@@ -1,0 +1,1591 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>寰影 CineFlow Pro 1.5</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <style>
+        body { margin: 0; padding: 0; background-color: #000; overflow: hidden; -webkit-tap-highlight-color: transparent; }
+        
+        /* 核心修复：移动端原生滚动与文字可选机制 */
+        .custom-scrollbar { 
+            -webkit-overflow-scrolling: touch; 
+            overscroll-behavior-y: contain;
+        }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+        
+        /* 核心修复：强制移动端允许长按划选文字 */
+        .selectable-text {
+            -webkit-user-select: text !important;
+            user-select: text !important;
+            cursor: text;
+        }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .animate-in { animation: fadeIn 0.4s ease-out; }
+        @keyframes loading { 0% { width: 0%; } 40% { width: 60%; } 100% { width: 100%; } }
+        .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+
+        /* ================= 浅色主题 (Paper Mode) ================= */
+        .theme-paper { background-color: #f3f4f6 !important; color: #111827 !important; }
+        .theme-paper .bg-black { background-color: #f9fafb !important; }
+        .theme-paper .bg-\[\#0B0F19\] { background-color: #f3f4f6 !important; }
+        .theme-paper .bg-gray-900 { background-color: #ffffff !important; }
+        .theme-paper .bg-gray-800 { background-color: #f3f4f6 !important; }
+        .theme-paper .bg-gray-700 { background-color: #e5e7eb !important; }
+        
+        .theme-paper .text-white { color: #111827 !important; }
+        .theme-paper .text-gray-100, .theme-paper .text-gray-200 { color: #1f2937 !important; }
+        .theme-paper .text-gray-300, .theme-paper .text-gray-400 { color: #4b5563 !important; }
+        .theme-paper .text-gray-500, .theme-paper .text-gray-600 { color: #6b7280 !important; }
+        
+        .theme-paper .border-gray-800 { border-color: #e5e7eb !important; }
+        .theme-paper .border-gray-700 { border-color: #d1d5db !important; }
+        
+        .theme-paper .bg-black\/20, .theme-paper .bg-black\/40 { background-color: rgba(255,255,255,0.6) !important; }
+        .theme-paper .bg-black\/50, .theme-paper .bg-black\/80 { background-color: rgba(255,255,255,0.85) !important; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel" data-type="module">
+        import React, { useState, useRef, useEffect, useMemo } from 'https://esm.sh/react@18.2.0';
+        import { createRoot } from 'https://esm.sh/react-dom@18.2.0/client';
+        import * as LucideIcons from 'https://esm.sh/lucide-react@0.292.0';
+
+        const {
+            Film, BookOpen, LayoutDashboard, Clapperboard, CalendarDays, Users, Camera, Play, CheckCircle, Clock, Search, Bell, Settings, Plus, FileVideo, MoreVertical, AlignLeft, Video, MapPin, CloudRain, FileText, AlertCircle, Activity, Upload, Download, Filter, ChevronRight, Eye, Edit3, Trash2, Highlighter, Move, Maximize, Target, FileDown, ArrowRight, Check, CheckSquare, Square, Send, Inbox, ListTodo, Layers, GripVertical, FileOutput, XCircle, ListChecks, BarChart3, HardDrive, TrendingUp, FolderPlus, Globe, Palette, Monitor, Archive, FilePlus2, FolderOpen, Sun, Save, SidebarOpen, Zap
+        } = LucideIcons;
+
+        const STORAGE_KEY = 'cineflow_pro_data_v1.5';
+        const SETTINGS_KEY = 'cineflow_pro_settings_v1.5';
+
+        const loadData = (key, defaultVal) => {
+            try {
+                const item = window.localStorage.getItem(key);
+                return item ? JSON.parse(item) : defaultVal;
+            } catch (error) {
+                return defaultVal;
+            }
+        };
+
+        const App = () => {
+            const [mobileTab, setMobileTab] = useState('left'); 
+
+            const savedSettings = loadData(SETTINGS_KEY, { themeColor: 'cyan', bgTheme: 'obsidian', sysLang: 'zh' });
+            const [showSystemSettings, setShowSystemSettings] = useState(false);
+            const [themeColor, setThemeColor] = useState(savedSettings.themeColor);
+            const [bgTheme, setBgTheme] = useState(savedSettings.bgTheme);
+            const [sysLang, setSysLang] = useState(savedSettings.sysLang);
+
+            useEffect(() => {
+                window.localStorage.setItem(SETTINGS_KEY, JSON.stringify({ themeColor, bgTheme, sysLang }));
+            }, [themeColor, bgTheme, sysLang]);
+
+            const [showSplash, setShowSplash] = useState(true);
+            const [modalConfig, setModalConfig] = useState(null); 
+
+            const showModal = (message, type = 'alert', onConfirm = null) => {
+                setModalConfig({ message, type, onConfirm });
+            };
+            const closeModal = () => setModalConfig(null);
+
+            const tColor = useMemo(() => {
+                const map = {
+                    cyan: { main: 'cyan', text: 'text-cyan-500', textLight: 'text-cyan-400', bg: 'bg-cyan-600', bgHover: 'hover:bg-cyan-500', border: 'border-cyan-500', shadow: 'shadow-[0_0_20px_rgba(6,182,212,0.3)]', activeBg: 'bg-cyan-500/10' },
+                    amber: { main: 'amber', text: 'text-amber-500', textLight: 'text-amber-400', bg: 'bg-amber-600', bgHover: 'hover:bg-amber-500', border: 'border-amber-500', shadow: 'shadow-[0_0_20px_rgba(245,158,11,0.3)]', activeBg: 'bg-amber-500/10' },
+                    purple: { main: 'purple', text: 'text-purple-500', textLight: 'text-purple-400', bg: 'bg-purple-600', bgHover: 'hover:bg-purple-500', border: 'border-purple-500', shadow: 'shadow-[0_0_20px_rgba(168,85,247,0.3)]', activeBg: 'bg-purple-500/10' },
+                };
+                return map[themeColor] || map.cyan;
+            }, [themeColor]);
+
+            const bTheme = useMemo(() => {
+                const map = {
+                    obsidian: { root: 'bg-black', panel: 'bg-[#0B0F19]', card: 'bg-gray-900', border: 'border-gray-800' },
+                    slate: { root: 'bg-slate-950', panel: 'bg-slate-900', card: 'bg-slate-800', border: 'border-slate-700' },
+                    zinc: { root: 'bg-zinc-950', panel: 'bg-zinc-900', card: 'bg-zinc-800', border: 'border-zinc-700' },
+                    paper: { root: 'bg-gray-100', panel: 'bg-gray-200', card: 'bg-white', border: 'border-gray-300' }
+                };
+                return map[bgTheme] || map.obsidian;
+            }, [bgTheme]);
+
+            const savedProject = loadData(STORAGE_KEY, {
+                projectInfo: { title: '', director: '', dp: '', startDate: '' },
+                archivedProjects: [],
+                ingestStage: 'upload',
+                originalScript: '',
+                editedScript: '',
+                parsedScriptBlocks: [],
+                shots: [],
+                schedule: { day1: { id: 'day1', date: '', title: 'Day 1: 初始拍摄日', callTime: '', location: '', weather: '', shots: [] } },
+                camNames: { A: 'CAM A (ARRI)', B: 'CAM B (RED)', C: 'CAM C (SONY)' },
+                shotLogs: {}
+            });
+
+            const [projectInfo, setProjectInfo] = useState(savedProject.projectInfo);
+            const [archivedProjects, setArchivedProjects] = useState(savedProject.archivedProjects); 
+            const [activeModule, setActiveModule] = useState(savedProject.projectInfo.title ? 'dashboard' : 'project-setup'); 
+
+            const [ingestStage, setIngestStage] = useState(savedProject.ingestStage); 
+            const [originalScript, setOriginalScript] = useState(savedProject.originalScript);
+            const [editedScript, setEditedScript] = useState(savedProject.editedScript);
+            const [parsedScriptBlocks, setParsedScriptBlocks] = useState(savedProject.parsedScriptBlocks); 
+
+            const [shots, setShots] = useState(savedProject.shots); 
+            const [schedule, setSchedule] = useState(savedProject.schedule);
+            const [camNames, setCamNames] = useState(savedProject.camNames);
+            const [shotLogs, setShotLogs] = useState(savedProject.shotLogs);
+
+            const fileInputRef = useRef(null);
+            const importProjectInputRef = useRef(null); // 本地硬盘导入引用
+            const originalScrollRef = useRef(null);
+            const editedScrollRef = useRef(null);
+            const isSyncingLeft = useRef(false);
+            const isSyncingRight = useRef(false);
+            const [activeHighlights, setActiveHighlights] = useState({ cast: true, props: true, vfx: true });
+            const [showShotForm, setShowShotForm] = useState(false);
+            const [selectedShotId, setSelectedShotId] = useState(null);
+            const [selectedShotIds, setSelectedShotIds] = useState(new Set());
+            const [newShot, setNewShot] = useState({ size: 'CU', angle: 'Eye Level', movement: 'Static', lens: '50mm', description: '', referenceText: '' });
+            const [repoSelectedShotIds, setRepoSelectedShotIds] = useState(new Set());
+            const [repoFilter, setRepoFilter] = useState('ALL'); 
+            const [draggedShotId, setDraggedShotId] = useState(null);
+            const [dragOverDayId, setDragOverDayId] = useState(null);
+            const [executionActiveDayId, setExecutionActiveDayId] = useState('day1');
+            const [scheduleActiveDayId, setScheduleActiveDayId] = useState('day1'); 
+            const [executionActiveShotId, setExecutionActiveShotId] = useState(null);
+
+            const [selectionPopup, setSelectionPopup] = useState(null);
+
+            useEffect(() => {
+                const projectDataToSave = {
+                    projectInfo, archivedProjects, ingestStage, originalScript, editedScript,
+                    parsedScriptBlocks, shots, schedule, camNames, shotLogs
+                };
+                window.localStorage.setItem(STORAGE_KEY, JSON.stringify(projectDataToSave));
+            }, [projectInfo, archivedProjects, ingestStage, originalScript, editedScript, parsedScriptBlocks, shots, schedule, camNames, shotLogs]);
+
+
+            const navItems = [
+                { id: 'dashboard', icon: LayoutDashboard, label: sysLang === 'zh' ? '总览大盘 (Dashboard)' : 'Dashboard', short: '总览' },
+                { id: 'script', icon: BookOpen, label: sysLang === 'zh' ? '剧本解析 (Script)' : 'Script', short: '剧本' },
+                { id: 'breakdown', icon: AlignLeft, label: sysLang === 'zh' ? '拆解分镜 (Breakdown)' : 'Breakdown', short: '拆解' },
+                { id: 'repository', icon: Inbox, label: sysLang === 'zh' ? '资产仓库 (Repository)' : 'Repository', short: '仓库' },
+                { id: 'schedule', icon: CalendarDays, label: sysLang === 'zh' ? '通告排期 (Schedule)' : 'Schedule', short: '排期' },
+                { id: 'execution', icon: Video, label: sysLang === 'zh' ? '现场打板 (Execution)' : 'Execution', short: '打板' },
+            ];
+
+            const handleModuleSwitch = (id) => {
+                setActiveModule(id);
+                setMobileTab('left');
+                setSelectionPopup(null);
+            }
+
+            useEffect(() => {
+                const timer = setTimeout(() => setShowSplash(false), 2500);
+                return () => clearTimeout(timer);
+            }, []);
+
+            useEffect(() => {
+                if (activeModule === 'breakdown' && selectedShotId && mobileTab === 'left') {
+                    const activeShot = shots.find(s => s.id === selectedShotId);
+                    if (activeShot && activeShot.referenceText) {
+                        const targetBlock = parsedScriptBlocks.find(b => b.text.includes(activeShot.referenceText));
+                        if (targetBlock) {
+                            setTimeout(() => {
+                                const element = document.getElementById(`script-block-${targetBlock.id}`);
+                                if (element) { element.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+                            }, 100);
+                        }
+                    }
+                }
+            }, [selectedShotId, activeModule, shots, parsedScriptBlocks, mobileTab]);
+
+            useEffect(() => {
+                if (!window.mammoth) {
+                    const script = document.createElement('script');
+                    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js';
+                    script.async = true;
+                    document.head.appendChild(script);
+                }
+            }, []);
+
+            useEffect(() => {
+                if (activeModule === 'execution') {
+                const activeDay = schedule[executionActiveDayId] || Object.values(schedule)[0];
+                if (activeDay && activeDay.shots.length > 0 && !executionActiveShotId) {
+                    setExecutionActiveShotId(activeDay.shots[0]);
+                }
+                }
+            }, [activeModule, executionActiveDayId, executionActiveShotId, schedule]);
+
+            const checkAndShowSelection = () => {
+                const selection = window.getSelection(); 
+                const text = selection.toString().trim(); 
+                if (text.length > 2) { 
+                    if (selection.rangeCount > 0) {
+                        const range = selection.getRangeAt(0);
+                        const rect = range.getBoundingClientRect();
+                        if (rect.width === 0 && rect.height === 0) return;
+                        
+                        let top = rect.bottom + 15; 
+                        if (top > window.innerHeight - 80) {
+                            top = rect.top - 55;
+                        }
+                        
+                        setSelectionPopup({
+                            x: Math.max(80, rect.left + (rect.width / 2)), 
+                            y: top,
+                            text: text
+                        });
+                    }
+                } else {
+                    setSelectionPopup(null);
+                }
+            };
+
+            useEffect(() => {
+                let timeoutId;
+                const onSelectionChange = () => {
+                    if (activeModule !== 'breakdown') return;
+                    clearTimeout(timeoutId);
+                    timeoutId = setTimeout(() => {
+                        checkAndShowSelection();
+                    }, 300); 
+                };
+                document.addEventListener('selectionchange', onSelectionChange);
+                return () => {
+                    document.removeEventListener('selectionchange', onSelectionChange);
+                    clearTimeout(timeoutId);
+                };
+            }, [activeModule]);
+
+            useEffect(() => {
+                const handleGlobalKeyDown = (e) => {
+                    if (activeModule === 'breakdown') {
+                        if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'n') {
+                            e.preventDefault();
+                            setShowShotForm(prev => !prev);
+                        }
+                        if (e.key.toLowerCase() === 'w' && selectionPopup) {
+                            const activeTag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+                            if (activeTag !== 'input' && activeTag !== 'textarea') {
+                                e.preventDefault();
+                                quickSaveShot(selectionPopup.text);
+                            }
+                        }
+                        if (e.key === 'Escape') {
+                            if (selectionPopup) {
+                                setSelectionPopup(null);
+                                if (window.getSelection) window.getSelection().removeAllRanges();
+                            }
+                            else if (showShotForm) setShowShotForm(false);
+                            else if (selectedShotId) setSelectedShotId(null);
+                        }
+                    }
+                };
+                window.addEventListener('keydown', handleGlobalKeyDown);
+                return () => window.removeEventListener('keydown', handleGlobalKeyDown);
+            }, [activeModule, showShotForm, selectedShotId, selectionPopup]);
+
+
+            const initProject = (e) => {
+                e.preventDefault();
+                if (!projectInfo.title) { showModal(sysLang === 'zh' ? "请输入项目名称" : "Please enter project title"); return; }
+                handleModuleSwitch('dashboard');
+            };
+
+            const createProjectSnapshot = () => ({
+                projectInfo, originalScript, editedScript, ingestStage, parsedScriptBlocks,
+                shots, schedule, camNames, shotLogs
+            });
+
+            // ================= 跨端互通：本地导出与导入 =================
+            const handleExportToDisk = () => {
+                if (!projectInfo.title) {
+                    showModal(sysLang === 'zh' ? "请先创建并命名项目后再导出。" : "Please name the project before exporting.");
+                    return;
+                }
+                const snapshot = createProjectSnapshot();
+                const dataStr = JSON.stringify(snapshot, null, 2);
+                const blob = new Blob([dataStr], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `CineFlow_Proj_${projectInfo.title}_${new Date().getTime()}.json`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                showModal(sysLang === 'zh' ? "✅ 跨端工程文件 (.json) 已保存至您的本地硬盘/设备。" : "✅ Project exported successfully.");
+            };
+
+            const handleImportFromDisk = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                try {
+                    const text = await file.text();
+                    const d = JSON.parse(text);
+                    if (!d.projectInfo || !d.shots) throw new Error("Invalid format");
+
+                    const doLoad = () => {
+                        setProjectInfo(d.projectInfo); setOriginalScript(d.originalScript || ''); setEditedScript(d.editedScript || ''); setIngestStage(d.ingestStage || 'upload');
+                        setParsedScriptBlocks(d.parsedScriptBlocks || []); setShots(d.shots || []); setSchedule(d.schedule || {}); setCamNames(d.camNames || { A: 'CAM A', B: 'CAM B', C: 'CAM C' }); setShotLogs(d.shotLogs || {});
+                        setSelectedShotIds(new Set()); setRepoSelectedShotIds(new Set()); setExecutionActiveShotId(null);
+                        showModal(sysLang === 'zh' ? `✅ 成功从本地调入跨端工程：${d.projectInfo.title}` : `✅ Successfully imported project.`);
+                        handleModuleSwitch('dashboard');
+                    };
+
+                    if (projectInfo.title) {
+                        showModal(sysLang === 'zh' ? "⚠️ 从本地导入将覆盖当前工作台。系统会自动为您在浏览器存档当前进度。" : "Import will overwrite workspace. Save local?", 'confirm', () => { handleArchiveProject(true); doLoad(); });
+                    } else { doLoad(); }
+
+                } catch (err) {
+                    showModal(sysLang === 'zh' ? "❌ 导入失败：该文件不是有效的 CineFlow 工程文件。" : "❌ Import failed: Invalid file.");
+                }
+                e.target.value = null; 
+            };
+            // ==========================================================
+
+            const handleArchiveProject = (silent = false) => {
+                if (!projectInfo.title) {
+                    if (!silent) showModal(sysLang === 'zh' ? "项目未命名，请先在设置中创建项目！" : "Project unnamed. Please setup first.");
+                    return false;
+                }
+                const snapshot = createProjectSnapshot();
+                setArchivedProjects(prev => {
+                    const existingIndex = prev.findIndex(p => p.title === projectInfo.title);
+                    if (existingIndex >= 0) {
+                        const newArchives = [...prev];
+                        newArchives[existingIndex] = { id: prev[existingIndex].id, title: projectInfo.title, date: new Date().toLocaleString(), shotsCount: shots.length, data: snapshot };
+                        return newArchives;
+                    } else {
+                        return [{ id: Date.now(), title: projectInfo.title, date: new Date().toLocaleString(), shotsCount: shots.length, data: snapshot }, ...prev];
+                    }
+                });
+                if (!silent) showModal(sysLang === 'zh' ? "✅ 项目进度已在浏览器本地存档成功！" : "✅ Project archived successfully!");
+                return true;
+            };
+
+            const handleLoadProject = (projId) => {
+                const projToLoad = archivedProjects.find(p => p.id === projId);
+                if (!projToLoad) return;
+                const doLoad = () => {
+                    const d = projToLoad.data;
+                    setProjectInfo(d.projectInfo); setOriginalScript(d.originalScript); setEditedScript(d.editedScript); setIngestStage(d.ingestStage);
+                    setParsedScriptBlocks(d.parsedScriptBlocks); setShots(d.shots); setSchedule(d.schedule); setCamNames(d.camNames || { A: 'CAM A', B: 'CAM B', C: 'CAM C' }); setShotLogs(d.shotLogs || {});
+                    setSelectedShotIds(new Set()); setRepoSelectedShotIds(new Set()); setExecutionActiveShotId(null);
+                    showModal(sysLang === 'zh' ? `✅ 成功调入存档项目：${projToLoad.title}` : `✅ Loaded project: ${projToLoad.title}`);
+                    handleModuleSwitch('dashboard');
+                };
+                if (projectInfo.title) {
+                    showModal(sysLang === 'zh' ? "⚠️ 加载项目将覆盖当前工作台。系统会自动为您存档当前正在编辑的进度。" : "System will save current before loading.", 'confirm', () => { handleArchiveProject(true); doLoad(); });
+                } else { doLoad(); }
+            };
+
+            const handleDeleteProject = (projId) => {
+                showModal(
+                    sysLang === 'zh' ? "⚠️ 危险操作：确定要永久删除此存档项目吗？\n此操作无法恢复！" : "⚠️ Warning: Permanently delete this archived project? This cannot be undone!", 
+                    'confirm', 
+                    () => { setArchivedProjects(prev => prev.filter(p => p.id !== projId)); showModal(sysLang === 'zh' ? "✅ 项目已永久删除。" : "✅ Project deleted successfully."); }
+                );
+            };
+
+            const handleCreateNewProject = () => {
+                showModal(sysLang === 'zh' ? "⚠️ 警告：新建项目将彻底清空当前工作台所有数据！\n系统会自动为您存档当前进度，是否继续？" : "⚠️ Warning: This clears the workspace. Proceed?", 'confirm', () => {
+                    if (projectInfo.title) handleArchiveProject(true); 
+                    setProjectInfo({ title: '', director: '', dp: '', startDate: '' }); setOriginalScript(''); setEditedScript(''); setIngestStage('upload'); setParsedScriptBlocks([]);
+                    setShots([]); setSchedule({ day1: { id: 'day1', date: '', title: 'Day 1: 新建拍摄日', callTime: '', location: '', weather: '', shots: [] } }); setShotLogs({});
+                    setSelectedShotIds(new Set()); setRepoSelectedShotIds(new Set()); setExecutionActiveShotId(null);
+                    handleModuleSwitch('project-setup');
+                });
+            };
+
+            const handleFileUpload = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                setIngestStage('loading');
+                const extension = file.name.split('.').pop().toLowerCase();
+                try {
+                if (extension === 'txt') {
+                    const text = await file.text(); setOriginalScript(text); setEditedScript(text); setIngestStage('review');
+                } else if (extension === 'docx') {
+                    if (!window.mammoth) throw new Error("解析引擎尚未就绪，请稍后重试。");
+                    const arrayBuffer = await file.arrayBuffer();
+                    const result = await window.mammoth.extractRawText({ arrayBuffer });
+                    const text = result.value || "（文档内无有效文本提取）";
+                    setOriginalScript(text); setEditedScript(text); setIngestStage('review');
+                } else { showModal("仅支持 .docx 或 .txt 格式文件"); setIngestStage('upload'); }
+                } catch (err) { setOriginalScript(`错误: ${err.message}`); setEditedScript(`错误: ${err.message}`); setIngestStage('review'); }
+            };
+
+            const handleOriginalScroll = (e) => {
+                if (isSyncingLeft.current) { isSyncingLeft.current = false; return; }
+                if (editedScrollRef.current && editedScrollRef.current.clientHeight > 0) {
+                    isSyncingRight.current = true;
+                    const { scrollTop, scrollHeight, clientHeight } = e.target;
+                    const maxScroll = scrollHeight - clientHeight;
+                    if (maxScroll <= 0) return;
+                    editedScrollRef.current.scrollTop = (scrollTop / maxScroll) * (editedScrollRef.current.scrollHeight - editedScrollRef.current.clientHeight);
+                }
+            };
+
+            const handleEditedScroll = (e) => {
+                if (isSyncingRight.current) { isSyncingRight.current = false; return; }
+                if (originalScrollRef.current && originalScrollRef.current.clientHeight > 0) {
+                    isSyncingLeft.current = true;
+                    const { scrollTop, scrollHeight, clientHeight } = e.target;
+                    const maxScroll = scrollHeight - clientHeight;
+                    if (maxScroll <= 0) return;
+                    originalScrollRef.current.scrollTop = (scrollTop / maxScroll) * (originalScrollRef.current.scrollHeight - originalScrollRef.current.clientHeight);
+                }
+            };
+
+            const handleConfirmAndBreakdown = () => {
+                const lines = editedScript.split('\n');
+                const newBlocks = [];
+                const hollywoodSceneRegex = /^(INT\.|EXT\.|I\/E|INT\/EXT|内景|外景|场景|第[一二三四五六七八九十\d]+场|\d+[.\s])/i;
+                lines.forEach((line, idx) => {
+                    const text = line.trim();
+                    if (!text) return;
+                    let type = 'action';
+                    if (hollywoodSceneRegex.test(text)) type = 'scene-heading';
+                    else if (text.length < 20 && !text.includes('（') && !text.includes('：') && !text.includes('(') && text === text.toUpperCase() && text.length > 1) type = 'character';
+                    else if (text.length < 15 && !text.includes('（') && !text.includes('：') && !text.includes('(')) type = 'character';
+                    else if (text.startsWith('（') || text.startsWith('(') || text.includes('：') || (newBlocks.length > 0 && newBlocks[newBlocks.length - 1].type === 'character')) type = 'dialogue';
+                    newBlocks.push({ id: `block-${Date.now()}-${idx}`, type, text });
+                });
+                if (newBlocks.length > 0) setParsedScriptBlocks(newBlocks);
+                handleModuleSwitch('breakdown');
+            };
+
+            const getOrCreateShotLog = (shotId) => { if (shotLogs[shotId]) return shotLogs[shotId]; return { currentTake: 1, draft: { A: { roll: '', clip: '', lens: '', note: '' }, B: { roll: '', clip: '', lens: '', note: '' }, C: { roll: '', clip: '', lens: '', note: '' } }, history: [] }; };
+            const handleLogChange = (shotId, cam, field, value) => { setShotLogs(prev => { const log = prev[shotId] || getOrCreateShotLog(shotId); return { ...prev, [shotId]: { ...log, draft: { ...log.draft, [cam]: { ...log.draft[cam], [field]: value } } } }; }); };
+            
+            // ================= 场记流水核心增强 =================
+            // 智能自增 Clip 编号
+            const incrementClipName = (clip) => {
+                if (!clip) return clip;
+                const match = clip.match(/(\d+)(?!.*\d)/); 
+                if (match) {
+                    const numStr = match[0];
+                    const nextNum = String(parseInt(numStr, 10) + 1).padStart(numStr.length, '0');
+                    return clip.slice(0, match.index) + nextNum + clip.slice(match.index + numStr.length);
+                }
+                return clip;
+            };
+
+            const handleUpdateCamName = (cam, value) => setCamNames(prev => ({ ...prev, [cam]: value }));
+            const handleCommitTake = (shotId, status) => { 
+                setShotLogs(prev => { 
+                    const log = prev[shotId] || getOrCreateShotLog(shotId); 
+                    const newTake = { id: `tk-${Date.now()}`, takeNum: log.currentTake, status: status, time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }), cams: JSON.parse(JSON.stringify(log.draft)) }; 
+                    return { 
+                        ...prev, 
+                        [shotId]: { 
+                            ...log, 
+                            currentTake: log.currentTake + 1, 
+                            history: [newTake, ...log.history], 
+                            draft: { 
+                                A: { ...log.draft.A, clip: incrementClipName(log.draft.A.clip), note: '' }, 
+                                B: { ...log.draft.B, clip: incrementClipName(log.draft.B.clip), note: '' }, 
+                                C: { ...log.draft.C, clip: incrementClipName(log.draft.C.clip), note: '' } 
+                            } 
+                        } 
+                    }; 
+                }); 
+            };
+
+            const handleDeleteTake = (shotId, takeId) => {
+                setShotLogs(prev => {
+                    const log = prev[shotId];
+                    if (!log) return prev;
+                    return { ...prev, [shotId]: { ...log, history: log.history.filter(t => t.id !== takeId) } };
+                });
+            };
+
+            const handleEditTakeClip = (shotId, takeId, cam, newClipValue) => {
+                setShotLogs(prev => {
+                    const log = prev[shotId];
+                    if (!log) return prev;
+                    const newHistory = log.history.map(tk => {
+                        if (tk.id === takeId) {
+                            return { ...tk, cams: { ...tk.cams, [cam]: { ...tk.cams[cam], clip: newClipValue } } };
+                        }
+                        return tk;
+                    });
+                    return { ...prev, [shotId]: { ...log, history: newHistory } };
+                });
+            };
+            // ==========================================================
+
+            const updateTakeCount = (shotId, delta) => { setShotLogs(prev => { const log = prev[shotId] || getOrCreateShotLog(shotId); return { ...prev, [shotId]: { ...log, currentTake: Math.max(1, log.currentTake + delta) } }; }); };
+            const toggleShotCompletion = (shotId) => { setShots(shots.map(s => s.id === shotId ? { ...s, status: s.status === 'completed' ? 'pending' : 'completed' } : s)); };
+            
+            const handleExportPDF = (day) => {
+                const dayShots = day.shots.map(id => shots.find(s => s.id === id)).filter(Boolean);
+                const htmlContent = `
+                <!DOCTYPE html>
+                <html lang="zh-CN">
+                <head><meta charset="UTF-8"><title>拍摄通告单 - ${day.title}</title>
+                <style>body { font-family: 'Helvetica Neue', 'SimHei', sans-serif; padding: 40px; color: #000; background: #fff; line-height: 1.6; } .header { text-align: center; border-bottom: 3px solid #000; padding-bottom: 20px; margin-bottom: 30px; } .header h1 { margin: 0 0 10px 0; font-size: 28px; letter-spacing: 2px; } .header h2 { margin: 0; font-size: 18px; color: #555; font-weight: normal; } .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 40px; } .info-box { border: 1px solid #000; padding: 15px; } .info-box strong { display: inline-block; width: 80px; } table { width: 100%; border-collapse: collapse; margin-top: 10px; } th, td { border: 1px solid #000; padding: 12px 8px; text-align: left; vertical-align: top; } th { background-color: #f0f0f0; font-weight: bold; text-transform: uppercase; font-size: 14px; } .shot-id { font-weight: bold; font-family: monospace; white-space: nowrap; } .footer { margin-top: 50px; text-align: center; font-size: 12px; color: #777; border-top: 1px solid #ddd; padding-top: 20px; }</style>
+                </head>
+                <body>
+                    <div class="header"><h1>CALL SHEET / 拍摄通告单</h1><h2>项目: ${projectInfo.title || '无项目名称'}</h2></div>
+                    <div class="info-grid">
+                    <div class="info-box"><div><strong>排期日:</strong> ${day.title}</div><div><strong>日期:</strong> ${day.date || 'TBD'}</div><div><strong>通告时间:</strong> ${day.callTime || 'TBD'}</div></div>
+                    <div class="info-box"><div><strong>拍摄地:</strong> ${day.location || 'TBD'}</div><div><strong>天气预报:</strong> ${day.weather || 'TBD'}</div><div><strong>总镜头数:</strong> ${day.shots.length} 个</div></div>
+                    </div>
+                    <h3 style="margin-bottom: 10px; border-left: 5px solid #000; padding-left: 10px;">SHOT LIST / 镜头清单</h3>
+                    <table>
+                    <thead><tr><th width="8%">编号</th><th width="10%">景别</th><th width="15%">角度</th><th width="15%">运镜</th><th width="10%">焦段</th><th width="42%">画面描述</th></tr></thead>
+                    <tbody>
+                        ${dayShots.length === 0 ? '<tr><td colspan="6" style="text-align:center; padding: 20px; color:#666;">该通告单暂无排期镜头</td></tr>' : ''}
+                        ${dayShots.map((s, i) => `<tr><td class="shot-id">SH-${i+1}</td><td>${s.size}</td><td>${s.angle}</td><td>${s.movement}</td><td>${s.lens || '-'}</td><td>${s.description}</td></tr>`).join('')}
+                    </tbody>
+                    </table>
+                    <div class="footer">寰影 CineFlow Pro 数字化场记系统生成 | 打印时间: ${new Date().toLocaleString()}</div>
+                </body></html>
+                `;
+                const printWindow = window.open('', '_blank');
+                if (printWindow) { printWindow.document.write(htmlContent); printWindow.document.close(); printWindow.focus(); setTimeout(() => printWindow.print(), 250); } else showModal("请允许浏览器弹出窗口以生成 PDF。");
+            };
+
+            const handleExportEditorLogPDF = (day) => {
+                const dayShots = day.shots.map(id => shots.find(s => s.id === id)).filter(Boolean);
+                const htmlContent = `
+                <!DOCTYPE html>
+                <html lang="zh-CN">
+                <head><meta charset="UTF-8"><title>场记单/摄影日志 - ${day.title}</title>
+                <style>body { font-family: 'Helvetica Neue', 'SimHei', sans-serif; padding: 30px; color: #000; background: #fff; line-height: 1.5; font-size: 12px; } .header { text-align: center; border-bottom: 2px solid #000; padding-bottom: 10px; margin-bottom: 20px; } .header h1 { margin: 0 0 5px 0; font-size: 24px; letter-spacing: 2px; } .shot-block { margin-bottom: 30px; border: 2px solid #000; page-break-inside: avoid; } .shot-header { background-color: #000; color: #fff; padding: 8px 12px; font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; } .shot-desc { padding: 10px 12px; background-color: #f9f9f9; border-bottom: 2px solid #000; font-style: italic; } table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid #ddd; padding: 8px; text-align: left; vertical-align: middle; } th { background-color: #eee; font-weight: bold; text-transform: uppercase; font-size: 11px; } .take-col { font-size: 16px; font-weight: bold; text-align: center; width: 50px; } .status-CIRCLE { color: #059669; font-weight: bold; font-size: 14px; text-align: center; } .status-NG { color: #dc2626; font-weight: bold; font-size: 14px; text-align: center; text-decoration: line-through; } .cam-name { font-weight: bold; color: #555; font-size: 10px; margin-bottom: 2px; } .clip-name { font-family: monospace; font-size: 11px; word-break: break-all; }</style>
+                </head>
+                <body>
+                    <div class="header"><h1>SCRIPT SUPERVISOR & CAMERA LOG (场记单)</h1><h2>项目: ${projectInfo.title || '无项目名称'} | 拍摄日: ${day.title.split(':')[0]} | 日期: ${day.date || 'TBD'}</h2></div>
+                    ${dayShots.length === 0 ? '<p style="text-align:center;">今日无拍摄记录</p>' : ''}
+                    ${dayShots.map((s, i) => {
+                    const logs = shotLogs[s.id]; const history = logs ? logs.history : [];
+                    return `
+                        <div class="shot-block">
+                        <div class="shot-header"><span>SHOT: ${i+1} | ${s.size} | ${s.angle} | ${s.movement}</span><span>${s.status === 'completed' ? 'WRAP' : 'PENDING'}</span></div>
+                        <div class="shot-desc">描述: ${s.description}</div>
+                        ${history.length > 0 ? `
+                            <table><thead><tr><th>TK</th><th>STATUS</th><th>CAM A: ${camNames.A}</th><th>CAM B: ${camNames.B}</th><th>CAM C: ${camNames.C}</th></tr></thead>
+                            <tbody>${history.map(tk => `<tr><td class="take-col">${tk.takeNum}</td><td class="${tk.status === 'CIRCLE' ? 'status-CIRCLE' : 'status-NG'}">${tk.status === 'CIRCLE' ? '⭕ CIRCLE' : '❌ NG'}</td><td>${tk.cams.A.clip ? `<div class="cam-name">Roll: ${tk.cams.A.roll || '-'} | Lens: ${tk.cams.A.lens || '-'}</div><div class="clip-name">${tk.cams.A.clip}</div><div style="color:#666; font-size:10px; margin-top:2px;">${tk.cams.A.note}</div>` : '-'}</td><td>${tk.cams.B.clip ? `<div class="cam-name">Roll: ${tk.cams.B.roll || '-'} | Lens: ${tk.cams.B.lens || '-'}</div><div class="clip-name">${tk.cams.B.clip}</div><div style="color:#666; font-size:10px; margin-top:2px;">${tk.cams.B.note}</div>` : '-'}</td><td>${tk.cams.C.clip ? `<div class="cam-name">Roll: ${tk.cams.C.roll || '-'} | Lens: ${tk.cams.C.lens || '-'}</div><div class="clip-name">${tk.cams.C.clip}</div><div style="color:#666; font-size:10px; margin-top:2px;">${tk.cams.C.note}</div>` : '-'}</td></tr>`).join('')}</tbody>
+                            </table>
+                        ` : '<div style="padding:15px; color:#999; text-align:center;">该镜头尚无打板录入记录</div>'}
+                        </div>
+                    `
+                    }).join('')}
+                </body></html>
+                `;
+                const printWindow = window.open('', '_blank');
+                if (printWindow) { printWindow.document.write(htmlContent); printWindow.document.close(); printWindow.focus(); setTimeout(() => printWindow.print(), 250); } else showModal("请允许浏览器弹出窗口以生成 PDF。");
+            };
+
+            const handleAddShot = () => { 
+                if (!newShot.description) return; 
+                setShots([...shots, { ...newShot, id: `shot${Date.now()}`, status: 'pending', inRepo: false, shootDay: null }]); 
+                setNewShot({ size: 'CU', angle: 'Eye Level', movement: 'Static', lens: '50mm', description: '', referenceText: '' }); 
+                setShowShotForm(false); 
+            };
+
+            const quickSaveShot = (text) => {
+                const shotToSave = { 
+                    size: newShot.size || 'CU', angle: newShot.angle || 'Eye Level', movement: newShot.movement || 'Static', lens: newShot.lens || '50mm', 
+                    description: text, referenceText: text, id: `shot${Date.now()}`, status: 'pending', inRepo: false, shootDay: null 
+                };
+                setShots(prev => [...prev, shotToSave]);
+                setSelectionPopup(null);
+                if (window.getSelection) window.getSelection().removeAllRanges();
+            };
+
+            const handleDeleteShot = (id, e) => { e.stopPropagation(); setShots(shots.filter(shot => shot.id !== id)); if (selectedShotId === id) setSelectedShotId(null); setSchedule(prev => { const newSchedule = { ...prev }; Object.keys(newSchedule).forEach(dayKey => { newSchedule[dayKey].shots = newSchedule[dayKey].shots.filter(sId => sId !== id); }); return newSchedule; }); };
+            const toggleHighlight = (type) => setActiveHighlights(prev => ({ ...prev, [type]: !prev[type] }));
+            const toggleSelectShot = (id, e) => { e.stopPropagation(); const newSet = new Set(selectedShotIds); if (newSet.has(id)) newSet.delete(id); else newSet.add(id); setSelectedShotIds(newSet); };
+            const handleSelectAllShots = () => { const unpushedShots = shots.filter(s => !s.inRepo); if (selectedShotIds.size === unpushedShots.length && unpushedShots.length > 0) setSelectedShotIds(new Set()); else setSelectedShotIds(new Set(unpushedShots.map(s => s.id))); };
+            const handlePushToRepository = () => { setShots(shots.map(s => selectedShotIds.has(s.id) ? { ...s, inRepo: true } : s)); setSelectedShotIds(new Set()); handleModuleSwitch('repository'); };
+            const toggleRepoSelectShot = (id, e) => { e.stopPropagation(); const newSet = new Set(repoSelectedShotIds); if (newSet.has(id)) newSet.delete(id); else newSet.add(id); setRepoSelectedShotIds(newSet); };
+            
+            const handleBulkAssignToDay = (dayId) => { 
+                if (repoSelectedShotIds.size === 0) return; 
+                setShots(shots.map(s => repoSelectedShotIds.has(s.id) ? { ...s, shootDay: dayId } : s)); 
+                setSchedule(prev => { 
+                    const newSchedule = { ...prev }; 
+                    Object.keys(newSchedule).forEach(k => { newSchedule[k].shots = newSchedule[k].shots.filter(id => !repoSelectedShotIds.has(id)); }); 
+                    if (dayId) newSchedule[dayId].shots.push(...Array.from(repoSelectedShotIds)); 
+                    return newSchedule; 
+                }); 
+                setRepoSelectedShotIds(new Set()); 
+            };
+            
+            const assignShotToDay = (shotId, dayId) => { 
+                setShots(shots.map(s => s.id === shotId ? { ...s, shootDay: dayId } : s)); 
+                setSchedule(prev => { 
+                    const newSchedule = { ...prev }; 
+                    Object.keys(newSchedule).forEach(k => { newSchedule[k].shots = newSchedule[k].shots.filter(id => id !== shotId); }); 
+                    if (dayId) newSchedule[dayId].shots.push(shotId); 
+                    return newSchedule; 
+                }); 
+            };
+            
+            const handleDragStart = (e, shotId) => { setDraggedShotId(shotId); e.dataTransfer.setData('text/plain', shotId); };
+            const handleDragOver = (e, dayId) => { e.preventDefault(); setDragOverDayId(dayId); };
+            const handleDragLeave = () => { setDragOverDayId(null); };
+            const handleDrop = (e, dayId) => { e.preventDefault(); const shotId = e.dataTransfer.getData('text/plain'); if (shotId) assignShotToDay(shotId, dayId); setDraggedShotId(null); setDragOverDayId(null); };
+            
+            const handleAddNewDay = () => { 
+                const dayCount = Object.keys(schedule).length + 1; 
+                const newDayId = `day${Date.now()}`; 
+                setSchedule(prev => ({ ...prev, [newDayId]: { id: newDayId, date: '', title: `Day ${dayCount}: 待定场景`, callTime: '', location: '', weather: '', shots: [] } })); 
+            };
+
+            const updateScheduleDetail = (dayId, field, value) => {
+                setSchedule(prev => ({
+                    ...prev,
+                    [dayId]: { ...prev[dayId], [field]: value }
+                }));
+            };
+
+            const renderModal = () => {
+                if (!modalConfig) return null;
+                return (
+                    <div className="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center backdrop-blur-sm animate-in fade-in p-4">
+                        <div className={`border rounded-2xl p-6 max-w-sm w-full shadow-2xl ${bTheme.card} ${bTheme.border}`}>
+                            <div className="flex items-start gap-3 mb-6">
+                                {modalConfig.type === 'confirm' ? <AlertCircle className="text-amber-500 shrink-0" size={24}/> : <Activity className={tColor.text + " shrink-0"} size={24}/>}
+                                <div className="text-white text-sm leading-relaxed whitespace-pre-wrap break-words">{modalConfig.message}</div>
+                            </div>
+                            <div className="flex justify-end gap-3 pt-4 border-t border-gray-800">
+                                {modalConfig.type === 'confirm' && (
+                                    <button onClick={closeModal} className="px-5 py-2 rounded-lg text-gray-400 hover:text-white bg-gray-800 hover:bg-gray-700 text-xs font-bold transition-all">取消</button>
+                                )}
+                                <button onClick={() => { if(modalConfig.onConfirm) modalConfig.onConfirm(); closeModal(); }} className={`px-5 py-2 rounded-lg text-white ${tColor.bg} ${tColor.bgHover} text-xs font-bold transition-all`}>
+                                    确定
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderSystemSettingsModal = () => {
+                if (!showSystemSettings) return null;
+                return (
+                <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center backdrop-blur-sm animate-in fade-in duration-200 p-4">
+                    <div className={`border rounded-3xl p-6 lg:p-8 max-w-md w-full shadow-2xl relative max-h-[90vh] overflow-y-auto custom-scrollbar ${bTheme.card} ${bTheme.border}`}>
+                    <button onClick={() => setShowSystemSettings(false)} className="absolute top-4 right-4 lg:top-6 lg:right-6 text-gray-500 hover:text-white transition-colors"><XCircle size={24}/></button>
+                    <h2 className={`text-xl lg:text-2xl font-black mb-6 flex items-center gap-2 ${tColor.text}`}><Settings size={24}/> 软件系统设置</h2>
+                    
+                    <div className="space-y-8">
+                        <div>
+                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-1"><Monitor size={14}/> {sysLang === 'zh' ? '软件背景 (Theme)' : 'Background'}</h3>
+                        <div className="grid grid-cols-2 gap-2">
+                            {[{ id: 'obsidian', name: 'Obsidian (黑曜石)', color: '#000000' }, { id: 'slate', name: 'Slate (深空灰)', color: '#0f172a' }, { id: 'zinc', name: 'Zinc (冷钢黑)', color: '#18181b' }, { id: 'paper', name: 'Paper (极昼浅色)', color: '#f3f4f6' }].map(bg => (
+                            <button key={bg.id} onClick={() => setBgTheme(bg.id)} className={`py-3 rounded-lg border-2 font-bold text-[10px] uppercase tracking-wider transition-all ${bgTheme === bg.id ? `border-cyan-500 shadow-lg` : `${bTheme.border} text-gray-500 hover:border-gray-400`}`} style={{ backgroundColor: bg.color, color: bg.id === 'paper' && bgTheme !== bg.id ? '#111827' : '' }}>{bg.name}</button>
+                            ))}
+                        </div>
+                        </div>
+                        <div>
+                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-1"><Palette size={14}/> {sysLang === 'zh' ? '强调色彩' : 'Accent Color'}</h3>
+                        <div className="flex gap-4">
+                            {[{ id: 'cyan', color: '#06b6d4', name: 'Cyber Cyan' }, { id: 'amber', color: '#f59e0b', name: 'Amber Gold' }, { id: 'purple', color: '#a855f7', name: 'Neon Purple' }].map(theme => (
+                            <button key={theme.id} onClick={() => setThemeColor(theme.id)} title={theme.name} className={`w-12 h-12 rounded-full border-4 transition-all ${themeColor === theme.id ? 'border-white scale-110 shadow-lg' : 'border-transparent opacity-40 hover:opacity-100'}`} style={{ backgroundColor: theme.color }}></button>
+                            ))}
+                        </div>
+                        </div>
+                        <div>
+                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-1"><Globe size={14}/> {sysLang === 'zh' ? '界面语言' : 'Language'}</h3>
+                        <div className={`flex gap-2 p-1 rounded-xl ${bTheme.panel}`}>
+                            <button onClick={() => setSysLang('zh')} className={`flex-1 py-2 rounded-lg font-bold text-sm transition-all ${sysLang === 'zh' ? `${tColor.bg} text-white shadow-md` : 'text-gray-400 hover:text-white'}`}>简体中文</button>
+                            <button onClick={() => setSysLang('en')} className={`flex-1 py-2 rounded-lg font-bold text-sm transition-all ${sysLang === 'en' ? `${tColor.bg} text-white shadow-md` : 'text-gray-400 hover:text-white'}`}>English</button>
+                        </div>
+                        </div>
+                        <div className={`border-t pt-6 ${bTheme.border}`}>
+                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3 flex items-center gap-1"><Activity size={14}/> 关于系统 (About CineFlow OS)</h3>
+                        <div className={`bg-black/50 border rounded-xl p-4 space-y-3 text-sm text-gray-400 font-mono ${bTheme.border}`}>
+                            <div className={`flex justify-between items-center pb-2 border-b ${bTheme.border}`}><span>{sysLang === 'zh' ? '版本标识' : 'Version'}:</span> <span className={`font-black tracking-widest ${bTheme.panel} px-2 py-1 rounded ${tColor.text}`}>寰影 CineFlow Pro 1.5</span></div>
+                            <div className="flex justify-between items-center"><span>{sysLang === 'zh' ? '研发支持' : 'Developer'}:</span> <span className="text-gray-200">ytmaya2014@gmail.com</span></div>
+                            <div className="flex justify-between items-center"><span>{sysLang === 'zh' ? '技术联络' : 'Contact'}:</span> <span className="text-gray-200">15589906090</span></div>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                );
+            };
+
+            const renderProjectSetup = () => {
+                return (
+                <div className={`flex-1 flex items-center justify-center relative overflow-hidden min-h-0 ${bTheme.panel}`}>
+                    <div className={`absolute top-[-20%] left-[-10%] w-[50%] h-[50%] blur-[120px] rounded-full pointer-events-none opacity-20 ${tColor.bg}`}></div>
+                    
+                    <div className="max-w-3xl w-full z-10 animate-in fade-in zoom-in-95 duration-500 p-4 lg:p-8 h-full overflow-y-auto custom-scrollbar touch-pan-y flex flex-col justify-center">
+                    <div className="flex flex-col lg:flex-row lg:justify-between lg:items-end mb-8 gap-4">
+                        <div>
+                        <div className={`inline-flex items-center justify-center w-12 h-12 lg:w-16 lg:h-16 shadow-xl rounded-2xl mb-4 border ${bTheme.card} ${bTheme.border} ${tColor.text}`}><FolderPlus size={28} /></div>
+                        <h1 className="text-3xl lg:text-4xl font-black text-white uppercase tracking-tighter">{projectInfo.title ? (sysLang === 'zh' ? '项目设置' : 'Project Settings') : (sysLang === 'zh' ? '建立项目' : 'Create Production')}</h1>
+                        <p className="text-gray-400 mt-1 text-sm lg:text-base">{projectInfo.title ? (sysLang === 'zh' ? '修改当前剧组配置信息' : 'Modify current production info') : (sysLang === 'zh' ? '建立全新的影视工业流项目资产库' : 'Initialize a new digital production workflow')}</p>
+                        </div>
+                        
+                        {/* 核心互通增强：导出与导入按钮 */}
+                        <div className="flex flex-row lg:flex-col gap-2.5 items-end flex-wrap">
+                            <button onClick={() => handleArchiveProject(false)} className={`px-3 lg:px-4 py-2 ${tColor.bg} hover:${tColor.bgHover} text-white rounded-xl text-xs lg:text-sm font-bold flex items-center gap-2 transition-all shadow-lg w-full lg:w-auto justify-center`}><Archive size={16}/> {sysLang === 'zh' ? '存档进度' : 'Archive'}</button>
+                            <div className="flex gap-2.5 w-full lg:w-auto">
+                                <button onClick={handleExportToDisk} className={`flex-1 lg:flex-none px-3 lg:px-4 py-2 bg-blue-900/20 hover:bg-blue-900/50 text-blue-400 border border-blue-500/50 rounded-xl text-xs lg:text-sm font-bold flex items-center justify-center gap-1.5 transition-all shadow-lg`}><Download size={14}/> {sysLang === 'zh' ? '导出本地' : 'Export'}</button>
+                                <button onClick={() => importProjectInputRef.current?.click()} className={`flex-1 lg:flex-none px-3 lg:px-4 py-2 bg-purple-900/20 hover:bg-purple-900/50 text-purple-400 border border-purple-500/50 rounded-xl text-xs lg:text-sm font-bold flex items-center justify-center gap-1.5 transition-all shadow-lg`}><Upload size={14}/> {sysLang === 'zh' ? '本地导入' : 'Import'}</button>
+                                <input ref={importProjectInputRef} type="file" className="hidden" accept=".json" onChange={handleImportFromDisk} />
+                            </div>
+                            {projectInfo.title && <button onClick={handleCreateNewProject} className={`px-3 lg:px-4 py-2 bg-red-900/20 hover:bg-red-900/50 border border-red-500/50 text-red-400 rounded-xl text-xs lg:text-sm font-bold flex items-center gap-2 transition-all shadow-lg w-full lg:w-auto justify-center`}><FilePlus2 size={16}/> {sysLang === 'zh' ? '新建项目' : 'New Project'}</button>}
+                        </div>
+                    </div>
+
+                    <form onSubmit={initProject} className={`border backdrop-blur-xl p-5 lg:p-8 rounded-3xl shadow-2xl mb-8 ${bTheme.card} bg-opacity-80 ${bTheme.border}`}>
+                        <div className="space-y-5 lg:space-y-6">
+                        <div><label className="block text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Project Title (项目名称) *</label><input autoFocus required type="text" value={projectInfo.title} onChange={e => setProjectInfo({...projectInfo, title: e.target.value})} className={`w-full bg-black/50 border rounded-xl p-3 lg:p-4 text-white text-base lg:text-lg outline-none transition-all focus:ring-1 ${bTheme.border} focus:${tColor.border} focus:ring-current`} placeholder="e.g. 赛博觉醒 (Cyber Awakening)" /></div>
+                        <div className="grid grid-cols-1 lg:grid-cols-2 gap-5 lg:gap-6">
+                            <div><label className="block text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Director (导演)</label><input type="text" value={projectInfo.director} onChange={e => setProjectInfo({...projectInfo, director: e.target.value})} className={`w-full bg-black/50 border rounded-xl p-3 text-white outline-none ${bTheme.border} focus:${tColor.border}`} /></div>
+                            <div><label className="block text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Cinematographer (摄影指导)</label><input type="text" value={projectInfo.dp} onChange={e => setProjectInfo({...projectInfo, dp: e.target.value})} className={`w-full bg-black/50 border rounded-xl p-3 text-white outline-none ${bTheme.border} focus:${tColor.border}`} /></div>
+                        </div>
+                        <div><label className="block text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-2">Est. Start Date (预计开机时间)</label><input type="date" value={projectInfo.startDate} onChange={e => setProjectInfo({...projectInfo, startDate: e.target.value})} className={`w-full bg-black/50 border rounded-xl p-3 text-gray-300 outline-none ${bTheme.border} focus:${tColor.border}`} /></div>
+                        <div className="pt-2 lg:pt-4"><button type="submit" className={`w-full py-3 lg:py-4 ${tColor.bg} ${tColor.bgHover} text-white rounded-xl font-black uppercase tracking-widest text-sm lg:text-base ${tColor.shadow} transition-all active:scale-[0.98] flex justify-center items-center gap-2`}>{projectInfo.title ? (sysLang === 'zh' ? '保存设置 (Save)' : 'Save Settings') : (sysLang === 'zh' ? '初始化管线 (Initialize)' : 'Initialize Pipeline')} <ArrowRight size={18} /></button></div>
+                        </div>
+                    </form>
+
+                    {archivedProjects.length > 0 && (
+                        <div className="animate-in fade-in slide-in-from-bottom-4">
+                        <h3 className="text-[10px] lg:text-xs font-bold text-gray-500 uppercase tracking-widest mb-3 lg:mb-4 flex items-center gap-2"><Layers size={14}/> {sysLang === 'zh' ? '浏览器本地存档 (Local Archives)' : 'Archived History'}</h3>
+                        <div className="space-y-3">
+                            {archivedProjects.map(proj => (
+                            <div key={proj.id} className={`${bTheme.card} border ${bTheme.border} rounded-xl p-3 lg:p-4 flex flex-col lg:flex-row justify-between items-start lg:items-center shadow-lg group gap-3`}>
+                                <div><h4 className="text-white font-bold text-base lg:text-lg">{proj.title}</h4><p className="text-[10px] lg:text-xs text-gray-500 mt-1 font-mono">Archived on: {proj.date} | Shots: {proj.shotsCount}</p></div>
+                                <div className="flex items-center gap-3 w-full lg:w-auto justify-end">
+                                <span className={`px-2 py-1 bg-black/40 text-gray-500 rounded font-bold text-[10px] border ${bTheme.border} hidden lg:block`}>{sysLang === 'zh' ? '安全封存' : 'Sealed'}</span>
+                                <button onClick={() => handleLoadProject(proj.id)} className={`px-3 lg:px-4 py-2 ${tColor.bg} ${tColor.bgHover} text-white rounded-lg text-xs font-bold shadow-md transition-all flex items-center gap-1.5 w-full lg:w-auto justify-center`}><FolderOpen size={14}/> {sysLang === 'zh' ? '调入恢复' : 'Load Project'}</button>
+                                <button onClick={() => handleDeleteProject(proj.id)} className={`p-2 bg-red-900/20 hover:bg-red-900/50 text-red-400 hover:text-red-300 rounded-lg transition-all border border-red-500/30 hover:border-red-500/60 shadow-md shrink-0`} title={sysLang === 'zh' ? '永久删除' : 'Delete'}><Trash2 size={16}/></button>
+                                </div>
+                            </div>
+                            ))}
+                        </div>
+                        </div>
+                    )}
+                    </div>
+                </div>
+                );
+            };
+
+            const renderSidebar = () => {
+                if (activeModule === 'project-setup') return null;
+                return (
+                <div className={`hidden lg:flex flex-col w-64 border-r h-full shrink-0 z-50 ${bTheme.card} ${bTheme.border}`}>
+                    <div className={`h-16 flex items-center px-6 border-b cursor-pointer ${bTheme.border}`} onClick={() => handleModuleSwitch('dashboard')}>
+                    <div className={`flex items-center gap-2 ${tColor.text}`}><Clapperboard size={24} /><span className="text-xl font-bold tracking-wider">CineFlow<span className="text-white">OS</span></span></div>
+                    </div>
+                    <div className="flex-1 overflow-y-auto py-4">
+                    <div className="px-4 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">{sysLang === 'zh' ? '核心工作流' : 'Workflow'}</div>
+                    <nav className="space-y-1 px-2">
+                        {navItems.map((item) => (
+                        <button key={item.id} onClick={() => handleModuleSwitch(item.id)} className={`w-full flex items-center justify-between px-4 py-3 text-sm font-medium rounded-lg transition-colors duration-150 ${activeModule === item.id ? `${tColor.activeBg} ${tColor.text} border ${tColor.border}` : `text-gray-400 hover:${bTheme.card === 'bg-gray-900' ? 'bg-gray-800' : 'bg-black/20'} hover:text-gray-100 border border-transparent`}`}>
+                            <div className="flex items-center gap-3"><item.icon size={18} />{item.label}</div>
+                            {item.id === 'repository' && shots.filter(s => s.inRepo && !s.shootDay).length > 0 && <span className={`w-2 h-2 rounded-full ${tColor.bg} animate-pulse`}></span>}
+                        </button>
+                        ))}
+                    </nav>
+                    </div>
+                    <div className={`p-4 border-t ${bTheme.border}`}>
+                    <div onClick={() => setShowSystemSettings(true)} className={`flex items-center gap-3 p-2 rounded-xl cursor-pointer transition-colors border border-transparent hover:${bTheme.border} hover:${bTheme.panel} group`}>
+                        <div className={`w-8 h-8 rounded-full border flex items-center justify-center ${bTheme.panel} ${bTheme.border} group-hover:${tColor.text}`}><Settings size={16} /></div>
+                        <div className="flex-1 min-w-0"><p className="text-sm font-bold text-gray-300 group-hover:text-white truncate">{sysLang === 'zh' ? '系统设置' : 'Settings'}</p><p className="text-[9px] font-mono text-gray-500 truncate uppercase tracking-widest">Preferences</p></div>
+                    </div>
+                    </div>
+                </div>
+                );
+            };
+
+            const renderMobileNav = () => {
+                if (activeModule === 'project-setup') return null;
+                return (
+                <div className={`lg:hidden fixed bottom-0 left-0 right-0 flex items-center justify-around h-[65px] shrink-0 border-t ${bTheme.card} ${bTheme.border} pb-safe z-[100]`}>
+                    {navItems.map((item) => (
+                    <button key={item.id} onClick={() => handleModuleSwitch(item.id)} className={`flex flex-col items-center justify-center w-full h-full relative ${activeModule === item.id ? tColor.text : 'text-gray-500'}`}>
+                        {activeModule === item.id && <div className={`absolute top-0 w-8 h-1 rounded-b-md ${tColor.bg}`}></div>}
+                        <item.icon size={20} className="mb-1" />
+                        <span className="text-[9px] font-medium mt-0.5">{item.short}</span>
+                        {item.id === 'repository' && shots.filter(s => s.inRepo && !s.shootDay).length > 0 && <span className={`absolute top-2 right-4 w-2 h-2 rounded-full ${tColor.bg} animate-pulse`}></span>}
+                    </button>
+                    ))}
+                </div>
+                );
+            };
+
+            const renderMobileTabs = (leftLabel, rightLabel, leftIcon, rightIcon) => {
+                return (
+                    <div className="lg:hidden flex w-full p-2 gap-2 bg-black/40 border-b border-gray-800 shrink-0">
+                        <button onClick={() => setMobileTab('left')} className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${mobileTab === 'left' ? `${tColor.bg} text-white shadow-md` : 'bg-gray-800/50 text-gray-400 border border-gray-700'}`}>
+                            {leftIcon} {leftLabel}
+                        </button>
+                        <button onClick={() => setMobileTab('right')} className={`flex-1 flex items-center justify-center gap-2 py-2 rounded-lg text-xs font-bold transition-all ${mobileTab === 'right' ? `${tColor.bg} text-white shadow-md` : 'bg-gray-800/50 text-gray-400 border border-gray-700'}`}>
+                            {rightIcon} {rightLabel}
+                        </button>
+                    </div>
+                )
+            }
+
+            const renderHeader = () => {
+                if (activeModule === 'project-setup') return null; 
+                return (
+                <header className={`h-14 lg:h-16 border-b flex items-center justify-between px-4 lg:px-6 shrink-0 z-40 ${bTheme.card} ${bTheme.border}`}>
+                    <div className="flex items-center gap-2 lg:gap-4 text-xs lg:text-sm">
+                    <span className={`text-gray-400 font-medium px-2 py-1 rounded hidden sm:inline-block ${bTheme.panel}`}>{sysLang === 'zh' ? '项目' : 'Proj'}: {projectInfo.title || (sysLang === 'zh' ? '未命名' : 'Untitled')}</span>
+                    <span className="text-gray-500 hidden sm:inline-block">/</span>
+                    <span className="text-white font-bold flex items-center gap-2">
+                        <Clapperboard size={18} className={`lg:hidden ${tColor.text}`}/>
+                        {navItems.find(i => i.id === activeModule)?.label || 'Dashboard'}
+                    </span>
+                    </div>
+                    <div className="flex items-center gap-3 lg:gap-6">
+                    <button onClick={() => handleArchiveProject(false)} className={`hidden sm:flex text-xs ${tColor.text} hover:${tColor.textLight} items-center gap-1 border ${tColor.border} border-opacity-30 ${tColor.activeBg} px-3 py-1.5 rounded-lg transition-all shadow-sm`}><Archive size={14}/> {sysLang === 'zh' ? '保存版本' : 'Save Version'}</button>
+                    <button onClick={() => handleModuleSwitch('project-setup')} className="text-xs text-gray-400 hover:text-white flex items-center gap-1 p-2 lg:p-0"><Settings size={16} className="lg:w-3.5 lg:h-3.5"/> <span className="hidden lg:inline">{sysLang === 'zh' ? '项目属性' : 'Proj Settings'}</span></button>
+                    <div className="w-px h-4 bg-gray-700 hidden lg:block"></div>
+                    <div className="relative hidden lg:block"><Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500" /><input type="text" placeholder={sysLang === 'zh' ? '全局搜索...' : 'Search...'} className={`w-48 border text-sm rounded-full py-1.5 pl-9 pr-4 text-white outline-none transition-all ${bTheme.panel} ${bTheme.border} focus:${tColor.border}`} /></div>
+                    <button onClick={() => setShowSystemSettings(true)} className="lg:hidden text-gray-400 hover:text-white p-2"><MoreVertical size={18}/></button>
+                    </div>
+                </header>
+                );
+            };
+
+            const renderDashboardWorkspace = () => {
+                const totalShots = shots.length;
+                const completedShots = shots.filter(s => s.status === 'completed').length;
+                const completionRate = totalShots > 0 ? Math.round((completedShots / totalShots) * 100) : 0;
+                let totalTakes = 0, recordedClips = 0;
+                Object.values(shotLogs).forEach(log => { totalTakes += log.history.length; log.history.forEach(tk => { if (tk.cams.A?.clip) recordedClips++; if (tk.cams.B?.clip) recordedClips++; if (tk.cams.C?.clip) recordedClips++; }); });
+                const estimatedDataTB = (recordedClips * 15 / 1024).toFixed(2);
+                const activeDay = schedule[executionActiveDayId] || Object.values(schedule)[0];
+
+                return (
+                <div className={`flex-1 overflow-y-auto p-4 lg:p-10 custom-scrollbar touch-pan-y min-h-0 ${bTheme.panel}`}>
+                    <div className="max-w-6xl mx-auto space-y-6 lg:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
+                    <div className={`flex flex-col lg:flex-row lg:justify-between lg:items-end border-b pb-4 lg:pb-6 gap-4 ${bTheme.border}`}>
+                        <div><h1 className="text-xl lg:text-3xl font-black text-white uppercase tracking-tighter flex items-center gap-2 lg:gap-3"><LayoutDashboard className={tColor.text} size={24}/> Production Telemetry</h1><p className="text-xs lg:text-sm text-gray-400 mt-1 lg:mt-2">{sysLang === 'zh' ? '实时制片数据大盘' : 'Live Production Dashboard'} | <span className={tColor.textLight}>{sysLang === 'zh' ? '项目' : 'Proj'}: {projectInfo.title || (sysLang === 'zh' ? '无' : 'None')}</span></p></div>
+                        <div className="text-left lg:text-right flex lg:block items-end gap-3"><div className={`text-3xl lg:text-4xl font-mono font-black ${tColor.textLight}`}>{completionRate}%</div><div className="text-[10px] text-gray-500 uppercase tracking-widest mt-1 mb-1.5 lg:mb-0">Overall Wrap Progress</div></div>
+                    </div>
+                    
+                    <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-6">
+                        <div className={`border rounded-2xl p-4 lg:p-6 shadow-lg relative overflow-hidden group hover:${tColor.border} transition-colors ${bTheme.card} ${bTheme.border}`}><div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"><Film size={80}/></div><div className={`${tColor.text} mb-2 lg:mb-4`}><Camera size={20} className="lg:w-6 lg:h-6"/></div><div className="text-2xl lg:text-4xl font-black text-white font-mono">{completedShots} <span className="text-sm lg:text-lg text-gray-600">/ {totalShots}</span></div><div className="text-[9px] lg:text-[11px] text-gray-400 uppercase tracking-widest mt-1 lg:mt-2 font-bold">{sysLang === 'zh' ? '已拍镜头' : 'Shots Wrapped'}</div></div>
+                        <div className={`border rounded-2xl p-4 lg:p-6 shadow-lg relative overflow-hidden group transition-colors hover:border-gray-500 ${bTheme.card} ${bTheme.border}`}><div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"><Clapperboard size={80}/></div><div className="text-gray-400 mb-2 lg:mb-4"><ListChecks size={20} className="lg:w-6 lg:h-6"/></div><div className="text-2xl lg:text-4xl font-black text-white font-mono">{totalTakes}</div><div className="text-[9px] lg:text-[11px] text-gray-400 uppercase tracking-widest mt-1 lg:mt-2 font-bold">{sysLang === 'zh' ? '打板次数' : 'Total Takes'}</div></div>
+                        <div className={`border rounded-2xl p-4 lg:p-6 shadow-lg relative overflow-hidden group transition-colors hover:border-gray-500 ${bTheme.card} ${bTheme.border}`}><div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"><HardDrive size={80}/></div><div className="text-gray-400 mb-2 lg:mb-4"><HardDrive size={20} className="lg:w-6 lg:h-6"/></div><div className="text-2xl lg:text-4xl font-black text-white font-mono">{estimatedDataTB} <span className="text-sm lg:text-lg text-gray-600">TB</span></div><div className="text-[9px] lg:text-[11px] text-gray-400 uppercase tracking-widest mt-1 lg:mt-2 font-bold">{sysLang === 'zh' ? '预估素材体积' : 'Est. Data'}</div></div>
+                        <div className={`border rounded-2xl p-4 lg:p-6 shadow-lg relative overflow-hidden group transition-colors hover:border-gray-500 ${bTheme.card} ${bTheme.border}`}><div className="absolute -right-4 -top-4 opacity-5 group-hover:opacity-10 transition-opacity"><CalendarDays size={80}/></div><div className="text-gray-400 mb-2 lg:mb-4"><CalendarDays size={20} className="lg:w-6 lg:h-6"/></div><div className="text-2xl lg:text-4xl font-black text-white font-mono">{Object.keys(schedule).length}</div><div className="text-[9px] lg:text-[11px] text-gray-400 uppercase tracking-widest mt-1 lg:mt-2 font-bold">{sysLang === 'zh' ? '排期天数' : 'Shoot Days'}</div></div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6 pt-2 lg:pt-4">
+                        <div className={`lg:col-span-2 border rounded-3xl p-5 lg:p-8 shadow-xl ${bTheme.card} ${bTheme.border}`}>
+                        <h3 className={`text-xs lg:text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2 mb-6 lg:mb-10`}><TrendingUp size={16} className={tColor.text}/> Pipeline Health ({sysLang === 'zh' ? '工业管线链路' : 'Status'})</h3>
+                        <div className="flex items-center justify-between relative px-1 lg:px-4">
+                            <div className="absolute top-1/2 left-4 right-4 lg:left-10 lg:right-10 h-1 lg:h-1.5 bg-gray-800 -translate-y-1/2 rounded-full z-0 overflow-hidden"><div className={`h-full ${tColor.bg} rounded-full w-[80%] animate-pulse ${tColor.shadow}`}></div></div>
+                            {[{ id: 'script', icon: FileText, label: 'Script Ingest' }, { id: 'breakdown', icon: AlignLeft, label: 'Breakdown' }, { id: 'repository', icon: Inbox, label: 'Repository' }, { id: 'schedule', icon: CalendarDays, label: 'Scheduling' }, { id: 'execution', icon: Video, label: 'On-Set Logging' }].map((node) => (
+                            <div key={`pipe-${node.id}`} className="relative z-10 flex flex-col items-center gap-2 lg:gap-4 cursor-pointer group" onClick={() => handleModuleSwitch(node.id)}><div className={`w-10 h-10 lg:w-16 lg:h-16 rounded-full flex items-center justify-center border-2 lg:border-4 transition-all duration-300 bg-gray-900 border-gray-700 text-gray-500 group-hover:scale-110 group-hover:${tColor.border} group-hover:${tColor.text}`}><node.icon size={18} className="lg:w-[26px] lg:h-[26px]"/></div><span className={`text-[8px] lg:text-[10px] font-bold uppercase tracking-wider text-gray-500 group-hover:text-white transition-colors text-center hidden sm:block`}>{node.label}</span></div>
+                            ))}
+                        </div>
+                        <div className="mt-8 lg:mt-14 flex flex-col sm:grid sm:grid-cols-3 gap-3 lg:gap-4">
+                            <button onClick={() => handleModuleSwitch('script')} className="py-3 bg-gray-800 hover:bg-gray-700 rounded-xl text-xs font-bold text-gray-300 transition-colors flex items-center justify-center gap-2"><FileDown size={14}/> {sysLang === 'zh' ? '导入新剧本' : 'Import Script'}</button>
+                            <button onClick={() => handleModuleSwitch('repository')} className="py-3 bg-gray-800 hover:bg-gray-700 rounded-xl text-xs font-bold text-gray-300 transition-colors flex items-center justify-center gap-2"><Layers size={14}/> {sysLang === 'zh' ? '资产仓库' : 'Manage Repository'}</button>
+                            <button onClick={() => handleModuleSwitch('execution')} className={`py-3 ${tColor.activeBg} hover:opacity-80 border ${tColor.border} ${tColor.text} rounded-xl text-xs font-bold transition-colors flex items-center justify-center gap-2 shadow-inner`}><Video size={14}/> {sysLang === 'zh' ? '现场执机打板' : 'Start On-Set Logging'}</button>
+                        </div>
+                        </div>
+                        <div className={`lg:col-span-1 border rounded-3xl p-5 lg:p-6 flex flex-col relative overflow-hidden shadow-xl ${bTheme.card} ${bTheme.border}`}>
+                        <div className="absolute -right-6 -bottom-6 lg:-right-10 lg:-bottom-10 opacity-5 pointer-events-none"><Camera size={150} className="lg:w-[200px] lg:h-[200px]"/></div>
+                        <h3 className="text-xs lg:text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2 mb-2"><AlertCircle className={tColor.text} size={16}/> Today's Call ({sysLang === 'zh' ? '今日通告' : 'Overview'})</h3>
+                        <div className="flex-1 flex flex-col justify-center z-10 mt-4 lg:mt-0">
+                            <h4 className={`text-xl lg:text-2xl font-black uppercase leading-tight ${tColor.textLight}`}>{activeDay?.title || 'No Schedule'}</h4>
+                            <div className="text-[10px] lg:text-xs text-gray-400 font-mono mt-1 mb-4 lg:mb-6">{activeDay?.date || '待定日期'} | {activeDay?.weather || '待定天气'}</div>
+                            <div className="space-y-3 lg:space-y-4 mb-6 lg:mb-8">
+                            <div className={`flex justify-between items-center border-b pb-2 ${bTheme.border}`}><span className="text-[10px] lg:text-xs text-gray-500 uppercase font-bold">Call Time</span><span className="text-xs lg:text-sm font-bold text-white">{activeDay?.callTime || 'TBD'}</span></div>
+                            <div className={`flex justify-between items-center border-b pb-2 ${bTheme.border}`}><span className="text-[10px] lg:text-xs text-gray-500 uppercase font-bold">Location</span><span className="text-xs lg:text-sm font-bold text-white text-right max-w-[120px] lg:max-w-[150px] truncate" title={activeDay?.location}>{activeDay?.location || 'TBD'}</span></div>
+                            <div className={`flex justify-between items-center border-b pb-2 ${bTheme.border}`}><span className="text-[10px] lg:text-xs text-gray-500 uppercase font-bold">Shots to cover</span><span className={`text-xs lg:text-sm font-bold ${tColor.textLight} ${tColor.activeBg} px-2 py-0.5 rounded`}>{activeDay?.shots?.length || 0}</span></div>
+                            </div>
+                            <button onClick={() => handleModuleSwitch('execution')} className={`w-full py-3 lg:py-4 ${tColor.bg} ${tColor.bgHover} text-white rounded-xl font-black uppercase tracking-widest text-xs lg:text-sm ${tColor.shadow} transition-all active:scale-95 flex justify-center items-center gap-2`}><Play size={16} fill="currentColor"/> Start Production</button>
+                        </div>
+                        </div>
+                    </div>
+                    </div>
+                </div>
+                );
+            };
+
+            const renderScriptModule = () => {
+                const isAnalyzing = ingestStage === 'loading';
+                const sceneCount = parsedScriptBlocks.filter(b => b.type === 'scene-heading').length;
+                const dialogueCount = parsedScriptBlocks.filter(b => b.type === 'dialogue').length;
+
+                return (
+                <div className={`flex-1 flex flex-col overflow-hidden min-h-0 ${bTheme.panel}`}>
+                    {renderMobileTabs('提取原稿', '好莱坞格式校对', <FileDown size={14}/>, <Edit3 size={14}/>)}
+
+                    {ingestStage === 'upload' && (
+                    <div className="flex-1 flex items-center justify-center p-4">
+                        <div className={`border p-8 lg:p-12 rounded-2xl text-center max-w-lg w-full shadow-2xl ${bTheme.card} ${bTheme.border}`}>
+                        <div className={`w-16 h-16 lg:w-20 lg:h-20 rounded-full flex items-center justify-center mx-auto mb-4 lg:mb-6 ${bTheme.panel} border ${bTheme.border}`}><FileDown size={32} className={`lg:w-9 lg:h-9 ${tColor.text}`} /></div>
+                        <h2 className="text-xl lg:text-2xl font-bold text-white mb-2 lg:mb-3">{sysLang === 'zh' ? '导入剧本文档' : 'Import Script'}</h2>
+                        <p className="text-xs lg:text-sm text-gray-400 mb-6 lg:mb-8 leading-relaxed px-4">{sysLang === 'zh' ? '支持 Word (.docx) 或 .txt 格式。引擎将尝试按好莱坞标准 (Hollywood Standard) 解析场景与对白。' : 'Upload .docx or .txt. CineFlow OS will process it for review.'}</p>
+                        <button onClick={() => fileInputRef.current?.click()} className={`${tColor.bg} ${tColor.bgHover} text-white font-medium px-6 lg:px-8 py-3 rounded-lg text-sm lg:text-base ${tColor.shadow} transition-all flex items-center justify-center gap-2 mx-auto`}><Upload size={18} /> {sysLang === 'zh' ? '选择文件' : 'Select File'}</button>
+                        <input ref={fileInputRef} type="file" className="hidden" accept=".docx,.txt" onChange={handleFileUpload} onClick={(e) => { e.target.value = null; }} />
+                        </div>
+                    </div>
+                    )}
+
+                    {ingestStage === 'loading' && (
+                    <div className="flex-1 flex flex-col items-center justify-center">
+                        <Activity size={48} className={`${tColor.text} animate-pulse mb-6`} />
+                        <p className={`text-xs lg:text-sm ${tColor.textLight} font-mono tracking-widest uppercase animate-pulse`}>AI Pipeline 正在分析场次与结构...</p>
+                    </div>
+                    )}
+
+                    {ingestStage === 'review' && (
+                    <div className="flex-1 flex flex-col h-full overflow-hidden min-h-0 animate-in fade-in duration-500">
+                        <div className={`h-14 lg:h-16 border-b flex items-center justify-between px-4 lg:px-6 shrink-0 ${bTheme.card} ${bTheme.border}`}>
+                        <div className="flex items-center gap-2 lg:gap-3"><Zap size={18} className="text-amber-400" /><span className="text-white font-medium text-xs lg:text-sm hidden sm:inline-block">{sysLang === 'zh' ? 'AI 解析完毕 - 请检查好莱坞格式' : 'Extracted Successfully'}</span>
+                            <div className="flex gap-2 ml-0 sm:ml-4">
+                                <span className={`text-[9px] lg:text-xs text-emerald-400 bg-emerald-500/10 px-2 py-1 rounded border border-emerald-500/20`}>场次: {sceneCount || '?'}</span>
+                                <span className={`text-[9px] lg:text-xs text-cyan-400 bg-cyan-500/10 px-2 py-1 rounded border border-cyan-500/20`}>对白: {dialogueCount || '?'}</span>
+                            </div>
+                        </div>
+                        <div className="flex gap-2 lg:gap-3"><button onClick={() => setIngestStage('upload')} className="bg-gray-800 hover:bg-gray-700 text-white px-3 lg:px-4 py-1.5 lg:py-2 rounded-lg text-[10px] lg:text-sm font-medium transition-all">重新上传</button><button onClick={handleConfirmAndBreakdown} className={`${tColor.bg} ${tColor.bgHover} text-white px-3 lg:px-5 py-1.5 lg:py-2 rounded-lg text-[10px] lg:text-sm font-medium flex items-center gap-1 lg:gap-2 shadow-lg transition-all`}>确认无误 <span className="hidden sm:inline">进入拆解</span> <ArrowRight size={14} className="lg:w-4 lg:h-4"/></button></div>
+                        </div>
+
+                        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden min-h-0">
+                        <div className={`w-full lg:w-1/2 border-r flex-col min-h-0 ${mobileTab === 'left' ? 'flex' : 'hidden'} lg:flex ${bTheme.card} bg-opacity-50 ${bTheme.border}`}>
+                            <div className={`h-10 lg:h-12 flex items-center px-4 lg:px-6 border-b shrink-0 ${bTheme.panel} ${bTheme.border}`}><span className="text-[10px] lg:text-xs font-semibold text-gray-400 uppercase tracking-widest flex items-center gap-2"><FileText size={14}/> 提取原稿 (Source Document) <span className="px-1.5 lg:px-2 py-0.5 bg-gray-700 rounded text-[9px] lg:text-[10px] text-gray-300">只读</span></span></div>
+                            <div className="flex-1 p-2 lg:p-8 overflow-y-auto min-h-0 custom-scrollbar selectable-text touch-pan-y" ref={originalScrollRef} onScroll={handleOriginalScroll}><pre className="text-gray-500 font-serif text-sm lg:text-lg leading-relaxed whitespace-pre-wrap">{originalScript}</pre></div>
+                        </div>
+                        <div className={`w-full lg:w-1/2 flex-col min-h-0 ${mobileTab === 'right' ? 'flex' : 'hidden'} lg:flex ${bTheme.panel}`}>
+                            <div className={`h-10 lg:h-12 flex items-center justify-between px-4 lg:px-6 border-b shrink-0 ${bTheme.card} ${bTheme.border}`}>
+                                <span className={`text-[10px] lg:text-xs font-semibold ${tColor.textLight} uppercase tracking-widest flex items-center gap-2`}><Edit3 size={14}/> 工作台修正区 (Courier 标准体)</span>
+                            </div>
+                            <div className="flex-1 p-2 lg:p-8 overflow-hidden min-h-0">
+                                <textarea ref={editedScrollRef} onScroll={handleEditedScroll} value={editedScript} onChange={(e) => setEditedScript(e.target.value)} className={`w-full h-full bg-transparent text-gray-200 font-mono text-sm lg:text-base leading-relaxed resize-none outline-none focus:ring-0 overflow-y-auto custom-scrollbar tracking-wide selectable-text touch-pan-y`} placeholder="在此对剧本进行微调，确保场景头包含 INT. / EXT. 以便引擎精准切割..."/>
+                            </div>
+                        </div>
+                        </div>
+                    </div>
+                    )}
+                </div>
+                );
+            };
+
+            const renderBreakdownWorkspace = () => {
+                const activeShot = shots.find(s => s.id === selectedShotId);
+                const renderBlockText = (text) => {
+                let elements = [text];
+                shots.forEach(shot => {
+                    if (!shot.referenceText || shot.referenceText.length < 2) return;
+                    elements = elements.flatMap(el => {
+                    if (typeof el !== 'string') return [el]; 
+                    const parts = el.split(shot.referenceText);
+                    const res = [];
+                    parts.forEach((part, i) => { res.push(part); if (i < parts.length - 1) { const isSelected = selectedShotId === shot.id; res.push(<span key={`shot-${shot.id}-${i}`} className={`transition-all duration-300 ${isSelected ? `${tColor.activeBg} ${tColor.textLight} rounded px-1 ${tColor.shadow}` : 'opacity-40 text-gray-500'}`} title={isSelected ? '当前选中镜头' : '已分配至镜头清单'}>{shot.referenceText}</span>); } });
+                    return res;
+                    });
+                });
+                if (activeHighlights.cast) elements = elements.flatMap(el => { if (typeof el !== 'string') return [el]; const parts = el.split('李明'); const res = []; parts.forEach((part, i) => { res.push(part); if (i < parts.length - 1) res.push(<span key={`cast-${i}`} className="bg-green-500/20 text-green-400 border-b border-green-500 px-1 mx-1 rounded cursor-pointer hover:bg-green-500/30">李明</span>); }); return res; });
+                if (activeHighlights.props) elements = elements.flatMap(el => { if (typeof el !== 'string') return [el]; const parts = el.split('手电筒'); const res = []; parts.forEach((part, i) => { res.push(part); if (i < parts.length - 1) res.push(<span key={`prop-${i}`} className="bg-orange-500/20 text-orange-400 border-b border-orange-500 px-1 mx-1 rounded cursor-pointer hover:bg-orange-500/30">手电筒</span>); }); return res; });
+                if (activeHighlights.vfx) elements = elements.flatMap(el => { if (typeof el !== 'string') return [el]; const parts = el.split('全息投影仪闪烁着蓝光'); const res = []; parts.forEach((part, i) => { res.push(part); if (i < parts.length - 1) res.push(<span key={`vfx-${i}`} className="bg-blue-500/20 text-blue-400 border-b border-blue-500 px-1 mx-1 rounded cursor-pointer">全息投影仪闪烁着蓝光</span>); }); return res; });
+                return elements;
+                };
+
+                return (
+                <div className={`flex-1 flex flex-col overflow-hidden min-h-0 ${bTheme.panel}`}>
+                    {renderMobileTabs('剧本视图', '分镜清单', <FileText size={14}/>, <Camera size={14}/>)}
+                    
+                    {selectionPopup && activeModule === 'breakdown' && (
+                        <div 
+                            style={{ top: selectionPopup.y, left: selectionPopup.x, transform: 'translateX(-50%)' }} 
+                            onMouseDown={e => e.stopPropagation()}
+                            className={`fixed z-[300] flex items-center gap-2 p-1.5 rounded-xl shadow-2xl animate-in zoom-in duration-150 ${bTheme.card} border ${tColor.border}`}
+                        >
+                            <div className="px-2 max-w-[120px] lg:max-w-[200px] truncate text-[10px] lg:text-xs text-gray-300 font-bold border-r border-gray-700">
+                                "{selectionPopup.text}"
+                            </div>
+                            <button onClick={() => quickSaveShot(selectionPopup.text)} className={`px-3 py-1.5 rounded-lg text-[10px] lg:text-xs font-bold text-white flex items-center gap-1.5 ${tColor.bg} ${tColor.bgHover} shadow-md`}>
+                                <Camera size={12}/> 保存镜头 <kbd className="bg-black/40 px-1.5 py-0.5 rounded font-mono text-[9px] ml-1 opacity-70 hidden sm:inline">W</kbd>
+                            </button>
+                            <button onClick={() => {setSelectionPopup(null); if (window.getSelection) window.getSelection().removeAllRanges();}} className="p-1.5 text-gray-500 hover:text-red-400 rounded-lg transition-colors"><XCircle size={14}/></button>
+                        </div>
+                    )}
+
+                    <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative min-h-0">
+                        <div className={`w-full lg:w-[45%] flex-col border-r shadow-2xl z-10 relative min-h-0 ${mobileTab === 'left' ? 'flex' : 'hidden'} lg:flex ${bTheme.border}`}>
+                        <div className={`h-12 lg:h-14 flex items-center justify-between px-4 lg:px-6 border-b shrink-0 ${bTheme.card} ${bTheme.border}`}><h2 className="text-xs lg:text-sm font-semibold text-white flex items-center gap-2"><AlignLeft size={16} className={tColor.text} /> {sysLang === 'zh' ? '工作剧本视图' : 'Script View'}</h2></div>
+                        <div className={`px-4 lg:px-6 py-2.5 lg:py-3 border-b flex gap-2 lg:gap-4 shrink-0 overflow-x-auto custom-scrollbar whitespace-nowrap ${bTheme.card} bg-opacity-50 ${bTheme.border}`}>
+                            <span className="text-[10px] lg:text-xs text-gray-500 flex items-center mr-1 lg:mr-2 shrink-0"><Highlighter size={14} className="mr-1" /> {sysLang === 'zh' ? '标记' : 'Tag'}:</span>
+                            <button onClick={() => toggleHighlight('cast')} className={`text-[10px] lg:text-xs px-2.5 py-1 rounded-full border transition-all shrink-0 ${activeHighlights.cast ? 'bg-green-500/20 text-green-400 border-green-500/50' : 'bg-transparent text-gray-500 border-gray-700'}`}>角色</button>
+                            <button onClick={() => toggleHighlight('props')} className={`text-[10px] lg:text-xs px-2.5 py-1 rounded-full border transition-all shrink-0 ${activeHighlights.props ? 'bg-orange-500/20 text-orange-400 border-orange-500/50' : 'bg-transparent text-gray-500 border-gray-700'}`}>道具</button>
+                            <button onClick={() => toggleHighlight('vfx')} className={`text-[10px] lg:text-xs px-2.5 py-1 rounded-full border transition-all shrink-0 ${activeHighlights.vfx ? 'bg-blue-500/20 text-blue-400 border-blue-500/50' : 'bg-transparent text-gray-500 border-gray-700'}`}>特效</button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-3 lg:p-8 lg:pl-12 font-serif text-base lg:text-lg text-gray-300 space-y-4 lg:space-y-6 leading-relaxed tracking-wide custom-scrollbar selectable-text touch-pan-y min-h-0">
+                            {parsedScriptBlocks.map((block) => (
+                                <div key={block.id} id={`script-block-${block.id}`} className={` ${block.type === 'scene-heading' ? 'font-bold text-white uppercase mb-6 lg:mb-8 border-b-2 border-gray-800 pb-2 text-sm lg:text-lg' : ''} ${block.type === 'character' ? 'text-center uppercase font-bold text-white mt-4 lg:mt-6 text-sm lg:text-lg' : ''} ${block.type === 'dialogue' ? `w-[95%] lg:w-2/3 mx-auto text-left text-gray-200 p-3 lg:p-4 rounded-lg border text-sm lg:text-base ${bTheme.card} ${bTheme.border}` : ''} ${block.type === 'action' ? 'text-justify text-sm lg:text-base' : ''} hover:bg-gray-800/30 p-2 -mx-2 rounded transition-all duration-300 group relative ${activeShot && activeShot.referenceText && block.text.includes(activeShot.referenceText) ? `${tColor.activeBg} border-l-4 ${tColor.border} ${tColor.shadow} translate-x-1` : 'border-l-4 border-transparent'} `}>
+                                {activeShot && activeShot.referenceText && block.text.includes(activeShot.referenceText) && <div className="absolute left-[-24px] lg:-left-10 top-2"><span className={`${tColor.bg} text-white text-[8px] lg:text-[10px] font-black px-1 lg:px-1.5 py-0.5 lg:py-1 rounded shadow-md`}>SH</span></div>}
+                                {renderBlockText(block.text)}
+                                </div>
+                            ))}
+                            {parsedScriptBlocks.length === 0 && <div className="text-center text-gray-500 mt-20 text-sm lg:text-base">{sysLang === 'zh' ? '请先在“剧本解析”模块中导入您的剧本文件' : 'Please import script first.'}</div>}
+                        </div>
+                        </div>
+
+                        <div className={`w-full lg:w-[55%] flex-col min-h-0 ${mobileTab === 'right' ? 'flex' : 'hidden'} lg:flex ${bTheme.root}`} onClick={() => { setSelectedShotId(null); setSelectionPopup(null); }}> 
+                        <div className={`h-12 lg:h-14 flex items-center justify-between px-4 lg:px-6 border-b shrink-0 ${bTheme.card} ${bTheme.border}`} onClick={e => e.stopPropagation()}>
+                            <div className="flex items-center gap-2 lg:gap-4"><button onClick={handleSelectAllShots} className={`text-gray-400 hover:${tColor.textLight} transition-colors p-1 lg:p-0`} title="全选未入库镜头">{selectedShotIds.size > 0 && selectedShotIds.size === shots.filter(s=>!s.inRepo).length ? <CheckSquare size={16} className="lg:w-[18px] lg:h-[18px]"/> : <Square size={16} className="lg:w-[18px] lg:h-[18px]"/>}</button><h2 className="text-xs lg:text-sm font-semibold text-white flex items-center gap-1 lg:gap-2"><Camera size={14} className={`lg:w-4 lg:h-4 ${tColor.text}`} /> <span className="hidden sm:inline">镜头清单</span> <span className={`text-[10px] lg:text-xs px-1.5 lg:px-2 py-0.5 rounded-full text-gray-400 ml-1 lg:ml-2 ${bTheme.panel}`}>{shots.length}</span></h2></div>
+                            <div className="flex items-center gap-2 lg:gap-3">
+                            {selectedShotIds.size > 0 && <button onClick={handlePushToRepository} className="flex items-center gap-1 lg:gap-1.5 px-2 lg:px-3 py-1 lg:py-1.5 text-[10px] lg:text-xs font-bold rounded bg-green-600 hover:bg-green-500 text-white animate-in zoom-in duration-200 shadow-[0_0_15px_rgba(22,163,74,0.4)]"><Send size={12} className="lg:w-3.5 lg:h-3.5" /> <span className="hidden sm:inline">推送入库</span> ({selectedShotIds.size})</button>}
+                            <button onClick={() => setShowShotForm(!showShotForm)} className={`flex items-center gap-1 px-2.5 lg:px-4 py-1 lg:py-1.5 text-[10px] lg:text-xs font-bold rounded transition-colors ${showShotForm ? 'bg-gray-800 text-white' : `${tColor.bg} ${tColor.bgHover} text-white`}`}>{showShotForm ? '取消 (Esc)' : <><Plus size={12} className="lg:w-3.5 lg:h-3.5" /> 新建 (Cmd+N)</>}</button>
+                            </div>
+                        </div>
+                        {showShotForm && (
+                            <form onSubmit={(e) => { e.preventDefault(); handleAddShot(); }} className={`border-b p-4 lg:p-6 shadow-xl animate-in slide-in-from-top-2 shrink-0 ${bTheme.card} ${bTheme.border}`} onClick={e => e.stopPropagation()}>
+                            <h3 className="text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-wider mb-3 lg:mb-4">镜头参数设置</h3>
+                            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 mb-3 lg:mb-4">
+                                <div><label className="block text-[9px] lg:text-[10px] text-gray-500 mb-1 flex items-center gap-1"><Maximize size={10}/> 景别</label><select value={newShot.size} onChange={(e) => setNewShot({...newShot, size: e.target.value})} className={`w-full border rounded p-1.5 lg:p-2 text-xs lg:text-sm text-white outline-none focus:${tColor.border} ${bTheme.panel} ${bTheme.border}`}><option value="WS">WS (全景)</option><option value="FS">FS (中全景)</option><option value="MCU">MCU (中近景)</option><option value="CU">CU (特写)</option><option value="ECU">ECU (大特写)</option></select></div>
+                                <div><label className="block text-[9px] lg:text-[10px] text-gray-500 mb-1 flex items-center gap-1"><Target size={10}/> 角度</label><select value={newShot.angle} onChange={(e) => setNewShot({...newShot, angle: e.target.value})} className={`w-full border rounded p-1.5 lg:p-2 text-xs lg:text-sm text-white outline-none focus:${tColor.border} ${bTheme.panel} ${bTheme.border}`}><option value="Eye Level">Eye Level (平视)</option><option value="High Angle">High Angle (俯视)</option><option value="Low Angle">Low Angle (仰视)</option><option value="Over Shoulder">OTS (过肩)</option></select></div>
+                                <div><label className="block text-[9px] lg:text-[10px] text-gray-500 mb-1 flex items-center gap-1"><Move size={10}/> 运镜</label><select value={newShot.movement} onChange={(e) => setNewShot({...newShot, movement: e.target.value})} className={`w-full border rounded p-1.5 lg:p-2 text-xs lg:text-sm text-white outline-none focus:${tColor.border} ${bTheme.panel} ${bTheme.border}`}><option value="Static">Static (固定)</option><option value="Pan">Pan (摇摄)</option><option value="Tilt">Tilt (俯仰)</option><option value="Dolly In">Dolly In (推)</option></select></div>
+                                <div><label className="block text-[9px] lg:text-[10px] text-gray-500 mb-1 flex items-center gap-1"><Video size={10}/> 焦段</label><input type="text" value={newShot.lens} onChange={(e) => setNewShot({...newShot, lens: e.target.value})} className={`w-full border rounded p-1.5 lg:p-2 text-xs lg:text-sm text-white outline-none focus:${tColor.border} ${bTheme.panel} ${bTheme.border}`} placeholder="e.g. 50mm" /></div>
+                            </div>
+                            <div className="mb-4">
+                                <label className="block text-[9px] lg:text-[10px] text-gray-500 mb-1 truncate">画面描述 (原: "{newShot.referenceText || '无'})"</label>
+                                <textarea 
+                                    value={newShot.description} 
+                                    onChange={(e) => setNewShot({...newShot, description: e.target.value})} 
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter' && !e.shiftKey) {
+                                            e.preventDefault();
+                                            handleAddShot();
+                                        }
+                                    }}
+                                    className={`w-full h-16 lg:h-20 border rounded p-2 lg:p-3 text-xs lg:text-sm text-white outline-none resize-none focus:${tColor.border} ${bTheme.panel} ${bTheme.border}`} 
+                                    placeholder="描述动作或构图 (按 Enter 保存, Shift+Enter 换行)" 
+                                />
+                            </div>
+                            <div className="flex justify-end gap-2 lg:gap-3"><button type="button" onClick={() => setShowShotForm(false)} className="px-3 lg:px-4 py-1.5 lg:py-2 text-[10px] lg:text-sm text-gray-400 hover:text-white">取消 (Esc)</button><button type="submit" className={`px-4 lg:px-6 py-1.5 lg:py-2 text-[10px] lg:text-sm ${tColor.bg} ${tColor.bgHover} text-white font-bold rounded shadow-lg flex items-center gap-1.5 ${tColor.shadow}`}>保存镜头 <span className="opacity-50 text-[10px] hidden sm:inline">(Enter)</span></button></div>
+                            </form>
+                        )}
+                        <div className="flex-1 overflow-y-auto p-2 lg:p-6 space-y-3 lg:space-y-4 custom-scrollbar touch-pan-y min-h-0">
+                            {shots.length === 0 ? (
+                            <div className="h-full flex flex-col items-center justify-center text-gray-600"><FileVideo size={36} className="lg:w-12 lg:h-12 mb-3 lg:mb-4 opacity-20" /><p className="text-xs lg:text-sm">划选左侧文字快速提取镜头</p></div>
+                            ) : (
+                            shots.map((shot, index) => (
+                                <div key={shot.id} onClick={(e) => { e.stopPropagation(); setSelectedShotId(shot.id === selectedShotId ? null : shot.id); }} className={`border rounded-xl p-3 lg:p-5 transition-all group cursor-pointer shadow-sm relative overflow-hidden ${selectedShotId === shot.id ? `${tColor.activeBg} ${tColor.border} ${tColor.ring} ring-1` : `${bTheme.card} bg-opacity-40 ${bTheme.border} hover:${tColor.border}`} ${shot.inRepo ? 'opacity-50 grayscale hover:grayscale-0' : ''}`}>
+                                {shot.inRepo && <div className={`absolute top-0 right-0 text-gray-400 text-[8px] lg:text-[9px] px-2 lg:px-3 py-0.5 lg:py-1 rounded-bl-lg font-black tracking-widest flex items-center gap-1 ${bTheme.panel}`}><Inbox size={10}/> 已入库</div>}
+                                <div className="flex justify-between items-start mb-2 lg:mb-4">
+                                    <div className="flex items-start gap-2 lg:gap-4 w-full">
+                                    {!shot.inRepo && <button onClick={(e) => toggleSelectShot(shot.id, e)} className={`mt-1 lg:mt-2 text-gray-500 hover:${tColor.textLight} transition-colors p-1 lg:p-0 shrink-0`}>{selectedShotIds.has(shot.id) ? <CheckSquare size={16} className={`lg:w-[18px] lg:h-[18px] ${tColor.text}`}/> : <Square size={16} className="lg:w-[18px] lg:h-[18px]"/>}</button>}
+                                    <div className={`w-8 h-8 lg:w-10 lg:h-10 rounded-lg flex flex-col items-center justify-center border shadow-inner transition-colors shrink-0 ${selectedShotId === shot.id ? `${tColor.activeBg} ${tColor.border}` : `${bTheme.panel} ${bTheme.border}`}`}>
+                                        <span className={`text-[8px] lg:text-[10px] leading-none ${selectedShotId === shot.id ? tColor.textLight : 'text-gray-500'}`}>SH</span>
+                                        <span className={`font-mono text-xs lg:text-sm font-bold ${selectedShotId === shot.id ? tColor.text : tColor.textLight}`}>{index + 1}</span>
+                                    </div>
+                                    <div className="pt-0.5 lg:pt-1 min-w-0 flex-1">
+                                        <div className="flex flex-wrap gap-1 lg:gap-2 mb-1.5 lg:mb-2">
+                                        <span className={`px-1.5 lg:px-2 py-0.5 text-[8px] lg:text-[10px] font-bold ${tColor.activeBg} ${tColor.textLight} border ${tColor.border} rounded flex items-center gap-1 whitespace-nowrap`}><Maximize size={8} className="lg:w-2.5 lg:h-2.5"/>{shot.size}</span>
+                                        <span className={`px-1.5 lg:px-2 py-0.5 text-[8px] lg:text-[10px] font-bold text-gray-300 rounded flex items-center gap-1 ${bTheme.border} border whitespace-nowrap`}><Target size={8} className="lg:w-2.5 lg:h-2.5"/>{shot.angle}</span>
+                                        <span className="px-1.5 lg:px-2 py-0.5 text-[8px] lg:text-[10px] font-bold bg-purple-900/30 text-purple-400 border border-purple-800/50 rounded flex items-center gap-1 whitespace-nowrap"><Move size={8} className="lg:w-2.5 lg:h-2.5"/>{shot.movement}</span>
+                                        <span className={`px-1.5 lg:px-2 py-0.5 text-[8px] lg:text-[10px] font-bold text-gray-300 rounded flex items-center gap-1 ${bTheme.border} border whitespace-nowrap hidden sm:flex`}><Video size={8} className="lg:w-2.5 lg:h-2.5"/>{shot.lens}</span>
+                                        </div>
+                                        <p className="text-xs lg:text-sm text-gray-200 leading-relaxed max-w-xl break-words">{shot.description}</p>
+                                    </div>
+                                    </div>
+                                    <div className={`flex gap-2 transition-opacity ml-2 ${selectedShotId === shot.id ? 'opacity-100' : 'opacity-100 lg:opacity-0 lg:group-hover:opacity-100'}`}>
+                                    {!shot.inRepo && <button onClick={(e) => handleDeleteShot(shot.id, e)} className={`p-1.5 text-gray-500 hover:text-red-400 rounded border ${bTheme.panel} ${bTheme.border}`}><Trash2 size={12} className="lg:w-3.5 lg:h-3.5" /></button>}
+                                    </div>
+                                </div>
+                                </div>
+                            ))
+                            )}
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                );
+            };
+
+            const renderRepositoryWorkspace = () => {
+                let repoShots = shots.filter(s => s.inRepo);
+                if (repoFilter === 'UNSCHEDULED') repoShots = repoShots.filter(s => !s.shootDay);
+                if (repoFilter === 'SCHEDULED') repoShots = repoShots.filter(s => s.shootDay);
+
+                return (
+                <div className={`flex-1 flex flex-col overflow-hidden min-h-0 ${bTheme.panel}`}>
+                    {renderMobileTabs('未排期镜头池', '剧组通告排期', <Inbox size={14}/>, <CalendarDays size={14}/>)}
+
+                    <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative min-h-0">
+                        <div className={`w-full lg:w-1/2 border-r flex-col shadow-2xl relative bg-black/20 z-10 min-h-0 ${mobileTab === 'left' ? 'flex' : 'hidden'} lg:flex ${bTheme.border}`}>
+                        <div className={`p-4 lg:p-6 border-b bg-opacity-80 shrink-0 ${bTheme.card} ${bTheme.border}`}>
+                            <div className="flex items-center justify-between mb-3 lg:mb-4">
+                            <h2 className="text-sm lg:text-lg font-bold text-white flex items-center gap-2"><Inbox className={tColor.text} size={18}/> <span className="hidden sm:inline">待排期分镜池</span></h2>
+                            <div className={`flex gap-1 lg:gap-2 p-1 rounded-lg ${bTheme.panel}`}>
+                                <button onClick={() => setRepoFilter('ALL')} className={`px-2 lg:px-3 py-1 text-[10px] lg:text-xs font-bold rounded ${repoFilter === 'ALL' ? `${tColor.bg} text-white` : 'text-gray-400'}`}>全部</button>
+                                <button onClick={() => setRepoFilter('UNSCHEDULED')} className={`px-2 lg:px-3 py-1 text-[10px] lg:text-xs font-bold rounded ${repoFilter === 'UNSCHEDULED' ? `${tColor.bg} text-white` : 'text-gray-400'}`}>未排</button>
+                            </div>
+                            </div>
+                            <div className="flex items-center justify-between flex-wrap gap-2">
+                            <div className="flex items-center gap-2 lg:gap-3">
+                                <button onClick={() => { if (repoSelectedShotIds.size === repoShots.length && repoShots.length > 0) setRepoSelectedShotIds(new Set()); else setRepoSelectedShotIds(new Set(repoShots.map(s => s.id))); }} className={`text-gray-400 hover:${tColor.textLight} flex items-center gap-1 lg:gap-2 text-[10px] lg:text-xs font-bold`}>
+                                {repoSelectedShotIds.size > 0 && repoSelectedShotIds.size === repoShots.length ? <CheckSquare size={14} className="lg:w-4 lg:h-4"/> : <Square size={14} className="lg:w-4 lg:h-4"/>}全选
+                                </button>
+                                <span className="text-[10px] lg:text-xs text-gray-500">已选: <span className={tColor.textLight}>{repoSelectedShotIds.size}</span></span>
+                            </div>
+                            {repoSelectedShotIds.size > 0 && (
+                                <div className="flex items-center gap-1.5 lg:gap-2 animate-in fade-in zoom-in duration-200 overflow-x-auto whitespace-nowrap max-w-[200px] lg:max-w-none custom-scrollbar pb-1">
+                                <span className="text-[9px] lg:text-[10px] text-gray-500 uppercase tracking-widest hidden sm:inline">批量排入:</span>
+                                {Object.values(schedule).map(day => (<button key={`bulk-${day.id}`} onClick={() => handleBulkAssignToDay(day.id)} className="px-2 lg:px-3 py-1 bg-emerald-600 hover:bg-emerald-500 text-white text-[10px] lg:text-xs font-bold rounded shadow-[0_0_10px_rgba(5,150,105,0.3)] transition-all">+ {day.title.split(':')[0] || 'Day'}</button>))}
+                                <button onClick={() => handleBulkAssignToDay(null)} className={`px-2 lg:px-3 py-1 hover:bg-red-600/80 text-gray-300 text-[10px] lg:text-xs font-bold rounded ml-1 lg:ml-2 ${bTheme.panel}`} title="撤销排期"><Trash2 size={12} className="lg:w-3.5 lg:h-3.5"/></button>
+                                </div>
+                            )}
+                            </div>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-2 lg:space-y-3 custom-scrollbar touch-pan-y min-h-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-gray-900/20 via-transparent to-transparent">
+                            {repoShots.length === 0 ? (
+                            <div className={`h-full flex flex-col items-center justify-center text-gray-600 border-2 border-dashed rounded-2xl m-4 ${bTheme.border}`}><Inbox size={24} className="lg:w-8 lg:h-8 mb-2 opacity-30" /><p className="text-[10px] lg:text-xs">无符合条件的镜头</p></div>
+                            ) : (
+                            repoShots.map((shot, index) => (
+                                <div key={shot.id} draggable={true} onDragStart={(e) => handleDragStart(e, shot.id)} onClick={(e) => toggleRepoSelectShot(shot.id, e)} className={`border rounded-xl p-3 lg:p-4 transition-all cursor-pointer flex items-start gap-2 lg:gap-4 group relative overflow-hidden ${repoSelectedShotIds.has(shot.id) ? `${tColor.activeBg} ${tColor.border} ${tColor.shadow}` : `${bTheme.card} bg-opacity-40 hover:${tColor.border} ${bTheme.border}`} ${draggedShotId === shot.id ? 'opacity-50 scale-95 border-dashed' : ''}`}>
+                                <div className="absolute left-0 top-0 bottom-0 w-6 flex items-center justify-center opacity-0 group-hover:opacity-30 cursor-grab hover:bg-gray-700/50 hidden lg:flex"><GripVertical size={14} className="text-white"/></div>
+                                <div className={`mt-0.5 lg:mt-1 pl-1 lg:pl-4 text-gray-500 group-hover:${tColor.textLight} transition-colors shrink-0`}>{repoSelectedShotIds.has(shot.id) ? <CheckSquare size={16} className={`lg:w-[18px] lg:h-[18px] ${tColor.text}`}/> : <Square size={16} className="lg:w-[18px] lg:h-[18px]"/>}</div>
+                                <div className="flex-1 min-w-0">
+                                    <div className="flex items-center justify-between mb-1.5 lg:mb-2">
+                                    <div className="flex items-center gap-1.5 lg:gap-2">
+                                        <span className={`text-[9px] lg:text-[10px] font-black ${tColor.text} ${tColor.activeBg} px-1.5 lg:px-2 py-0.5 rounded border ${tColor.border}`}>SH-{index + 1}</span>
+                                        {shot.shootDay && schedule[shot.shootDay] && <span className="text-[8px] lg:text-[9px] font-bold text-emerald-400 bg-emerald-500/10 px-1.5 lg:px-2 py-0.5 rounded flex items-center gap-1 whitespace-nowrap"><CalendarDays size={8} className="lg:w-2.5 lg:h-2.5"/> {schedule[shot.shootDay].title.split(':')[0]}</span>}
+                                    </div>
+                                    <div className="flex gap-1 lg:gap-1.5 opacity-60"><span className={`text-[8px] lg:text-[9px] px-1 lg:px-1.5 py-0.5 rounded text-gray-300 border ${bTheme.panel} ${bTheme.border}`}>{shot.size}</span><span className={`text-[8px] lg:text-[9px] px-1 lg:px-1.5 py-0.5 rounded text-gray-300 border ${bTheme.panel} ${bTheme.border}`}>{shot.angle}</span></div>
+                                    </div>
+                                    <p className="text-[10px] lg:text-xs text-gray-300 leading-relaxed line-clamp-2 break-words">{shot.description}</p>
+                                </div>
+                                </div>
+                            ))
+                            )}
+                        </div>
+                        </div>
+
+                        <div className={`w-full lg:w-1/2 flex-col lg:border-l shadow-[-10px_0_30px_rgba(0,0,0,0.5)] z-20 min-h-0 ${mobileTab === 'right' ? 'flex' : 'hidden'} lg:flex ${bTheme.root} ${bTheme.border}`}>
+                        <div className={`p-4 lg:p-6 border-b shrink-0 flex justify-between items-center bg-opacity-40 ${bTheme.card} ${bTheme.border}`}>
+                            <div>
+                            <h2 className="text-sm lg:text-lg font-bold text-white flex items-center gap-2"><CalendarDays className="text-emerald-500" size={18}/> 排期通告单</h2>
+                            <p className="text-[9px] lg:text-xs text-gray-500 mt-0.5 lg:mt-1 hidden sm:block">支持将左侧镜头直接拖拽至下方。</p>
+                            </div>
+                            <button onClick={handleAddNewDay} className={`px-3 lg:px-4 py-1.5 lg:py-2 hover:bg-gray-700 text-white text-[10px] lg:text-xs font-bold rounded-lg flex items-center gap-1.5 lg:gap-2 transition-all ${bTheme.panel}`}><Plus size={12} className="lg:w-3.5 lg:h-3.5"/> 增加天数</button>
+                        </div>
+                        <div className="flex-1 overflow-y-auto p-4 lg:p-6 space-y-6 lg:space-y-8 custom-scrollbar touch-pan-y min-h-0">
+                            {Object.values(schedule).map(day => {
+                            const isDragOver = dragOverDayId === day.id;
+                            return (
+                                <div key={day.id} onDragOver={(e) => handleDragOver(e, day.id)} onDragLeave={handleDragLeave} onDrop={(e) => handleDrop(e, day.id)} className={`border-2 rounded-2xl overflow-hidden transition-all duration-300 relative ${bTheme.card} ${isDragOver ? 'border-emerald-500 shadow-[0_0_20px_rgba(16,185,129,0.2)] scale-[1.01]' : `${bTheme.border} shadow-lg`}`}>
+                                {isDragOver && <div className="absolute inset-0 bg-emerald-500/10 z-50 flex items-center justify-center backdrop-blur-sm pointer-events-none"><div className="bg-emerald-600 text-white px-4 lg:px-6 py-2 rounded-full font-bold shadow-2xl flex items-center gap-2 text-xs lg:text-base"><Download size={16} className="lg:w-4 lg:h-4"/> 分配至 {day.title.split(':')[0]}</div></div>}
+                                <div className={`bg-opacity-80 px-4 lg:px-6 py-3 lg:py-4 flex flex-col sm:flex-row justify-between sm:items-center border-b gap-3 sm:gap-0 ${bTheme.panel} ${bTheme.border}`}>
+                                    <div className="flex-1 min-w-0">
+                                    <input 
+                                        type="text" 
+                                        value={day.title} 
+                                        onChange={(e) => updateScheduleDetail(day.id, 'title', e.target.value)} 
+                                        onClick={e => e.stopPropagation()}
+                                        className="w-full text-base lg:text-lg font-black text-emerald-400 uppercase tracking-widest bg-transparent border-b border-transparent hover:border-emerald-500/50 focus:border-emerald-500 outline-none transition-colors truncate"
+                                        placeholder="输入拍摄日标题 (如 Day X: ...)"
+                                    />
+                                    <div className="flex flex-wrap items-center gap-2 lg:gap-4 mt-2 text-[10px] lg:text-xs font-mono text-gray-400">
+                                        <span className="flex items-center gap-1"><Clock size={10} className="lg:w-3 lg:h-3"/> {day.callTime || '时间未定'}</span>
+                                        <span className="flex items-center gap-1 truncate"><MapPin size={10} className="lg:w-3 lg:h-3"/> {day.location || '地点未定'}</span>
+                                    </div>
+                                    </div>
+                                    <div className="flex flex-row sm:flex-col items-center sm:items-end justify-between sm:justify-center gap-2 shrink-0">
+                                    <span className={`text-[9px] lg:text-[10px] font-black text-gray-300 px-2 lg:px-3 py-1 rounded border ${bTheme.card} ${bTheme.border}`}>{day.shots.length} SHOTS</span>
+                                    <button onClick={() => handleExportPDF(day)} className="px-2 lg:px-3 py-1 lg:py-1.5 bg-white text-black hover:bg-emerald-500 hover:text-white rounded text-[10px] lg:text-xs font-bold flex items-center gap-1 lg:gap-1.5 transition-all shadow-md"><FileOutput size={12} className="lg:w-3.5 lg:h-3.5"/> PDF</button>
+                                    </div>
+                                </div>
+                                <div className={`p-3 lg:p-4 bg-opacity-60 min-h-[100px] lg:min-h-[150px] ${bTheme.panel}`}>
+                                    {day.shots.length === 0 ? (
+                                    <div className="h-full flex flex-col items-center justify-center text-gray-600 py-6 lg:py-8"><ListTodo size={24} className="lg:w-8 lg:h-8 mb-2 lg:mb-3 opacity-20" /><span className="text-[10px] lg:text-xs font-bold">空通告单</span><span className="text-[8px] lg:text-[10px] mt-1 hidden lg:block">从左侧拖拽镜头至此区域</span></div>
+                                    ) : (
+                                    <div className="space-y-2">
+                                        {day.shots.map(shotId => {
+                                        const shot = shots.find(s => s.id === shotId);
+                                        if (!shot) return null;
+                                        const isSelectedInPool = repoSelectedShotIds.has(shot.id);
+                                        return (
+                                            <div key={`sch-${shot.id}`} className={`bg-opacity-60 rounded-lg p-2.5 lg:p-3 flex items-center justify-between group/shot transition-all ${bTheme.card} ${isSelectedInPool ? `ring-2 ${tColor.border} ${tColor.shadow}` : `border ${bTheme.border}`}`}>
+                                            <div className="flex items-start gap-2 lg:gap-3 min-w-0 flex-1">
+                                                <div className="w-1 lg:w-1.5 h-full min-h-[30px] lg:min-h-[40px] bg-emerald-500/50 rounded-full mt-1 shrink-0"></div>
+                                                <div className="flex-1 min-w-0">
+                                                <div className="flex flex-wrap items-center gap-1.5 lg:gap-2 mb-1 lg:mb-1.5">
+                                                    <span className={`text-[8px] lg:text-[9px] font-black text-white border px-1 lg:px-1.5 py-0.5 rounded ${bTheme.panel} ${bTheme.border}`}>{shot.size}</span>
+                                                    <span className={`text-[8px] lg:text-[9px] font-black text-white border px-1 lg:px-1.5 py-0.5 rounded hidden sm:inline-block ${bTheme.panel} ${bTheme.border}`}>{shot.movement}</span>
+                                                    {isSelectedInPool && <span className={`text-[8px] lg:text-[9px] ${tColor.textLight} animate-pulse ml-1 lg:ml-2 font-bold whitespace-nowrap`}>左侧选中</span>}
+                                                </div>
+                                                <p className="text-[10px] lg:text-xs text-gray-300 leading-relaxed pr-2 lg:pr-4 truncate">{shot.description}</p>
+                                                </div>
+                                            </div>
+                                            <button onClick={() => assignShotToDay(shot.id, null)} className={`opacity-100 lg:opacity-0 lg:group-hover/shot:opacity-100 p-1.5 lg:p-2 text-gray-500 hover:bg-red-500/20 hover:text-red-400 transition-all rounded-lg shrink-0 ${bTheme.panel}`} title="移出通告单"><Trash2 size={12} className="lg:w-3.5 lg:h-3.5"/></button>
+                                            </div>
+                                        );
+                                        })}
+                                    </div>
+                                    )}
+                                </div>
+                                </div>
+                            );
+                            })}
+                        </div>
+                        </div>
+                    </div>
+                </div>
+                );
+            };
+
+            const renderScheduleWorkspace = () => {
+                const activeDay = schedule[scheduleActiveDayId] || Object.values(schedule)[0];
+                const dayShots = activeDay ? activeDay.shots.map(id => shots.find(s => s.id === id)).filter(Boolean) : [];
+
+                return (
+                    <div className={`flex-1 flex flex-col overflow-hidden min-h-0 ${bTheme.panel}`}>
+                        {renderMobileTabs('日期列表', '通告单编辑', <CalendarDays size={14}/>, <Edit3 size={14}/>)}
+
+                        <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative min-h-0">
+                            {/* 左侧：排期日列表 */}
+                            <div className={`w-full lg:w-72 border-r flex-col shadow-2xl z-10 min-h-0 ${mobileTab === 'left' ? 'flex' : 'hidden'} lg:flex ${bTheme.card} ${bTheme.border}`}>
+                                <div className={`p-4 lg:p-6 border-b shrink-0 flex justify-between items-center ${bTheme.border}`}>
+                                    <h2 className="text-sm lg:text-lg font-bold text-white flex items-center gap-2"><CalendarDays className={tColor.text} size={18}/> 排期表</h2>
+                                    <button onClick={handleAddNewDay} className={`p-1.5 lg:p-2 hover:bg-gray-700 text-white rounded-lg transition-all ${bTheme.panel}`} title="添加新拍摄日"><Plus size={14} className="lg:w-4 lg:h-4"/></button>
+                                </div>
+                                <div className="flex-1 overflow-y-auto p-3 lg:p-4 space-y-2 custom-scrollbar touch-pan-y min-h-0">
+                                    {Object.values(schedule).map(day => (
+                                        <div 
+                                            key={`tab-${day.id}`} 
+                                            onClick={() => { setScheduleActiveDayId(day.id); setMobileTab('right'); }}
+                                            className={`p-3 lg:p-4 rounded-xl cursor-pointer transition-all border ${scheduleActiveDayId === day.id ? `${tColor.activeBg} ${tColor.border} ${tColor.shadow}` : `${bTheme.panel} border-transparent hover:${bTheme.border}`}`}
+                                        >
+                                            <div className="flex justify-between items-center mb-1 gap-2">
+                                                <h3 className={`font-black text-xs lg:text-sm truncate ${scheduleActiveDayId === day.id ? tColor.text : 'text-gray-300'}`}>{day.title.split(':')[0]}</h3>
+                                                <span className={`text-[9px] lg:text-[10px] font-bold px-1.5 lg:px-2 py-0.5 rounded-full shrink-0 ${day.shots.length === 0 ? 'bg-red-500/20 text-red-400' : 'bg-emerald-500/20 text-emerald-400'}`}>{day.shots.length} 镜</span>
+                                            </div>
+                                            <p className="text-[10px] lg:text-xs text-gray-500 truncate">{day.date || '未定日期'}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                            {/* 右侧：通告单详细编辑器 */}
+                            <div className={`flex-1 flex flex-col overflow-y-auto p-4 lg:p-10 custom-scrollbar touch-pan-y min-h-0 ${mobileTab === 'right' ? 'flex' : 'hidden'} lg:flex ${bTheme.root}`}>
+                                {activeDay ? (
+                                    <div className="max-w-4xl mx-auto w-full">
+                                        <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-4 lg:mb-6 gap-3 sm:gap-0">
+                                            <div>
+                                                <h2 className="text-xl lg:text-3xl font-black text-white uppercase tracking-wider mb-1 lg:mb-2">Call Sheet Editor</h2>
+                                                <p className="text-gray-400 text-xs lg:text-sm">编辑今日通告详情与镜头规划</p>
+                                            </div>
+                                            <button onClick={() => handleExportPDF(activeDay)} className="w-full sm:w-auto px-4 lg:px-5 py-2 lg:py-2.5 bg-white text-black hover:bg-emerald-500 hover:text-white rounded-xl text-xs lg:text-sm font-bold flex items-center justify-center gap-2 transition-all shadow-lg"><FileOutput size={14} className="lg:w-4 lg:h-4"/> 生成通告单 (PDF)</button>
+                                        </div>
+
+                                        {/* 通告单表头表单 */}
+                                        <div className={`border rounded-2xl p-4 lg:p-8 mb-6 lg:mb-8 shadow-xl ${bTheme.card} ${bTheme.border}`}>
+                                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-8">
+                                                <div>
+                                                    <label className="block text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 lg:mb-2">Shooting Day (拍摄日标题)</label>
+                                                    <input type="text" value={activeDay.title} onChange={e => updateScheduleDetail(activeDay.id, 'title', e.target.value)} className={`w-full text-sm lg:text-lg font-bold bg-transparent border-b ${bTheme.border} text-white pb-1.5 lg:pb-2 focus:outline-none focus:${tColor.border} transition-colors`} placeholder="Day X: 场景描述" />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 lg:mb-2">Date (拍摄日期)</label>
+                                                    <input type="date" value={activeDay.date} onChange={e => updateScheduleDetail(activeDay.id, 'date', e.target.value)} className={`w-full text-sm lg:text-lg font-bold bg-transparent border-b ${bTheme.border} text-white pb-1.5 lg:pb-2 focus:outline-none focus:${tColor.border} transition-colors style-color-scheme-dark`} />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 lg:mb-2">Call Time (通告时间)</label>
+                                                    <input type="text" value={activeDay.callTime} onChange={e => updateScheduleDetail(activeDay.id, 'callTime', e.target.value)} className={`w-full text-sm lg:text-lg font-bold bg-transparent border-b ${bTheme.border} text-emerald-400 pb-1.5 lg:pb-2 focus:outline-none focus:${tColor.border} transition-colors`} placeholder="e.g. 06:00 AM" />
+                                                </div>
+                                                <div>
+                                                    <label className="block text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 lg:mb-2">Weather (天气预报)</label>
+                                                    <input type="text" value={activeDay.weather} onChange={e => updateScheduleDetail(activeDay.id, 'weather', e.target.value)} className={`w-full text-sm lg:text-lg font-bold bg-transparent border-b ${bTheme.border} text-white pb-1.5 lg:pb-2 focus:outline-none focus:${tColor.border} transition-colors`} placeholder="e.g. 晴转多云 22°C" />
+                                                </div>
+                                                <div className="lg:col-span-2">
+                                                    <label className="block text-[10px] lg:text-xs font-bold text-gray-400 uppercase tracking-widest mb-1 lg:mb-2">Location (拍摄地点)</label>
+                                                    <input type="text" value={activeDay.location} onChange={e => updateScheduleDetail(activeDay.id, 'location', e.target.value)} className={`w-full text-sm lg:text-lg font-bold bg-transparent border-b ${bTheme.border} text-white pb-1.5 lg:pb-2 focus:outline-none focus:${tColor.border} transition-colors`} placeholder="e.g. 洛杉矶华纳影城 Stage 15" />
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* 今日镜头列表 */}
+                                        <h3 className="text-xs lg:text-sm font-bold text-white uppercase tracking-widest flex items-center gap-2 mb-3 lg:mb-4 border-l-4 border-emerald-500 pl-2 lg:pl-3">Shot List (今日任务镜头)</h3>
+                                        <div className={`border rounded-xl lg:rounded-2xl overflow-hidden ${bTheme.card} ${bTheme.border}`}>
+                                            {dayShots.length === 0 ? (
+                                                <div className="p-8 lg:p-12 text-center text-gray-500 flex flex-col items-center">
+                                                    <ListTodo size={36} className="lg:w-[48px] lg:h-[48px] mb-3 lg:mb-4 opacity-20"/>
+                                                    <p className="text-xs lg:text-base px-4">该通告单尚未分配镜头，请前往“资产仓库”批量排入。</p>
+                                                </div>
+                                            ) : (
+                                                <div className="overflow-x-auto">
+                                                <table className="w-full text-left text-xs lg:text-sm min-w-[600px]">
+                                                    <thead>
+                                                        <tr className={`bg-opacity-50 text-[9px] lg:text-[10px] text-gray-400 uppercase tracking-wider ${bTheme.panel}`}>
+                                                            <th className="py-3 lg:py-4 px-4 lg:px-6 font-bold w-16 lg:w-20">NO.</th>
+                                                            <th className="py-3 lg:py-4 px-4 lg:px-6 font-bold w-48">Specs (参数)</th>
+                                                            <th className="py-3 lg:py-4 px-4 lg:px-6 font-bold w-auto">Description (描述)</th>
+                                                            <th className="py-3 lg:py-4 px-4 lg:px-6 font-bold text-right w-16">Action</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody className={`divide-y ${bTheme.border}`}>
+                                                        {dayShots.map((shot, idx) => (
+                                                            <tr key={shot.id} className={`hover:${bTheme.panel} transition-colors group`}>
+                                                                <td className="py-3 lg:py-4 px-4 lg:px-6 font-mono font-black text-white">SH-{idx + 1}</td>
+                                                                <td className="py-3 lg:py-4 px-4 lg:px-6">
+                                                                    <div className="flex gap-1 lg:gap-1.5 flex-wrap">
+                                                                        <span className={`text-[8px] lg:text-[9px] font-bold px-1 lg:px-1.5 py-0.5 rounded border ${bTheme.panel} ${bTheme.border} text-cyan-300`}>{shot.size}</span>
+                                                                        <span className={`text-[8px] lg:text-[9px] font-bold px-1 lg:px-1.5 py-0.5 rounded border ${bTheme.panel} ${bTheme.border} text-gray-300`}>{shot.angle}</span>
+                                                                        <span className={`text-[8px] lg:text-[9px] font-bold px-1 lg:px-1.5 py-0.5 rounded border ${bTheme.panel} ${bTheme.border} text-purple-300 hidden sm:inline-block`}>{shot.movement}</span>
+                                                                    </div>
+                                                                </td>
+                                                                <td className="py-3 lg:py-4 px-4 lg:px-6 text-gray-300 leading-relaxed text-xs">{shot.description}</td>
+                                                                <td className="py-3 lg:py-4 px-4 lg:px-6 text-right">
+                                                                    <button onClick={() => assignShotToDay(shot.id, null)} className={`p-1.5 lg:p-2 text-gray-500 hover:text-red-400 hover:bg-red-500/10 rounded-lg transition-all lg:opacity-0 lg:group-hover:opacity-100`} title="移出通告单"><Trash2 size={14} className="lg:w-4 lg:h-4"/></button>
+                                                                </td>
+                                                            </tr>
+                                                        ))}
+                                                    </tbody>
+                                                </table>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <div className="h-full flex items-center justify-center text-gray-500 text-sm lg:text-base">请选择或新建拍摄日</div>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            const renderExecutionWorkspace = () => {
+                const activeDay = schedule[executionActiveDayId] || Object.values(schedule)[0];
+                const dayShots = activeDay ? activeDay.shots.map(id => shots.find(s => s.id === id)).filter(Boolean) : [];
+                const activeShot = executionActiveShotId ? shots.find(s => s.id === executionActiveShotId) : null;
+                const activeLogState = activeShot ? getOrCreateShotLog(activeShot.id) : null;
+
+                return (
+                <div className={`flex-1 flex flex-col overflow-hidden min-h-0 ${bTheme.root}`}>
+                    {renderMobileTabs('待拍队列', '场记打板', <ListTodo size={14}/>, <Play size={14}/>)}
+
+                    <div className={`h-14 lg:h-16 border-b flex items-center justify-between px-4 lg:px-8 shrink-0 z-10 shadow-lg ${bTheme.card} ${bTheme.border}`}>
+                    <div className="flex items-center gap-2 lg:gap-6 w-full lg:w-auto overflow-x-auto custom-scrollbar no-scrollbar pr-2">
+                        <span className="text-[10px] lg:text-xs font-bold text-gray-500 flex items-center gap-1.5 lg:gap-2 shrink-0"><Clapperboard size={14} className="lg:w-4 lg:h-4"/> 调入:</span>
+                        <div className="flex gap-1.5 lg:gap-2">
+                        {Object.values(schedule).map(day => (
+                            <button key={`exec-${day.id}`} onClick={() => { setExecutionActiveDayId(day.id); setExecutionActiveShotId(null); setMobileTab('left'); }} className={`px-3 lg:px-6 py-1.5 lg:py-2 text-[10px] lg:text-xs font-bold rounded-full transition-all whitespace-nowrap ${executionActiveDayId === day.id ? `${tColor.bg} text-white ${tColor.shadow}` : `${bTheme.panel} text-gray-400 hover:text-white`}`}>
+                            {day.title.split(':')[0]}
+                            </button>
+                        ))}
+                        </div>
+                    </div>
+                    {/* 核心修复：找回移动端导出功能 */}
+                    <button onClick={() => handleExportEditorLogPDF(activeDay)} className="flex px-3 lg:px-4 py-1.5 lg:py-2 bg-white text-black hover:bg-emerald-500 hover:text-white font-bold text-[10px] lg:text-xs rounded-lg items-center gap-1.5 lg:gap-2 transition-all shadow-md shrink-0">
+                        <FileOutput size={14} className="lg:w-4 lg:h-4"/> 
+                        <span className="hidden sm:inline">导出场记单</span>
+                        <span className="sm:hidden">导出</span>
+                    </button>
+                    </div>
+
+                    <div className="flex-1 flex flex-col lg:flex-row overflow-hidden relative min-h-0">
+                    <div className={`w-full lg:w-80 border-r flex-col shadow-2xl relative min-h-0 ${mobileTab === 'left' ? 'flex' : 'hidden'} lg:flex ${bTheme.panel} ${bTheme.border}`}>
+                        <div className={`p-3 lg:p-4 border-b shrink-0 ${bTheme.card} ${bTheme.border}`}><h3 className="text-[10px] lg:text-[11px] font-black text-emerald-500 uppercase tracking-widest flex items-center justify-between">今日待拍队列<span className={`text-white px-2 py-0.5 rounded-md ${bTheme.panel}`}>{dayShots.length}</span></h3></div>
+                        <div className="flex-1 overflow-y-auto p-3 lg:p-4 space-y-2 lg:space-y-3 custom-scrollbar touch-pan-y min-h-0">
+                        {dayShots.length === 0 ? (
+                            <div className="text-center text-gray-600 mt-10 text-[10px] lg:text-xs">该通告单尚未分配镜头</div>
+                        ) : (
+                            dayShots.map((shot, idx) => (
+                            <div key={`exec-shot-${shot.id}`} onClick={() => { setExecutionActiveShotId(shot.id); setMobileTab('right'); }} className={`p-2.5 lg:p-3 rounded-xl border cursor-pointer transition-all flex items-start gap-2 lg:gap-3 ${executionActiveShotId === shot.id ? `${tColor.activeBg} ${tColor.border} shadow-sm` : `${bTheme.card} bg-opacity-40 ${bTheme.border} hover:${tColor.border}`} ${shot.status === 'completed' ? 'opacity-50 grayscale' : ''}`}>
+                                <div className={`w-7 h-7 lg:w-8 lg:h-8 rounded flex items-center justify-center font-black text-[9px] lg:text-[10px] shrink-0 ${executionActiveShotId === shot.id ? `${tColor.bg} text-white` : `${bTheme.panel} text-gray-400`}`}>S{idx+1}</div>
+                                <div className="flex-1 min-w-0">
+                                <div className="flex gap-1 lg:gap-1.5 mb-1 lg:mb-1.5"><span className={`text-[7px] lg:text-[8px] px-1 lg:px-1.5 py-0.5 rounded text-gray-300 ${bTheme.panel}`}>{shot.size}</span><span className={`text-[7px] lg:text-[8px] px-1 lg:px-1.5 py-0.5 rounded text-gray-300 ${bTheme.panel}`}>{shot.movement}</span></div>
+                                <p className="text-[9px] lg:text-[10px] text-gray-300 line-clamp-2 lg:truncate">{shot.description}</p>
+                                </div>
+                                {shot.status === 'completed' && <CheckCircle size={12} className="text-emerald-500 mt-1 lg:w-[14px] lg:h-[14px] shrink-0"/>}
+                            </div>
+                            ))
+                        )}
+                        </div>
+                    </div>
+
+                    <div className={`flex-1 flex-col overflow-y-auto p-4 lg:p-10 custom-scrollbar touch-pan-y min-h-0 ${mobileTab === 'right' ? 'flex' : 'hidden'} lg:flex ${bTheme.root}`}>
+                        {activeShot && activeLogState ? (
+                        <div className="max-w-6xl mx-auto w-full">
+                            <div className={`border lg:border-2 rounded-2xl lg:rounded-[2rem] p-5 lg:p-8 mb-6 lg:mb-8 shadow-2xl relative overflow-hidden flex flex-col lg:flex-row lg:justify-between items-start lg:items-end gap-6 lg:gap-0 ${bTheme.card} ${bTheme.border}`}>
+                            <div className="absolute top-0 left-0 right-0 h-2 lg:h-4 bg-[repeating-linear-gradient(45deg,#000,#000_20px,#fff_20px,#fff_40px)] opacity-20"></div>
+                            <div className="pt-2 lg:pt-4 flex-1 w-full">
+                                <div className="flex flex-wrap items-center gap-2 lg:gap-3 mb-3 lg:mb-4">
+                                <span className="bg-red-500 text-white text-[8px] lg:text-[10px] font-black uppercase px-2 lg:px-3 py-0.5 lg:py-1 rounded-full animate-pulse flex items-center gap-1"><span className="w-1 lg:w-1.5 h-1 lg:h-1.5 bg-white rounded-full"></span> LIVE SLATE</span>
+                                <span className={`${tColor.text} text-[8px] lg:text-[10px] font-bold uppercase tracking-widest`}>{activeDay?.title}</span>
+                                </div>
+                                <h2 className="text-xl lg:text-3xl font-black text-white uppercase tracking-tighter mb-1.5 lg:mb-2">SHOT: {activeShot.size} / {activeShot.angle}</h2>
+                                <p className="text-gray-400 text-xs lg:text-sm max-w-2xl leading-relaxed line-clamp-3 lg:line-clamp-none">"{activeShot.description}"</p>
+                            </div>
+                            <div className={`flex flex-col items-center p-4 lg:p-5 rounded-2xl lg:rounded-3xl border shadow-inner w-full lg:w-auto lg:min-w-[160px] ${bTheme.panel} ${bTheme.border}`}>
+                                <span className="text-[9px] lg:text-[10px] text-gray-500 font-bold uppercase tracking-widest mb-1">Current Take</span>
+                                <div className="flex items-center justify-between lg:justify-center gap-4 lg:gap-6 w-full">
+                                <button onClick={() => updateTakeCount(activeShot.id, -1)} className={`w-10 h-10 lg:w-8 lg:h-8 rounded-full text-white hover:bg-red-500/50 hover:text-red-400 font-bold ${bTheme.card}`}>-</button>
+                                <span className={`text-5xl lg:text-6xl font-mono font-black ${tColor.text}`}>{String(activeLogState.currentTake).padStart(2, '0')}</span>
+                                <button onClick={() => updateTakeCount(activeShot.id, 1)} className={`w-10 h-10 lg:w-8 lg:h-8 rounded-full text-white hover:bg-emerald-500/50 hover:text-emerald-400 font-bold ${bTheme.card}`}>+</button>
+                                </div>
+                            </div>
+                            </div>
+
+                            <div className={`border rounded-2xl lg:rounded-3xl p-4 lg:p-6 mb-6 lg:mb-8 ${bTheme.card} bg-opacity-50 ${bTheme.border}`}>
+                            <div className="flex items-center justify-between mb-4 lg:mb-6">
+                                <h3 className="text-xs lg:text-sm font-bold text-white uppercase tracking-widest flex items-center gap-1.5 lg:gap-2"><Camera size={14} className={`lg:w-4 lg:h-4 ${tColor.text}`}/> 机位参数 (Active Inputs)</h3>
+                            </div>
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 lg:gap-6">
+                                {['A', 'B', 'C'].map(cam => {
+                                const camDraft = activeLogState.draft[cam];
+                                const activeColor = cam === 'A' ? 'border-red-500/30' : cam === 'B' ? 'border-blue-500/30' : 'border-emerald-500/30';
+                                const labelColor = cam === 'A' ? 'text-red-400' : cam === 'B' ? 'text-blue-400' : 'text-emerald-400';
+
+                                return (
+                                    <div key={`cam-${cam}`} className={`border-2 rounded-xl lg:rounded-2xl p-4 lg:p-5 bg-black/40 ${activeColor} relative shadow-inner`}>
+                                    <input type="text" value={camNames[cam]} onChange={(e) => handleUpdateCamName(cam, e.target.value)} className={`w-full bg-transparent text-base lg:text-lg font-black uppercase tracking-widest ${labelColor} mb-3 lg:mb-4 border-b border-transparent hover:border-gray-700 focus:border-current outline-none transition-colors`} />
+                                    <div className="space-y-3 lg:space-y-4">
+                                        <div><label className="block text-[11px] lg:text-xs uppercase font-bold text-gray-500 mb-1">Clip File (文件名)</label><input type="text" value={camDraft.clip || ''} onChange={e => handleLogChange(activeShot.id, cam, 'clip', e.target.value)} className={`w-full border rounded-lg px-3 py-3 lg:py-2.5 text-base lg:text-sm text-gray-100 focus:${tColor.border} outline-none font-mono tracking-wider shadow-inner ${bTheme.panel} ${bTheme.border} h-12 lg:h-10`} placeholder={`e.g. ${cam}001_C001`} /></div>
+                                        <div className="flex gap-3 lg:gap-4">
+                                        <div className="w-1/2"><label className="block text-[11px] lg:text-xs uppercase font-bold text-gray-500 mb-1">Roll</label><input type="text" value={camDraft.roll || ''} onChange={e => handleLogChange(activeShot.id, cam, 'roll', e.target.value)} className={`w-full border rounded-lg px-3 py-3 lg:py-2.5 text-base lg:text-sm text-white focus:${tColor.border} outline-none uppercase font-mono ${bTheme.panel} ${bTheme.border} h-12 lg:h-10`} placeholder={`${cam}001`} /></div>
+                                        <div className="w-1/2"><label className="block text-[11px] lg:text-xs uppercase font-bold text-gray-500 mb-1">Lens (mm)</label><input type="text" value={camDraft.lens || ''} onChange={e => handleLogChange(activeShot.id, cam, 'lens', e.target.value)} className={`w-full border rounded-lg px-3 py-3 lg:py-2.5 text-base lg:text-sm text-white focus:${tColor.border} outline-none ${bTheme.panel} ${bTheme.border} h-12 lg:h-10`} placeholder="35" /></div>
+                                        </div>
+                                        <div><label className="block text-[11px] lg:text-xs uppercase font-bold text-gray-500 mb-1">Camera Note</label><textarea value={camDraft.note || ''} onChange={e => handleLogChange(activeShot.id, cam, 'note', e.target.value)} className={`w-full h-20 lg:h-20 border rounded-lg p-3 lg:p-2.5 text-sm lg:text-xs text-white focus:${tColor.border} outline-none resize-none ${bTheme.panel} ${bTheme.border}`} placeholder="焦点/构图备注..." /></div>
+                                    </div>
+                                    </div>
+                                );
+                                })}
+                            </div>
+                            <div className={`mt-6 lg:mt-8 flex flex-col lg:flex-row justify-center gap-3 lg:gap-6 pt-4 lg:pt-6 border-t ${bTheme.border}`}>
+                                <button onClick={() => handleCommitTake(activeShot.id, 'NG')} className="w-full lg:w-auto px-6 lg:px-10 py-3 lg:py-4 bg-red-600 hover:bg-red-500 text-white font-black uppercase tracking-[0.1em] lg:tracking-[0.2em] text-xs lg:text-sm rounded-xl lg:rounded-2xl flex justify-center items-center gap-2 lg:gap-3 shadow-[0_0_15px_rgba(220,38,38,0.3)] transition-all active:scale-95"><XCircle size={16} className="lg:w-5 lg:h-5"/> 标记 NG (废片)</button>
+                                <button onClick={() => handleCommitTake(activeShot.id, 'CIRCLE')} className="w-full lg:w-auto px-6 lg:px-10 py-3 lg:py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-black uppercase tracking-[0.1em] lg:tracking-[0.2em] text-xs lg:text-sm rounded-xl lg:rounded-2xl flex justify-center items-center gap-2 lg:gap-3 shadow-[0_0_15px_rgba(16,185,129,0.3)] transition-all active:scale-95"><CheckCircle size={16} className="lg:w-5 lg:h-5"/> 标记 CIRCLE (保条)</button>
+                            </div>
+                            </div>
+
+                            <div className={`border rounded-2xl lg:rounded-3xl overflow-hidden mb-8 lg:mb-12 ${bTheme.panel} ${bTheme.border}`}>
+                            <div className={`p-4 lg:p-5 border-b flex justify-between items-center ${bTheme.card} ${bTheme.border}`}><h3 className="text-xs lg:text-sm font-bold text-white uppercase tracking-widest flex items-center gap-1.5 lg:gap-2"><ListChecks size={14} className={`lg:w-4 lg:h-4 ${tColor.text}`}/> Take History (场记流水)</h3><span className="text-[10px] lg:text-xs text-gray-500 font-mono">Total Takes: {activeLogState.history.length}</span></div>
+                            {activeLogState.history.length === 0 ? (
+                                <div className="p-8 lg:p-10 text-center text-gray-600 text-xs lg:text-sm">此镜头暂无打板记录，在上方录入信息并点击标记按钮。</div>
+                            ) : (
+                                <div className="overflow-x-auto custom-scrollbar">
+                                <table className="w-full text-left border-collapse text-xs lg:text-sm min-w-[500px]">
+                                <thead><tr className={`border-b text-[9px] lg:text-[10px] text-gray-400 uppercase tracking-wider ${bTheme.card} ${bTheme.border}`}><th className="py-2.5 lg:py-3 px-3 lg:px-5 font-bold w-12 lg:w-16">Take</th><th className="py-2.5 lg:py-3 px-3 lg:px-5 font-bold w-20 lg:w-24">Status</th><th className={`py-2.5 lg:py-3 px-3 lg:px-5 font-bold border-l w-1/3 ${bTheme.border}`}>{camNames.A}</th><th className={`py-2.5 lg:py-3 px-3 lg:px-5 font-bold border-l w-1/3 ${bTheme.border}`}>{camNames.B}</th><th className={`py-2.5 lg:py-3 px-3 lg:px-5 font-bold border-l w-1/3 ${bTheme.border}`}>{camNames.C}</th></tr></thead>
+                                <tbody className={`divide-y ${bTheme.border}`}>
+                                    {activeLogState.history.map(tk => (
+                                    <tr key={tk.id} className={`hover:${bTheme.card} transition-colors group/take`}>
+                                        <td className="py-3 lg:py-4 px-3 lg:px-5 font-mono text-base lg:text-lg font-black text-white relative">
+                                            {/* 删除单条 Take 功能 */}
+                                            <button onClick={() => handleDeleteTake(activeShot.id, tk.id)} className="absolute left-0 top-1/2 -translate-y-1/2 ml-0.5 p-1 text-gray-600 hover:text-red-500 lg:opacity-0 lg:group-hover/take:opacity-100 transition-opacity bg-black/50 rounded shadow-md"><Trash2 size={12}/></button>
+                                            <span className="ml-5">{String(tk.takeNum).padStart(2,'0')}</span>
+                                        </td>
+                                        <td className="py-3 lg:py-4 px-3 lg:px-5">
+                                        {tk.status === 'CIRCLE' ? <span className="text-emerald-500 font-black uppercase text-[10px] lg:text-xs flex items-center gap-1 lg:gap-1.5 bg-emerald-500/10 px-1.5 lg:px-2 py-1 rounded w-max"><div className="w-1.5 h-1.5 lg:w-2 lg:h-2 rounded-full border border-emerald-500 lg:border-2"></div> CIRCLE</span> : <span className="text-red-500 font-bold uppercase text-[10px] lg:text-xs flex items-center gap-1 line-through bg-red-500/10 px-1.5 lg:px-2 py-1 rounded w-max"><XCircle size={10} className="lg:w-3 lg:h-3"/> NG</span>}
+                                        </td>
+                                        {['A', 'B', 'C'].map(c => (
+                                        <td key={`${tk.id}-${c}`} className={`py-2.5 lg:py-3 px-3 lg:px-5 border-l align-top ${bTheme.border}`}>
+                                            {tk.cams[c].clip ? (
+                                            <div className="space-y-1">
+                                                {/* 流水卡片文件名变更为可编辑输入框 */}
+                                                <input 
+                                                    type="text" 
+                                                    value={tk.cams[c].clip} 
+                                                    onChange={(e) => handleEditTakeClip(activeShot.id, tk.id, c, e.target.value)}
+                                                    className={`font-mono text-[10px] lg:text-xs ${tColor.textLight} break-all bg-black/40 p-1 lg:p-1.5 rounded w-full border border-transparent hover:border-gray-600 focus:border-cyan-500 outline-none transition-colors`}
+                                                    title="点击修改文件名"
+                                                />
+                                                <div className="flex flex-col sm:flex-row gap-1 sm:gap-2 text-[8px] lg:text-[9px] text-gray-500 font-bold uppercase px-1"><span>R: {tk.cams[c].roll || '-'}</span> <span>L: {tk.cams[c].lens || '-'}</span></div>
+                                                {tk.cams[c].note && <div className={`text-[9px] lg:text-[10px] text-gray-400 italic leading-snug mt-1 border-l-2 pl-1.5 ${bTheme.border}`}>{tk.cams[c].note}</div>}
+                                            </div>
+                                            ) : <span className="text-gray-700 text-[10px] lg:text-xs italic">-</span>}
+                                        </td>
+                                        ))}
+                                    </tr>
+                                    ))}
+                                </tbody>
+                                </table>
+                                </div>
+                            )}
+                            </div>
+
+                            <div className="flex justify-center lg:justify-end pb-8 lg:pb-12 px-4 lg:px-0">
+                            <button onClick={() => toggleShotCompletion(activeShot.id)} className={`w-full lg:w-auto px-6 lg:px-8 py-3 lg:py-4 rounded-xl font-black uppercase tracking-widest text-xs lg:text-sm flex justify-center items-center gap-2 transition-all ${activeShot.status === 'completed' ? `text-gray-400 border ${bTheme.card} ${bTheme.border}` : `${tColor.bg} ${tColor.bgHover} text-white ${tColor.shadow}`}`}>
+                                {activeShot.status === 'completed' ? '撤销杀青 (Undo Wrap)' : <><CheckCircle size={16} className="lg:w-[18px] lg:h-[18px]"/> 确认此镜头完成 (Wrap Shot)</>}
+                            </button>
+                            </div>
+                        </div>
+                        ) : (
+                        <div className="h-full flex flex-col items-center justify-center text-gray-600 px-4 text-center"><Clapperboard size={48} className="lg:w-16 lg:h-16 mb-3 lg:mb-4 opacity-20" /><p className="text-xs lg:text-sm font-bold">请选择要执行的镜头</p></div>
+                        )}
+                    </div>
+                    </div>
+                </div>
+                );
+            };
+
+            const renderActiveModule = () => {
+                switch(activeModule) {
+                case 'project-setup': return renderProjectSetup();
+                case 'dashboard': return renderDashboardWorkspace();
+                case 'script': return renderScriptModule(); 
+                case 'breakdown': return renderBreakdownWorkspace();
+                case 'repository': return renderRepositoryWorkspace();
+                case 'schedule': return renderScheduleWorkspace(); 
+                case 'execution': return renderExecutionWorkspace();
+                default: return <div className="flex-1 flex items-center justify-center text-gray-500 bg-[#0B0F19]">模块加载异常</div>;
+                }
+            };
+
+            if (showSplash) {
+                return (
+                <div className={`flex h-screen w-full items-center justify-center bg-[#020617] overflow-hidden relative font-sans ${bgTheme === 'paper' ? 'theme-paper' : ''}`}>
+                    <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-cyan-900/20 via-black to-black"></div>
+                    <div className="z-10 flex flex-col items-center animate-in fade-in zoom-in-95 duration-1000 p-6 text-center">
+                    <div className="w-20 h-20 lg:w-24 lg:h-24 bg-gray-900 border-2 border-gray-800 rounded-2xl lg:rounded-[2rem] flex items-center justify-center shadow-2xl mb-6 lg:mb-8 relative overflow-hidden group">
+                        <div className="absolute inset-0 bg-cyan-500/10 animate-pulse"></div>
+                        <Clapperboard size={40} className={`lg:w-12 lg:h-12 text-cyan-500 drop-shadow-[0_0_15px_rgba(6,182,212,0.5)]`} />
+                    </div>
+                    <h1 className="text-4xl lg:text-7xl font-black text-white tracking-tighter mb-3 lg:mb-4 flex items-center justify-center flex-wrap">
+                        <span className="text-gray-300 font-serif tracking-[0.2em] mr-4 lg:mr-6 text-3xl lg:text-5xl shrink-0">寰影</span>
+                        <span>CineFlow<span className="text-cyan-500 ml-1">Pro</span></span>
+                    </h1>
+                    <div className="flex flex-col sm:flex-row items-center gap-2 lg:gap-4 mt-2">
+                        <span className="text-[10px] lg:text-sm font-mono text-gray-400 tracking-[0.3em] lg:tracking-[0.4em] uppercase">Digital Production OS</span>
+                        <span className="px-2 py-0.5 bg-cyan-500/10 text-cyan-400 text-[9px] lg:text-[10px] font-black rounded border border-cyan-500/30">v1.5 Sync Edition</span>
+                    </div>
+                    <div className="w-48 lg:w-64 h-1 bg-gray-800 rounded-full mt-10 lg:mt-16 overflow-hidden relative">
+                        <div className="absolute top-0 left-0 h-full bg-cyan-500 shadow-[0_0_10px_rgba(6,182,212,0.8)] animate-[loading_2.5s_ease-in-out_forwards]"></div>
+                    </div>
+                    <div className="mt-4 text-[8px] lg:text-[9px] font-mono text-gray-600 uppercase tracking-widest animate-pulse">
+                        Initializing Pipeline Engine...
+                    </div>
+                    </div>
+                </div>
+                );
+            }
+
+            return (
+                <div className={`flex flex-col lg:flex-row h-[100dvh] w-full font-sans text-gray-100 overflow-hidden ${bTheme.root} ${bgTheme === 'paper' ? 'theme-paper' : ''}`}>
+                    {renderSidebar()}
+                    <div className="flex-1 flex flex-col h-full min-w-0 pb-[65px] lg:pb-0 relative">
+                        {renderHeader()}
+                        {renderActiveModule()}
+                        {renderMobileNav()}
+                    </div>
+                    {renderSystemSettingsModal()}
+                    {renderModal()}
+                </div>
+            );
+        };
+
+        const root = createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
