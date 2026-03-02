@@ -1,0 +1,1616 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><script>(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6ImJlMDcyNWEwZmIxZWZmN2I5N2MyNDEwY2U0Nzc1YmM5MGY1MWFiYTUiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwMzE4NzA0MjYxODY0Mzc1NzM5NCIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzVkMzJiNzk1MmQ4NmZhMDdfU21hcnRfU2xhdGVfUHJvX2tleS5odG1sLTc5NiJ9LCJleHAiOjE3NzI0NTAyNjksImlhdCI6MTc3MjQ0NjY2OSwiYWxnIjoiUlMyNTYifQ.H8BraGiC0b5WRufrJrnDSn3BUc4zLP8sG_4BUwpXNJvHgbjzf4XPB_n4mwPCRB-c-EL1nLGkBLsXuF-Kb2R2ya9l9STStvC6OOgtlAwqiPd-S1GY6RWoFd9RPhzIehvUlzioI5-DEHDmKMRrrQlC70p5E0xqnOfSQ-CQm3Yw_PL0q2WtMw29ySlCEUlowzGCVPbqKDCg_N65EOZtijMC1M2tTNvZXVcWXvWxj_qld8omht_kuw-dloaJO19SGhZIxsDvnuznrDj4SuGGD0OdWvCllqBfKTBWR5eRX6aE4QWnphEeHkB9RnxzlDcGTpmJ8pxHszVgLu9xQF3dt8IH8w","c_5d32b7952d86fa07_Smart_Slate_Pro_key.html-796")</script><script>(function(){'use strict';var h=typeof Object.defineProperties=="function"?Object.defineProperty:function(a,b,d){if(a==Array.prototype||a==Object.prototype)return a;a[b]=d.value;return a};function l(a){a=["object"==typeof globalThis&&globalThis,a,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var b=0;b<a.length;++b){var d=a[b];if(d&&d.Math==Math)return d}throw Error("Cannot find global object");}var n=l(this);
+function p(a,b){if(b)a:{var d=n;a=a.split(".");for(var c=0;c<a.length-1;c++){var e=a[c];if(!(e in d))break a;d=d[e]}a=a[a.length-1];c=d[a];b=b(c);b!=c&&b!=null&&h(d,a,{configurable:!0,writable:!0,value:b})}}function r(a){function b(c){return a.next(c)}function d(c){return a.throw(c)}return new Promise(function(c,e){function f(g){g.done?c(g.value):Promise.resolve(g.value).then(b,d).then(f,e)}f(a.next())})}function t(a){return r(a())}
+p("Object.values",function(a){return a?a:function(b){var d=[],c;for(c in b)Object.prototype.hasOwnProperty.call(b,c)&&d.push(b[c]);return d}});p("Array.prototype.includes",function(a){return a?a:function(b,d){var c=this;c instanceof String&&(c=String(c));var e=c.length;d=d||0;for(d<0&&(d=Math.max(d+e,0));d<e;d++){var f=c[d];if(f===b||Object.is(f,b))return!0}return!1}});/*
+
+ MIT License
+
+ Copyright (c) 2017-2023 W.Y.
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+*/
+function u(a,b){const d=a.style;b.backgroundColor&&(d.backgroundColor=b.backgroundColor);b.width&&(d.width=`${b.width}px`);b.height&&(d.height=`${b.height}px`);const c=b.style;c!=null&&Object.keys(c).forEach(e=>{d[e]=c[e]})};var v=(()=>{let a=0;return()=>{a+=1;return`u${`0000${(Math.random()*1679616<<0).toString(36)}`.slice(-4)}${a}`}})();function w(a){const b=[];for(let d=0,c=a.length;d<c;d++)b.push(a[d]);return b}let x=null;function y(a={}){return x?x:a.l?x=a.l:x=w(window.getComputedStyle(document.documentElement))}function z(a,b){return(a=(a.ownerDocument.defaultView||window).getComputedStyle(a).getPropertyValue(b))?parseFloat(a.replace("px","")):0}
+function A(a,b={}){var d;if(!(d=b.width)){d=z(a,"border-left-width");var c=z(a,"border-right-width");d=a.clientWidth+d+c}(b=b.height)||(b=z(a,"border-top-width"),c=z(a,"border-bottom-width"),b=a.clientHeight+b+c);return{width:d,height:b}}function B(a){return new Promise((b,d)=>{const c=new Image;c.onload=()=>{c.decode().then(()=>{requestAnimationFrame(()=>b(c))})};c.onerror=d;c.crossOrigin="anonymous";c.decoding="async";c.src=a})}
+function C(a){return t(function*(){return Promise.resolve().then(()=>(new XMLSerializer).serializeToString(a)).then(encodeURIComponent).then(b=>`data:image/svg+xml;charset=utf-8,${b}`)})}
+function D(a,b,d){return t(function*(){const c=document.createElementNS("http://www.w3.org/2000/svg","svg"),e=document.createElementNS("http://www.w3.org/2000/svg","foreignObject");c.setAttribute("width",`${b}`);c.setAttribute("height",`${d}`);c.setAttribute("viewBox",`0 0 ${b} ${d}`);e.setAttribute("width","100%");e.setAttribute("height","100%");e.setAttribute("x","0");e.setAttribute("y","0");e.setAttribute("externalResourcesRequired","true");c.appendChild(e);e.appendChild(a);return C(c)})}
+var E=(a,b)=>{if(a instanceof b)return!0;a=Object.getPrototypeOf(a);return a===null?!1:a.constructor.name===b.name||E(a,b)};function F(a,b){return y(b).map(d=>{const c=a.getPropertyValue(d),e=a.getPropertyPriority(d);return`${d}: ${c}${e?" !important":""};`}).join(" ")}
+function G(a,b,d,c){a=window.getComputedStyle(a,d);var e=a.getPropertyValue("content");if(e!==""&&e!=="none"){var f=v();try{b.className=`${b.className} ${f}`}catch(k){return}e=document.createElement("style");var g=e.appendChild;d=`.${f}:${d}`;a.cssText?(c=a.getPropertyValue("content"),c=`${a.cssText} content: '${c.replace(/'|"/g,"")}';`):c=F(a,c);g.call(e,document.createTextNode(`${d}{${c}}`));b.appendChild(e)}};function H(a){return a.search(/^(data:)/)!==-1}function I(a,b,d){return t(function*(){const c=yield fetch(a,b);if(c.status===404)throw Error(`Resource "${c.url}" not found`);const e=yield c.blob();return new Promise((f,g)=>{const k=new FileReader;k.onerror=g;k.onloadend=()=>{try{f(d({o:c,result:k.result}))}catch(m){g(m)}};k.readAsDataURL(e)})})}const J={};function K(a,b,d){let c=a.replace(/\?.*/,"");d&&(c=a);/ttf|otf|eot|woff2?/i.test(c)&&(c=c.replace(/.*\//,""));return b?`[${b}]${c}`:c}
+function L(a,b,d){return t(function*(){const c=K(a,b,d.C);if(J[c]!=null)return J[c];d.u&&(a+=(/\?/.test(a)?"&":"?")+(new Date).getTime());let e;try{const f=yield I(a,d.i,({o:g,result:k})=>{b||(b=g.headers.get("Content-Type")||"");return k.split(/,/)[1]});e=`data:${b};base64,${f}`}catch(f){e=d.B||""}return J[c]=e})};const M={P:"application/font-woff",R:"application/font-woff",N:"application/font-truetype",v:"application/vnd.ms-fontobject",H:"image/png",F:"image/jpeg",D:"image/jpeg",A:"image/gif",M:"image/tiff",L:"image/svg+xml",O:"image/webp"};function N(a){return(a=/\.([^./]*?)$/g.exec(a))?a[1]:""};function O(a){return t(function*(){const b=a.toDataURL();return b==="data:,"?a.cloneNode(!1):B(b)})}function aa(a,b){return t(function*(){if(a.currentSrc){var d=document.createElement("canvas");const c=d.getContext("2d");d.width=a.clientWidth;d.height=a.clientHeight;c==null||c.drawImage(a,0,0,d.width,d.height);d=d.toDataURL();return B(d)}d=a.poster;d=yield L(d,M[N(d).toLowerCase()]||"",b);return B(d)})}
+function ba(a,b){return t(function*(){try{let d;if(a==null?0:(d=a.contentDocument)==null?0:d.body)return yield P(a.contentDocument.body,b,!0)}catch(d){}return a.cloneNode(!1)})}function ca(a,b){return t(function*(){return E(a,HTMLCanvasElement)?O(a):E(a,HTMLVideoElement)?aa(a,b):E(a,HTMLIFrameElement)?ba(a,b):a.cloneNode(a.tagName!=null&&a.tagName.toUpperCase()==="SVG")})}
+function da(a,b,d){return t(function*(){if(b.tagName!=null&&b.tagName.toUpperCase()==="SVG")return b;let c=[];if(a.tagName!=null&&a.tagName.toUpperCase()==="SLOT"&&a.assignedNodes)c=w(a.assignedNodes());else{let e;if(E(a,HTMLIFrameElement)&&((e=a.contentDocument)==null?0:e.body))c=w(a.contentDocument.body.childNodes);else{let f;c=w(((f=a.shadowRoot)!=null?f:a).childNodes)}}if(c.length===0||E(a,HTMLVideoElement))return b;yield c.reduce((e,f)=>e.then(()=>P(f,d)).then(g=>{g&&b.appendChild(g)}),Promise.resolve());
+return b})}function ea(a,b,d){const c=b.style;if(c){var e=window.getComputedStyle(a);e.cssText?(c.cssText=e.cssText,c.transformOrigin=e.transformOrigin):y(d).forEach(f=>{let g=e.getPropertyValue(f);f==="font-size"&&g.endsWith("px")&&(g=`${Math.floor(parseFloat(g.substring(0,g.length-2)))-.1}px`);E(a,HTMLIFrameElement)&&f==="display"&&g==="inline"&&(g="block");f==="d"&&b.getAttribute("d")&&(g=`path(${b.getAttribute("d")})`);c.setProperty(f,g,e.getPropertyPriority(f))})}}
+function fa(a,b){E(a,HTMLSelectElement)&&(b=Array.from(b.children).find(d=>a.value===d.getAttribute("value")))&&b.setAttribute("selected","")}
+function ha(a,b){return t(function*(){var d=a.querySelectorAll?a.querySelectorAll("use"):[];if(d.length===0)return a;var c={};for(var e=0;e<d.length;e++){var f=d[e].getAttribute("xlink:href");if(f){const g=document.querySelector(f);a.querySelector(f)||!g||c[f]||(c[f]=yield P(g,b,!0))}}d=Object.values(c);if(d.length){c=document.createElementNS("http://www.w3.org/1999/xhtml","svg");c.setAttribute("xmlns","http://www.w3.org/1999/xhtml");c.style.position="absolute";c.style.width="0";c.style.height="0";
+c.style.overflow="hidden";c.style.display="none";e=document.createElementNS("http://www.w3.org/1999/xhtml","defs");c.appendChild(e);for(f=0;f<d.length;f++)e.appendChild(d[f]);a.appendChild(c)}return a})}
+function P(a,b,d){return t(function*(){return d||!b.filter||b.filter(a)?Promise.resolve(a).then(c=>ca(c,b)).then(c=>da(a,c,b)).then(c=>{E(c,Element)&&(ea(a,c,b),G(a,c,":before",b),G(a,c,":after",b),E(a,HTMLTextAreaElement)&&(c.textContent=a.value),E(a,HTMLInputElement)&&c.setAttribute("value",a.value),fa(a,c));return c}).then(c=>ha(c,b)):null})};const Q=/url\((['"]?)([^'"]+?)\1\)/g,ia=/url\([^)]+\)\s*format\((["']?)([^"']+)\1\)/g,ja=/src:\s*(?:url\([^)]+\)\s*format\([^)]+\)[,;]\s*)+/g;function ka(a){const b=[];a.replace(Q,(d,c,e)=>{b.push(e);return d});return b.filter(d=>!H(d))}
+function la(a,b,d,c){return t(function*(){try{const e=d?(new URL(b,d||void 0)).toString():b;let f;f=yield L(e,M[N(b).toLowerCase()]||"",c);return a.replace(new RegExp(`(url\\(['"]?)(${b.replace(/([.*+?^${}()|\[\]\/\\])/g,"\\$1")})(['"]?\\))`,"g"),`$1${f}$3`)}catch(e){}return a})}function ma(a,{I:b}){return b?a.replace(ja,d=>{for(;;){const [c,,e]=ia.exec(d)||[],f=c,g=e;if(!g)return"";if(g===b)return`src: ${f};`}}):a}
+function R(a,b,d){return t(function*(){if(a.search(Q)===-1)return a;const c=ma(a,d);return ka(c).reduce((e,f)=>e.then(g=>la(g,f,b,d)),Promise.resolve(c))})};function S(a,b,d){return t(function*(){var c;const e=(c=b.style)==null?void 0:c.getPropertyValue(a);return e?(c=yield R(e,null,d),b.style.setProperty(a,c,b.style.getPropertyPriority(a)),!0):!1})}function na(a,b){return t(function*(){(yield S("background",a,b))||(yield S("background-image",a,b));(yield S("mask",a,b))||(yield S("-webkit-mask",a,b))||(yield S("mask-image",a,b))||(yield S("-webkit-mask-image",a,b))})}
+function oa(a,b){return t(function*(){const d=E(a,HTMLImageElement);if(d&&!H(a.src)||E(a,SVGImageElement)&&!H(a.href.baseVal)){var c=d?a.src:a.href.baseVal,e=yield L(c,M[N(c).toLowerCase()]||"",b);yield new Promise((f,g)=>{a.onload=f;a.onerror=b.m?(...k)=>{try{f(b.m(...k))}catch(m){g(m)}}:g;a.decode&&(a.decode=f);a.loading==="lazy"&&(a.loading="eager");d?(a.srcset="",a.src=e):a.href.baseVal=e})}})}
+function pa(a,b){return t(function*(){const d=w(a.childNodes).map(c=>T(c,b));yield Promise.all(d).then(()=>a)})}function T(a,b){return t(function*(){E(a,Element)&&(yield na(a,b),yield oa(a,b),yield pa(a,b))})};const U={};function V(a){return t(function*(){var b=U[a];if(b!=null)return b;b=yield(yield fetch(a)).text();b={url:a,cssText:b};return U[a]=b})}function W(a,b){return t(function*(){let d=a.cssText;const c=/url\(["']?([^"')]+)["']?\)/g,e=(d.match(/url\([^)]+\)/g)||[]).map(f=>t(function*(){let g=f.replace(c,"$1");g.startsWith("https://")||(g=(new URL(g,a.url)).href);return I(g,b.i,({result:k})=>{d=d.replace(f,`url(${k})`);return[f,k]})}));return Promise.all(e).then(()=>d)})}
+function X(a){if(a==null)return[];const b=[];a=a.replace(/(\/\*[\s\S]*?\*\/)/gi,"");for(var d=RegExp("((@.*?keyframes [\\s\\S]*?){([\\s\\S]*?}\\s*?)})","gi");;){var c=d.exec(a);if(c===null)break;b.push(c[0])}a=a.replace(d,"");d=/@import[\s\S]*?url\([^)]*\)[\s\S]*?;/gi;for(c=RegExp("((\\s*?(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*?@media[\\s\\S]*?){([\\s\\S]*?)}\\s*?})|(([\\s\\S]*?){([\\s\\S]*?)})","gi");;){let e=d.exec(a);if(e===null)if(e=c.exec(a),e===null)break;else d.lastIndex=c.lastIndex;else c.lastIndex=
+d.lastIndex;b.push(e[0])}return b}
+function qa(a,b){return t(function*(){const d=[],c=[];a.forEach(e=>{if("cssRules"in e)try{w(e.cssRules||[]).forEach((f,g)=>{if(f.type===CSSRule.IMPORT_RULE){let k=g+1;f=V(f.href).then(m=>W(m,b)).then(m=>X(m).forEach(q=>{try{e.insertRule(q,q.startsWith("@import")?k+=1:e.cssRules.length)}catch(Da){}})).catch(()=>{});c.push(f)}})}catch(f){const g=a.find(k=>k.href==null)||document.styleSheets[0];e.href!=null&&c.push(V(e.href).then(k=>W(k,b)).then(k=>X(k).forEach(m=>{g.insertRule(m,g.cssRules.length)})).catch(()=>
+{}))}});return Promise.all(c).then(()=>{a.forEach(e=>{if("cssRules"in e)try{w(e.cssRules||[]).forEach(f=>{d.push(f)})}catch(f){}});return d})})}function ra(a){return a.filter(b=>b.type===CSSRule.FONT_FACE_RULE).filter(b=>b.style.getPropertyValue("src").search(Q)!==-1)}function sa(a,b){return t(function*(){if(a.ownerDocument==null)throw Error("Provided element is not within a Document");var d=w(a.ownerDocument.styleSheets);d=yield qa(d,b);return ra(d)})}
+function ta(a){function b(c){(c.style.fontFamily||getComputedStyle(c).fontFamily).split(",").forEach(e=>{d.add(e.trim().replace(/["']/g,""))});Array.from(c.children).forEach(e=>{e instanceof HTMLElement&&b(e)})}const d=new Set;b(a);return d}function ua(a,b){return t(function*(){const d=yield sa(a,b),c=ta(a);return(yield Promise.all(d.filter(e=>c.has(e.style.fontFamily.trim().replace(/["']/g,""))).map(e=>R(e.cssText,e.parentStyleSheet?e.parentStyleSheet.href:null,b)))).join("\n")})}
+function va(a,b){return t(function*(){const d=b.j!=null?b.j:b.K?null:yield ua(a,b);if(d){const c=document.createElement("style");c.appendChild(document.createTextNode(d));a.firstChild?a.insertBefore(c,a.firstChild):a.appendChild(c)}})};function wa(a,b={}){return t(function*(){const {width:d,height:c}=A(a,b),e=yield P(a,b,!0);yield va(e,b);yield T(e,b);u(e,b);return yield D(e,d,c)})}
+function xa(a,b={}){return t(function*(){const {width:d,height:c}=A(a,b);var e=yield wa(a,b);e=yield B(e);const f=document.createElement("canvas"),g=f.getContext("2d"),k=b.G||window.devicePixelRatio||1,m=b.h||d,q=b.g||c;f.width=m*k;f.height=q*k;!b.J&&(f.width>16384||f.height>16384)&&(f.width>16384&&f.height>16384?f.width>f.height?(f.height*=16384/f.width,f.width=16384):(f.width*=16384/f.height,f.height=16384):f.width>16384?(f.height*=16384/f.width,f.width=16384):(f.width*=16384/f.height,f.height=
+16384));f.style.width=`${m}`;f.style.height=`${q}`;b.backgroundColor&&(g.fillStyle=b.backgroundColor,g.fillRect(0,0,f.width,f.height));g.drawImage(e,0,0,f.width,f.height);return f})}function ya(a,b={}){return t(function*(){return(yield xa(a,b)).toDataURL()})};const za=["gemini.google.com","corp.google.com","proxy.googlers.com"];function Y(){return document.body.querySelectorAll('[class*="animate"]').length>0}function Z(a){return t(function*(){try{return yield ya(a,{h:a.offsetWidth,g:a.offsetHeight})}catch(d){var b=a.offsetHeight;const c=document.createElement("canvas");c.width=a.offsetWidth;c.height=b;return c.toDataURL("image/png")}})}
+function Aa(){return t(function*(){const a=document.body.offsetWidth,b=document.body.offsetHeight,d=document.body.cloneNode(!0);d.querySelectorAll('[class*="animate"]').forEach(c=>{c.classList.remove(...Array.from(c.classList).filter(e=>e.startsWith("animate")))});d.style.width=`${a}px`;d.style.height=`${b}px`;return d})}
+function Ba(a){return t(function*(){let b=document.body;if(Y()){var d=yield Aa();b=d;document.body.appendChild(d)}d=yield Z(b);Y()&&document.body.removeChild(b);window.parent.postMessage({type:"SEND_SCREENSHOT",image:d,topOffset:document.documentElement.scrollTop},a.origin)})}function Ca(a){return t(function*(){const b={type:"SEND_SCREENSHOT_FOR_DATA_VISUALIZATION",image:yield Z(document.body),topOffset:0};window.parent.postMessage(b,a.origin)})}
+window.addEventListener("message",a=>t(function*(){if(za.some(d=>a.origin.includes(d))){var b=a.data;b&&(b.type==="MAKE_SCREENSHOT"&&(yield Ba(a)),b.type==="MAKE_SCREENSHOT_FOR_DATA_VISUALIZATION"&&(yield Ca(a)))}}));
+})();</script><script>(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script>
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script>((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-2.5-flash","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-2.5-flash-image-preview","imageTransformModelName":"gemini-3-pro-image-preview-11-2025","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"]})</script><script>(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script>(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Smart Slate Pro - 终极实战打板台</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&amp;family=JetBrains+Mono:wght@400;700;800;900&amp;family=Oswald:wght@500;700;900&amp;display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-deep: #030305;
+            --bg-panel: #0a0a0e;
+            --bg-card: #121217;
+            --border-dim: #1f1f2e;
+            --accent: #06b6d4; 
+            
+            --cam-a: #ef4444; 
+            --cam-b: #3b82f6; 
+            --cam-c: #10b981; 
+        }
+
+        body { 
+            background-color: var(--bg-deep); 
+            color: #d1d5db; 
+            font-family: 'Inter', sans-serif; 
+            overflow: hidden; 
+            user-select: none; 
+            -webkit-user-select: none;
+        }
+
+        .font-mono-data { font-family: 'JetBrains Mono', monospace; }
+        .font-oswald { font-family: 'Oswald', sans-serif; }
+
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #27272a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #3f3f46; }
+
+        .clapper-stripes { background: repeating-linear-gradient(-45deg, #1f1f2e, #1f1f2e 20px, #121217 20px, #121217 40px); }
+
+        .cam-input {
+            background: #050508; border: 1px solid #1f1f2e; color: #fff;
+            font-family: 'JetBrains Mono', monospace; font-size: 14px;
+            border-radius: 6px; padding: 10px 12px; outline: none; width: 100%; transition: all 0.2s;
+        }
+        .cam-input:focus { border-color: var(--accent); box-shadow: inset 0 0 0 1px rgba(6, 182, 212, 0.4); }
+        .cam-input::placeholder { color: #3f3f46; }
+        
+        .cam-textarea {
+            background: #050508; border: 1px solid #1f1f2e; color: #a1a1aa;
+            font-size: 12px; border-radius: 6px; padding: 10px 12px; outline: none; width: 100%; resize: none; min-height: 70px; transition: all 0.2s;
+        }
+        .cam-textarea:focus { border-color: var(--accent); color: #fff; }
+
+        .cam-title-input {
+            background: transparent; border: none; outline: none; font-weight: 900; 
+            color: inherit; text-align: left; width: 80px; text-transform: uppercase;
+        }
+
+        .shot-item { border-left: 2px solid transparent; transition: all 0.2s; }
+        .shot-item.active { background: #121217; border-left-color: var(--accent); }
+        .shot-item.wrapped { opacity: 0.5; filter: grayscale(100%); }
+        .shot-item.wrapped.active { opacity: 1; filter: none; border-left-color: #10b981; }
+        
+        .btn-press { transition: transform 0.1s cubic-bezier(0.4, 0, 0.2, 1); cursor: pointer; }
+        .btn-press:active { transform: scale(0.96); }
+
+        .flash-overlay { position: fixed; inset: 0; background: white; z-index: 9999; opacity: 0; pointer-events: none; transition: opacity 0.05s; }
+        .flash-active { opacity: 0.8 !important; }
+
+        .log-ok-take { background: rgba(16, 185, 129, 0.05) !important; border: 1px solid #059669 !important; box-shadow: 0 0 15px rgba(16, 185, 129, 0.08); }
+        .log-ng-take { opacity: 0.7; }
+
+        @keyframes stamp { 0% { transform: scale(3) rotate(-20deg); opacity: 0; } 100% { transform: scale(1) rotate(-12deg); opacity: 1; } }
+        .wrap-stamp { animation: stamp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; }
+
+        .fade-enter {
+            opacity: 0;
+            transform: scale(0.98);
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.pointer-events-auto{pointer-events:auto}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.inset-0{inset:0px}.bottom-10{bottom:2.5rem}.left-0{left:0px}.right-0{right:0px}.right-10{right:2.5rem}.top-0{top:0px}.z-10{z-index:10}.z-40{z-index:40}.z-50{z-index:50}.z-\[10000\]{z-index:10000}.mx-0\.5{margin-left:0.125rem;margin-right:0.125rem}.mx-1{margin-left:0.25rem;margin-right:0.25rem}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-1{margin-left:0.25rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-8{margin-top:2rem}.mb-2{margin-bottom:0.5rem}.line-clamp-2{overflow:hidden;display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:2}.block{display:block}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-1{height:0.25rem}.h-1\.5{height:0.375rem}.h-10{height:2.5rem}.h-16{height:4rem}.h-3{height:0.75rem}.h-3\.5{height:0.875rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.h-full{height:100%}.h-screen{height:100vh}.max-h-\[100px\]{max-height:100px}.min-h-\[56px\]{min-height:56px}.w-1\.5{width:0.375rem}.w-10{width:2.5rem}.w-16{width:4rem}.w-3{width:0.75rem}.w-3\.5{width:0.875rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-64{width:16rem}.w-8{width:2rem}.w-\[280px\]{width:280px}.w-\[90\%\]{width:90%}.w-full{width:100%}.w-px{width:1px}.w-screen{width:100vw}.min-w-\[200px\]{min-width:200px}.max-w-3xl{max-width:48rem}.max-w-\[1400px\]{max-width:1400px}.max-w-\[150px\]{max-width:150px}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.scale-95{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-pointer{cursor:pointer}.select-none{-webkit-user-select:none;user-select:none}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-start{align-items:flex-start}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.space-y-1\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.375rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.375rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.rounded{border-radius:0.25rem}.rounded-2xl{border-radius:1rem}.rounded-3xl{border-radius:1.5rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-md{border-radius:0.375rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-4{border-width:4px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-l-2{border-left-width:2px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-\[\#1f1f2e\]{--tw-border-opacity:1;border-color:rgb(31 31 46 / var(--tw-border-opacity, 1))}.border-blue-500\/50{border-color:rgb(59 130 246 / 0.5)}.border-cyan-500\/30{border-color:rgb(6 182 212 / 0.3)}.border-emerald-500{--tw-border-opacity:1;border-color:rgb(16 185 129 / var(--tw-border-opacity, 1))}.border-emerald-500\/50{border-color:rgb(16 185 129 / 0.5)}.border-emerald-900\/50{border-color:rgb(6 78 59 / 0.5)}.border-red-500\/50{border-color:rgb(239 68 68 / 0.5)}.border-zinc-700{--tw-border-opacity:1;border-color:rgb(63 63 70 / var(--tw-border-opacity, 1))}.border-zinc-800{--tw-border-opacity:1;border-color:rgb(39 39 42 / var(--tw-border-opacity, 1))}.border-zinc-800\/80{border-color:rgb(39 39 42 / 0.8)}.border-cyan-500{--tw-border-opacity:1;border-color:rgb(6 182 212 / var(--tw-border-opacity, 1))}.bg-\[\#030305\]{--tw-bg-opacity:1;background-color:rgb(3 3 5 / var(--tw-bg-opacity, 1))}.bg-\[\#050508\]{--tw-bg-opacity:1;background-color:rgb(5 5 8 / var(--tw-bg-opacity, 1))}.bg-\[\#06b6d4\]{--tw-bg-opacity:1;background-color:rgb(6 182 212 / var(--tw-bg-opacity, 1))}.bg-\[\#0a0a0e\]{--tw-bg-opacity:1;background-color:rgb(10 10 14 / var(--tw-bg-opacity, 1))}.bg-\[\#121217\]{--tw-bg-opacity:1;background-color:rgb(18 18 23 / var(--tw-bg-opacity, 1))}.bg-\[\#1f1f2e\]{--tw-bg-opacity:1;background-color:rgb(31 31 46 / var(--tw-bg-opacity, 1))}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-black\/80{background-color:rgb(0 0 0 / 0.8)}.bg-blue-600{--tw-bg-opacity:1;background-color:rgb(37 99 235 / var(--tw-bg-opacity, 1))}.bg-cyan-500{--tw-bg-opacity:1;background-color:rgb(6 182 212 / var(--tw-bg-opacity, 1))}.bg-cyan-900\/20{background-color:rgb(22 78 99 / 0.2)}.bg-emerald-600{--tw-bg-opacity:1;background-color:rgb(5 150 105 / var(--tw-bg-opacity, 1))}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-white{--tw-bg-opacity:1;background-color:rgb(255 255 255 / var(--tw-bg-opacity, 1))}.bg-zinc-500{--tw-bg-opacity:1;background-color:rgb(113 113 122 / var(--tw-bg-opacity, 1))}.bg-zinc-800{--tw-bg-opacity:1;background-color:rgb(39 39 42 / var(--tw-bg-opacity, 1))}.bg-zinc-900{--tw-bg-opacity:1;background-color:rgb(24 24 27 / var(--tw-bg-opacity, 1))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-cyan-600{--tw-gradient-from:#0891b2 var(--tw-gradient-from-position);--tw-gradient-to:rgb(8 145 178 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-\[\#06b6d4\]{--tw-gradient-to:#06b6d4 var(--tw-gradient-to-position)}.p-0\.5{padding:0.125rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.px-8{padding-left:2rem;padding-right:2rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-10{padding-top:2.5rem;padding-bottom:2.5rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.pb-1{padding-bottom:0.25rem}.pb-3{padding-bottom:0.75rem}.pb-32{padding-bottom:8rem}.pb-4{padding-bottom:1rem}.pl-3{padding-left:0.75rem}.pl-4{padding-left:1rem}.pr-4{padding-right:1rem}.pr-6{padding-right:1.5rem}.pr-2{padding-right:0.5rem}.text-center{text-align:center}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-5xl{font-size:3rem;line-height:1}.text-6xl{font-size:3.75rem;line-height:1}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[9px\]{font-size:9px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.text-\[8px\]{font-size:8px}.font-black{font-weight:900}.font-bold{font-weight:700}.font-medium{font-weight:500}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.tracking-\[0\.2em\]{letter-spacing:0.2em}.tracking-\[0\.3em\]{letter-spacing:0.3em}.tracking-tighter{letter-spacing:-0.05em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-\[\#06b6d4\]{--tw-text-opacity:1;color:rgb(6 182 212 / var(--tw-text-opacity, 1))}.text-\[\#3f3f46\]{--tw-text-opacity:1;color:rgb(63 63 70 / var(--tw-text-opacity, 1))}.text-black{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.text-cyan-400{--tw-text-opacity:1;color:rgb(34 211 238 / var(--tw-text-opacity, 1))}.text-cyan-500{--tw-text-opacity:1;color:rgb(6 182 212 / var(--tw-text-opacity, 1))}.text-emerald-500{--tw-text-opacity:1;color:rgb(16 185 129 / var(--tw-text-opacity, 1))}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-zinc-300{--tw-text-opacity:1;color:rgb(212 212 216 / var(--tw-text-opacity, 1))}.text-zinc-400{--tw-text-opacity:1;color:rgb(161 161 170 / var(--tw-text-opacity, 1))}.text-zinc-500{--tw-text-opacity:1;color:rgb(113 113 122 / var(--tw-text-opacity, 1))}.text-zinc-600{--tw-text-opacity:1;color:rgb(82 82 91 / var(--tw-text-opacity, 1))}.text-zinc-700{--tw-text-opacity:1;color:rgb(63 63 70 / var(--tw-text-opacity, 1))}.accent-blue-500{accent-color:#3b82f6}.accent-emerald-500{accent-color:#10b981}.accent-red-500{accent-color:#ef4444}.opacity-0{opacity:0}.opacity-100{opacity:1}.opacity-20{opacity:0.2}.opacity-50{opacity:0.5}.opacity-80{opacity:0.8}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(220\2c 38\2c 38\2c 0\.4\)\]{--tw-shadow:0 0 15px rgba(220,38,38,0.4);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(6\2c 182\2c 212\2c 0\.2\)\]{--tw-shadow:0 0 15px rgba(6,182,212,0.2);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(6\2c 182\2c 212\2c 0\.3\)\]{--tw-shadow:0 0 15px rgba(6,182,212,0.3);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_20px_rgba\(16\2c 185\2c 129\2c 0\.05\)\]{--tw-shadow:0 0 20px rgba(16,185,129,0.05);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_20px_rgba\(239\2c 68\2c 68\2c 0\.05\)\]{--tw-shadow:0 0 20px rgba(239,68,68,0.05);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_20px_rgba\(59\2c 130\2c 246\2c 0\.05\)\]{--tw-shadow:0 0 20px rgba(59,130,246,0.05);--tw-shadow-colored:0 0 20px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_10px_25px_rgba\(16\2c 185\2c 129\2c 0\.25\)\]{--tw-shadow:0 10px 25px rgba(16,185,129,0.25);--tw-shadow-colored:0 10px 25px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_10px_25px_rgba\(220\2c 38\2c 38\2c 0\.25\)\]{--tw-shadow:0 10px 25px rgba(220,38,38,0.25);--tw-shadow-colored:0 10px 25px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_15px_30px_rgba\(6\2c 182\2c 212\2c 0\.4\)\]{--tw-shadow:0 15px 30px rgba(6,182,212,0.4);--tw-shadow-colored:0 15px 30px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_20px_50px_rgba\(0\2c 0\2c 0\2c 0\.8\)\]{--tw-shadow:0 20px 50px rgba(0,0,0,0.8);--tw-shadow-colored:0 20px 50px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_20px_50px_rgba\(0\2c 0\2c 0\2c 0\.9\)\]{--tw-shadow:0 20px 50px rgba(0,0,0,0.9);--tw-shadow-colored:0 20px 50px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[10px_0_30px_rgba\(0\2c 0\2c 0\2c 0\.5\)\]{--tw-shadow:10px 0 30px rgba(0,0,0,0.5);--tw-shadow-colored:10px 0 30px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(6\2c 182\2c 212\2c 0\.4\)\]{--tw-shadow:0 0 15px rgba(6,182,212,0.4);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.outline-none{outline:2px solid transparent;outline-offset:2px}.drop-shadow-\[0_0_10px_rgba\(6\2c 182\2c 212\2c 0\.4\)\]{--tw-drop-shadow:drop-shadow(0 0 10px rgba(6,182,212,0.4));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.drop-shadow-\[0_0_8px_rgba\(6\2c 182\2c 212\2c 0\.5\)\]{--tw-drop-shadow:drop-shadow(0 0 8px rgba(6,182,212,0.5));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.grayscale{--tw-grayscale:grayscale(100%);filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-200{transition-duration:200ms}.duration-300{transition-duration:300ms}.placeholder\:tracking-widest::placeholder{letter-spacing:0.1em}.placeholder\:text-\[\#3f3f46\]::placeholder{--tw-text-opacity:1;color:rgb(63 63 70 / var(--tw-text-opacity, 1))}.hover\:border-blue-500\/50:hover{border-color:rgb(59 130 246 / 0.5)}.hover\:border-cyan-500\/50:hover{border-color:rgb(6 182 212 / 0.5)}.hover\:border-emerald-500\/50:hover{border-color:rgb(16 185 129 / 0.5)}.hover\:border-red-500\/50:hover{border-color:rgb(239 68 68 / 0.5)}.hover\:bg-cyan-400:hover{--tw-bg-opacity:1;background-color:rgb(34 211 238 / var(--tw-bg-opacity, 1))}.hover\:bg-emerald-500:hover{--tw-bg-opacity:1;background-color:rgb(16 185 129 / var(--tw-bg-opacity, 1))}.hover\:bg-red-500:hover{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.hover\:bg-zinc-200:hover{--tw-bg-opacity:1;background-color:rgb(228 228 231 / var(--tw-bg-opacity, 1))}.hover\:bg-zinc-700:hover{--tw-bg-opacity:1;background-color:rgb(63 63 70 / var(--tw-bg-opacity, 1))}.hover\:bg-zinc-800:hover{--tw-bg-opacity:1;background-color:rgb(39 39 42 / var(--tw-bg-opacity, 1))}.hover\:bg-\[\#1a1a24\]:hover{--tw-bg-opacity:1;background-color:rgb(26 26 36 / var(--tw-bg-opacity, 1))}.hover\:text-cyan-300:hover{--tw-text-opacity:1;color:rgb(103 232 249 / var(--tw-text-opacity, 1))}.hover\:text-cyan-500:hover{--tw-text-opacity:1;color:rgb(6 182 212 / var(--tw-text-opacity, 1))}.hover\:text-emerald-400:hover{--tw-text-opacity:1;color:rgb(52 211 153 / var(--tw-text-opacity, 1))}.hover\:text-red-500:hover{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.focus\:border-\[\#06b6d4\]:focus{--tw-border-opacity:1;border-color:rgb(6 182 212 / var(--tw-border-opacity, 1))}.focus\:border-cyan-500:focus{--tw-border-opacity:1;border-color:rgb(6 182 212 / var(--tw-border-opacity, 1))}.focus\:ring-1:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-\[\#06b6d4\]:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(6 182 212 / var(--tw-ring-opacity, 1))}.group:hover .group-hover\:text-zinc-300{--tw-text-opacity:1;color:rgb(212 212 216 / var(--tw-text-opacity, 1))}@media (min-width: 768px){.md\:mt-2{margin-top:0.5rem}.md\:grid-cols-3{grid-template-columns:repeat(3, minmax(0, 1fr))}.md\:flex-row{flex-direction:row}.md\:p-8{padding:2rem}.md\:text-3xl{font-size:1.875rem;line-height:2.25rem}.md\:text-6xl{font-size:3.75rem;line-height:1}.md\:text-7xl{font-size:4.5rem;line-height:1}.md\:text-sm{font-size:0.875rem;line-height:1.25rem}.md\:text-xl{font-size:1.25rem;line-height:1.75rem}}@media (min-width: 1024px){.lg\:w-\[320px\]{width:320px}.lg\:gap-8{gap:2rem}.lg\:px-6{padding-left:1.5rem;padding-right:1.5rem}.lg\:pr-6{padding-right:1.5rem}}</style></head>
+<body class="h-screen w-full relative">
+
+    <!-- ==================== 锁定屏幕 (Smart Slate 专属青色科技风) ==================== -->
+    <div id="lock-screen" class="absolute inset-0 z-[10000] flex items-center justify-center p-4 bg-[#030305] backdrop-blur-md hidden">
+        <div class="bg-[#0a0a0e] p-8 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.9)] max-w-sm w-full text-center border border-[#1f1f2e] relative overflow-hidden">
+            <!-- 顶部高光点缀 (Cyan) -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-cyan-600 to-[#06b6d4] opacity-80"></div>
+
+            <div class="mx-auto bg-[#121217] w-16 h-16 flex items-center justify-center rounded-xl mb-6 shadow-inner border border-[#1f1f2e]">
+                <!-- 场记板/摄影机 Icon -->
+                <svg class="w-8 h-8 text-[#06b6d4] drop-shadow-[0_0_8px_rgba(6,182,212,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+            </div>
+            
+            <h2 class="text-3xl font-oswald font-black text-white mb-1 uppercase tracking-wider">Smart Slate</h2>
+            <p class="text-zinc-500 mb-8 text-[10px] font-bold uppercase tracking-[0.2em] font-mono-data">Secure Access Required</p>
+            
+            <div class="space-y-5">
+                <div>
+                    <input type="password" id="secret-key-input" placeholder="ENTER SYNC KEY" class="w-full px-4 py-3 bg-[#030305] rounded-lg border border-[#1f1f2e] focus:ring-1 focus:ring-[#06b6d4] focus:border-[#06b6d4] outline-none transition-all text-center tracking-[0.3em] text-lg font-mono-data text-[#06b6d4] placeholder:text-[#3f3f46] placeholder:tracking-widest">
+                </div>
+                <div id="error-message" class="text-red-500 text-[10px] hidden font-bold tracking-widest uppercase flex items-center justify-center gap-1 font-mono-data">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    SYNC FAILED / INVALID KEY
+                </div>
+                <button onclick="checkKey()" class="w-full bg-[#06b6d4] hover:bg-cyan-400 text-black font-black py-3 px-4 rounded-lg transition-colors shadow-[0_0_15px_rgba(6,182,212,0.2)] flex items-center justify-center gap-2 text-xs uppercase tracking-widest font-oswald">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v8l9-11h-7z"></path></svg>
+                    Authorize Device
+                </button>
+            </div>
+            
+            <div class="mt-8 text-[9px] text-[#3f3f46] font-mono-data uppercase tracking-widest">
+                Slate OS v2.2.0 PRO
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 系统主界面 (包含原版所有功能，初始隐藏) ==================== -->
+    <div id="main-app" class="flex-col h-screen w-screen relative flex fade-enter fade-enter-active">
+        <div id="flashOverlay" class="flash-overlay"></div>
+
+        <!-- 自定义内部模态框 -->
+        <div id="customModal" class="fixed inset-0 z-[10000] items-center justify-center bg-black/80 backdrop-blur-sm transition-opacity duration-200 opacity-0 hidden">
+            <div class="bg-[#121217] border border-[#1f1f2e] rounded-2xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] w-[90%] max-w-sm flex flex-col overflow-hidden transform transition-transform duration-200 scale-95" id="customModalBox">
+                <div class="p-5 border-b border-zinc-800/80">
+                    <h3 class="text-sm font-black text-white tracking-widest uppercase flex items-center gap-2" id="modalTitle"><svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> ⚠️ 警告：强制重置系统</h3>
+                </div>
+                <div class="p-5">
+                    <p id="modalMessage" class="text-sm text-zinc-300 leading-relaxed whitespace-pre-wrap font-medium">您即将强制清空整个场记控制台！<br>这将会抹除当前所有的打板进度、文件记录以及已导入的工程。<br><br>确定要恢复初始状态吗？</p>
+                    <input type="text" id="modalInput" class="mt-4 w-full bg-[#050508] border border-zinc-700 text-white text-sm rounded-lg px-3 py-2 outline-none focus:border-cyan-500 hidden font-bold">
+                </div>
+                <div class="bg-[#0a0a0e] p-4 border-t border-zinc-800/80 flex justify-end gap-3" id="modalButtons">
+                    <button id="modalBtnCancel" class="px-5 py-2 rounded text-xs font-bold text-zinc-400 hover:text-white bg-zinc-800 hover:bg-zinc-700 transition">取消 (CANCEL)</button>
+                    <button id="modalBtnConfirm" class="px-6 py-2 rounded text-xs font-black text-white bg-red-600 hover:bg-red-500 transition shadow-[0_0_15px_rgba(220,38,38,0.4)]">确定 (CONFIRM)</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 顶部侧边栏导航：全局统筹大盘 -->
+        <header class="min-h-[56px] bg-[#0a0a0e] border-b border-[#1f1f2e] shrink-0 flex items-center justify-between px-4 lg:px-6 z-50">
+            <!-- Logo区 -->
+            <div class="flex items-center gap-4 shrink-0 border-r border-[#1f1f2e] pr-4 lg:pr-6 py-2">
+                <div class="w-8 h-8 bg-cyan-500 rounded flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                    <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="text-sm font-black tracking-widest text-white uppercase">Smart Slate <span class="text-cyan-500">PRO</span></h1>
+                    <span id="projTitle" class="text-[9px] text-zinc-500 font-bold uppercase tracking-widest truncate max-w-[150px]">Waiting...</span>
+                </div>
+            </div>
+
+            <!-- 天数卡片云 -->
+            <div class="flex-1 flex flex-wrap items-center gap-2 px-4 py-2 max-h-[100px] overflow-y-auto custom-scrollbar" id="daySelectorContainer"><div class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">请导入工程数据或恢复历史进度</div></div>
+
+            <!-- 导出与控制区 -->
+            <div class="flex items-center gap-3 shrink-0 pl-4 border-l border-[#1f1f2e] py-2">
+                <input type="file" id="importInput" accept=".json" class="hidden" onchange="window.handleImport(event)">
+                
+                <div class="flex bg-[#121217] rounded-md border border-[#1f1f2e] p-0.5 shadow-sm">
+                    <button onclick="window.triggerImport()" class="text-[10px] font-bold uppercase tracking-widest text-zinc-400 hover:text-white transition px-3 py-1.5 rounded hover:bg-zinc-800">
+                        导入排期
+                    </button>
+                    <div class="w-px bg-[#1f1f2e] mx-0.5"></div>
+                    <button onclick="window.triggerImport()" class="text-[10px] font-bold uppercase tracking-widest text-cyan-500 hover:text-cyan-300 transition px-3 py-1.5 rounded hover:bg-zinc-800 flex items-center gap-1.5" title="载入之前保存的进度">
+                        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg> 调入进度
+                    </button>
+                </div>
+                
+                <button onclick="window.saveProject()" class="text-[10px] font-bold uppercase tracking-widest text-emerald-500 hover:text-emerald-400 transition flex items-center gap-1.5 bg-[#121217] px-3 py-2 rounded-md border border-emerald-900/50 hover:border-emerald-500/50 shadow-sm">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg> 保存进度
+                </button>
+
+                <button onclick="window.exportPDFLog()" class="text-[10px] font-black uppercase tracking-widest bg-white text-black px-4 py-2 rounded-md hover:bg-zinc-200 transition shadow flex items-center gap-1.5">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg> 导出场记单
+                </button>
+
+                <div class="h-5 w-px bg-zinc-800 mx-1"></div>
+                
+                <!-- 强力清空重置命令 -->
+                <button onclick="window.resetProject()" class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-red-500 transition px-3 py-2 rounded-md bg-[#121217] border border-[#1f1f2e] hover:border-red-500/50 flex items-center gap-1.5" title="强制还原系统初始状态">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg> 清空
+                </button>
+
+                <!-- 🔒 退出锁定按钮 -->
+                <button onclick="window.lockApp()" class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 hover:text-cyan-500 transition px-3 py-2 rounded-md bg-[#121217] border border-[#1f1f2e] hover:border-cyan-500/50 flex items-center gap-1.5 ml-1" title="锁定控制台屏幕">
+                    <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg> 锁定
+                </button>
+            </div>
+        </header>
+
+        <main class="flex-1 flex overflow-hidden">
+            <!-- ==================== 左侧：今日待拍队列 ==================== -->
+            <aside class="w-[280px] lg:w-[320px] shrink-0 bg-[#0a0a0e] flex flex-col h-full border-r border-[#1f1f2e] z-40 relative shadow-[10px_0_30px_rgba(0,0,0,0.5)]">
+                <div class="p-4 border-b border-[#1f1f2e] shrink-0 flex justify-between items-center bg-[#121217]">
+                    <span class="text-[11px] font-bold text-cyan-500 tracking-wider">今日待拍队列</span>
+                    <span id="dayShotCount" class="text-[10px] font-mono-data font-bold text-white bg-black border border-[#1f1f2e] px-2 py-0.5 rounded-full">0</span>
+                </div>
+
+                <div id="shotListContainer" class="flex-1 overflow-y-auto p-3 space-y-1.5"><div class="flex items-center justify-center h-full text-zinc-600 text-[10px] font-bold">请先调入拍摄日</div></div>
+
+                <div class="p-4 border-t border-[#1f1f2e] shrink-0 bg-[#0a0a0e] flex justify-between items-center">
+                    <span id="statusInfo" class="text-[9px] text-zinc-500 font-mono-data uppercase tracking-widest flex items-center gap-1.5"><span class="w-1.5 h-1.5 bg-zinc-500 rounded-full"></span> SYSTEM RESET</span>
+                    <button onclick="window.downloadSourceCode()" class="text-zinc-500 hover:text-white transition flex items-center gap-1 border border-zinc-800 bg-zinc-900 hover:bg-zinc-800 px-2 py-1 rounded shadow text-[9px] font-mono-data" title="保存源码备份">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg> SOURCE
+                    </button>
+                </div>
+            </aside>
+
+            <!-- ==================== 右侧主屏 ==================== -->
+            <section class="flex-1 flex flex-col relative overflow-y-auto custom-scrollbar" id="mainScrollArea">
+                <div id="emptyState" class="absolute inset-0 flex flex-col items-center justify-center text-zinc-600 z-50 bg-[#030305] transition-opacity duration-300">
+                    <svg class="w-16 h-16 mb-4 opacity-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M7 4v16M17 4v16M3 8h4m10 0h4M3 12h18M3 16h4m10 0h4M4 20h16a1 1 0 001-1V5a1 1 0 00-1-1H4a1 1 0 00-1 1v14a1 1 0 001 1z"></path></svg>
+                    <p class="text-xs font-bold uppercase tracking-widest">系统待命中，请导入数据并选择排期日</p>
+                </div>
+
+                <div id="executionWorkspace" class="w-full max-w-[1400px] mx-auto p-4 md:p-8 transition-opacity duration-300 flex flex-col gap-6 lg:gap-8 pb-32 opacity-0 pointer-events-none">
+                    <!-- 1. 顶部：大盘 -->
+                    <div class="bg-[#121217] rounded-3xl border border-[#1f1f2e] relative overflow-hidden p-6 md:p-8 flex flex-col md:flex-row justify-between shadow-xl shrink-0">
+                        <div class="absolute top-0 left-0 w-full h-3 clapper-stripes"></div>
+                        <div class="mt-2 flex-1 pr-6 relative">
+                            <div id="wrapStamp" class="hidden absolute right-10 top-0 text-emerald-500 border-4 border-emerald-500 font-oswald text-4xl font-black uppercase tracking-widest px-4 py-1 rounded-lg wrap-stamp z-10 select-none pointer-events-none">WRAPPED</div>
+                            <div class="flex items-center gap-3 mb-3">
+                                <span class="bg-red-600 text-white text-[9px] px-2.5 py-1 rounded-full flex items-center gap-1.5 font-bold tracking-widest shadow-md"><span class="w-1.5 h-1.5 bg-white rounded-full animate-pulse"></span> LIVE SLATE 现场直播</span>
+                                <span class="text-cyan-500 text-[10px] uppercase font-bold tracking-widest bg-cyan-900/20 px-2 py-0.5 rounded border border-cyan-500/30" id="rt-day">DAY 1</span>
+                            </div>
+                            <div class="flex items-end gap-4 mb-1">
+                                <h2 class="text-5xl md:text-6xl font-black text-white uppercase tracking-tighter font-oswald leading-none" id="rt-shot-num">SH-001</h2>
+                                <h3 class="text-2xl md:text-3xl font-bold text-zinc-400 tracking-wider font-oswald leading-none pb-1" id="rt-shot-en">车间A</h3>
+                            </div>
+                            <h4 class="text-lg md:text-xl font-bold text-zinc-300 tracking-widest mb-4" id="rt-shot-zh">【外/日】 张三</h4>
+                            <p class="text-zinc-400 text-xs md:text-sm max-w-3xl leading-relaxed italic border-l-2 border-zinc-700 pl-3" id="rt-desc">"城市航拍全景，快速推进到时代首府项目地块。<br><br>浩宇地产企业Logo演绎，企业获得的荣誉展示。<br><br>项目规划图与城市生态规划图的叠影。<br><br>浩宇高层在规划局汇报或内部研讨城市配套的镜头。"</p>
+                        </div>
+                        <div class="bg-[#050508] border border-[#1f1f2e] rounded-2xl p-6 flex flex-col items-center justify-center shrink-0 mt-4 md:mt-2 min-w-[200px] shadow-inner">
+                            <span class="text-[9px] text-zinc-500 font-bold uppercase tracking-widest mb-4">CURRENT TAKE 当前视点</span>
+                            <div class="flex items-center justify-between w-full">
+                                <button onclick="window.updateTakeCount(-1)" class="w-10 h-10 rounded-full bg-[#121217] border border-[#1f1f2e] text-zinc-400 hover:text-white flex items-center justify-center hover:bg-zinc-800 transition text-xl font-bold btn-press shadow-sm">-</button>
+                                <span class="text-6xl md:text-7xl font-black text-cyan-400 font-oswald leading-none tracking-tighter drop-shadow-[0_0_10px_rgba(6,182,212,0.4)]" id="rt-take">01</span>
+                                <button onclick="window.updateTakeCount(1)" class="w-10 h-10 rounded-full bg-[#121217] border border-[#1f1f2e] text-zinc-400 hover:text-white flex items-center justify-center hover:bg-zinc-800 transition text-xl font-bold btn-press shadow-sm">+</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 2. 中部：三机位控制台 -->
+                    <div class="flex flex-col gap-4">
+                        <div class="flex items-center gap-2">
+                            <div class="w-6 h-6 bg-[#1f1f2e] rounded flex items-center justify-center border border-zinc-700">
+                                <svg class="w-3.5 h-3.5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 9a2 2 0 012-2h.93a2 2 0 001.664-.89l.812-1.22A2 2 0 0110.07 4h3.86a2 2 0 011.664.89l.812 1.22A2 2 0 0018.07 7H19a2 2 0 012 2v9a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 13a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                            </div>
+                            <h3 class="text-xs font-bold text-white tracking-widest">机位参数 (ACTIVE INPUTS)</h3>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- CAM A -->
+                            <div class="border-2 border-red-500/50 rounded-2xl p-6 bg-[#0a0a0e] shadow-[0_0_20px_rgba(239,68,68,0.05)] relative transition-all duration-300" id="camA_container">
+                                <div class="flex justify-between items-center border-b border-zinc-800 pb-3 mb-4">
+                                    <div class="text-sm font-black text-white bg-red-600 px-2 py-0.5 rounded flex items-center shadow">
+                                        <input type="text" id="camA_name" value="ARRI" class="cam-title-input text-white text-base">机
+                                    </div>
+                                    <label class="flex items-center gap-2 cursor-pointer bg-black px-2.5 py-1.5 rounded-lg border border-zinc-700 hover:border-red-500/50 transition">
+                                        <input type="checkbox" id="camA_active" checked="" class="accent-red-500 w-4 h-4 cursor-pointer">
+                                        <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">启用</span>
+                                    </label>
+                                </div>
+                                <div class="flex flex-col gap-4">
+                                    <div><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">CLIP FILE (文件名)</span><input type="text" id="camA_clip" class="cam-input tracking-widest font-bold text-white text-base" placeholder="A00001" style="box-shadow: none;"></div>
+                                    <div class="flex gap-4">
+                                        <div class="flex-1"><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">ROLL 卷</span><input type="text" id="camA_roll" class="cam-input uppercase" placeholder="A001"></div>
+                                        <div class="flex-1"><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">LENS 镜头</span><input type="text" id="camA_lens" class="cam-input" placeholder="35"></div>
+                                    </div>
+                                    <div><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">CAMERA NOTE 备注</span><textarea id="camA_note" class="cam-textarea" placeholder="焦点/构图..."></textarea></div>
+                                </div>
+                            </div>
+
+                            <!-- CAM B -->
+                            <div class="border-2 border-blue-500/50 rounded-2xl p-6 bg-[#0a0a0e] shadow-[0_0_20px_rgba(59,130,246,0.05)] relative transition-all duration-300" id="camB_container">
+                                <div class="flex justify-between items-center border-b border-zinc-800 pb-3 mb-4">
+                                    <div class="text-sm font-black text-white bg-blue-600 px-2 py-0.5 rounded flex items-center shadow">
+                                        <input type="text" id="camB_name" value="RED" class="cam-title-input text-white text-base">机
+                                    </div>
+                                    <label class="flex items-center gap-2 cursor-pointer bg-black px-2.5 py-1.5 rounded-lg border border-zinc-700 hover:border-blue-500/50 transition">
+                                        <input type="checkbox" id="camB_active" checked="" class="accent-blue-500 w-4 h-4 cursor-pointer">
+                                        <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">启用</span>
+                                    </label>
+                                </div>
+                                <div class="flex flex-col gap-4">
+                                    <div><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">CLIP FILE (文件名)</span><input type="text" id="camB_clip" class="cam-input tracking-widest font-bold text-white text-base" placeholder="B00001" style="box-shadow: none;"></div>
+                                    <div class="flex gap-4">
+                                        <div class="flex-1"><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">ROLL 卷</span><input type="text" id="camB_roll" class="cam-input uppercase" placeholder="B001"></div>
+                                        <div class="flex-1"><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">LENS 镜头</span><input type="text" id="camB_lens" class="cam-input" placeholder="50"></div>
+                                    </div>
+                                    <div><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">CAMERA NOTE 备注</span><textarea id="camB_note" class="cam-textarea" placeholder="焦点/构图..."></textarea></div>
+                                </div>
+                            </div>
+
+                            <!-- CAM C -->
+                            <div class="border-2 border-emerald-500/50 rounded-2xl p-6 bg-[#0a0a0e] shadow-[0_0_20px_rgba(16,185,129,0.05)] relative transition-all duration-300 opacity-50 grayscale" id="camC_container">
+                                <div class="flex justify-between items-center border-b border-zinc-800 pb-3 mb-4">
+                                    <div class="text-sm font-black text-white bg-emerald-600 px-2 py-0.5 rounded flex items-center shadow">
+                                        <input type="text" id="camC_name" value="SONY" class="cam-title-input text-white text-base">机
+                                    </div>
+                                    <label class="flex items-center gap-2 cursor-pointer bg-black px-2.5 py-1.5 rounded-lg border border-zinc-700 hover:border-emerald-500/50 transition">
+                                        <input type="checkbox" id="camC_active" class="accent-emerald-500 w-4 h-4 cursor-pointer">
+                                        <span class="text-[10px] text-zinc-400 font-bold uppercase tracking-widest">启用</span>
+                                    </label>
+                                </div>
+                                <div class="flex flex-col gap-4">
+                                    <div><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">CLIP FILE (文件名)</span><input type="text" id="camC_clip" class="cam-input tracking-widest font-bold text-white text-base" placeholder="C00001" style="box-shadow: none;"></div>
+                                    <div class="flex gap-4">
+                                        <div class="flex-1"><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">ROLL 卷</span><input type="text" id="camC_roll" class="cam-input uppercase" placeholder="C001"></div>
+                                        <div class="flex-1"><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">LENS 镜头</span><input type="text" id="camC_lens" class="cam-input" placeholder="85"></div>
+                                    </div>
+                                    <div><span class="text-[10px] text-zinc-500 font-bold block mb-1.5 uppercase">CAMERA NOTE 备注</span><textarea id="camC_note" class="cam-textarea" placeholder="焦点/构图..."></textarea></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 打板动作 -->
+                        <div class="flex justify-center gap-6 mt-4">
+                            <button onclick="window.triggerClap('NG')" class="btn-press bg-red-600 hover:bg-red-500 text-white w-64 py-4 rounded-full font-black uppercase tracking-widest text-sm flex justify-center items-center gap-2 transition shadow-[0_10px_25px_rgba(220,38,38,0.25)]">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                标记 NG (废片)
+                            </button>
+                            <button onclick="window.triggerClap('CIRCLE')" class="btn-press bg-emerald-600 hover:bg-emerald-500 text-white w-64 py-4 rounded-full font-black uppercase tracking-widest text-sm flex justify-center items-center gap-2 transition shadow-[0_10px_25px_rgba(16,185,129,0.25)]">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                标记 CIRCLE (保条)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 3. 下部：场记流水表 -->
+                    <div class="flex flex-col mt-4 bg-[#0a0a0e] rounded-3xl border border-[#1f1f2e] p-6 shadow-xl">
+                        <div class="flex justify-between items-end border-b border-zinc-800 pb-4 mb-4 px-2">
+                            <div class="flex items-center gap-3">
+                                <svg class="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg>
+                                <h3 class="text-sm font-black text-white tracking-widest uppercase">TAKE HISTORY (场记流水)</h3>
+                            </div>
+                            <div class="text-[10px] text-zinc-500 font-mono-data font-bold uppercase tracking-widest">Total Takes: <span id="logCount" class="text-white ml-1">0</span></div>
+                        </div>
+                        <div id="logStream" class="flex flex-col gap-2"><div class="text-center text-zinc-700 font-bold uppercase tracking-widest py-10 text-xs">Waiting for first action...</div></div>
+                    </div>
+
+                </div>
+
+                <!-- 浮动杀青按钮 -->
+                <button onclick="window.wrapScene()" id="btnWrap" class="fixed bottom-10 right-10 z-50 btn-press bg-cyan-500 hover:bg-cyan-400 text-black px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition shadow-[0_15px_30px_rgba(6,182,212,0.4)] flex items-center gap-2 opacity-100 pointer-events-auto opacity-0 pointer-events-none"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M5 13l4 4L19 7"></path></svg> 确认此镜头完成 (WRAP SHOT)</button>
+            </section>
+        </main>
+    </div>
+
+    <!-- ==========================================
+         核心 JavaScript 逻辑
+         ========================================== -->
+    <script>
+        // ==========================================
+        // 🔒 认证模块逻辑 (Smart Slate 锁屏)
+        // ==========================================
+        const CORRECT_KEY = "ytmayA"; 
+        const AUTH_STORAGE_KEY = "smart_slate_auth_passed";
+
+        window.addEventListener('load', function() {
+            if (localStorage.getItem(AUTH_STORAGE_KEY) === "true") {
+                showMainApp();
+            }
+            document.getElementById('daySelectorContainer').innerHTML = `<div class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">请导入工程数据</div>`;
+        });
+
+        document.getElementById('secret-key-input').addEventListener('keypress', function (e) {
+            e.stopPropagation(); 
+            if (e.key === 'Enter') checkKey();
+        });
+
+        function checkKey() {
+            const inputVal = document.getElementById('secret-key-input').value;
+            const errorMsg = document.getElementById('error-message');
+
+            if (inputVal === CORRECT_KEY) {
+                errorMsg.classList.add('hidden');
+                localStorage.setItem(AUTH_STORAGE_KEY, "true"); 
+                showMainApp();
+            } else {
+                errorMsg.classList.remove('hidden');
+                const inputElement = document.getElementById('secret-key-input');
+                inputElement.classList.add('border-red-500', 'text-red-500');
+                setTimeout(() => inputElement.classList.remove('border-red-500', 'text-red-500'), 500);
+            }
+        }
+
+        function showMainApp() {
+            const lockScreen = document.getElementById('lock-screen');
+            const mainApp = document.getElementById('main-app');
+
+            lockScreen.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            mainApp.classList.add('flex'); 
+            
+            mainApp.classList.add('fade-enter');
+            void mainApp.offsetWidth; 
+            mainApp.classList.add('fade-enter-active');
+        }
+
+        window.lockApp = function() {
+            localStorage.removeItem(AUTH_STORAGE_KEY);
+            document.getElementById('secret-key-input').value = '';
+            document.getElementById('error-message').classList.add('hidden');
+            
+            const mainApp = document.getElementById('main-app');
+            mainApp.classList.add('hidden');
+            mainApp.classList.remove('flex', 'fade-enter', 'fade-enter-active');
+            
+            document.getElementById('lock-screen').classList.remove('hidden');
+        };
+
+        // ==========================================
+        // 💡 0. 自定义 UI 弹窗 (绕过拦截)
+        // ==========================================
+        window.modalContext = null;
+
+        window.showModal = function({ type, title = "System Notification", message, defaultInput = "", onConfirm }) {
+            const modal = document.getElementById('customModal');
+            const box = document.getElementById('customModalBox');
+            const titleEl = document.getElementById('modalTitle');
+            const msgEl = document.getElementById('modalMessage');
+            const inputEl = document.getElementById('modalInput');
+            const btnCancel = document.getElementById('modalBtnCancel');
+            const btnConfirm = document.getElementById('modalBtnConfirm');
+
+            let iconHtml = `<svg class="w-5 h-5 ${type==='error'||type==='warning'||type==='confirm'?'text-red-500':'text-amber-500'}" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>`;
+            if(type === 'prompt') iconHtml = `<svg class="w-5 h-5 text-cyan-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>`;
+            
+            titleEl.innerHTML = `${iconHtml} ${title}`;
+            msgEl.innerText = message;
+            
+            if (type === 'prompt') {
+                inputEl.classList.remove('hidden');
+                inputEl.value = defaultInput;
+            } else {
+                inputEl.classList.add('hidden');
+            }
+
+            if (type === 'alert') {
+                btnCancel.classList.add('hidden');
+                btnConfirm.innerText = "我知道了 (OK)";
+                btnConfirm.className = "px-6 py-2 rounded text-xs font-black text-black bg-cyan-500 hover:bg-cyan-400 transition";
+            } else if (type === 'warning' || type === 'confirm') {
+                btnCancel.classList.remove('hidden');
+                btnCancel.innerText = "取消 (CANCEL)";
+                btnConfirm.innerText = "确定 (CONFIRM)";
+                btnConfirm.className = "px-6 py-2 rounded text-xs font-black text-white bg-red-600 hover:bg-red-500 transition shadow-[0_0_15px_rgba(220,38,38,0.4)]";
+            } else if (type === 'prompt') {
+                btnCancel.classList.remove('hidden');
+                btnCancel.innerText = "取消 (CANCEL)";
+                btnConfirm.innerText = "保存 (SAVE)";
+                btnConfirm.className = "px-6 py-2 rounded text-xs font-black text-black bg-cyan-500 hover:bg-cyan-400 transition";
+            }
+
+            window.modalContext = { onConfirm };
+            modal.classList.remove('hidden');
+            void modal.offsetWidth; // force reflow
+            modal.classList.remove('opacity-0');
+            box.classList.remove('scale-95');
+            if (type === 'prompt') setTimeout(() => inputEl.focus(), 100);
+        };
+
+        window.closeModal = function() {
+            const modal = document.getElementById('customModal');
+            const box = document.getElementById('customModalBox');
+            modal.classList.add('opacity-0');
+            box.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); window.modalContext = null; }, 200);
+        };
+
+        document.getElementById('modalBtnCancel').onclick = window.closeModal;
+        document.getElementById('modalBtnConfirm').onclick = () => {
+            const inputVal = document.getElementById('modalInput').value;
+            if (window.modalContext && window.modalContext.onConfirm) {
+                window.modalContext.onConfirm(inputVal);
+            }
+            window.closeModal();
+        };
+
+        // ==========================================
+        // 💡 1. 核心状态体系
+        // ==========================================
+        window.fullProjectData = { scenes: [] };
+        window.shootingDays = [];
+        window.currentDayId = null;
+        window.dayScenes = [];
+        
+        window.activeSceneId = null;
+        window.takeCounter = 1;
+        window.shotLogs = [];
+        
+        window.globalCamsState = {
+            A: { clip: '', roll: 'A001', lens: '35' },
+            B: { clip: '', roll: 'B001', lens: '50' },
+            C: { clip: '', roll: 'C001', lens: '85' }
+        };
+
+        window.incrementClipName = function(clipName) {
+            if (!clipName) return "";
+            return clipName.replace(/(\d+)(?!.*\d)/, (match) => {
+                const len = match.length;
+                const nextNum = parseInt(match, 10) + 1;
+                return String(nextNum).padStart(len, '0');
+            });
+        };
+
+        // ==========================================
+        // 💡 2. 安全管理引擎 (保存与清空重置)
+        // ==========================================
+        window.saveProject = function(isAutoBackup = false) {
+            if (!window.fullProjectData || !window.fullProjectData.scenes || window.fullProjectData.scenes.length === 0) {
+                if(isAutoBackup !== true) window.showModal({ type: 'alert', title: '无数据', message: "目前没有可保存的工程数据！请先导入排期。" });
+                return false;
+            }
+            
+            const safeTitle = window.fullProjectData.title || "未命名工程";
+            const exportData = {
+                ...window.fullProjectData,
+                title: safeTitle,
+                shotLogs: window.shotLogs || [],
+                globalCamsState: window.globalCamsState
+            };
+
+            const jsonStr = JSON.stringify(exportData, null, 2);
+            const a = document.createElement('a'); 
+            const blob = new Blob([jsonStr], {type:'application/json'});
+            a.href = URL.createObjectURL(blob); 
+            
+            const suffix = isAutoBackup === true ? "_AutoBackup" : "_ExecutionLog";
+            const projTitle = document.getElementById('projTitle').innerText.replace(/\s+/g, '_');
+            a.download = `SmartSlate_${projTitle}${suffix}.json`; 
+            a.click();
+            URL.revokeObjectURL(a.href);
+            
+            if(isAutoBackup !== true) {
+                const status = document.getElementById('statusInfo');
+                if(status) {
+                    status.innerHTML = `<span class="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse"></span> PROJECT SAVED`;
+                    setTimeout(() => { status.innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> SYSTEM READY`; }, 3000);
+                }
+            }
+            return true;
+        };
+
+        window.resetProject = function() {
+            window.showModal({
+                type: 'warning',
+                title: "⚠️ 警告：强制重置系统",
+                message: "您即将强制清空整个场记控制台！\n这将会抹除当前所有的打板进度、文件记录以及已导入的工程。\n\n确定要恢复初始状态吗？",
+                onConfirm: () => {
+                    window.fullProjectData = { scenes: [] };
+                    window.shootingDays = [];
+                    window.currentDayId = null;
+                    window.dayScenes = [];
+                    window.activeSceneId = null;
+                    window.takeCounter = 1;
+                    window.shotLogs = [];
+                    window.globalCamsState = {
+                        A: { clip: '', roll: 'A001', lens: '35' },
+                        B: { clip: '', roll: 'B001', lens: '50' },
+                        C: { clip: '', roll: 'C001', lens: '85' }
+                    };
+
+                    document.getElementById('projTitle').innerText = "Waiting...";
+                    document.getElementById('daySelectorContainer').innerHTML = `<div class="text-[10px] font-bold text-zinc-600 uppercase tracking-widest">请导入工程数据或恢复历史进度</div>`;
+                    document.getElementById('dayShotCount').innerText = "0";
+                    document.getElementById('shotListContainer').innerHTML = `<div class="flex items-center justify-center h-full text-zinc-600 text-[10px] font-bold">请先调入拍摄日</div>`;
+                    
+                    document.getElementById('emptyState').classList.remove('hidden');
+                    document.getElementById('executionWorkspace').classList.add('opacity-0', 'pointer-events-none');
+                    
+                    document.getElementById('rt-take').innerText = "01";
+                    document.getElementById('logCount').innerText = "0";
+                    document.getElementById('logStream').innerHTML = `<div class="text-center text-zinc-700 font-bold uppercase tracking-widest py-10 text-xs">Waiting for first action...</div>`;
+
+                    ['A', 'B', 'C'].forEach(cam => {
+                        const clipInput = document.getElementById(`cam${cam}_clip`);
+                        if(clipInput) { clipInput.value = ''; clipInput.style.boxShadow = "none"; }
+                        const rollInput = document.getElementById(`cam${cam}_roll`);
+                        if(rollInput) rollInput.value = '';
+                        const lensInput = document.getElementById(`cam${cam}_lens`);
+                        if(lensInput) lensInput.value = '';
+                        const noteInput = document.getElementById(`cam${cam}_note`);
+                        if(noteInput) noteInput.value = '';
+                    });
+
+                    const btnWrap = document.getElementById('btnWrap');
+                    if(btnWrap) btnWrap.classList.add('opacity-0', 'pointer-events-none'); 
+
+                    const statusInfo = document.getElementById('statusInfo');
+                    if(statusInfo) statusInfo.innerHTML = `<span class="w-1.5 h-1.5 bg-zinc-500 rounded-full"></span> SYSTEM RESET`;
+                }
+            });
+        };
+
+        // ==========================================
+        // 💡 3. 硬件控制台联动
+        // ==========================================
+        ['A', 'B', 'C'].forEach(cam => {
+            const cb = document.getElementById(`cam${cam}_active`);
+            if(cb) {
+                cb.addEventListener('change', (e) => {
+                    const isActive = e.target.checked;
+                    const container = document.getElementById(`cam${cam}_container`);
+                    if(container) {
+                        container.style.opacity = isActive ? '1' : '0.4';
+                        container.style.filter = isActive ? 'none' : 'grayscale(100%)';
+                    }
+                    if(isActive && !document.getElementById(`cam${cam}_clip`).value) {
+                        document.getElementById(`cam${cam}_clip`).focus();
+                    }
+                });
+            }
+        });
+
+        // ==========================================
+        // 💡 4. 数据导入 (兼容最新的 dayId 对象化逻辑)
+        // ==========================================
+        window.triggerImport = function() { document.getElementById('importInput').click(); };
+        window.handleImport = function(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    window.fullProjectData = data;
+                    document.getElementById('projTitle').innerText = data.title || "UNTITLED PROJECT";
+                    
+                    window.shotLogs = data.shotLogs || [];
+                    if (data.globalCamsState) window.globalCamsState = data.globalCamsState;
+
+                    // 兼容 V1.0 的排期天数引擎
+                    if (data.shootingDays && Array.isArray(data.shootingDays) && typeof data.shootingDays[0] === 'object') {
+                        window.shootingDays = data.shootingDays;
+                    } else {
+                        // 降级兼容老版本
+                        let uniqueDays = [...new Set((data.scenes || []).map(s => s.dayId || s.shootDay).filter(Boolean))];
+                        window.shootingDays = uniqueDays.map(d => ({id: d, name: `DAY ${d}`}));
+                        
+                        // 抹平 shootDay 到 dayId
+                        (window.fullProjectData.scenes || []).forEach(s => {
+                            if (s.shootDay && !s.dayId) { 
+                                s.dayId = s.shootDay; 
+                                delete s.shootDay; 
+                            }
+                            if(s.isWrapped === undefined) s.isWrapped = false;
+                        });
+                    }
+                    
+                    if(window.shootingDays.length > 0) { 
+                        window.selectDay(window.shootingDays[0].id); 
+                    } else { 
+                        window.showModal({ type: 'alert', title: '格式错误', message: "工程中未找到排期天数！\n\n请确认该 JSON 已在【通告排期系统】中完成排期。" }); 
+                    }
+                } catch (err) { window.showModal({ type: 'alert', title: '解析失败', message: "JSON 文件解析失败，可能文件已损坏。" }); }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        };
+
+        // ==========================================
+        // 💡 5. 左侧排期列表
+        // ==========================================
+        window.selectDay = function(dayId) {
+            window.currentDayId = dayId;
+            const dayHtml = window.shootingDays.map(d => `
+                <button onclick="window.selectDay(${d.id})" class="px-5 py-2 text-[10px] font-black uppercase tracking-widest rounded-full transition border shrink-0
+                ${d.id === dayId ? 'bg-cyan-500 text-black border-cyan-500 shadow-[0_0_15px_rgba(6,182,212,0.4)]' : 'bg-[#121217] text-zinc-500 border-[#1f1f2e] hover:text-white'}">
+                    ${d.name}
+                </button>
+            `).join('');
+            document.getElementById('daySelectorContainer').innerHTML = dayHtml;
+
+            window.dayScenes = window.fullProjectData.scenes.filter(s => !s.isChapter && s.dayId === dayId).sort((a,b) => (a.pos||a.id) - (b.pos||b.id));
+            document.getElementById('dayShotCount').innerText = window.dayScenes.length;
+            
+            window.renderShotList();
+            
+            const firstUnwrapped = window.dayScenes.find(s => !s.isWrapped);
+            if(firstUnwrapped) window.activateScene(firstUnwrapped.id);
+            else if (window.dayScenes.length > 0) window.activateScene(window.dayScenes[0].id);
+        };
+
+        window.getGlobalSceneNumber = function(id) { 
+            const nonChapters = window.fullProjectData.scenes.filter(s => !s.isChapter); 
+            const index = nonChapters.findIndex(s => s.id === id); 
+            return index >= 0 ? index + 1 : 0; 
+        };
+
+        window.renderShotList = function() {
+            const container = document.getElementById('shotListContainer');
+            if(window.dayScenes.length === 0) {
+                container.innerHTML = '<div class="text-zinc-600 text-center py-10 text-xs">本日无镜头排期</div>';
+                return;
+            }
+
+            container.innerHTML = window.dayScenes.map(s => {
+                const sNum = window.getGlobalSceneNumber(s.id);
+                const isActive = window.activeSceneId === s.id;
+                
+                const wrapOpacity = s.isWrapped ? 'wrapped' : '';
+                const wrapIcon = s.isWrapped ? `<svg class="w-4 h-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>` : `<div class="w-3 h-3 rounded-full border border-zinc-700"></div>`;
+
+                return `
+                <div class="shot-item p-4 bg-[#121217] border border-[#1f1f2e] hover:bg-[#1a1a24] cursor-pointer mb-2 flex flex-col rounded-xl transition-all group relative overflow-hidden ${wrapOpacity} ${isActive ? 'active shadow-lg' : ''}" onclick="window.activateScene(${s.id})">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex items-center gap-2">
+                            <span class="w-8 h-8 bg-[#050508] border border-zinc-800 text-zinc-300 font-black text-[10px] flex items-center justify-center rounded-lg shadow-inner">S${sNum}</span>
+                            <div class="flex flex-col">
+                                <span class="text-[10px] text-zinc-300 font-bold">${s.locationName || '未知地点'}</span>
+                                <span class="text-[8px] text-zinc-500 tracking-wider">${s.env||'外'}/${s.timeOfDay||'日'}</span>
+                            </div>
+                        </div>
+                        ${wrapIcon}
+                    </div>
+                    <div class="text-[11px] ${isActive ? 'text-white' : 'text-zinc-500'} font-medium line-clamp-2 leading-relaxed group-hover:text-zinc-300 transition pr-2">${s.col1 || s.col2 || '无描述'}</div>
+                </div>`;
+            }).join('');
+        };
+
+        // ==========================================
+        // 💡 6. 右侧主屏渲染
+        // ==========================================
+        window.activateScene = function(id) {
+            window.activeSceneId = id;
+            window.renderShotList(); 
+            
+            const s = window.dayScenes.find(x => x.id === id);
+            if(s) {
+                document.getElementById('emptyState').classList.add('hidden');
+                document.getElementById('executionWorkspace').classList.remove('opacity-0', 'pointer-events-none');
+                window.updateRightPanelDOM(s);
+            }
+
+            const existingTakes = window.shotLogs.filter(log => log.sceneId === id);
+            window.takeCounter = existingTakes.length > 0 ? Math.max(...existingTakes.map(t => parseInt(t.take))) + 1 : 1;
+            document.getElementById('rt-take').innerText = String(window.takeCounter).padStart(2,'0');
+
+            ['A', 'B', 'C'].forEach(cam => {
+                const clipInput = document.getElementById(`cam${cam}_clip`);
+                if(clipInput) {
+                    clipInput.value = window.globalCamsState[cam].clip;
+                    document.getElementById(`cam${cam}_roll`).value = window.globalCamsState[cam].roll;
+                    document.getElementById(`cam${cam}_lens`).value = window.globalCamsState[cam].lens;
+                    document.getElementById(`cam${cam}_note`).value = ''; 
+                    clipInput.style.boxShadow = "none"; 
+                }
+            });
+
+            window.updateWrapButtonState(s);
+            window.renderLogs();
+        };
+
+        window.updateRightPanelDOM = function(s) {
+            if(!s) return;
+            const dayObj = window.shootingDays.find(d => d.id === window.currentDayId);
+            document.getElementById('rt-day').innerText = dayObj ? dayObj.name : 'UNKNOWN DAY';
+            
+            const sNum = window.getGlobalSceneNumber(s.id);
+            document.getElementById('rt-shot-num').innerText = `SH-${String(sNum).padStart(3, '0')}`;
+            document.getElementById('rt-shot-en').innerText = `${s.locationName || 'LOCATION TBD'}`;
+            document.getElementById('rt-shot-zh').innerText = `【${s.env||'外'}/${s.timeOfDay||'日'}】 ${s.castNames || '未分配角色'}`;
+            document.getElementById('rt-desc').innerText = `"${s.col1 || s.col2 || '无画面动作或对白描述'}"`;
+        };
+
+        window.updateTakeCount = function(delta) {
+            window.takeCounter = Math.max(1, window.takeCounter + delta);
+            document.getElementById('rt-take').innerText = String(window.takeCounter).padStart(2,'0');
+        };
+
+        window.wrapScene = function() {
+            if(!window.activeSceneId) return;
+            const s = window.fullProjectData.scenes.find(x => x.id === window.activeSceneId);
+            if(s) { s.isWrapped = !s.isWrapped; window.renderShotList(); window.updateWrapButtonState(s); }
+        };
+
+        window.updateWrapButtonState = function(s) {
+            const btn = document.getElementById('btnWrap');
+            const stamp = document.getElementById('wrapStamp');
+            if(s.isWrapped) {
+                btn.innerHTML = "撤销杀青 (UNDO WRAP)";
+                btn.className = "fixed bottom-10 right-10 z-50 btn-press bg-zinc-800 hover:bg-zinc-700 border border-zinc-600 text-zinc-400 px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition shadow-lg opacity-100 pointer-events-auto";
+                stamp.classList.remove('hidden'); stamp.style.animation = 'none'; stamp.offsetHeight; stamp.style.animation = null;
+            } else {
+                btn.innerHTML = "<svg class='w-5 h-5' fill='none' stroke='currentColor' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' stroke-width='2.5' d='M5 13l4 4L19 7'></path></svg> 确认此镜头完成 (WRAP SHOT)";
+                btn.className = "fixed bottom-10 right-10 z-50 btn-press bg-cyan-500 hover:bg-cyan-400 text-black px-8 py-4 rounded-full font-black uppercase tracking-widest text-sm transition shadow-[0_15px_30px_rgba(6,182,212,0.4)] flex items-center gap-2 opacity-100 pointer-events-auto";
+                stamp.classList.add('hidden');
+            }
+        };
+
+        // ==========================================
+        // 💡 7. 核心打板 & 记忆
+        // ==========================================
+        window.triggerClap = function(status) {
+            if(!window.activeSceneId) { window.showModal({ type: 'alert', title: '未选择镜头', message: '请先在左侧列表中选择一个镜头开始！' }); return; }
+
+            const flash = document.getElementById('flashOverlay');
+            flash.classList.add('flash-active');
+            setTimeout(() => flash.classList.remove('flash-active'), 150);
+
+            const s = window.dayScenes.find(x => x.id === window.activeSceneId);
+            
+            let missingClip = false; let activeCamCount = 0;
+            ['A', 'B', 'C'].forEach(cam => {
+                if(document.getElementById(`cam${cam}_active`).checked) {
+                    activeCamCount++;
+                    const clipInput = document.getElementById(`cam${cam}_clip`);
+                    if(clipInput && clipInput.value.trim() === '') { missingClip = true; clipInput.style.boxShadow = "inset 0 0 0 2px #ef4444"; } 
+                    else { if(clipInput) clipInput.style.boxShadow = "none"; }
+                }
+            });
+
+            if (activeCamCount === 0) { window.showModal({ type: 'alert', title: '无法执行', message: "🔴 警告：必须至少勾选启用一台摄影机才能打板！" }); return; }
+            if (missingClip) { window.showModal({ type: 'alert', title: '缺少文件名', message: "🔴 警告：已启用的摄影机必须录入 CLIP FILE 文件名（比如 A001C001）。\n这决定了后期剪辑能否找到素材，绝不能空！" }); return; }
+
+            const sNum = window.getGlobalSceneNumber(s.id);
+            const tNum = window.takeCounter;
+            let camsData = {};
+            ['A', 'B', 'C'].forEach(cam => {
+                if(document.getElementById(`cam${cam}_active`).checked) {
+                    const camName = document.getElementById(`cam${cam}_name`).value || cam;
+                    const clipVal = document.getElementById(`cam${cam}_clip`).value.trim();
+                    const rollVal = document.getElementById(`cam${cam}_roll`).value.trim();
+                    const lensVal = document.getElementById(`cam${cam}_lens`).value.trim();
+                    const noteVal = document.getElementById(`cam${cam}_note`).value.trim();
+                    
+                    camsData[cam] = { name: camName, clip: clipVal, roll: rollVal, lens: lensVal, note: noteVal };
+
+                    const nextClip = window.incrementClipName(clipVal);
+                    window.globalCamsState[cam] = { clip: nextClip, roll: rollVal, lens: lensVal };
+                    document.getElementById(`cam${cam}_clip`).value = nextClip;
+                    document.getElementById(`cam${cam}_note`).value = '';
+                }
+            });
+
+            const newLog = { id: Date.now(), sceneId: s.id, sceneNum: sNum, take: tNum, camsData: camsData, status: status };
+            window.shotLogs.unshift(newLog); 
+            window.updateTakeCount(1);
+            window.renderLogs();
+            setTimeout(() => { const el = document.getElementById('mainScrollArea'); el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' }); }, 100);
+        };
+
+        // ==========================================
+        // 💡 8. 动态流水表渲染 (TAKE HISTORY)
+        // ==========================================
+        window.renderLogs = function() {
+            const container = document.getElementById('logStream');
+            const currentLogs = window.shotLogs.filter(l => l.sceneId === window.activeSceneId);
+            
+            document.getElementById('logCount').innerText = `${currentLogs.length}`;
+
+            if (currentLogs.length === 0) {
+                container.innerHTML = `<div class="text-center text-zinc-700 font-bold uppercase tracking-widest py-10 text-xs">Waiting for first action...</div>`;
+                return;
+            }
+
+            let html = `
+                <div class="flex border-b border-zinc-800 pb-2 px-4 text-[10px] font-bold text-zinc-500 uppercase tracking-widest">
+                    <div class="w-28 text-left">SHOT (镜号)</div>
+                    <div class="w-20 text-center">TAKE</div>
+                    <div class="w-28 text-center">STATUS</div>
+                    <div class="flex-1 pl-4">CLIPS (机位文件记录)</div>
+                </div>
+            `;
+
+            html += currentLogs.map(log => {
+                const isOK = log.status === 'CIRCLE';
+                const rowClass = isOK ? 'log-ok-take' : 'log-ng-take bg-[#0a0a0e] border border-zinc-800/80';
+                
+                const statusBadge = isOK 
+                    ? `<span class="text-emerald-500 font-black uppercase text-[10px] flex items-center gap-1.5"><div class="w-2 h-2 rounded-full border-2 border-emerald-500"></div> CIRCLE</span>`
+                    : `<span class="text-red-600 font-bold uppercase text-[10px] flex items-center gap-1"><svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg> NG</span>`;
+
+                const activeCams = Object.keys(log.camsData);
+                const camHtml = activeCams.map(camKey => {
+                    const data = log.camsData[camKey];
+                    const camColor = camKey==='A' ? 'text-red-500' : camKey==='B' ? 'text-blue-500' : 'text-emerald-500';
+                    return `
+                        <div class="flex-1 bg-[#050508] p-3 rounded-lg border ${isOK ? 'border-emerald-900/50 shadow-[inset_0_0_15px_rgba(16,185,129,0.05)]' : 'border-zinc-800/80'} flex flex-col justify-center min-w-[140px]">
+                            <div class="flex items-center gap-2 mb-1.5">
+                                <span class="text-[9px] font-black ${camColor} bg-zinc-900 px-1.5 py-0.5 rounded border border-zinc-800">${data.name}</span>
+                            </div>
+                            <div class="text-sm font-mono-data font-black tracking-widest ${isOK ? 'text-emerald-400' : 'text-zinc-200'}">${data.clip}</div>
+                            <div class="flex gap-2 text-[9px] text-zinc-600 font-mono-data uppercase mt-1.5 tracking-wider font-bold">R: ${data.roll||'-'} <span class="mx-0.5">|</span> L: ${data.lens||'-'}</div>
+                            ${data.note ? `<div class="text-[9px] text-zinc-400 mt-2 italic leading-snug border-l-2 border-zinc-700 pl-2">${data.note}</div>` : ''}
+                        </div>
+                    `;
+                }).join('');
+
+                return `
+                <div class="flex items-stretch rounded-xl p-3 transition-all ${rowClass} relative mt-2 group">
+                    <div class="w-28 flex items-center pl-2">
+                        <span class="text-4xl font-black font-oswald text-cyan-500 tracking-tighter">S${log.sceneNum}</span>
+                    </div>
+                    <div class="w-20 flex items-center justify-center">
+                        <span class="text-3xl font-black font-oswald text-white">${String(log.take).padStart(2,'0')}</span>
+                    </div>
+                    <div class="w-28 flex items-center justify-center">
+                        ${statusBadge}
+                    </div>
+                    <div class="flex-1 flex gap-3 px-2 overflow-x-auto custom-scrollbar">
+                        ${camHtml}
+                    </div>
+                    <button onclick="window.deleteLog(${log.id})" class="absolute right-2 top-2 text-zinc-600 hover:text-red-500 p-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/80 rounded-full shadow" title="删除记录"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg></button>
+                </div>`;
+            }).join('');
+
+            container.innerHTML = html;
+        };
+
+        window.deleteLog = function(id) {
+            window.showModal({
+                type: 'confirm',
+                title: '删除场记记录',
+                message: "您确定要删除这条打板记录吗？\n此操作无法恢复，后期的文件匹配可能受到影响。",
+                onConfirm: () => {
+                    window.shotLogs = window.shotLogs.filter(l => l.id !== id);
+                    window.renderLogs();
+                }
+            });
+        };
+
+        // ==========================================
+        // 💡 9. PDF 导出 
+        // ==========================================
+        window.exportPDFLog = function() {
+            if (window.shotLogs.length === 0) { window.showModal({ type: 'alert', message: "暂无打板记录可导出！" }); return; }
+            
+            const dayObj = window.shootingDays.find(d => d.id === window.currentDayId) || {name: `DAY ???`};
+            const projTitle = document.getElementById('projTitle').innerText;
+            
+            const nameA = document.getElementById('camA_name').value || 'CAM A';
+            const nameB = document.getElementById('camB_name').value || 'CAM B';
+            const nameC = document.getElementById('camC_name').value || 'CAM C';
+
+            let htmlContent = `
+            <!DOCTYPE html>
+            <html lang="zh-CN">
+            <head><meta charset="UTF-8"><title>场记单 - ${dayObj.name}</title>
+            <style>
+                body { font-family: 'Helvetica Neue', 'SimHei', sans-serif; padding: 40px; color: #000; background: #fff; line-height: 1.5; font-size: 12px; } 
+                .header { text-align: center; border-bottom: 3px solid #000; padding-bottom: 15px; margin-bottom: 30px; } 
+                .header h1 { margin: 0 0 10px 0; font-size: 26px; letter-spacing: 2px; text-transform: uppercase; } 
+                .header h2 { margin: 0; font-size: 16px; font-weight: normal; } 
+                .shot-block { margin-bottom: 30px; border: 2px solid #000; page-break-inside: avoid; } 
+                .shot-header { background-color: #f4f4f5; border-bottom: 1px solid #000; padding: 10px 15px; font-weight: bold; font-size: 14px; display: flex; justify-content: space-between; color: #3f3f46; } 
+                .shot-desc { padding: 10px 15px; border-bottom: 2px solid #000; font-style: italic; color: #52525b; } 
+                table { width: 100%; border-collapse: collapse; } 
+                th, td { border: 1px solid #d4d4d8; padding: 12px; text-align: left; vertical-align: middle; } 
+                th { background-color: #fafafa; font-weight: bold; text-transform: uppercase; font-size: 11px; color: #71717a; border-bottom: 2px solid #000; } 
+                .take-col { font-size: 18px; font-weight: 900; text-align: center; width: 60px; font-family: monospace; } 
+                .status-CIRCLE { color: #059669; font-weight: 900; font-size: 14px; text-align: center; letter-spacing: 1px; } 
+                .status-NG { color: #dc2626; font-weight: bold; font-size: 14px; text-align: center; text-decoration: line-through; } 
+                .cam-name { font-weight: bold; color: #52525b; font-size: 10px; margin-bottom: 4px; } 
+                .clip-name { font-family: monospace; font-size: 14px; font-weight: bold; color: #000; }
+                .wrap-tag { color: #059669; font-weight: 900; letter-spacing: 2px; }
+                .pending-tag { color: #a1a1aa; font-weight: bold; }
+            </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>SCRIPT SUPERVISOR & CAMERA LOG (场记单)</h1>
+                    <h2>项目: <b>${projTitle}</b> | 拍摄排期: <b>${dayObj.name}</b> | 导出日期: <b>${new Date().toISOString().split('T')[0]}</b></h2>
+                </div>
+            `;
+
+            window.dayScenes.forEach((s, i) => {
+                const sNum = window.getGlobalSceneNumber(s.id);
+                const sceneInfo = `${s.env || '外'}/${s.timeOfDay || '日'}`;
+                const wrapHtml = s.isWrapped ? `<span class="wrap-tag">WRAPPED</span>` : `<span class="pending-tag">PENDING</span>`;
+                
+                htmlContent += `
+                    <div class="shot-block">
+                        <div class="shot-header">
+                            <span>SHOT: SH-${String(sNum).padStart(3, '0')} | ${s.locationName || 'LOCATION TBD'} | ${sceneInfo}</span>
+                            ${wrapHtml}
+                        </div>
+                        <div class="shot-desc">描述: ${s.col1 || s.col2 || '无'}</div>
+                `;
+
+                const logsForShot = window.shotLogs.filter(l => l.sceneId === s.id);
+                if (logsForShot.length > 0) {
+                    htmlContent += `
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th style="text-align:center;">TK</th>
+                                    <th style="text-align:center;">STATUS</th>
+                                    <th>${nameA}</th>
+                                    <th>${nameB}</th>
+                                    <th>${nameC}</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                    `;
+
+                    const sortedLogs = [...logsForShot].sort((a,b)=> a.take - b.take);
+                    sortedLogs.forEach(log => {
+                        const statusClass = log.status === 'CIRCLE' ? 'status-CIRCLE' : 'status-NG';
+                        const statusText = log.status === 'CIRCLE' ? '⭕ CIRCLE' : '❌ NG';
+                        
+                        const renderCamPrint = (camKey) => {
+                            const d = log.camsData[camKey];
+                            if(!d || !d.clip) return '-';
+                            return `
+                                <div class="cam-name">${d.name} | Roll: ${d.roll || '-'} | Lens: ${d.lens || '-'}</div>
+                                <div class="clip-name">${d.clip}</div>
+                            `;
+                        };
+
+                        htmlContent += `
+                            <tr>
+                                <td class="take-col">${log.take}</td>
+                                <td class="${statusClass}">${statusText}</td>
+                                <td>${renderCamPrint('A')}</td>
+                                <td>${renderCamPrint('B')}</td>
+                                <td>${renderCamPrint('C')}</td>
+                            </tr>
+                        `;
+                    });
+                    
+                    htmlContent += `</tbody></table></div>`;
+                } else {
+                    htmlContent += `<div style="padding: 20px; color: #a1a1aa; text-align: center; font-weight: bold;">该镜头尚未执行打板记录</div></div>`;
+                }
+            });
+
+            htmlContent += `</body></html>`;
+
+            const printWindow = window.open('', '_blank');
+            if (printWindow) { 
+                printWindow.document.write(htmlContent); 
+                printWindow.document.close(); 
+                printWindow.focus(); 
+                setTimeout(() => { 
+                    printWindow.print(); 
+                    printWindow.close(); 
+                }, 250); 
+            } else {
+                window.showModal({ type: 'alert', title: '弹窗被拦截', message: "请允许浏览器弹出窗口以生成 PDF 打印单。" });
+            }
+        };
+
+        window.downloadSourceCode = function() {
+            const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([htmlContent], {type:'text/html'}));
+            a.download = "Smart_Slate_Pro_Protected.html";
+            a.click();
+            
+            const status = document.getElementById('statusInfo');
+            if(status) {
+                status.innerHTML = `<span class="w-1.5 h-1.5 bg-cyan-500 rounded-full animate-pulse"></span> CODE SAVED`;
+                setTimeout(() => { status.innerHTML = `<span class="w-1.5 h-1.5 bg-emerald-500 rounded-full animate-pulse"></span> SYSTEM READY`; }, 3000);
+            }
+        };
+    </script>
+
+</body></html>

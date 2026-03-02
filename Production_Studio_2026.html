@@ -1,0 +1,1538 @@
+<!DOCTYPE html>
+<html lang="zh-CN"><head><script>(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6ImJlMDcyNWEwZmIxZWZmN2I5N2MyNDEwY2U0Nzc1YmM5MGY1MWFiYTUiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIwMzE4NzA0MjYxODY0Mzc1NzM5NCIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzVkMzJiNzk1MmQ4NmZhMDdfUHJvZHVjdGlvbl9TdHVkaW9fRGVtb19rZXkuaHRtbC01NzgifSwiZXhwIjoxNzcyNDM2MzQzLCJpYXQiOjE3NzI0MzI3NDMsImFsZyI6IlJTMjU2In0.TIhh8fEZh3YVtajWKI35ejkp5qys4ogmEnwsc53wVO_zmJxYUizdE3eSCRa_1DxsY8gjNgevpURop9dPmOCIhIvMOBKx1fmnkKUirnzvEonfdyCRFxW_2Dl7ASMO4dPnX4-eeFnzzzp3mNSoZnDUibHfUnwlSVaCqpSTmGfMig0Ib2mXLtI5byK8Y2-imWNIjy4ex0wZiQtqY7sIymzxXkkUuJ-FscMa6SPJAogy2xuw49vhW6GbMgZEF5lWiT-T8SmMZGr53tXK9-X68NE4CIJ4d0ddFam6iFuqOOJsMZamRR37vHgBYPXFIWzzu8HUMQwuOT3b2nE8I4SKG2GmmQ","c_5d32b7952d86fa07_Production_Studio_Demo_key.html-578")</script><script>(function(){'use strict';var h=typeof Object.defineProperties=="function"?Object.defineProperty:function(a,b,d){if(a==Array.prototype||a==Object.prototype)return a;a[b]=d.value;return a};function l(a){a=["object"==typeof globalThis&&globalThis,a,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var b=0;b<a.length;++b){var d=a[b];if(d&&d.Math==Math)return d}throw Error("Cannot find global object");}var n=l(this);
+function p(a,b){if(b)a:{var d=n;a=a.split(".");for(var c=0;c<a.length-1;c++){var e=a[c];if(!(e in d))break a;d=d[e]}a=a[a.length-1];c=d[a];b=b(c);b!=c&&b!=null&&h(d,a,{configurable:!0,writable:!0,value:b})}}function r(a){function b(c){return a.next(c)}function d(c){return a.throw(c)}return new Promise(function(c,e){function f(g){g.done?c(g.value):Promise.resolve(g.value).then(b,d).then(f,e)}f(a.next())})}function t(a){return r(a())}
+p("Object.values",function(a){return a?a:function(b){var d=[],c;for(c in b)Object.prototype.hasOwnProperty.call(b,c)&&d.push(b[c]);return d}});p("Array.prototype.includes",function(a){return a?a:function(b,d){var c=this;c instanceof String&&(c=String(c));var e=c.length;d=d||0;for(d<0&&(d=Math.max(d+e,0));d<e;d++){var f=c[d];if(f===b||Object.is(f,b))return!0}return!1}});/*
+
+ MIT License
+
+ Copyright (c) 2017-2023 W.Y.
+
+ Permission is hereby granted, free of charge, to any person obtaining a copy
+ of this software and associated documentation files (the "Software"), to deal
+ in the Software without restriction, including without limitation the rights
+ to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ copies of the Software, and to permit persons to whom the Software is
+ furnished to do so, subject to the following conditions:
+
+ The above copyright notice and this permission notice shall be included in
+ all copies or substantial portions of the Software.
+
+ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ SOFTWARE.
+
+*/
+function u(a,b){const d=a.style;b.backgroundColor&&(d.backgroundColor=b.backgroundColor);b.width&&(d.width=`${b.width}px`);b.height&&(d.height=`${b.height}px`);const c=b.style;c!=null&&Object.keys(c).forEach(e=>{d[e]=c[e]})};var v=(()=>{let a=0;return()=>{a+=1;return`u${`0000${(Math.random()*1679616<<0).toString(36)}`.slice(-4)}${a}`}})();function w(a){const b=[];for(let d=0,c=a.length;d<c;d++)b.push(a[d]);return b}let x=null;function y(a={}){return x?x:a.l?x=a.l:x=w(window.getComputedStyle(document.documentElement))}function z(a,b){return(a=(a.ownerDocument.defaultView||window).getComputedStyle(a).getPropertyValue(b))?parseFloat(a.replace("px","")):0}
+function A(a,b={}){var d;if(!(d=b.width)){d=z(a,"border-left-width");var c=z(a,"border-right-width");d=a.clientWidth+d+c}(b=b.height)||(b=z(a,"border-top-width"),c=z(a,"border-bottom-width"),b=a.clientHeight+b+c);return{width:d,height:b}}function B(a){return new Promise((b,d)=>{const c=new Image;c.onload=()=>{c.decode().then(()=>{requestAnimationFrame(()=>b(c))})};c.onerror=d;c.crossOrigin="anonymous";c.decoding="async";c.src=a})}
+function C(a){return t(function*(){return Promise.resolve().then(()=>(new XMLSerializer).serializeToString(a)).then(encodeURIComponent).then(b=>`data:image/svg+xml;charset=utf-8,${b}`)})}
+function D(a,b,d){return t(function*(){const c=document.createElementNS("http://www.w3.org/2000/svg","svg"),e=document.createElementNS("http://www.w3.org/2000/svg","foreignObject");c.setAttribute("width",`${b}`);c.setAttribute("height",`${d}`);c.setAttribute("viewBox",`0 0 ${b} ${d}`);e.setAttribute("width","100%");e.setAttribute("height","100%");e.setAttribute("x","0");e.setAttribute("y","0");e.setAttribute("externalResourcesRequired","true");c.appendChild(e);e.appendChild(a);return C(c)})}
+var E=(a,b)=>{if(a instanceof b)return!0;a=Object.getPrototypeOf(a);return a===null?!1:a.constructor.name===b.name||E(a,b)};function F(a,b){return y(b).map(d=>{const c=a.getPropertyValue(d),e=a.getPropertyPriority(d);return`${d}: ${c}${e?" !important":""};`}).join(" ")}
+function G(a,b,d,c){a=window.getComputedStyle(a,d);var e=a.getPropertyValue("content");if(e!==""&&e!=="none"){var f=v();try{b.className=`${b.className} ${f}`}catch(k){return}e=document.createElement("style");var g=e.appendChild;d=`.${f}:${d}`;a.cssText?(c=a.getPropertyValue("content"),c=`${a.cssText} content: '${c.replace(/'|"/g,"")}';`):c=F(a,c);g.call(e,document.createTextNode(`${d}{${c}}`));b.appendChild(e)}};function H(a){return a.search(/^(data:)/)!==-1}function I(a,b,d){return t(function*(){const c=yield fetch(a,b);if(c.status===404)throw Error(`Resource "${c.url}" not found`);const e=yield c.blob();return new Promise((f,g)=>{const k=new FileReader;k.onerror=g;k.onloadend=()=>{try{f(d({o:c,result:k.result}))}catch(m){g(m)}};k.readAsDataURL(e)})})}const J={};function K(a,b,d){let c=a.replace(/\?.*/,"");d&&(c=a);/ttf|otf|eot|woff2?/i.test(c)&&(c=c.replace(/.*\//,""));return b?`[${b}]${c}`:c}
+function L(a,b,d){return t(function*(){const c=K(a,b,d.C);if(J[c]!=null)return J[c];d.u&&(a+=(/\?/.test(a)?"&":"?")+(new Date).getTime());let e;try{const f=yield I(a,d.i,({o:g,result:k})=>{b||(b=g.headers.get("Content-Type")||"");return k.split(/,/)[1]});e=`data:${b};base64,${f}`}catch(f){e=d.B||""}return J[c]=e})};const M={P:"application/font-woff",R:"application/font-woff",N:"application/font-truetype",v:"application/vnd.ms-fontobject",H:"image/png",F:"image/jpeg",D:"image/jpeg",A:"image/gif",M:"image/tiff",L:"image/svg+xml",O:"image/webp"};function N(a){return(a=/\.([^./]*?)$/g.exec(a))?a[1]:""};function O(a){return t(function*(){const b=a.toDataURL();return b==="data:,"?a.cloneNode(!1):B(b)})}function aa(a,b){return t(function*(){if(a.currentSrc){var d=document.createElement("canvas");const c=d.getContext("2d");d.width=a.clientWidth;d.height=a.clientHeight;c==null||c.drawImage(a,0,0,d.width,d.height);d=d.toDataURL();return B(d)}d=a.poster;d=yield L(d,M[N(d).toLowerCase()]||"",b);return B(d)})}
+function ba(a,b){return t(function*(){try{let d;if(a==null?0:(d=a.contentDocument)==null?0:d.body)return yield P(a.contentDocument.body,b,!0)}catch(d){}return a.cloneNode(!1)})}function ca(a,b){return t(function*(){return E(a,HTMLCanvasElement)?O(a):E(a,HTMLVideoElement)?aa(a,b):E(a,HTMLIFrameElement)?ba(a,b):a.cloneNode(a.tagName!=null&&a.tagName.toUpperCase()==="SVG")})}
+function da(a,b,d){return t(function*(){if(b.tagName!=null&&b.tagName.toUpperCase()==="SVG")return b;let c=[];if(a.tagName!=null&&a.tagName.toUpperCase()==="SLOT"&&a.assignedNodes)c=w(a.assignedNodes());else{let e;if(E(a,HTMLIFrameElement)&&((e=a.contentDocument)==null?0:e.body))c=w(a.contentDocument.body.childNodes);else{let f;c=w(((f=a.shadowRoot)!=null?f:a).childNodes)}}if(c.length===0||E(a,HTMLVideoElement))return b;yield c.reduce((e,f)=>e.then(()=>P(f,d)).then(g=>{g&&b.appendChild(g)}),Promise.resolve());
+return b})}function ea(a,b,d){const c=b.style;if(c){var e=window.getComputedStyle(a);e.cssText?(c.cssText=e.cssText,c.transformOrigin=e.transformOrigin):y(d).forEach(f=>{let g=e.getPropertyValue(f);f==="font-size"&&g.endsWith("px")&&(g=`${Math.floor(parseFloat(g.substring(0,g.length-2)))-.1}px`);E(a,HTMLIFrameElement)&&f==="display"&&g==="inline"&&(g="block");f==="d"&&b.getAttribute("d")&&(g=`path(${b.getAttribute("d")})`);c.setProperty(f,g,e.getPropertyPriority(f))})}}
+function fa(a,b){E(a,HTMLSelectElement)&&(b=Array.from(b.children).find(d=>a.value===d.getAttribute("value")))&&b.setAttribute("selected","")}
+function ha(a,b){return t(function*(){var d=a.querySelectorAll?a.querySelectorAll("use"):[];if(d.length===0)return a;var c={};for(var e=0;e<d.length;e++){var f=d[e].getAttribute("xlink:href");if(f){const g=document.querySelector(f);a.querySelector(f)||!g||c[f]||(c[f]=yield P(g,b,!0))}}d=Object.values(c);if(d.length){c=document.createElementNS("http://www.w3.org/1999/xhtml","svg");c.setAttribute("xmlns","http://www.w3.org/1999/xhtml");c.style.position="absolute";c.style.width="0";c.style.height="0";
+c.style.overflow="hidden";c.style.display="none";e=document.createElementNS("http://www.w3.org/1999/xhtml","defs");c.appendChild(e);for(f=0;f<d.length;f++)e.appendChild(d[f]);a.appendChild(c)}return a})}
+function P(a,b,d){return t(function*(){return d||!b.filter||b.filter(a)?Promise.resolve(a).then(c=>ca(c,b)).then(c=>da(a,c,b)).then(c=>{E(c,Element)&&(ea(a,c,b),G(a,c,":before",b),G(a,c,":after",b),E(a,HTMLTextAreaElement)&&(c.textContent=a.value),E(a,HTMLInputElement)&&c.setAttribute("value",a.value),fa(a,c));return c}).then(c=>ha(c,b)):null})};const Q=/url\((['"]?)([^'"]+?)\1\)/g,ia=/url\([^)]+\)\s*format\((["']?)([^"']+)\1\)/g,ja=/src:\s*(?:url\([^)]+\)\s*format\([^)]+\)[,;]\s*)+/g;function ka(a){const b=[];a.replace(Q,(d,c,e)=>{b.push(e);return d});return b.filter(d=>!H(d))}
+function la(a,b,d,c){return t(function*(){try{const e=d?(new URL(b,d||void 0)).toString():b;let f;f=yield L(e,M[N(b).toLowerCase()]||"",c);return a.replace(new RegExp(`(url\\(['"]?)(${b.replace(/([.*+?^${}()|\[\]\/\\])/g,"\\$1")})(['"]?\\))`,"g"),`$1${f}$3`)}catch(e){}return a})}function ma(a,{I:b}){return b?a.replace(ja,d=>{for(;;){const [c,,e]=ia.exec(d)||[],f=c,g=e;if(!g)return"";if(g===b)return`src: ${f};`}}):a}
+function R(a,b,d){return t(function*(){if(a.search(Q)===-1)return a;const c=ma(a,d);return ka(c).reduce((e,f)=>e.then(g=>la(g,f,b,d)),Promise.resolve(c))})};function S(a,b,d){return t(function*(){var c;const e=(c=b.style)==null?void 0:c.getPropertyValue(a);return e?(c=yield R(e,null,d),b.style.setProperty(a,c,b.style.getPropertyPriority(a)),!0):!1})}function na(a,b){return t(function*(){(yield S("background",a,b))||(yield S("background-image",a,b));(yield S("mask",a,b))||(yield S("-webkit-mask",a,b))||(yield S("mask-image",a,b))||(yield S("-webkit-mask-image",a,b))})}
+function oa(a,b){return t(function*(){const d=E(a,HTMLImageElement);if(d&&!H(a.src)||E(a,SVGImageElement)&&!H(a.href.baseVal)){var c=d?a.src:a.href.baseVal,e=yield L(c,M[N(c).toLowerCase()]||"",b);yield new Promise((f,g)=>{a.onload=f;a.onerror=b.m?(...k)=>{try{f(b.m(...k))}catch(m){g(m)}}:g;a.decode&&(a.decode=f);a.loading==="lazy"&&(a.loading="eager");d?(a.srcset="",a.src=e):a.href.baseVal=e})}})}
+function pa(a,b){return t(function*(){const d=w(a.childNodes).map(c=>T(c,b));yield Promise.all(d).then(()=>a)})}function T(a,b){return t(function*(){E(a,Element)&&(yield na(a,b),yield oa(a,b),yield pa(a,b))})};const U={};function V(a){return t(function*(){var b=U[a];if(b!=null)return b;b=yield(yield fetch(a)).text();b={url:a,cssText:b};return U[a]=b})}function W(a,b){return t(function*(){let d=a.cssText;const c=/url\(["']?([^"')]+)["']?\)/g,e=(d.match(/url\([^)]+\)/g)||[]).map(f=>t(function*(){let g=f.replace(c,"$1");g.startsWith("https://")||(g=(new URL(g,a.url)).href);return I(g,b.i,({result:k})=>{d=d.replace(f,`url(${k})`);return[f,k]})}));return Promise.all(e).then(()=>d)})}
+function X(a){if(a==null)return[];const b=[];a=a.replace(/(\/\*[\s\S]*?\*\/)/gi,"");for(var d=RegExp("((@.*?keyframes [\\s\\S]*?){([\\s\\S]*?}\\s*?)})","gi");;){var c=d.exec(a);if(c===null)break;b.push(c[0])}a=a.replace(d,"");d=/@import[\s\S]*?url\([^)]*\)[\s\S]*?;/gi;for(c=RegExp("((\\s*?(?:\\/\\*[\\s\\S]*?\\*\\/)?\\s*?@media[\\s\\S]*?){([\\s\\S]*?)}\\s*?})|(([\\s\\S]*?){([\\s\\S]*?)})","gi");;){let e=d.exec(a);if(e===null)if(e=c.exec(a),e===null)break;else d.lastIndex=c.lastIndex;else c.lastIndex=
+d.lastIndex;b.push(e[0])}return b}
+function qa(a,b){return t(function*(){const d=[],c=[];a.forEach(e=>{if("cssRules"in e)try{w(e.cssRules||[]).forEach((f,g)=>{if(f.type===CSSRule.IMPORT_RULE){let k=g+1;f=V(f.href).then(m=>W(m,b)).then(m=>X(m).forEach(q=>{try{e.insertRule(q,q.startsWith("@import")?k+=1:e.cssRules.length)}catch(Da){}})).catch(()=>{});c.push(f)}})}catch(f){const g=a.find(k=>k.href==null)||document.styleSheets[0];e.href!=null&&c.push(V(e.href).then(k=>W(k,b)).then(k=>X(k).forEach(m=>{g.insertRule(m,g.cssRules.length)})).catch(()=>
+{}))}});return Promise.all(c).then(()=>{a.forEach(e=>{if("cssRules"in e)try{w(e.cssRules||[]).forEach(f=>{d.push(f)})}catch(f){}});return d})})}function ra(a){return a.filter(b=>b.type===CSSRule.FONT_FACE_RULE).filter(b=>b.style.getPropertyValue("src").search(Q)!==-1)}function sa(a,b){return t(function*(){if(a.ownerDocument==null)throw Error("Provided element is not within a Document");var d=w(a.ownerDocument.styleSheets);d=yield qa(d,b);return ra(d)})}
+function ta(a){function b(c){(c.style.fontFamily||getComputedStyle(c).fontFamily).split(",").forEach(e=>{d.add(e.trim().replace(/["']/g,""))});Array.from(c.children).forEach(e=>{e instanceof HTMLElement&&b(e)})}const d=new Set;b(a);return d}function ua(a,b){return t(function*(){const d=yield sa(a,b),c=ta(a);return(yield Promise.all(d.filter(e=>c.has(e.style.fontFamily.trim().replace(/["']/g,""))).map(e=>R(e.cssText,e.parentStyleSheet?e.parentStyleSheet.href:null,b)))).join("\n")})}
+function va(a,b){return t(function*(){const d=b.j!=null?b.j:b.K?null:yield ua(a,b);if(d){const c=document.createElement("style");c.appendChild(document.createTextNode(d));a.firstChild?a.insertBefore(c,a.firstChild):a.appendChild(c)}})};function wa(a,b={}){return t(function*(){const {width:d,height:c}=A(a,b),e=yield P(a,b,!0);yield va(e,b);yield T(e,b);u(e,b);return yield D(e,d,c)})}
+function xa(a,b={}){return t(function*(){const {width:d,height:c}=A(a,b);var e=yield wa(a,b);e=yield B(e);const f=document.createElement("canvas"),g=f.getContext("2d"),k=b.G||window.devicePixelRatio||1,m=b.h||d,q=b.g||c;f.width=m*k;f.height=q*k;!b.J&&(f.width>16384||f.height>16384)&&(f.width>16384&&f.height>16384?f.width>f.height?(f.height*=16384/f.width,f.width=16384):(f.width*=16384/f.height,f.height=16384):f.width>16384?(f.height*=16384/f.width,f.width=16384):(f.width*=16384/f.height,f.height=
+16384));f.style.width=`${m}`;f.style.height=`${q}`;b.backgroundColor&&(g.fillStyle=b.backgroundColor,g.fillRect(0,0,f.width,f.height));g.drawImage(e,0,0,f.width,f.height);return f})}function ya(a,b={}){return t(function*(){return(yield xa(a,b)).toDataURL()})};const za=["gemini.google.com","corp.google.com","proxy.googlers.com"];function Y(){return document.body.querySelectorAll('[class*="animate"]').length>0}function Z(a){return t(function*(){try{return yield ya(a,{h:a.offsetWidth,g:a.offsetHeight})}catch(d){var b=a.offsetHeight;const c=document.createElement("canvas");c.width=a.offsetWidth;c.height=b;return c.toDataURL("image/png")}})}
+function Aa(){return t(function*(){const a=document.body.offsetWidth,b=document.body.offsetHeight,d=document.body.cloneNode(!0);d.querySelectorAll('[class*="animate"]').forEach(c=>{c.classList.remove(...Array.from(c.classList).filter(e=>e.startsWith("animate")))});d.style.width=`${a}px`;d.style.height=`${b}px`;return d})}
+function Ba(a){return t(function*(){let b=document.body;if(Y()){var d=yield Aa();b=d;document.body.appendChild(d)}d=yield Z(b);Y()&&document.body.removeChild(b);window.parent.postMessage({type:"SEND_SCREENSHOT",image:d,topOffset:document.documentElement.scrollTop},a.origin)})}function Ca(a){return t(function*(){const b={type:"SEND_SCREENSHOT_FOR_DATA_VISUALIZATION",image:yield Z(document.body),topOffset:0};window.parent.postMessage(b,a.origin)})}
+window.addEventListener("message",a=>t(function*(){if(za.some(d=>a.origin.includes(d))){var b=a.data;b&&(b.type==="MAKE_SCREENSHOT"&&(yield Ba(a)),b.type==="MAKE_SCREENSHOT_FOR_DATA_VISUALIZATION"&&(yield Ca(a)))}}));
+})();</script><script>(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script>
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script>((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-2.5-flash","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-2.5-flash-image-preview","imageTransformModelName":"gemini-3-pro-image-preview-11-2025","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"]})</script><script>(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script>(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Production Studio - 影视制片统筹工作台</title>
+    <!-- 引入 Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- 引入字体 -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800;900&amp;family=JetBrains+Mono:wght@400;700;900&amp;display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-base: #09090b;
+            --bg-panel: #18181b;
+            --bg-kanban: #121214;
+            --border-dim: #27272a;
+            --accent: #f59e0b; 
+            --ai-purple: #a855f7;
+        }
+
+        body { 
+            background-color: var(--bg-base); 
+            color: #e4e4e7; 
+            font-family: 'Inter', system-ui, sans-serif; 
+            overflow: hidden; 
+        }
+
+        .font-mono-num { font-family: 'JetBrains Mono', monospace; }
+        .glass-header { background: rgba(9, 9, 11, 0.85); backdrop-filter: blur(16px); border-bottom: 1px solid var(--border-dim); }
+
+        /* ------------------ 全局通用组件 ------------------ */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #52525b; }
+
+        input, textarea { background: rgba(0,0,0,0.2); border: 1px solid var(--border-dim); border-radius: 4px; padding: 6px 8px; color: #fff; width: 100%; transition: all 0.2s; outline: none; }
+        textarea { resize: none; overflow-y: hidden !important; }
+        input:focus, textarea:focus { border-color: var(--accent); background: rgba(0,0,0,0.4); }
+
+        .nav-btn { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 800; color: #e4e4e7; background: #27272a; border: 1px solid #3f3f46; transition: all 0.2s; cursor: pointer; text-transform: uppercase; letter-spacing: 0.05em; }
+        .nav-btn:hover { background: #3f3f46; transform: translateY(-1px); border-color: #71717a; }
+        .nav-btn-primary { background: var(--accent); color: #000; border: none; }
+        .nav-btn-primary:hover { background: #fbbf24; }
+
+        .image-gen-loading { position: absolute; inset: 0; background: rgba(0,0,0,0.85); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 30; backdrop-filter: blur(4px); }
+
+        /* ------------------ 锁屏过渡动画 ------------------ */
+        .fade-enter {
+            opacity: 0;
+            transform: scale(0.98);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .fade-enter-active {
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        /* ------------------ 模块 1: 排期看板专用样式 ------------------ */
+        .shot-card { background: var(--bg-panel); border: 1px solid var(--border-dim); transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); cursor: grab; }
+        .shot-card:active { cursor: grabbing; }
+        .shot-card:hover { border-color: #52525b; transform: translateY(-2px); box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.5); }
+
+        .shot-strip { background: #1e1e21; border: 1px solid #3f3f46; transition: all 0.2s ease; cursor: grab; }
+        .shot-strip:active { cursor: grabbing; }
+        .shot-strip:hover { border-color: var(--accent); background: #27272a; transform: translateX(2px); }
+
+        .scroll-y-hidden::-webkit-scrollbar { width: 5px; }
+        .kanban-block { background: #121214; border: 1px solid #27272a; border-radius: 12px; width: 100%; flex-shrink: 0; display: flex; flex-direction: column; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5); min-height: 120px; }
+        .drag-over-zone { background-color: rgba(245, 158, 11, 0.08) !important; border: 1px dashed var(--accent) !important; }
+
+        /* 左侧详细卡片画廊 */
+        .storyboard-gallery::-webkit-scrollbar { height: 6px; }
+        .storyboard-zone { width: 140px; height: 105px; border: 1px solid var(--border-dim); border-radius: 6px; background: #000; position: relative; overflow: hidden; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+        .storyboard-zone img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        /* 徽章与星星 */
+        .scene-info-badge { background: rgba(0,0,0,0.3); border: 1px solid var(--border-dim); border-radius: 4px; padding: 0 8px; height: 24px; display: flex; align-items: center; font-size: 10px; color: var(--text-muted); }
+        .star-rating { color: #4b5563; transition: color 0.2s; cursor: pointer; font-size: 14px; }
+        .star-rating.active { color: #fbbf24; }
+
+        /* ------------------ 模块 2: 通告单生成器专用样式 ------------------ */
+        .panel-input { background: rgba(0,0,0,0.3); border: 1px solid var(--border-dim); border-radius: 6px; padding: 8px 10px; color: #fff; width: 100%; font-size: 12px; }
+        .panel-label { font-size: 10px; font-weight: 800; text-transform: uppercase; color: #8b949e; margin-bottom: 4px; display: block; letter-spacing: 0.05em; }
+
+        .call-sheet-paper {
+            background: white; color: black; width: 210mm; min-height: 297mm; padding: 15mm;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5); font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            margin: 20px auto;
+        }
+        .cs-table { width: 100%; border-collapse: collapse; margin-bottom: 12px; font-size: 10px; }
+        .cs-table th, .cs-table td { border: 1px solid #000; padding: 4px 6px; vertical-align: top; }
+        .cs-table th { background-color: #e5e7eb; font-weight: bold; text-transform: uppercase; text-align: left; }
+        .cs-table-dark th { background-color: #1f2937; color: white; border-color: #1f2937; }
+        .cs-header-box { border: 2px solid #000; padding: 10px; text-align: center; margin-bottom: 12px; }
+        .cs-section-title { font-size: 11px; font-weight: 900; background: #000; color: #fff; padding: 4px 8px; text-transform: uppercase; display: inline-block; margin-bottom: 4px; }
+        
+        [contenteditable="true"] { outline: none; transition: background 0.2s; }
+        [contenteditable="true"]:hover { background: rgba(245, 158, 11, 0.1); cursor: text; }
+        [contenteditable="true"]:focus { background: rgba(245, 158, 11, 0.2); border-bottom: 1px dashed var(--accent); }
+
+        /* 🖨️ 打印终极修复隔离控制 */
+        @media print {
+            @page { size: A4 portrait; margin: 15mm; }
+            * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+            html, body { height: auto !important; overflow: visible !important; display: block !important; background: white !important; }
+            #header-nav, #view-schedule, #left-panel, #mainFooter, .no-print, #toast, #lock-screen { display: none !important; }
+            #main-app { display: block !important; }
+            #view-callsheet { display: block !important; height: auto !important; overflow: visible !important; }
+            #right-workspace { display: block !important; padding: 0 !important; overflow: visible !important; background: white !important; width: 100% !important; height: auto !important; }
+            .call-sheet-paper { box-shadow: none !important; margin: 0 !important; padding: 0 !important; width: 100% !important; min-height: auto !important; page-break-after: avoid; }
+            [contenteditable="true"]:hover { background: none !important; }
+            [contenteditable="true"]:focus { border: none !important; }
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:ui-sans-serif, system-ui, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.bottom-12{bottom:3rem}.bottom-4{bottom:1rem}.left-0{left:0px}.left-1\/2{left:50%}.left-4{left:1rem}.right-0{right:0px}.right-4{right:1rem}.top-0{top:0px}.-right-1\.5{right:-0.375rem}.-top-1\.5{top:-0.375rem}.top-4{top:1rem}.z-10{z-index:10}.z-20{z-index:20}.z-50{z-index:50}.z-\[10000\]{z-index:10000}.z-\[9999\]{z-index:9999}.col-span-2{grid-column:span 2 / span 2}.mx-auto{margin-left:auto;margin-right:auto}.mb-1{margin-bottom:0.25rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mb-6{margin-bottom:1.5rem}.mb-8{margin-bottom:2rem}.ml-2{margin-left:0.5rem}.mt-1{margin-top:0.25rem}.mt-1\.5{margin-top:0.375rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-8{margin-top:2rem}.mt-0\.5{margin-top:0.125rem}.mb-2{margin-bottom:0.5rem}.ml-1{margin-left:0.25rem}.mt-3{margin-top:0.75rem}.flex{display:flex}.grid{display:grid}.hidden{display:none}.h-1{height:0.25rem}.h-1\.5{height:0.375rem}.h-1\/2{height:50%}.h-10{height:2.5rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-3{height:0.75rem}.h-32{height:8rem}.h-4{height:1rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.h-screen{height:100vh}.h-14{height:3.5rem}.h-full{height:100%}.min-h-\[50px\]{min-height:50px}.min-h-\[80px\]{min-height:80px}.min-h-\[30px\]{min-height:30px}.w-1\.5{width:0.375rem}.w-1\/2{width:50%}.w-10{width:2.5rem}.w-16{width:4rem}.w-2{width:0.5rem}.w-3{width:0.75rem}.w-4{width:1rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-8{width:2rem}.w-\[30\%\]{width:30%}.w-\[35\%\]{width:35%}.w-\[40\%\]{width:40%}.w-full{width:100%}.\!w-12{width:3rem !important}.\!w-24{width:6rem !important}.\!w-28{width:7rem !important}.w-20{width:5rem}.min-w-\[320px\]{min-width:320px}.min-w-0{min-width:0px}.max-w-\[400px\]{max-width:400px}.max-w-sm{max-width:24rem}.flex-1{flex:1 1 0%}.shrink-0{flex-shrink:0}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-10{--tw-translate-y:2.5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-20{--tw-translate-y:5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.scale-95{--tw-scale-x:.95;--tw-scale-y:.95;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@keyframes pulse{50%{opacity:.5}}.animate-pulse{animation:pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite}.cursor-default{cursor:default}.cursor-grab{cursor:grab}.grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1{gap:0.25rem}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-x-2{column-gap:0.5rem}.gap-y-0\.5{row-gap:0.125rem}.space-y-3 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.75rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.75rem * var(--tw-space-y-reverse))}.space-y-5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.25rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.25rem * var(--tw-space-y-reverse))}.space-y-6 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1.5rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1.5rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.overflow-x-hidden{overflow-x:hidden}.truncate{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.whitespace-pre-wrap{white-space:pre-wrap}.rounded{border-radius:0.25rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.rounded-md{border-radius:0.375rem}.rounded-b-xl{border-bottom-right-radius:0.75rem;border-bottom-left-radius:0.75rem}.rounded-t-xl{border-top-left-radius:0.75rem;border-top-right-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-b{border-bottom-width:1px}.border-b-2{border-bottom-width:2px}.border-r{border-right-width:1px}.border-t{border-top-width:1px}.border-none{border-style:none}.\!border-zinc-800{--tw-border-opacity:1 !important;border-color:rgb(39 39 42 / var(--tw-border-opacity, 1)) !important}.border-amber-900\/30{border-color:rgb(120 53 15 / 0.3)}.border-black{--tw-border-opacity:1;border-color:rgb(0 0 0 / var(--tw-border-opacity, 1))}.border-gray-300{--tw-border-opacity:1;border-color:rgb(209 213 219 / var(--tw-border-opacity, 1))}.border-red-900\/30{border-color:rgb(127 29 29 / 0.3)}.border-red-900\/50{border-color:rgb(127 29 29 / 0.5)}.border-zinc-600{--tw-border-opacity:1;border-color:rgb(82 82 91 / var(--tw-border-opacity, 1))}.border-zinc-700{--tw-border-opacity:1;border-color:rgb(63 63 70 / var(--tw-border-opacity, 1))}.border-zinc-800{--tw-border-opacity:1;border-color:rgb(39 39 42 / var(--tw-border-opacity, 1))}.border-amber-500\/30{border-color:rgb(245 158 11 / 0.3)}.border-purple-500\/30{border-color:rgb(168 85 247 / 0.3)}.border-zinc-500{--tw-border-opacity:1;border-color:rgb(113 113 122 / var(--tw-border-opacity, 1))}.border-amber-500{--tw-border-opacity:1;border-color:rgb(245 158 11 / var(--tw-border-opacity, 1))}.\!bg-transparent{background-color:transparent !important}.bg-\[\#09090b\]{--tw-bg-opacity:1;background-color:rgb(9 9 11 / var(--tw-bg-opacity, 1))}.bg-\[\#0c0c0e\]{--tw-bg-opacity:1;background-color:rgb(12 12 14 / var(--tw-bg-opacity, 1))}.bg-\[\#121214\]{--tw-bg-opacity:1;background-color:rgb(18 18 20 / var(--tw-bg-opacity, 1))}.bg-\[\#18181b\]{--tw-bg-opacity:1;background-color:rgb(24 24 27 / var(--tw-bg-opacity, 1))}.bg-\[\#27272a\]{--tw-bg-opacity:1;background-color:rgb(39 39 42 / var(--tw-bg-opacity, 1))}.bg-amber-500{--tw-bg-opacity:1;background-color:rgb(245 158 11 / var(--tw-bg-opacity, 1))}.bg-amber-900\/10{background-color:rgb(120 53 15 / 0.1)}.bg-black{--tw-bg-opacity:1;background-color:rgb(0 0 0 / var(--tw-bg-opacity, 1))}.bg-black\/80{background-color:rgb(0 0 0 / 0.8)}.bg-gray-50{--tw-bg-opacity:1;background-color:rgb(249 250 251 / var(--tw-bg-opacity, 1))}.bg-green-500{--tw-bg-opacity:1;background-color:rgb(34 197 94 / var(--tw-bg-opacity, 1))}.bg-red-500\/10{background-color:rgb(239 68 68 / 0.1)}.bg-red-600{--tw-bg-opacity:1;background-color:rgb(220 38 38 / var(--tw-bg-opacity, 1))}.bg-zinc-700{--tw-bg-opacity:1;background-color:rgb(63 63 70 / var(--tw-bg-opacity, 1))}.bg-zinc-800{--tw-bg-opacity:1;background-color:rgb(39 39 42 / var(--tw-bg-opacity, 1))}.bg-zinc-900{--tw-bg-opacity:1;background-color:rgb(24 24 27 / var(--tw-bg-opacity, 1))}.bg-\[\#111113\]{--tw-bg-opacity:1;background-color:rgb(17 17 19 / var(--tw-bg-opacity, 1))}.bg-\[\#1e1e21\]{--tw-bg-opacity:1;background-color:rgb(30 30 33 / var(--tw-bg-opacity, 1))}.bg-amber-900\/30{background-color:rgb(120 53 15 / 0.3)}.bg-black\/40{background-color:rgb(0 0 0 / 0.4)}.bg-black\/60{background-color:rgb(0 0 0 / 0.6)}.bg-purple-900\/20{background-color:rgb(88 28 135 / 0.2)}.bg-red-900\/10{background-color:rgb(127 29 29 / 0.1)}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-amber-600{--tw-gradient-from:#d97706 var(--tw-gradient-from-position);--tw-gradient-to:rgb(217 119 6 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.to-amber-400{--tw-gradient-to:#fbbf24 var(--tw-gradient-to-position)}.object-cover{object-fit:cover}.p-1{padding:0.25rem}.p-2{padding:0.5rem}.p-3{padding:0.75rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.p-6{padding:1.5rem}.p-8{padding:2rem}.\!p-1{padding:0.25rem !important}.px-1{padding-left:0.25rem;padding-right:0.25rem}.px-2{padding-left:0.5rem;padding-right:0.5rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-4{padding-left:1rem;padding-right:1rem}.px-6{padding-left:1.5rem;padding-right:1.5rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-0\.5{padding-top:0.125rem;padding-bottom:0.125rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-1{padding-bottom:0.25rem}.pb-32{padding-bottom:8rem}.pr-2{padding-right:0.5rem}.pb-2{padding-bottom:0.5rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-4xl{font-size:2.25rem;line-height:2.5rem}.text-\[10px\]{font-size:10px}.text-\[11px\]{font-size:11px}.text-\[9px\]{font-size:9px}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.\!text-\[9px\]{font-size:9px !important}.\!text-xs{font-size:0.75rem !important;line-height:1rem !important}.text-\[8px\]{font-size:8px}.font-black{font-weight:900}.font-bold{font-weight:700}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-none{line-height:1}.leading-relaxed{line-height:1.625}.tracking-\[0\.2em\]{letter-spacing:0.2em}.tracking-\[0\.3em\]{letter-spacing:0.3em}.tracking-tighter{letter-spacing:-0.05em}.tracking-wide{letter-spacing:0.025em}.tracking-widest{letter-spacing:0.1em}.text-amber-500{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.text-amber-500\/70{color:rgb(245 158 11 / 0.7)}.text-black{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.text-gray-500{--tw-text-opacity:1;color:rgb(107 114 128 / var(--tw-text-opacity, 1))}.text-red-400{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.text-red-400\/80{color:rgb(248 113 113 / 0.8)}.text-red-500{--tw-text-opacity:1;color:rgb(239 68 68 / var(--tw-text-opacity, 1))}.text-white{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.text-zinc-300{--tw-text-opacity:1;color:rgb(212 212 216 / var(--tw-text-opacity, 1))}.text-zinc-400{--tw-text-opacity:1;color:rgb(161 161 170 / var(--tw-text-opacity, 1))}.text-zinc-500{--tw-text-opacity:1;color:rgb(113 113 122 / var(--tw-text-opacity, 1))}.text-zinc-600{--tw-text-opacity:1;color:rgb(82 82 91 / var(--tw-text-opacity, 1))}.text-zinc-700{--tw-text-opacity:1;color:rgb(63 63 70 / var(--tw-text-opacity, 1))}.text-blue-300{--tw-text-opacity:1;color:rgb(147 197 253 / var(--tw-text-opacity, 1))}.text-blue-500{--tw-text-opacity:1;color:rgb(59 130 246 / var(--tw-text-opacity, 1))}.text-purple-400{--tw-text-opacity:1;color:rgb(192 132 252 / var(--tw-text-opacity, 1))}.text-blue-800{--tw-text-opacity:1;color:rgb(30 64 175 / var(--tw-text-opacity, 1))}.text-gray-600{--tw-text-opacity:1;color:rgb(75 85 99 / var(--tw-text-opacity, 1))}.opacity-0{opacity:0}.opacity-40{opacity:0.4}.opacity-80{opacity:0.8}.opacity-90{opacity:0.9}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(245\2c 158\2c 11\2c 0\.2\)\]{--tw-shadow:0 0 15px rgba(245,158,11,0.2);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_0_15px_rgba\(245\2c 158\2c 11\2c 0\.3\)\]{--tw-shadow:0 0 15px rgba(245,158,11,0.3);--tw-shadow-colored:0 0 15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_10px_30px_rgba\(0\2c 0\2c 0\2c 0\.8\)\]{--tw-shadow:0 10px 30px rgba(0,0,0,0.8);--tw-shadow-colored:0 10px 30px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_20px_50px_rgba\(0\2c 0\2c 0\2c 0\.8\)\]{--tw-shadow:0 20px 50px rgba(0,0,0,0.8);--tw-shadow-colored:0 20px 50px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-lg{--tw-shadow:0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 10px 15px -3px var(--tw-shadow-color), 0 4px 6px -4px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-xl{--tw-shadow:0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 20px 25px -5px var(--tw-shadow-color), 0 8px 10px -6px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-amber-900\/20{--tw-shadow-color:rgb(120 53 15 / 0.2);--tw-shadow:var(--tw-shadow-colored)}.shadow-red-900\/20{--tw-shadow-color:rgb(127 29 29 / 0.2);--tw-shadow:var(--tw-shadow-colored)}.outline-none{outline:2px solid transparent;outline-offset:2px}.drop-shadow-\[0_0_8px_rgba\(245\2c 158\2c 11\2c 0\.5\)\]{--tw-drop-shadow:drop-shadow(0 0 8px rgba(245,158,11,0.5));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-xl{--tw-backdrop-blur:blur(24px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur{--tw-backdrop-blur:blur(8px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-colors{transition-property:color, background-color, border-color, fill, stroke, -webkit-text-decoration-color;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, -webkit-text-decoration-color;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-opacity{transition-property:opacity;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.placeholder\:tracking-widest::placeholder{letter-spacing:0.1em}.placeholder\:text-zinc-700::placeholder{--tw-text-opacity:1;color:rgb(63 63 70 / var(--tw-text-opacity, 1))}.hover\:\!border-amber-500\/50:hover{border-color:rgb(245 158 11 / 0.5) !important}.hover\:border-red-900\/50:hover{border-color:rgb(127 29 29 / 0.5)}.hover\:border-amber-500\/50:hover{border-color:rgb(245 158 11 / 0.5)}.hover\:bg-amber-400:hover{--tw-bg-opacity:1;background-color:rgb(251 191 36 / var(--tw-bg-opacity, 1))}.hover\:bg-amber-600:hover{--tw-bg-opacity:1;background-color:rgb(217 119 6 / var(--tw-bg-opacity, 1))}.hover\:bg-red-500:hover{--tw-bg-opacity:1;background-color:rgb(239 68 68 / var(--tw-bg-opacity, 1))}.hover\:bg-red-900\/30:hover{background-color:rgb(127 29 29 / 0.3)}.hover\:bg-zinc-800:hover{--tw-bg-opacity:1;background-color:rgb(39 39 42 / var(--tw-bg-opacity, 1))}.hover\:bg-zinc-700:hover{--tw-bg-opacity:1;background-color:rgb(63 63 70 / var(--tw-bg-opacity, 1))}.hover\:text-amber-500:hover{--tw-text-opacity:1;color:rgb(245 158 11 / var(--tw-text-opacity, 1))}.hover\:text-black:hover{--tw-text-opacity:1;color:rgb(0 0 0 / var(--tw-text-opacity, 1))}.hover\:text-red-400:hover{--tw-text-opacity:1;color:rgb(248 113 113 / var(--tw-text-opacity, 1))}.hover\:text-white:hover{--tw-text-opacity:1;color:rgb(255 255 255 / var(--tw-text-opacity, 1))}.hover\:text-purple-300:hover{--tw-text-opacity:1;color:rgb(216 180 254 / var(--tw-text-opacity, 1))}.hover\:opacity-100:hover{opacity:1}.focus\:border-amber-500:focus{--tw-border-opacity:1;border-color:rgb(245 158 11 / var(--tw-border-opacity, 1))}.focus\:ring-1:focus{--tw-ring-offset-shadow:var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);--tw-ring-shadow:var(--tw-ring-inset) 0 0 0 calc(1px + var(--tw-ring-offset-width)) var(--tw-ring-color);box-shadow:var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000)}.focus\:ring-amber-500:focus{--tw-ring-opacity:1;--tw-ring-color:rgb(245 158 11 / var(--tw-ring-opacity, 1))}.group:hover .group-hover\:opacity-100{opacity:1}@media (min-width: 640px){.sm\:inline{display:inline}}@media (min-width: 768px){.md\:h-full{height:100%}.md\:w-\[40\%\]{width:40%}.md\:w-\[60\%\]{width:60%}.md\:flex-row{flex-direction:row}}</style></head>
+<body class="h-screen w-full relative">
+
+    <!-- ==================== 锁定屏幕 (影视工业暗黑风) ==================== -->
+    <div id="lock-screen" class="absolute inset-0 z-[10000] flex items-center justify-center p-4 bg-[#09090b] backdrop-blur-xl hidden">
+        <div class="bg-[#121214] p-8 rounded-xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] max-w-sm w-full text-center border border-zinc-800 relative overflow-hidden">
+            <!-- 顶部高光点缀 -->
+            <div class="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-amber-600 to-amber-400 opacity-80"></div>
+
+            <div class="mx-auto bg-[#18181b] w-16 h-16 flex items-center justify-center rounded-xl mb-6 shadow-inner border border-zinc-800">
+                <svg class="w-8 h-8 text-amber-500 drop-shadow-[0_0_8px_rgba(245,158,11,0.5)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+            </div>
+            
+            <h2 class="text-2xl font-black text-white mb-1 uppercase tracking-widest font-mono-num">System Locked</h2>
+            <p class="text-zinc-500 mb-8 text-[10px] font-bold uppercase tracking-[0.2em]">Authentication Required</p>
+            
+            <div class="space-y-5">
+                <div>
+                    <input type="password" id="secret-key-input" placeholder="ACCESS KEY" class="w-full px-4 py-3 bg-[#09090b] rounded-lg border border-zinc-800 focus:ring-1 focus:ring-amber-500 focus:border-amber-500 outline-none transition-all text-center tracking-[0.3em] text-lg font-mono-num text-amber-500 placeholder:text-zinc-700 placeholder:tracking-widest">
+                </div>
+                <div id="error-message" class="text-red-500 text-[10px] hidden font-bold tracking-widest uppercase flex items-center justify-center gap-1">
+                    <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    Invalid Key / Access Denied
+                </div>
+                <button onclick="checkKey()" class="w-full bg-amber-500 hover:bg-amber-400 text-black font-black py-3 px-4 rounded-lg transition-colors shadow-[0_0_15px_rgba(245,158,11,0.2)] flex items-center justify-center gap-2 text-xs uppercase tracking-widest">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M13 10V3L4 14h7v8l9-11h-7z"></path></svg>
+                    Authorize Session
+                </button>
+            </div>
+            
+            <div class="mt-8 text-[9px] text-zinc-700 font-mono-num uppercase tracking-widest">
+                Prod Studio OS v1.0.4
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 系统主界面 ==================== -->
+    <div id="main-app" class="h-screen w-full flex-col flex fade-enter fade-enter-active">
+        <!-- 顶部统一控制中心 -->
+        <header id="header-nav" class="h-16 flex items-center justify-between px-6 glass-header sticky top-0 z-50 shrink-0">
+            <div class="flex items-center gap-4">
+                <div class="w-8 h-8 bg-amber-500 rounded flex items-center justify-center shadow-[0_0_15px_rgba(245,158,11,0.3)]">
+                    <svg class="w-5 h-5 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                </div>
+                <div class="flex flex-col">
+                    <h1 class="text-lg font-black tracking-tighter text-white uppercase leading-none">Prod Studio</h1>
+                    <span id="displayProjectTitle" class="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">无标题</span>
+                </div>
+            </div>
+            
+            <!-- 核心切换器 -->
+            <div class="flex items-center bg-zinc-900 rounded-lg p-1 border border-zinc-800 shadow-inner">
+                <button id="tab-schedule" onclick="window.switchMainView('schedule')" class="px-4 py-1.5 text-xs font-black uppercase rounded bg-zinc-700 text-white transition shadow-sm">排期看板</button>
+                <button id="tab-callsheet" onclick="window.switchMainView('callsheet')" class="px-4 py-1.5 text-xs font-black uppercase rounded text-zinc-500 hover:text-white transition">生成通告单</button>
+            </div>
+
+            <div class="flex items-center gap-3">
+                <button onclick="window.openConfirmModal()" class="nav-btn hover:bg-red-900/30 hover:text-red-400 hover:border-red-900/50 transition-colors border-red-900/30 text-red-400/80">🗑️ 清空</button>
+                <input type="file" id="importInput" accept=".json" class="hidden" onchange="window.handleImport(event)">
+                <button onclick="window.triggerImport()" class="nav-btn">📂 导入工程 JSON</button>
+                <button onclick="window.saveProject()" class="nav-btn">💾 暂存/导出</button>
+                <button id="btnPrint" onclick="window.printCallSheet()" class="nav-btn nav-btn-primary shadow-lg shadow-amber-900/20 hidden">🖨️ 打印通告单</button>
+                <!-- 退出锁定按钮 -->
+                <button onclick="window.lockApp()" class="nav-btn ml-2 !bg-transparent !border-zinc-800 text-zinc-500 hover:text-amber-500 hover:!border-amber-500/50" title="锁定系统">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- ==================== 视图 1：排期看板工作台 ==================== -->
+        <main id="view-schedule" class="flex-1 flex flex-col md:flex-row overflow-hidden w-full">
+            <!-- 左侧：分镜池 -->
+            <div class="w-full md:w-[40%] h-1/2 md:h-full flex flex-col border-r border-zinc-800 bg-black relative drag-over-zone" ondragover="window.allowDrop(event)" ondrop="window.dropScene(event, null)">
+                <div class="bg-[#121214] border-b border-zinc-800 px-6 py-3 flex justify-between items-center shrink-0 shadow-sm z-10">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-black tracking-widest uppercase text-zinc-400">待排期 (<span id="stat-unassigned" class="text-white text-sm">0</span>)</span>
+                    </div>
+                    <div class="flex items-center gap-1 bg-zinc-900 p-1 rounded-lg border border-zinc-800">
+                        <button onclick="window.setPoolSort('default')" id="sort-default" class="px-3 py-1 text-[10px] font-black rounded text-zinc-500 hover:text-white transition">顺序</button>
+                        <button onclick="window.setPoolSort('location')" id="sort-location" class="px-3 py-1 text-[10px] font-black rounded bg-zinc-700 text-white transition">按地点</button>
+                        <button onclick="window.setPoolSort('cast')" id="sort-cast" class="px-3 py-1 text-[10px] font-black rounded text-zinc-500 hover:text-white transition">按人物</button>
+                    </div>
+                </div>
+                
+                <div id="emptyStateSchedule" class="absolute inset-0 flex flex-col items-center justify-center bg-black z-20 opacity-40">
+                    <svg class="w-16 h-16 text-zinc-600 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                    <h2 class="text-lg font-black tracking-widest uppercase text-zinc-500">请先导入工程数据</h2>
+                </div>
+                
+                <div id="libraryContainer" class="flex-1 scroll-y-hidden overflow-y-auto p-5 flex flex-col pb-32"></div>
+
+                <!-- 多选批量操作栏 -->
+                <div id="batchActionBar" class="absolute bottom-4 left-4 right-4 bg-zinc-800 border border-zinc-600 rounded-xl p-3 flex justify-between items-center shadow-[0_10px_30px_rgba(0,0,0,0.8)] transition-all duration-300 translate-y-20 opacity-0 pointer-events-none z-50">
+                    <div class="flex items-center gap-2">
+                        <div class="bg-amber-500 text-black w-6 h-6 rounded-full flex items-center justify-center font-black text-xs" id="batchCount">0</div>
+                        <span class="text-[10px] font-bold text-white tracking-widest uppercase hidden sm:inline">已选镜头</span>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <select id="batchDaySelect" class="bg-black border border-zinc-600 rounded text-xs text-white px-2 py-1.5 outline-none focus:border-amber-500">
+                            <!-- JS 注入天数选项 -->
+                        </select>
+                        <button onclick="window.batchAssign()" class="bg-amber-500 hover:bg-amber-400 text-black text-xs font-black px-4 py-1.5 rounded transition shadow-lg">移入</button>
+                        <button onclick="window.clearSelection()" class="text-zinc-400 hover:text-white text-xs px-2 py-1">取消</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 右侧：竖向时间线排期 -->
+            <div class="w-full md:w-[60%] h-1/2 md:h-full flex flex-col bg-[#0c0c0e]">
+                <div class="bg-[#121214] border-b border-zinc-800 px-6 py-3 flex justify-between items-center shrink-0 shadow-sm z-10">
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-black tracking-widest uppercase text-amber-500">拍摄日轨道 (Shooting Days)</span>
+                    </div>
+                    <button onclick="window.addDay()" class="text-[10px] font-black bg-zinc-800 hover:bg-amber-600 hover:text-black text-zinc-300 px-3 py-1.5 rounded transition">
+                        ＋ 添加一天
+                    </button>
+                </div>
+                <div id="scheduleContainer" class="flex-1 overflow-y-auto overflow-x-hidden p-6 flex flex-col gap-6 pb-32"></div>
+            </div>
+        </main>
+
+        <!-- ==================== 视图 2：通告单生成器 ==================== -->
+        <main id="view-callsheet" class="flex-1 flex overflow-hidden w-full hidden">
+            <!-- 左侧：参数控制 -->
+            <aside id="left-panel" class="w-[35%] min-w-[320px] max-w-[400px] flex flex-col border-r border-zinc-800 bg-[#121214] z-10 shadow-xl">
+                <div class="p-4 border-b border-zinc-800 bg-[#18181b] shrink-0">
+                    <label class="panel-label">要生成通告的拍摄日</label>
+                    <div id="daySelector" class="flex flex-wrap gap-2 mt-2"><div class="text-xs text-zinc-600 font-bold">无排期数据</div></div>
+                </div>
+                <div class="flex-1 overflow-y-auto p-5 space-y-6">
+                    <div>
+                        <h3 class="text-xs font-black text-amber-500 uppercase tracking-widest mb-3 border-b border-zinc-800 pb-1">大盘参数</h3>
+                        <div class="space-y-3">
+                            <div><label class="panel-label">项目名称 Prod.</label><input type="text" id="inputProd" class="panel-input" oninput="window.syncData()"></div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="panel-label">导演 Director</label><input type="text" id="inputDir" class="panel-input" oninput="window.syncData()"></div>
+                                <div><label class="panel-label">制片 Producer</label><input type="text" id="inputProdName" class="panel-input" oninput="window.syncData()"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="panel-label">摄影 DP</label><input type="text" id="inputDP" class="panel-input" oninput="window.syncData()"></div>
+                                <div><label class="panel-label">灯光 Gaffer</label><input type="text" id="inputGaffer" class="panel-input" oninput="window.syncData()"></div>
+                            </div>
+                            <div class="grid grid-cols-2 gap-3">
+                                <div><label class="panel-label">化妆 Makeup</label><input type="text" id="inputMakeup" class="panel-input" oninput="window.syncData()"></div>
+                                <div><label class="panel-label">全组通告 Call Time</label><input type="time" id="inputCallTime" class="panel-input" value="08:00" oninput="window.syncData()"></div>
+                            </div>
+                            <div><label class="panel-label">日期 Date</label><input type="date" id="inputDate" class="panel-input" oninput="window.syncData()"></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-black text-amber-500 uppercase tracking-widest mb-3 border-b border-zinc-800 pb-1">后勤保障</h3>
+                        <div class="space-y-3">
+                            <div><label class="panel-label">天气预报 Weather</label><input type="text" id="inputWeather" class="panel-input" placeholder="晴 24°C" oninput="window.syncData()"></div>
+                            <div><label class="panel-label">最近医院 Hospital</label><textarea id="inputHospital" class="panel-input min-h-[50px]" oninput="window.syncData()"></textarea></div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-black text-amber-500 uppercase tracking-widest mb-3 border-b border-zinc-800 pb-1">部门提示</h3>
+                        <textarea id="inputNotes" class="panel-input min-h-[80px]" placeholder="各部门注意事项..." oninput="window.syncData()"></textarea>
+                    </div>
+                </div>
+                <div class="p-3 border-t border-zinc-800 bg-[#09090b] text-center shrink-0">
+                    <span class="text-[10px] text-amber-500/70 font-bold">右侧纸面支持直接点击修改内容</span>
+                </div>
+            </aside>
+
+            <!-- 右侧：A4 纸面预览 (65%) -->
+            <section id="right-workspace" class="flex-1 overflow-y-auto bg-[#27272a] p-8 pb-32">
+                <div class="call-sheet-paper relative group">
+                    <div class="cs-header-box flex justify-between items-center relative">
+                        <div class="w-[40%] text-left">
+                            <div class="font-bold text-[10px] uppercase text-gray-500">Production</div>
+                            <div class="text-2xl font-black uppercase tracking-tighter" id="sheetProdTitle" contenteditable="true">UNTITLED</div>
+                            <div class="grid grid-cols-2 gap-x-2 gap-y-0.5 text-xs mt-1.5">
+                                <div><span class="font-bold text-gray-500">DIR:</span> <span id="sheetDir" contenteditable="true">TBD</span></div>
+                                <div><span class="font-bold text-gray-500">PROD:</span> <span id="sheetProdName" contenteditable="true">TBD</span></div>
+                                <div><span class="font-bold text-gray-500">DP:</span> <span id="sheetDP" contenteditable="true">TBD</span></div>
+                                <div><span class="font-bold text-gray-500">GAFFER:</span> <span id="sheetGaffer" contenteditable="true">TBD</span></div>
+                                <div class="col-span-2"><span class="font-bold text-gray-500">MAKEUP:</span> <span id="sheetMakeup" contenteditable="true">TBD</span></div>
+                            </div>
+                        </div>
+                        <div class="w-[30%] text-center flex flex-col items-center">
+                            <div class="text-3xl font-black uppercase border-b-2 border-black px-4 pb-1">CALL SHEET</div>
+                            <div class="text-sm font-bold mt-1 uppercase" id="sheetDate" contenteditable="true">DATE: 2026-03-02</div>
+                        </div>
+                        <div class="w-[30%] text-right">
+                            <div class="text-xs font-bold text-gray-500 uppercase">General Crew Call</div>
+                            <div class="text-4xl font-black tracking-tighter" id="sheetCallTime" contenteditable="true">08:00</div>
+                            <div class="text-xs font-bold uppercase mt-1">DAY <span id="sheetDayNum" class="text-xl px-1">1</span> OF <span id="sheetDayTotal">3</span></div>
+                        </div>
+                    </div>
+
+                    <table class="cs-table">
+                        <tbody><tr><th width="50%">Weather</th><th width="50%">Nearest Hospital</th></tr>
+                        <tr>
+                            <td id="sheetWeather" contenteditable="true">TBD</td>
+                            <td id="sheetHospital" contenteditable="true">TBD</td>
+                        </tr>
+                    </tbody></table>
+
+                    <div class="cs-section-title mt-2">Shooting Schedule (Scenes)</div>
+                    <table class="cs-table cs-table-dark">
+                        <thead>
+                            <tr><th width="5%">SEQ</th><th width="8%">SCENE</th><th width="8%">D/N</th><th width="40%">LOCATION / DESCRIPTION</th><th width="22%">CAST</th><th width="17%">EST. TIME</th></tr>
+                        </thead>
+                        <tbody id="sheetSceneGrid"><tr><td colspan="6" class="text-center py-6 italic text-gray-500">Please select a shooting day on the left.</td></tr></tbody>
+                    </table>
+
+                    <div class="cs-section-title mt-4">Cast Call Times</div>
+                    <table class="cs-table">
+                        <thead style="background:#f3f4f6;">
+                            <tr><th width="5%">ID</th><th width="25%">CHARACTER / ACTOR</th><th width="15%">STATUS</th><th width="15%">PICK UP</th><th width="20%">MAKEUP</th><th width="20%">ON SET</th></tr>
+                        </thead>
+                        <tbody id="sheetCastGrid"><tr><td colspan="6" class="text-center py-4 italic text-gray-500">Auto-generated from scenes...</td></tr></tbody>
+                    </table>
+
+                    <div class="flex gap-4 mt-6 h-32">
+                        <div class="w-1/2 flex flex-col border border-black p-2">
+                            <div class="font-black uppercase border-b border-gray-300 pb-1 mb-1 text-[10px]">Department Notes</div>
+                            <div id="sheetNotes" class="flex-1 whitespace-pre-wrap text-[10px] leading-relaxed" contenteditable="true"></div>
+                        </div>
+                        <div class="w-1/2 flex flex-col border border-black p-2 bg-gray-50">
+                            <div class="font-black uppercase border-b border-gray-300 pb-1 mb-1 text-[10px]">Advance Schedule (Tomorrow)</div>
+                            <div class="flex-1 text-[10px] text-gray-500 italic flex items-center justify-center text-center" contenteditable="true">To be distributed at wrap.</div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Footer -->
+        <footer id="mainFooter" class="no-print border-t border-zinc-800 bg-[#09090b] flex items-center justify-between px-6 py-2">
+            <div id="statusInfo" class="font-mono text-[10px] uppercase tracking-widest text-zinc-500 flex items-center gap-2">
+                <span class="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span> SYSTEM ONLINE
+            </div>
+            <div class="flex items-center gap-6">
+                <div id="wordCountDisplay" class="font-mono text-[11px] text-amber-500 font-bold bg-amber-900/10 px-3 py-1 rounded-full border border-amber-900/30">TOTAL SHOTS: 0</div>
+                <button onclick="window.downloadSourceCode()" class="tool-btn flex items-center gap-1.5 opacity-40 hover:opacity-100 transition text-[9px] font-mono border border-zinc-700 px-2 py-1 rounded"><svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"></path></svg> SOURCE</button>
+            </div>
+        </footer>
+
+        <!-- 状态反馈条 -->
+        <div id="toast" class="fixed bottom-12 left-1/2 transform -translate-x-1/2 bg-zinc-800 text-white px-6 py-3 rounded-full shadow-2xl font-bold text-sm tracking-wide transition-all duration-300 z-[9999] border border-zinc-600 flex items-center gap-2 opacity-0 translate-y-10">
+            <span class="w-2 h-2 bg-amber-500 rounded-full animate-pulse"></span><span id="toastMsg">🧹 工程及全部资产已彻底清空，随时开始新的创作！</span>
+        </div>
+
+        <!-- 清空确认弹窗 -->
+        <div id="confirmModal" class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[9999] flex items-center justify-center transition-opacity duration-300 opacity-0 hidden">
+            <div class="bg-zinc-900 border border-red-900/50 rounded-xl p-6 max-w-sm w-full shadow-2xl transform transition-transform duration-300 scale-95" id="confirmModalPanel">
+                <div class="flex items-center gap-3 mb-4">
+                    <div class="w-10 h-10 rounded-full bg-red-500/10 flex items-center justify-center shrink-0">
+                        <svg class="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                    </div>
+                    <h3 class="text-lg font-black text-white">清空工程确认</h3>
+                </div>
+                <p class="text-sm text-zinc-400 mb-6 leading-relaxed">此操作将抹除当前所有的排期、分镜和通告单数据，将其恢复到初始状态。<br><br><span class="text-red-400 font-bold">提示：该操作不可撤销，请确保已备份（导出）需要的数据！</span></p>
+                <div class="flex gap-3 justify-end">
+                    <button onclick="window.closeConfirmModal()" class="px-4 py-2 rounded-lg text-sm font-bold text-zinc-300 hover:text-white hover:bg-zinc-800 transition">取消</button>
+                    <button onclick="window.executeClearProject()" class="px-4 py-2 rounded-lg text-sm font-black bg-red-600 text-white hover:bg-red-500 transition shadow-lg shadow-red-900/20">确认清空</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==================== 核心 JavaScript ==================== -->
+    <script>
+        // 初始化 Icons
+        if(window.lucide) lucide.createIcons();
+
+        // ==========================================
+        // 🔒 认证模块逻辑 (锁屏)
+        // ==========================================
+        const CORRECT_KEY = "ytmayA"; 
+        const AUTH_STORAGE_KEY = "prod_studio_auth_passed";
+
+        window.onload = function() {
+            if (localStorage.getItem(AUTH_STORAGE_KEY) === "true") {
+                showMainApp();
+            }
+            window.switchMainView('schedule');
+            window.renderScheduleBoard();
+        };
+
+        document.getElementById('secret-key-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') checkKey();
+        });
+
+        function checkKey() {
+            const inputVal = document.getElementById('secret-key-input').value;
+            const errorMsg = document.getElementById('error-message');
+
+            if (inputVal === CORRECT_KEY) {
+                errorMsg.classList.add('hidden');
+                localStorage.setItem(AUTH_STORAGE_KEY, "true"); 
+                showMainApp();
+            } else {
+                errorMsg.classList.remove('hidden');
+                const inputElement = document.getElementById('secret-key-input');
+                inputElement.classList.add('border-red-500', 'text-red-500');
+                setTimeout(() => inputElement.classList.remove('border-red-500', 'text-red-500'), 500);
+            }
+        }
+
+        function showMainApp() {
+            const lockScreen = document.getElementById('lock-screen');
+            const mainApp = document.getElementById('main-app');
+
+            lockScreen.classList.add('hidden');
+            mainApp.classList.remove('hidden');
+            mainApp.classList.add('flex'); 
+            
+            mainApp.classList.add('fade-enter');
+            void mainApp.offsetWidth; 
+            mainApp.classList.add('fade-enter-active');
+        }
+
+        window.lockApp = function() {
+            localStorage.removeItem(AUTH_STORAGE_KEY);
+            document.getElementById('secret-key-input').value = '';
+            document.getElementById('error-message').classList.add('hidden');
+            
+            const mainApp = document.getElementById('main-app');
+            mainApp.classList.add('hidden');
+            mainApp.classList.remove('flex', 'fade-enter', 'fade-enter-active');
+            
+            document.getElementById('lock-screen').classList.remove('hidden');
+        };
+
+        // ==========================================
+        // 💡 主程序核心逻辑 (无损对齐 ScriptMaster V1.0 数据引擎)
+        // ==========================================
+        
+        window.projectData = { 
+            title: "无标题工程", 
+            scenes: [] 
+        };
+        
+        // 【核心修复】使用对象数组兼容 ScriptMaster V1.0 的排期天数引擎
+        window.shootingDays = []; 
+        window.currentCallSheetDay = null; 
+        window.poolSortMode = 'default';
+        window.selectedScenes = new Set(); 
+
+        document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
+
+        // 路由切换
+        window.switchMainView = function(viewMode) {
+            const vSched = document.getElementById('view-schedule');
+            const vCall = document.getElementById('view-callsheet');
+            const tSched = document.getElementById('tab-schedule');
+            const tCall = document.getElementById('tab-callsheet');
+            const btnPrint = document.getElementById('btnPrint');
+
+            if(viewMode === 'schedule') {
+                vSched.classList.remove('hidden'); vCall.classList.add('hidden');
+                tSched.className = "px-4 py-1.5 text-xs font-black uppercase rounded bg-zinc-700 text-white transition shadow-sm";
+                tCall.className = "px-4 py-1.5 text-xs font-black uppercase rounded text-zinc-500 hover:text-white transition";
+                btnPrint.classList.add('hidden');
+                window.renderScheduleBoard();
+            } else {
+                vSched.classList.add('hidden'); vCall.classList.remove('hidden');
+                tCall.className = "px-4 py-1.5 text-xs font-black uppercase rounded bg-zinc-700 text-white transition shadow-sm";
+                tSched.className = "px-4 py-1.5 text-xs font-black uppercase rounded text-zinc-500 hover:text-white transition";
+                btnPrint.classList.remove('hidden');
+                
+                if(window.shootingDays.length > 0 && !window.currentCallSheetDay) {
+                    window.currentCallSheetDay = window.shootingDays[0].id;
+                }
+                window.renderCallSheetSidebar();
+                window.syncData();
+            }
+        };
+
+        // 数据导入导出引擎 (实现全量无损过渡)
+        window.triggerImport = function() { document.getElementById('importInput').click(); };
+        
+        window.handleImport = function(event) {
+            const file = event.target.files[0]; if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = JSON.parse(e.target.result);
+                    // 接收全量参数，确保不破坏 ScriptMaster 带来的源数据
+                    window.projectData = data;
+                    if(!window.projectData.scenes) window.projectData.scenes = [];
+                    
+                    document.getElementById('inputProd').value = window.projectData.title || "UNTITLED PROJECT";
+                    document.getElementById('displayProjectTitle').innerText = window.projectData.title || "无标题";
+                    
+                    if (window.projectData.scenes.length > 0) {
+                        document.getElementById('emptyStateSchedule').classList.add('hidden');
+                    }
+                    
+                    // 【核心修复】智能适配与转化 shootingDays 结构
+                    if (data.shootingDays && data.shootingDays.length > 0) {
+                        // 如果传入的是已经是新版对象数组
+                        if (typeof data.shootingDays[0] === 'object') {
+                            window.shootingDays = data.shootingDays;
+                        } else {
+                            // 降级兼容极老版本
+                            window.shootingDays = data.shootingDays.map(d => ({id: d, name: `DAY ${d}`}));
+                        }
+                    } else {
+                        // 万一为空，尝试从场景内推导
+                        let uniqueDays = [...new Set(window.projectData.scenes.map(s => s.dayId || s.shootDay).filter(Boolean))];
+                        window.shootingDays = uniqueDays.map(d => ({id: d, name: `DAY ${d}`}));
+                        
+                        // 清洗旧版 shootDay，统一使用新版 dayId 映射
+                        window.projectData.scenes.forEach(s => {
+                            if (s.shootDay && !s.dayId) { 
+                                s.dayId = s.shootDay; 
+                                delete s.shootDay; 
+                            }
+                        });
+                    }
+
+                    window.renderScheduleBoard();
+                    window.showToast("工程载入成功！可以开始排期或生成通告");
+                } catch (err) { alert("文件解析失败: " + err.message); }
+                event.target.value = '';
+            };
+            reader.readAsText(file);
+        };
+
+        window.saveProject = function() {
+            if(!window.projectData || window.projectData.scenes.length === 0) return window.showToast("无数据可导出");
+            
+            // 确保导回的数据严格包含天数排期，且保持对象化
+            window.projectData.title = document.getElementById('inputProd').value;
+            window.projectData.shootingDays = window.shootingDays; 
+
+            const jsonStr = JSON.stringify(window.projectData, null, 2);
+            const a = document.createElement('a'); 
+            a.href = URL.createObjectURL(new Blob([jsonStr], {type:'application/json'})); 
+            a.download = `${window.projectData.title || 'Project'}_统筹大文件.json`; 
+            a.click();
+            window.showToast("项目已连同所有剧本资产无损导出！");
+        };
+
+        window.downloadSourceCode = function() {
+            const htmlContent = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([htmlContent], {type:'text/html'}));
+            a.download = "Production_Studio_Backup.html";
+            a.click();
+            window.showToast("系统源码已成功备份至本地");
+        };
+
+        // 清空确认弹窗
+        window.openConfirmModal = function() {
+            const modal = document.getElementById('confirmModal');
+            const panel = document.getElementById('confirmModalPanel');
+            modal.classList.remove('hidden');
+            void modal.offsetWidth;
+            modal.classList.remove('opacity-0');
+            panel.classList.remove('scale-95');
+        };
+
+        window.closeConfirmModal = function() {
+            const modal = document.getElementById('confirmModal');
+            const panel = document.getElementById('confirmModalPanel');
+            modal.classList.add('opacity-0');
+            panel.classList.add('scale-95');
+            setTimeout(() => { modal.classList.add('hidden'); }, 300);
+        };
+
+        window.executeClearProject = function() {
+            window.closeConfirmModal();
+            window.projectData = { title: "", scenes: [], rawMaterial: "", referenceBoardText: "", projectLocations: [], projectCharacters: [] };
+            window.shootingDays = [];
+            window.currentCallSheetDay = null;
+            window.selectedScenes.clear();
+            
+            const inputsToClear = ['inputProd', 'inputDir', 'inputProdName', 'inputDP', 'inputGaffer', 'inputMakeup', 'inputWeather', 'inputHospital', 'inputNotes'];
+            inputsToClear.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.value = '';
+            });
+            document.getElementById('inputDate').value = new Date().toISOString().split('T')[0];
+            document.getElementById('inputCallTime').value = '08:00';
+            document.getElementById('displayProjectTitle').innerText = '无标题';
+
+            document.getElementById('emptyStateSchedule').classList.remove('hidden');
+            
+            window.renderScheduleBoard();
+            window.renderCallSheetSidebar();
+            window.syncData();
+            
+            window.showToast("🧹 工程及全部资产已彻底清空，随时开始新的创作！");
+        };
+
+        // 基础数据操作
+        window.autoResize = function(el) { if (!el) return; el.style.height = 'auto'; el.style.height = (el.scrollHeight + 2) + 'px'; };
+        window.silentUpdate = function(id, f, v) { const s = window.projectData.scenes.find(x => x.id == id); if(s) { s[f] = v; } };
+        window.getSceneNumber = function(id) { const nonChapters = window.projectData.scenes.filter(s => !s.isChapter); const index = nonChapters.findIndex(s => s.id === id); return index >= 0 ? index + 1 : 0; };
+        window.forceUpdateValue = function(id, f, v) { const s = window.projectData.scenes.find(x => x.id == id); if(s) { s[f] = s[f] === v ? 0 : v; window.renderScheduleBoard(); } };
+
+        // 拖拽与排序
+        window.setPoolSort = function(mode) {
+            window.poolSortMode = mode;
+            ['default', 'location', 'cast'].forEach(m => {
+                const btn = document.getElementById(`sort-${m}`);
+                if (btn) btn.className = m === mode ? "px-3 py-1 text-[10px] font-black rounded bg-zinc-700 text-white transition" : "px-3 py-1 text-[10px] font-black rounded text-zinc-500 hover:text-white transition";
+            });
+            window.renderScheduleBoard();
+        };
+
+        window.addDay = function() {
+            const nextDayNum = window.shootingDays.length + 1;
+            window.shootingDays.push({ id: Date.now(), name: `DAY ${nextDayNum}` });
+            window.renderScheduleBoard();
+            window.updateBatchActionBar();
+            setTimeout(()=> { const con = document.getElementById('scheduleContainer'); con.scrollTo({ top: con.scrollHeight, behavior: 'smooth' }); }, 100);
+        };
+
+        window.dragStart = function(e, id) { e.dataTransfer.setData('text/plain', id); e.target.style.opacity = '0.4'; };
+        window.dragEnd = function(e) { e.target.style.opacity = '1'; };
+        window.allowDrop = function(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over-zone'); };
+        window.dragLeave = function(e) { e.currentTarget.classList.remove('drag-over-zone'); };
+        
+        window.dropScene = function(e, targetDayId) {
+            e.preventDefault(); e.currentTarget.classList.remove('drag-over-zone');
+            const id = parseInt(e.dataTransfer.getData('text/plain'));
+            const s = window.projectData.scenes.find(x => x.id === id);
+            // 这里我们对齐 dayId 逻辑
+            if(s) { s.dayId = targetDayId; window.renderScheduleBoard(); }
+        };
+        
+        window.removeSceneFromDay = function(id, event) {
+            if(event) event.stopPropagation();
+            const s = window.projectData.scenes.find(x => x.id === id);
+            if(s) { s.dayId = null; window.renderScheduleBoard(); }
+        };
+
+        // 多选操作
+        window.toggleSceneSelection = function(event, id) {
+            if(event && ['INPUT', 'TEXTAREA', 'BUTTON', 'SELECT'].includes(event.target.tagName)) return;
+            const card = document.getElementById(`card-${id}`);
+            const checkbox = document.getElementById(`checkbox-${id}`);
+            if (window.selectedScenes.has(id)) {
+                window.selectedScenes.delete(id);
+                if(card) { card.classList.remove('ring-2', 'ring-amber-500'); if(checkbox) { checkbox.classList.remove('bg-amber-500', 'border-amber-500'); checkbox.innerHTML = ''; } }
+            } else {
+                window.selectedScenes.add(id);
+                if(card) { card.classList.add('ring-2', 'ring-amber-500'); if(checkbox) { checkbox.classList.add('bg-amber-500', 'border-amber-500'); checkbox.innerHTML = '<svg class="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>'; } }
+            }
+            window.updateBatchActionBar();
+        };
+
+        window.updateBatchActionBar = function() {
+            const bar = document.getElementById('batchActionBar');
+            if (!bar) return;
+            if (window.selectedScenes.size > 0) {
+                document.getElementById('batchCount').innerText = window.selectedScenes.size;
+                // 更新下拉菜单为对象化的 shootingDays
+                document.getElementById('batchDaySelect').innerHTML = window.shootingDays.map(d => `<option value="${d.id}">${d.name}</option>`).join('');
+                bar.classList.remove('translate-y-20', 'opacity-0', 'pointer-events-none');
+                bar.classList.add('translate-y-0', 'opacity-100');
+            } else {
+                bar.classList.add('translate-y-20', 'opacity-0', 'pointer-events-none');
+                bar.classList.remove('translate-y-0', 'opacity-100');
+            }
+        };
+
+        window.batchAssign = function() {
+            const targetDayId = parseInt(document.getElementById('batchDaySelect').value);
+            if (isNaN(targetDayId)) return;
+            window.selectedScenes.forEach(id => { 
+                const s = window.projectData.scenes.find(x => x.id === id); 
+                if (s) s.dayId = targetDayId; 
+            });
+            window.selectedScenes.clear();
+            window.updateBatchActionBar();
+            window.renderScheduleBoard();
+            
+            const targetDayObj = window.shootingDays.find(d => d.id === targetDayId);
+            window.showToast(`成功将选中镜头排入 ${targetDayObj ? targetDayObj.name : '指定排期'}`);
+        };
+
+        window.clearSelection = function() {
+            window.selectedScenes.clear();
+            window.renderScheduleBoard();
+            window.updateBatchActionBar();
+        };
+
+        // UI 渲染 (核心)
+        window.renderScheduleBoard = function() {
+            const libContainer = document.getElementById('libraryContainer');
+            const schedContainer = document.getElementById('scheduleContainer');
+            
+            // 过滤待分配场景 (使用新字段 dayId)
+            let unassignedScenes = (window.projectData.scenes || []).filter(s => !s.isChapter && !s.dayId);
+            document.getElementById('stat-unassigned').innerText = unassignedScenes.length;
+            document.getElementById('wordCountDisplay').innerText = `TOTAL SHOTS: ${(window.projectData.scenes || []).filter(s=>!s.isChapter).length}`;
+
+            const renderGroupedScenes = (scenesToRender, isDetailed) => {
+                if (scenesToRender.length === 0) return '';
+                let html = '';
+                const colors = ['#3b82f6', '#10b981', '#a855f7', '#ec4899', '#f59e0b', '#06b6d4', '#eab308'];
+
+                if (window.poolSortMode === 'location') {
+                    const groups = {};
+                    scenesToRender.forEach(s => { const loc = s.locationName || '未指定地点'; if(!groups[loc]) groups[loc] = []; groups[loc].push(s); });
+                    const sortedKeys = Object.keys(groups).sort((a,b) => a.localeCompare(b, 'zh-CN'));
+                    sortedKeys.forEach((loc, idx) => {
+                        const color = colors[idx % colors.length];
+                        if (isDetailed) html += `<div class="text-xs font-black uppercase tracking-widest mt-4 mb-2 pb-1 border-b" style="color: ${color}; border-color: ${color}40;">📍 ${loc} <span class="text-zinc-500 ml-1 font-mono-num text-[10px]">(${groups[loc].length})</span></div>`;
+                        else html += `<div class="text-[10px] font-black uppercase tracking-widest mt-3 mb-1 px-1 border-b" style="color: ${color}; border-color: ${color}40;">📍 ${loc}</div>`;
+                        groups[loc].forEach(s => { html += window.createCardHTML(s, isDetailed, color); });
+                    });
+                } else if (window.poolSortMode === 'cast') {
+                    const groups = {};
+                    scenesToRender.forEach(s => { const cast = s.castNames || '无角色'; if(!groups[cast]) groups[cast] = []; groups[cast].push(s); });
+                    const sortedKeys = Object.keys(groups).sort((a,b) => a.localeCompare(b, 'zh-CN'));
+                    sortedKeys.forEach((cast, idx) => {
+                        const color = colors[idx % colors.length];
+                        if (isDetailed) html += `<div class="text-xs font-black uppercase tracking-widest mt-4 mb-2 pb-1 border-b" style="color: ${color}; border-color: ${color}40;">👥 ${cast} <span class="text-zinc-500 ml-1 font-mono-num text-[10px]">(${groups[cast].length})</span></div>`;
+                        else html += `<div class="text-[10px] font-black uppercase tracking-widest mt-3 mb-1 px-1 border-b" style="color: ${color}; border-color: ${color}40;">👥 ${cast}</div>`;
+                        groups[cast].forEach(s => { html += window.createCardHTML(s, isDetailed, color); });
+                    });
+                } else {
+                    const sortedScenes = [...scenesToRender].sort((a, b) => (a.pos || a.id) - (b.pos || b.id));
+                    sortedScenes.forEach(s => { html += window.createCardHTML(s, isDetailed, null); });
+                }
+                return html;
+            };
+
+            libContainer.innerHTML = renderGroupedScenes(unassignedScenes, true);
+
+            let rightHtml = '';
+            window.shootingDays.forEach(day => {
+                const dayScenes = window.projectData.scenes.filter(s => !s.isChapter && s.dayId === day.id);
+                const dayContentHtml = renderGroupedScenes(dayScenes, false);
+                rightHtml += `
+                    <div class="kanban-block transition-colors" ondragover="window.allowDrop(event)" ondragleave="window.dragLeave(event)" ondrop="window.dropScene(event, ${day.id})">
+                        <div class="p-3 border-b border-zinc-800 flex justify-between items-center bg-[#1e1e21] rounded-t-xl shrink-0 cursor-default">
+                            <div class="flex items-center gap-2"><span class="bg-amber-500 text-black font-black text-[10px] px-2 py-0.5 rounded shadow">${day.name}</span><span class="text-xs font-bold text-zinc-400">拍摄日</span></div>
+                            <span class="text-[10px] bg-zinc-800 border border-zinc-700 text-zinc-300 px-2 py-0.5 rounded font-bold">${dayScenes.length} Shots</span>
+                        </div>
+                        <div class="flex-1 p-3 bg-[#121214] rounded-b-xl flex flex-col gap-2 relative">
+                            ${dayScenes.length === 0 ? `<div class="absolute inset-4 flex items-center justify-center text-zinc-700 text-xs font-bold uppercase tracking-widest border-2 border-dashed border-zinc-800 rounded-lg opacity-50">拖拽镜头至此安排</div>` : dayContentHtml}
+                        </div>
+                    </div>`;
+            });
+
+            schedContainer.innerHTML = rightHtml;
+            document.querySelectorAll('#view-schedule textarea').forEach(el => window.autoResize(el));
+            window.updateBatchActionBar();
+        };
+
+        window.createCardHTML = function(s, isDetailed, groupColor = null) {
+            const imgArray = s.storyboardUrls || [];
+            const hasImg = imgArray.length > 0;
+            const seqNum = String(window.getSceneNumber(s.id)).padStart(3, '0');
+            const borderStyle = groupColor ? `border-left: 4px solid ${groupColor};` : '';
+
+            if (!isDetailed) {
+                const imgHtml = hasImg ? `<img src="${imgArray[0]}" class="w-full h-full object-cover opacity-90">` : `<div class="w-full h-full flex items-center justify-center bg-zinc-900 text-[8px] text-zinc-600 font-bold uppercase">无图</div>`;
+                const stripBadges = `
+                    ${s.difficulty ? `<span class="text-amber-500 text-[10px] tracking-tighter mr-1">${'★'.repeat(s.difficulty)}</span>` : ''}
+                    ${s.notes ? `<span class="text-red-500 text-[8px] bg-red-900/30 px-1 rounded border border-red-500/50 inline-flex items-center" title="附有导演小纪">📝</span>` : ''}
+                `;
+                return `
+                    <div class="shot-strip rounded-md p-2 flex gap-3 relative group z-10" id="card-${s.id}" draggable="true" ondragstart="window.dragStart(event, ${s.id})" ondragend="window.dragEnd(event)" style="${borderStyle}">
+                        <button onclick="window.removeSceneFromDay(${s.id}, event)" class="absolute -top-1.5 -right-1.5 bg-red-600 text-white w-4 h-4 flex items-center justify-center rounded-full opacity-0 group-hover:opacity-100 transition shadow-lg z-20" title="移出排期">✕</button>
+                        <div class="w-20 h-14 bg-black rounded shrink-0 overflow-hidden border border-zinc-800 relative">${s.isImageLoading ? `<div class="absolute inset-0 flex items-center justify-center bg-black/80"><div class="animate-spin h-3 w-3 border border-amber-500 border-t-transparent rounded-full"></div></div>` : imgHtml}</div>
+                        <div class="flex-1 flex flex-col justify-center min-w-0 pr-2">
+                            <div class="flex justify-between items-center mb-1">
+                                <div class="flex items-center gap-2"><span class="text-amber-500 font-mono-num font-black text-sm leading-none">SH-${seqNum}</span><span class="text-[9px] bg-zinc-800 px-1 rounded text-zinc-300 border border-zinc-700">${s.env||'外'}/${s.timeOfDay||'日'}</span></div>
+                                <div class="text-[11px] text-white font-bold truncate flex items-center gap-1">${s.locationName || '地点未定'} ${stripBadges}</div>
+                            </div>
+                            <div class="text-[10px] text-zinc-500 truncate mt-0.5">${s.col1 || s.col2 || '...'}</div>
+                        </div>
+                    </div>`;
+            }
+
+            let imgContent = '';
+            if (!hasImg) { imgContent = `<div class="w-full h-32 bg-black flex flex-col items-center justify-center border-b border-zinc-800 text-center"><span class="text-[9px] font-black text-zinc-700 uppercase tracking-widest">无视觉参考</span></div>`; } 
+            else {
+                const gridClass = imgArray.length === 1 ? 'img-grid-1' : (imgArray.length === 2 ? 'img-grid-2' : 'img-grid-3');
+                const imgHtml = imgArray.slice(0, 3).map((url, idx) => `
+                    <div class="relative w-full h-full bg-black flex items-center justify-center overflow-hidden border-zinc-800 ${imgArray.length>1 ? 'border-r border-b' : ''} group/img">
+                        <img src="${url}" class="w-full h-full object-cover opacity-90 group-hover/img:scale-105 transition duration-500">
+                        <button onclick="window.deleteImage(${s.id}, ${idx})" class="absolute top-2 right-2 bg-zinc-200/20 hover:bg-red-500/90 text-zinc-200 hover:text-white w-6 h-6 flex items-center justify-center rounded opacity-0 group-hover/img:opacity-100 transition backdrop-blur-md">✕</button>
+                    </div>`).join('');
+                imgContent = `<div class="w-full h-40 grid ${gridClass} border-b border-zinc-800">${imgHtml}</div>`;
+            }
+
+            const isSelected = window.selectedScenes && window.selectedScenes.has(s.id);
+            const ringClass = isSelected ? 'ring-2 ring-amber-500' : '';
+            const checkboxHtml = isDetailed ? `
+                <div id="checkbox-${s.id}" class="absolute top-4 left-4 w-5 h-5 rounded border-2 border-zinc-500 bg-black/60 backdrop-blur z-20 flex items-center justify-center transition-colors ${isSelected ? 'bg-amber-500 border-amber-500' : ''}">
+                    ${isSelected ? '<svg class="w-3 h-3 text-black" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>' : ''}
+                </div>
+            ` : '';
+
+            return `
+                <div class="shot-card p-4 rounded-xl relative group shadow-2xl mb-3 flex flex-col cursor-grab transition-all ${ringClass}" id="card-${s.id}" draggable="true" ondragstart="window.dragStart(event, ${s.id})" ondragend="window.dragEnd(event)" onclick="if(${isDetailed}) window.toggleSceneSelection(event, ${s.id})" style="${borderStyle}">
+                    ${checkboxHtml}
+                    ${s.isImageLoading ? `<div class="image-gen-loading rounded-xl"><div class="animate-spin h-6 w-6 border-2 border-amber-500 border-t-transparent rounded-full mb-3"></div><span class="text-[9px] font-bold text-amber-500 tracking-widest">AI 处理中...</span></div>` : ''}
+                    ${imgContent}
+                    
+                    <div class="p-3 bg-[#111113] border-b border-zinc-800 flex justify-between items-center shrink-0">
+                        <div class="flex items-center gap-2">
+                            <button onclick="window.uploadImage(${s.id})" class="text-[9px] font-black bg-zinc-800 hover:bg-zinc-700 text-zinc-300 px-3 py-1.5 rounded">上传本地</button>
+                            <button onclick="window.generateImage(${s.id})" class="text-[9px] font-black bg-amber-900/30 hover:bg-amber-600 text-amber-500 hover:text-black border border-amber-500/30 px-3 py-1.5 rounded">✨ AI配图</button>
+                        </div>
+                        <button onclick="window.getAISuggestion(${s.id})" class="text-[9px] font-black text-purple-400 hover:text-purple-300 bg-purple-900/20 px-3 py-1.5 rounded border border-purple-500/30">💡 自动动作调度</button>
+                    </div>
+                    
+                    <div class="p-4 flex flex-col gap-3">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="text-blue-500 font-mono-num font-black text-sm">SH-${seqNum}</span>
+                            <div class="flex items-center gap-2">
+                                <div class="flex">${[1,2,3,4,5].map(star => `<span class="star-rating ${s.difficulty >= star ? 'active' : ''}" onclick="window.forceUpdateValue(${s.id}, 'difficulty', ${star})">★</span>`).join('')}</div>
+                            </div>
+                        </div>
+
+                        <div class="flex gap-1 flex-wrap">
+                            <input type="text" value="${s.env || ''}" oninput="window.silentUpdate(${s.id},'env',this.value)" class="!w-12 !p-1 !text-[9px] font-bold text-center" placeholder="ENV">
+                            <input type="text" value="${s.timeOfDay || ''}" oninput="window.silentUpdate(${s.id},'timeOfDay',this.value)" class="!w-12 !p-1 !text-[9px] font-bold text-center" placeholder="TIME">
+                            <input type="text" value="${s.locationName || ''}" oninput="window.silentUpdate(${s.id},'locationName',this.value)" class="!w-24 !p-1 !text-[9px] font-bold" placeholder="场景">
+                            <input type="text" value="${s.castNames || ''}" oninput="window.silentUpdate(${s.id},'castNames',this.value)" class="!w-28 !p-1 !text-[9px] font-bold text-blue-300" placeholder="角色">
+                        </div>
+
+                        <div class="flex flex-col">
+                            <label class="text-blue-500 font-black uppercase text-[9px] mb-1">VISUAL 画面</label>
+                            <textarea oninput="window.silentUpdate(${s.id}, 'col1', this.value); window.autoResize(this)" class="!text-xs text-zinc-300 min-h-[30px]">${s.col1 || ''}</textarea>
+                        </div>
+                        
+                        <div class="flex flex-col">
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="text-zinc-500 font-black uppercase text-[9px]">AUDIO 对白</label>
+                                <div class="flex items-center gap-1">
+                                    <span class="text-[9px] text-zinc-500 uppercase font-bold tracking-tighter">时长:</span>
+                                    <input type="number" value="${s.duration || 5}" onchange="window.forceUpdateValue(${s.id}, 'duration', this.value)" class="w-10 h-5 text-center text-[10px] bg-black/40 border border-zinc-700 rounded outline-none text-white">
+                                </div>
+                            </div>
+                            <textarea oninput="window.silentUpdate(${s.id}, 'col2', this.value); window.autoResize(this)" class="!text-xs text-zinc-400 min-h-[30px]">${s.col2 || ''}</textarea>
+                        </div>
+
+                        <textarea oninput="window.silentUpdate(${s.id}, 'notes', this.value); window.autoResize(this)" placeholder="DIRECTOR'S NOTES..." class="min-h-[30px] text-[11px] text-red-400 font-bold italic border-none bg-red-900/10 p-2 rounded outline-none w-full mt-1 border border-red-900/30">${s.notes || ''}</textarea>
+                    </div>
+                </div>`;
+        };
+
+        // UI 其他相关方法
+        window.compressImageAsync = function(b, q = 0.7, w = 600) { return new Promise(r => { if(!b) return r(""); const img = new Image(); img.onload = () => { const cvs = document.createElement('canvas'); const sc = w/img.width; cvs.width = w; cvs.height = img.height*sc; const ctx = cvs.getContext('2d'); ctx.fillStyle='#FFF'; ctx.fillRect(0,0,cvs.width,cvs.height); ctx.drawImage(img,0,0,cvs.width,cvs.height); r(cvs.toDataURL('image/jpeg', q)); }; img.src = b; }); };
+        window.deleteImage = function(id, idx) { const s = window.projectData.scenes.find(x => x.id == id); if(s && s.storyboardUrls) { s.storyboardUrls.splice(idx, 1); window.renderScheduleBoard(); } };
+        window.uploadImage = function(id) { 
+            const ipt = document.createElement('input'); ipt.type = 'file'; ipt.accept = 'image/*'; ipt.multiple = true;
+            ipt.onchange = async e => { 
+                const files = Array.from(e.target.files); const s = window.projectData.scenes.find(x=>x.id===id); 
+                if(!s) return; if(!s.storyboardUrls) s.storyboardUrls = []; s.isImageLoading = true; window.renderScheduleBoard(); 
+                for(let f of files) { const dataUrl = await new Promise(res => { const r = new FileReader(); r.onload = ev => res(ev.target.result); r.readAsDataURL(f); }); s.storyboardUrls.push(await window.compressImageAsync(dataUrl, 0.7, 600)); } 
+                s.isImageLoading = false; window.renderScheduleBoard(); 
+            }; ipt.click(); 
+        };
+
+        // 通告单生成与渲染
+        window.renderCallSheetSidebar = function() {
+            const container = document.getElementById('daySelector');
+            if (window.shootingDays.length === 0) {
+                container.innerHTML = `<div class="text-xs text-zinc-600 font-bold">无排期数据</div>`; return;
+            }
+            container.innerHTML = window.shootingDays.map(day => `
+                <button onclick="window.selectCallSheetDay(${day.id})" class="px-4 py-1.5 rounded font-black text-xs transition border 
+                ${window.currentCallSheetDay === day.id ? 'bg-amber-500 text-black border-amber-500' : 'bg-zinc-800 text-zinc-400 border-zinc-700 hover:border-amber-500/50 hover:text-white'}">
+                    ${day.name}
+                </button>
+            `).join('');
+        };
+
+        window.selectCallSheetDay = function(dayId) { window.currentCallSheetDay = dayId; window.renderCallSheetSidebar(); window.syncData(); };
+
+        window.syncData = function() {
+            if(document.getElementById('view-callsheet').classList.contains('hidden')) return;
+
+            document.getElementById('sheetProdTitle').innerText = document.getElementById('inputProd').value || 'UNTITLED';
+            document.getElementById('sheetDir').innerText = document.getElementById('inputDir').value || 'TBD';
+            document.getElementById('sheetProdName').innerText = document.getElementById('inputProdName').value || 'TBD';
+            
+            document.getElementById('sheetDP').innerText = document.getElementById('inputDP').value || 'TBD';
+            document.getElementById('sheetGaffer').innerText = document.getElementById('inputGaffer').value || 'TBD';
+            document.getElementById('sheetMakeup').innerText = document.getElementById('inputMakeup').value || 'TBD';
+
+            document.getElementById('sheetDate').innerText = `DATE: ${document.getElementById('inputDate').value || 'YYYY-MM-DD'}`;
+            document.getElementById('sheetCallTime').innerText = document.getElementById('inputCallTime').value || '08:00';
+            
+            document.getElementById('sheetWeather').innerText = document.getElementById('inputWeather').value || 'TBD';
+            document.getElementById('sheetHospital').innerText = document.getElementById('inputHospital').value || 'TBD';
+            document.getElementById('sheetNotes').innerText = document.getElementById('inputNotes').value || '';
+
+            if (window.currentCallSheetDay) {
+                const currentDayObj = window.shootingDays.find(d => d.id === window.currentCallSheetDay);
+                document.getElementById('sheetDayNum').innerText = currentDayObj ? currentDayObj.name.replace('DAY ', '') : '-';
+                document.getElementById('sheetDayTotal').innerText = window.shootingDays.length;
+            }
+
+            window.renderA4SceneGrid();
+            window.renderA4CastGrid();
+        };
+
+        window.renderA4SceneGrid = function() {
+            const grid = document.getElementById('sheetSceneGrid');
+            if(!window.currentCallSheetDay) { grid.innerHTML = `<tr><td colspan="6" class="text-center py-6 italic text-gray-500">Please select a shooting day on the left.</td></tr>`; return; }
+
+            const dayScenes = window.projectData.scenes.filter(s => !s.isChapter && s.dayId === window.currentCallSheetDay);
+            if(dayScenes.length === 0) { grid.innerHTML = `<tr><td colspan="6" class="text-center py-6 italic text-gray-500">No scenes scheduled for this day.</td></tr>`; return; }
+
+            let currentTimeMins = timeToMinutes(document.getElementById('inputCallTime').value || "08:00") + 60; 
+            let html = '';
+            
+            dayScenes.forEach((s, idx) => {
+                const startStr = minutesToTime(currentTimeMins);
+                const durationMins = parseInt(s.duration) || 5;
+                currentTimeMins += durationMins;
+                const endStr = minutesToTime(currentTimeMins);
+                const desc = (s.col1 || s.col2 || '').substring(0, 60) + '...';
+                
+                const difficultyStars = s.difficulty ? `<div class="text-amber-500 text-[10px] mt-1 tracking-widest">${'★'.repeat(s.difficulty)}${'☆'.repeat(5-s.difficulty)}</div>` : '';
+                const dirNotes = s.notes ? `<div class="text-[9px] text-red-600 font-bold mt-1 bg-red-50 p-1 border border-red-200">📝 NOTES: ${s.notes}</div>` : '';
+
+                html += `
+                    <tr>
+                        <td class="font-bold text-center">${idx + 1}</td>
+                        <td class="font-bold text-center">SH-${window.getSceneNumber(s.id)}</td>
+                        <td class="text-center">${s.env}/${s.timeOfDay||'日'}</td>
+                        <td class="pb-2">
+                            <div class="font-bold uppercase">${s.locationName || 'LOCATION TBD'}</div>
+                            <div class="text-[9px] text-gray-600 mt-1">${desc}</div>
+                            ${difficultyStars}
+                            ${dirNotes}
+                        </td>
+                        <td class="text-[9px] font-bold text-blue-800">${s.castNames || ''}</td>
+                        <td class="text-center font-mono" contenteditable="true">${startStr} - ${endStr}</td>
+                    </tr>`;
+            });
+            grid.innerHTML = html;
+        };
+
+        window.renderA4CastGrid = function() {
+            const grid = document.getElementById('sheetCastGrid');
+            if(!window.currentCallSheetDay) { grid.innerHTML = `<tr><td colspan="6" class="text-center py-4 italic text-gray-500">Auto-generated from scenes...</td></tr>`; return; }
+
+            const dayScenes = window.projectData.scenes.filter(s => !s.isChapter && s.dayId === window.currentCallSheetDay);
+            const castSet = new Set();
+            dayScenes.forEach(s => { if(s.castNames) { s.castNames.split(/[,，、\s]+/).filter(n=>n.trim()).forEach(n => castSet.add(n)); } });
+
+            if(castSet.size === 0) { grid.innerHTML = `<tr><td colspan="6" class="text-center py-4 italic text-gray-500">No specific cast members required.</td></tr>`; return; }
+
+            let html = ''; let idCounter = 1;
+            castSet.forEach(castName => { html += `<tr><td class="font-bold text-center">${idCounter++}</td><td class="font-bold uppercase" contenteditable="true">${castName}</td><td contenteditable="true" class="text-center">SWF</td><td contenteditable="true" class="text-center">07:00</td><td contenteditable="true" class="text-center">07:30</td><td contenteditable="true" class="text-center font-bold">08:30</td></tr>`; });
+            for(let i=0; i<2; i++) { html += `<tr><td></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td><td contenteditable="true"></td></tr>`; }
+            grid.innerHTML = html;
+        };
+
+        function timeToMinutes(timeStr) { const [h, m] = timeStr.split(':').map(Number); return h * 60 + m; }
+        function minutesToTime(mins) { const h = Math.floor(mins / 60) % 24; const m = mins % 60; return `${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}`; }
+
+        window.printCallSheet = function() { window.print(); };
+
+        let toastTimeout;
+        window.showToast = function(msg) {
+            const toast = document.getElementById('toast'); document.getElementById('toastMsg').innerText = msg;
+            toast.classList.remove('opacity-0', 'translate-y-10');
+            clearTimeout(toastTimeout); toastTimeout = setTimeout(() => { toast.classList.add('opacity-0', 'translate-y-10'); }, 3000);
+        };
+    </script>
+
+</body></html>
