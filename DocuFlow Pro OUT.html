@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DOCUFlow PRO 商业化全景战略书</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- Chosen Palette: Warm Neutrals (Slate-50 to Slate-900) with Subtle Corporate Teal and Amber accents -->
+    <!-- Application Structure Plan: The SPA uses a 'Business Dashboard' structure. Instead of a linear scroll, it is divided into FIVE critical strategic domains: Market, Features UI (New), Roadmap, Profitability, and Execution. This allows decision-makers to focus on specific business aspects interactively. A persistent sidebar provides quick navigation. Highly detailed, pure CSS mockups populated with the specific "Times Capital" demo data visually demonstrate the product's value without relying on external image assets. -->
+    <!-- Visualization & Content Choices: 
+         1. Target Audience -> Goal: Inform on market segments -> Viz: Doughnut Chart (Chart.js)
+         2. Features UI Showcase (NEW) -> Goal: Show product reality -> Viz: High-fidelity CSS Mockups (HTML/Tailwind) -> Interaction: Scroll and hover effects -> Justification: Replaces images completely while showing actual demo data ("时代首府").
+         3. USP -> Goal: Compare/Inform -> Viz: Interactive HTML grid cards
+         4. Roadmap -> Goal: Organize timeline -> Viz: Interactive vertical timeline (HTML/CSS)
+         5. Profitability -> Goal: Compare business models -> Viz: Toggle switch + Bar Chart (Chart.js)
+         6. Execution -> Goal: Organize process flow -> Viz: Interactive Step Tabs (HTML/CSS)
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. Pure CSS Mockups used for screenshots. -->
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        body {
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc; /* slate-50 */
+            color: #0f172a; /* slate-900 */
+        }
+
+        /* Mandatory Chart Container Constraints */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 40vh;
+            max-height: 400px;
+            min-height: 300px;
+            overflow: hidden;
+        }
+
+        /* View Management */
+        .view-section {
+            display: none;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+        .view-section.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Interactive Elements */
+        .nav-btn {
+            transition: all 0.2s ease;
+        }
+        .nav-btn.active {
+            background-color: #0f172a;
+            color: #ffffff;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        }
+        .nav-btn:not(.active):hover {
+            background-color: #e2e8f0;
+        }
+
+        .hover-card {
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .hover-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease-out, opacity 0.3s ease, padding 0.3s ease;
+            opacity: 0;
+            padding-top: 0;
+            padding-bottom: 0;
+        }
+        .accordion-content.expanded {
+            max-height: 500px;
+            opacity: 1;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+        }
+
+        .toggle-btn {
+            transition: all 0.2s ease;
+        }
+        .toggle-btn.active {
+            background-color: #0d9488; /* teal-600 */
+            color: white;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1);
+        }
+
+        .step-tab {
+            transition: all 0.2s ease;
+            border-left-width: 4px;
+            border-left-color: transparent;
+        }
+        .step-tab.active {
+            border-left-color: #0f172a;
+            background-color: #f1f5f9;
+            font-weight: bold;
+        }
+
+        /* High-Fidelity CSS Mockup Specific Styles */
+        .mockup-bg { background-color: #0e0e11; }
+        .mockup-panel { background-color: #16161a; }
+        .mockup-card { background-color: #1c1c22; }
+        .mockup-border { border-color: #2d2d36; }
+        .mockup-accent { color: #1bd2b4; }
+        .mockup-accent-bg { background-color: #1bd2b4; }
+        .mockup-amber { color: #f59e0b; }
+        .mockup-font { font-family: 'JetBrains Mono', monospace, system-ui; }
+        
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="flex flex-col md:flex-row h-screen w-full overflow-hidden">
+
+    <!-- Mobile Header -->
+    <header class="md:hidden w-full bg-white border-b border-slate-200 p-4 flex justify-between items-center z-30 shrink-0 shadow-sm">
+        <div class="flex items-center gap-2">
+            <span class="text-xl">🎬</span>
+            <h1 class="text-lg font-black tracking-tight text-slate-900">DOCUFlow <span class="text-teal-600 font-medium text-sm">PRO</span></h1>
+        </div>
+        <button id="mobileMenuBtn" class="text-slate-500 font-bold text-xl px-2">&#9776;</button>
+    </header>
+
+    <!-- Sidebar Navigation -->
+    <nav id="sidebar" class="absolute md:relative w-64 h-full bg-white border-r border-slate-200 flex flex-col shrink-0 z-20 shadow-xl md:shadow-none transition-transform duration-300 -translate-x-full md:translate-x-0 overflow-y-auto">
+        <div class="p-6 border-b border-slate-100 hidden md:block">
+            <h1 class="text-xl font-black text-slate-900 tracking-tight flex items-center gap-2 mb-1">
+                <span>🎬</span> DOCUFlow
+            </h1>
+            <p class="text-[10px] text-teal-600 font-bold tracking-widest uppercase">商业化全景战略</p>
+        </div>
+        
+        <div class="flex flex-col gap-2 p-4 mt-2">
+            <p class="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-2 mb-2">Strategy Domains</p>
+            <button class="nav-btn active flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600" data-target="view-market">
+                <span class="text-lg w-6 text-center">&#128202;</span> <span class="font-medium text-sm">市场前景分析</span>
+            </button>
+            <button class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600" data-target="view-features">
+                <span class="text-lg w-6 text-center">&#128187;</span> <span class="font-medium text-sm">核心界面展示</span>
+            </button>
+            <button class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600" data-target="view-roadmap">
+                <span class="text-lg w-6 text-center">&#128640;</span> <span class="font-medium text-sm">软件开发方向</span>
+            </button>
+            <button class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600" data-target="view-profit">
+                <span class="text-lg w-6 text-center">&#128176;</span> <span class="font-medium text-sm">盈利模式设计</span>
+            </button>
+            <button class="nav-btn flex items-center gap-3 px-4 py-3 rounded-xl text-left text-slate-600" data-target="view-execution">
+                <span class="text-lg w-6 text-center">&#9881;</span> <span class="font-medium text-sm">实操落地流程</span>
+            </button>
+        </div>
+        
+        <div class="mt-auto p-6">
+            <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                <p class="text-xs text-slate-500 font-medium leading-relaxed">目标：将 MVP 转化为垂直市场的高净值原生盈利资产。</p>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Mobile Overlay -->
+    <div id="mobileOverlay" class="fixed inset-0 bg-slate-900/50 z-10 hidden backdrop-blur-sm transition-opacity opacity-0"></div>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 h-full overflow-y-auto relative bg-slate-50">
+        
+        <!-- ==================== VIEW 01: MARKET ==================== -->
+        <section id="view-market" class="view-section active flex-col p-6 md:p-10 lg:p-14 max-w-7xl mx-auto">
+            <div class="mb-10">
+                <p class="text-teal-600 font-bold tracking-widest text-xs uppercase mb-2">Domain 01</p>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">市场前景与受众剖析</h2>
+                <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">本模块解析 DOCUFlow PRO 切入的高净值垂直细分市场（Niche Market）。通过下方的交互式图表与核心优势卡片，直观呈现目标用户群体的“硬核”痛点及我们不可替代的技术壁垒。</p>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12">
+                <!-- Audience Chart -->
+                <div class="bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col h-full hover-card">
+                    <div class="mb-4">
+                        <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><span>&#127919;</span> 目标用户群画像</h3>
+                        <p class="text-sm text-slate-500 mt-1">悬停下方环形图区块，查看特定人群的核心痛点。</p>
+                    </div>
+                    <div class="chart-container flex-1 min-h-[300px] flex items-center justify-center">
+                        <canvas id="audienceChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- USP Cards -->
+                <div class="flex flex-col gap-5">
+                    <div class="bg-slate-900 p-6 rounded-2xl shadow-md text-white mb-2 relative overflow-hidden">
+                        <div class="absolute -right-10 -bottom-10 w-40 h-40 bg-teal-500 opacity-20 rounded-full blur-3xl"></div>
+                        <h3 class="text-xl font-bold mb-2 flex items-center gap-2 relative z-10"><span>&#127942;</span> 核心竞争优势 (USP)</h3>
+                        <p class="text-sm text-slate-300 relative z-10">对比泛用型备忘录App，本产品拥有三大杀手锏：</p>
+                    </div>
+                    
+                    <div class="hover-card bg-white p-6 rounded-xl border border-l-4 border-l-slate-800 shadow-sm flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-xl shrink-0">&#128246;</div>
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-bold text-slate-800 text-lg">断网即用 (Pure Offline)</h4>
+                            </div>
+                            <p class="text-sm text-slate-600 leading-relaxed mb-2">基于 IndexedDB 的重型纯本地架构。野外、矿山、工地等无网络环境工作者的“救命稻草”。</p>
+                            <span class="bg-slate-100 text-slate-600 text-[10px] px-2 py-0.5 rounded font-mono font-bold tracking-wider">Tech: IndexedDB</span>
+                        </div>
+                    </div>
+                    
+                    <div class="hover-card bg-white p-6 rounded-xl border border-l-4 border-l-teal-600 shadow-sm flex items-start gap-4">
+                        <div class="w-10 h-10 rounded-full bg-teal-50 flex items-center justify-center text-xl shrink-0">&#9889;</div>
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <h4 class="font-bold text-slate-800 text-lg">秒转后期 (Instant Post)</h4>
+                            </div>
+                            <p class="text-sm text-slate-600 leading-relaxed mb-2">直接导出 FCP7 XML 和 DaVinci EDL 强制套底。打通了“前期到后期”的任督二脉，形成技术壁垒。</p>
+                            <span class="bg-teal-50 text-teal-700 text-[10px] px-2 py-0.5 rounded font-mono font-bold tracking-wider">Tech: XML / EDL</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 02: UI FEATURES MOCKUPS (NEW) ==================== -->
+        <section id="view-features" class="view-section hidden flex-col p-6 md:p-10 lg:p-14 max-w-6xl mx-auto pb-24">
+            <div class="mb-10">
+                <p class="text-teal-600 font-bold tracking-widest text-xs uppercase mb-2">Domain 02</p>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">核心功能与界面演示</h2>
+                <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">以<strong class="text-slate-800">《时代首府全周期执行大纲》</strong>为真实业务数据，直观展示软件三大核心工作台的高级深空暗黑（Dark Industrial）UI 设计与专业工作流。</p>
+            </div>
+
+            <div class="space-y-12">
+                
+                <!-- Mockup 1: Dashboard -->
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-lg border border-slate-200">
+                    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-900 flex items-center gap-2"><span>🗂️</span> 全案大纲管理中心</h3>
+                            <p class="text-sm text-slate-500 mt-1">树状结构管理，打破线性剧本束缚，支持无限层级包板块拆解。</p>
+                        </div>
+                        <span class="bg-slate-100 text-slate-600 text-xs px-3 py-1.5 rounded-lg font-bold tracking-wider">Dashboard View</span>
+                    </div>
+                    
+                    <!-- CSS Native Mockup (No Images) -->
+                    <div class="w-full h-[400px] mockup-bg rounded-xl border-2 mockup-border shadow-2xl flex flex-col overflow-hidden">
+                        <!-- Mac OS window header -->
+                        <div class="h-8 bg-black/60 flex items-center px-4 gap-2 border-b mockup-border shrink-0">
+                            <div class="w-3 h-3 rounded-full bg-slate-700"></div><div class="w-3 h-3 rounded-full bg-slate-700"></div><div class="w-3 h-3 rounded-full bg-slate-700"></div>
+                            <div class="mx-auto text-[10px] text-slate-500 font-bold tracking-widest">DOCUFlow PRO - 时代首府</div>
+                        </div>
+                        <div class="flex flex-1 overflow-hidden">
+                            <!-- Sidebar -->
+                            <div class="w-64 mockup-panel border-r mockup-border flex flex-col shrink-0">
+                                <div class="p-4 border-b mockup-border bg-[#111113]">
+                                    <div class="text-white text-sm font-black flex items-center gap-2">🎬 《时代首府全周期大纲》</div>
+                                </div>
+                                <div class="p-3 flex flex-col gap-1">
+                                    <div class="px-3 py-2 bg-slate-800 border-l-2 border-amber-500 text-white text-xs font-bold rounded-r">包1：设计之光</div>
+                                    <div class="px-3 py-2 text-slate-400 text-xs hover:text-white cursor-pointer">包2：寻脉之旅 —— 寻材</div>
+                                    <div class="px-3 py-2 text-slate-400 text-xs hover:text-white cursor-pointer">包3：淬炼成金 —— 施工</div>
+                                </div>
+                            </div>
+                            <!-- Main Area -->
+                            <div class="flex-1 p-6 flex flex-col bg-[#0e0e11]">
+                                <div class="mockup-card border mockup-border rounded-xl p-5 mb-6 shadow-md">
+                                    <h2 class="text-white text-lg font-black mb-2 flex items-center gap-2"><span class="text-amber-500">包1：设计之光</span></h2>
+                                    <p class="text-xs text-teal-500 bg-teal-900/20 p-2 rounded border border-teal-500/30">🎯 核心目的：记录“无中生有”的脑力碰撞，体现项目的国际化视野与前瞻性。</p>
+                                </div>
+                                <div class="grid grid-cols-2 gap-4">
+                                    <div class="mockup-card border mockup-border rounded-xl p-5 hover:border-amber-500 transition-colors cursor-pointer">
+                                        <h3 class="text-amber-500 text-sm font-bold mb-3">1.1 闭门方案研讨会 (会议室)</h3>
+                                        <p class="text-[10px] text-slate-400 mb-4 line-clamp-2">镜头重点：多机位拍摄。图纸铺满桌面的特写；双方争论、妥协、最终达成共识的张力瞬间。</p>
+                                        <div class="flex gap-2 text-[9px] font-mono">
+                                            <span class="bg-black border mockup-border px-2 py-1 rounded text-slate-300">堪景: 1</span>
+                                            <span class="bg-black border mockup-border px-2 py-1 rounded text-cyan-500">实拍: 3</span>
+                                        </div>
+                                    </div>
+                                    <div class="mockup-card border mockup-border rounded-xl p-5 cursor-pointer">
+                                        <h3 class="text-white text-sm font-bold mb-3">1.2 设计师专访与理念阐释</h3>
+                                        <p class="text-[10px] text-slate-400 mb-4 line-clamp-2">镜头重点：主灯光布置，三机位（全景、近景、手部比划特写）。</p>
+                                        <div class="flex gap-2 text-[9px] font-mono">
+                                            <span class="bg-black border mockup-border px-2 py-1 rounded text-slate-500">堪景: 0</span>
+                                            <span class="bg-black border mockup-border px-2 py-1 rounded text-slate-500">实拍: 0</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mockup 2: Production Log -->
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-lg border border-slate-200">
+                    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-900 flex items-center gap-2"><span>🎥</span> 实拍场记工作台 (Production Log)</h3>
+                            <p class="text-sm text-slate-500 mt-1">录入打点极其高效。支持超长场记笔记与多机位文件号快速绑定。</p>
+                        </div>
+                        <span class="bg-cyan-50 text-cyan-700 text-xs px-3 py-1.5 rounded-lg font-bold tracking-wider">Log View</span>
+                    </div>
+                    
+                    <div class="w-full h-[450px] mockup-bg rounded-xl border-2 mockup-border shadow-2xl flex flex-col overflow-hidden">
+                        <div class="h-8 bg-black/60 flex items-center px-4 gap-2 border-b mockup-border shrink-0">
+                            <div class="w-3 h-3 rounded-full bg-slate-700"></div><div class="w-3 h-3 rounded-full bg-slate-700"></div><div class="w-3 h-3 rounded-full bg-slate-700"></div>
+                            <div class="mx-auto text-[10px] text-slate-500 font-bold tracking-widest uppercase">Production Camera Matrix</div>
+                        </div>
+                        <!-- Log Area -->
+                        <div class="flex-1 p-6 flex flex-col lg:flex-row gap-6 bg-[#0e0e11]">
+                            <!-- Left: Image & Metadata -->
+                            <div class="w-full lg:w-[40%] flex flex-col gap-4">
+                                <div class="w-full aspect-video bg-black rounded-xl border border-slate-800 flex flex-col items-center justify-center relative overflow-hidden">
+                                    <div class="absolute inset-0 bg-gradient-to-tr from-teal-900/30 to-transparent"></div>
+                                    <span class="text-4xl opacity-50 mb-2">📸</span>
+                                    <span class="text-[10px] text-slate-500 font-bold tracking-widest z-10">点击更新现场截图</span>
+                                    <div class="absolute top-2 right-2 bg-blue-900/50 border border-blue-500/50 text-blue-300 text-[8px] px-2 py-1 rounded">📍 堪景转化</div>
+                                </div>
+                                <div>
+                                    <div class="text-white text-xl font-black border-b border-slate-800 pb-2 mb-3">📍 深山林地-园林总监看树</div>
+                                    <div class="mockup-panel border mockup-border p-4 rounded-xl text-xs text-slate-300 leading-relaxed min-h-[100px]">
+                                        【动作】跟拍总监穿过灌木丛。<br><br>
+                                        【同期声】“为了找到这棵造型最完美的迎客松，我们跑了三个省。”
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Right: Takes & Filing -->
+                            <div class="w-full lg:w-[60%] flex flex-col">
+                                <div class="flex justify-between items-center mb-4">
+                                    <div class="text-teal-500 text-sm font-black tracking-widest uppercase">镜头文件库 (Takes)</div>
+                                    <span class="bg-black border mockup-border text-slate-400 text-[10px] px-2 py-1 rounded font-mono">TOTAL: 2</span>
+                                </div>
+                                <div class="flex-1 mockup-card border-2 border-dashed mockup-border rounded-xl p-4 flex flex-col gap-3 mb-4 overflow-y-auto">
+                                    <!-- Take 1 -->
+                                    <div class="bg-[#050505] border mockup-border p-3 rounded-lg flex justify-between items-center">
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-slate-600 font-mono text-xs w-5">#1</span>
+                                            <span class="bg-black border mockup-border text-amber-500 px-2 py-1 rounded text-[10px] font-black">R5</span>
+                                            <span class="text-slate-400 font-mono text-sm">R5_001</span>
+                                        </div>
+                                        <div class="bg-[#16161a] border mockup-border text-slate-500 text-[10px] px-3 py-1.5 rounded">标为可用</div>
+                                    </div>
+                                    <!-- Take 2 OK -->
+                                    <div class="bg-emerald-900/10 border border-emerald-500/50 p-3 rounded-lg flex justify-between items-center">
+                                        <div class="flex items-center gap-3">
+                                            <span class="text-slate-600 font-mono text-xs w-5">#2</span>
+                                            <span class="bg-black border border-emerald-900 text-amber-500 px-2 py-1 rounded text-[10px] font-black">R5</span>
+                                            <span class="text-emerald-400 font-mono text-sm font-bold">R5_002_OK</span>
+                                        </div>
+                                        <div class="bg-emerald-500 text-black font-black shadow-md shadow-emerald-500/20 text-[10px] px-3 py-1.5 rounded">⭕ 保用 (OK)</div>
+                                    </div>
+                                </div>
+                                <!-- Input Area -->
+                                <div class="flex gap-2">
+                                    <div class="bg-black border mockup-border p-2 rounded-lg flex-1 flex items-center">
+                                        <span class="text-red-500 font-mono text-lg ml-2 font-bold tracking-wider opacity-60">R5_003|</span>
+                                    </div>
+                                    <div class="bg-emerald-800/30 text-emerald-500 border border-emerald-600/50 px-4 flex items-center justify-center rounded-lg text-xs font-bold">
+                                        🎬 标记杀青
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mockup 3: Timeline NLE -->
+                <div class="bg-white p-6 md:p-8 rounded-3xl shadow-lg border border-slate-200">
+                    <div class="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h3 class="text-2xl font-bold text-slate-900 flex items-center gap-2"><span>✂️</span> 纸上剪辑多轨套底台 (Timeline)</h3>
+                            <p class="text-sm text-slate-500 mt-1">国内独创功能。前期直接在 iPad 拖拽轨道排序，一键生成 FCP7 XML。</p>
+                        </div>
+                        <span class="bg-emerald-50 text-emerald-700 text-xs px-3 py-1.5 rounded-lg font-bold tracking-wider">NLE View</span>
+                    </div>
+                    
+                    <div class="w-full h-[300px] mockup-bg rounded-xl border-2 mockup-border shadow-2xl flex flex-col overflow-hidden relative">
+                        <div class="h-8 bg-black/60 flex justify-between items-center px-4 border-b mockup-border shrink-0">
+                            <div class="flex gap-2">
+                                <div class="w-3 h-3 rounded-full bg-slate-700"></div><div class="w-3 h-3 rounded-full bg-slate-700"></div><div class="w-3 h-3 rounded-full bg-slate-700"></div>
+                            </div>
+                            <div class="text-[10px] text-emerald-500 border border-emerald-500/30 bg-emerald-900/20 px-2 rounded font-mono">Export XML</div>
+                        </div>
+                        <!-- Tracks Area -->
+                        <div class="flex-1 flex flex-col justify-end pb-8 bg-[#0e0e11]">
+                            <!-- Ruler -->
+                            <div class="h-5 bg-[#111113] border-b mockup-border w-full absolute top-8 flex items-end overflow-hidden opacity-50">
+                                <div class="w-full h-2" style="background-image: repeating-linear-gradient(to right, transparent, transparent 49px, #3f3f46 49px, #3f3f46 50px)"></div>
+                            </div>
+                            
+                            <!-- V2 Track -->
+                            <div class="flex items-end border-b mockup-border relative">
+                                <div class="w-16 h-16 bg-[#16161a] border-r mockup-border flex flex-col items-center justify-center z-10 shrink-0">
+                                    <span class="text-[10px] text-emerald-700 font-bold">V2</span>
+                                    <span class="text-[7px] text-slate-600 mt-1">B-ROLL</span>
+                                </div>
+                                <div class="flex-1 h-16 bg-[#111113] flex items-end gap-0.5 p-1 pl-4">
+                                    <!-- Clip 1 -->
+                                    <div class="w-32 h-10 mockup-card border border-slate-700 border-t-[3px] border-t-emerald-500 rounded flex flex-col relative overflow-hidden">
+                                        <div class="bg-slate-700 text-white text-[8px] px-1 h-4 flex items-center font-bold">深山林地-看树</div>
+                                        <div class="flex-1 bg-black p-1"><span class="bg-black/80 text-slate-400 text-[7px] font-mono rounded">R5</span></div>
+                                        <div class="absolute bottom-0 right-1 text-emerald-500 text-[8px] font-black">✔</div>
+                                    </div>
+                                    <!-- Clip Placeholder -->
+                                    <div class="w-24 h-10 bg-red-950/30 border border-dashed border-red-500/80 rounded flex flex-col overflow-hidden">
+                                        <div class="bg-red-900/80 text-red-200 text-[8px] px-1 h-4 flex items-center font-bold truncate">⭕缺: 树皮特写</div>
+                                        <div class="flex-1 flex items-center justify-center text-[7px] text-red-400 tracking-widest">去实拍补齐</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- V1 Track -->
+                            <div class="flex items-end border-b mockup-border relative">
+                                <div class="w-16 h-20 bg-[#16161a] border-r mockup-border flex flex-col items-center justify-center z-10 shrink-0">
+                                    <span class="text-[10px] text-amber-600 font-bold">V1</span>
+                                    <span class="text-[7px] text-slate-600 mt-1">MAIN</span>
+                                </div>
+                                <div class="flex-1 h-20 bg-[#111113] flex items-end gap-0.5 p-1 pl-12">
+                                    <!-- Clip 2 -->
+                                    <div class="w-40 h-14 mockup-card border border-slate-700 border-t-[3px] border-t-emerald-500 rounded flex flex-col relative overflow-hidden">
+                                        <div class="bg-slate-700 text-white text-[8px] px-1 h-4 flex items-center font-bold truncate">航拍深山云海</div>
+                                        <div class="flex-1 bg-black p-1"><span class="bg-black/80 text-slate-400 text-[7px] font-mono rounded">DJI</span></div>
+                                        <div class="absolute bottom-0 right-1 text-emerald-500 text-[8px] font-black">✔</div>
+                                    </div>
+                                    <!-- Clip 3 -->
+                                    <div class="w-48 h-14 mockup-card border border-slate-700 border-t-[3px] border-t-emerald-500 rounded flex flex-col relative overflow-hidden">
+                                        <div class="absolute -top-1 left-2 w-0 h-0 border-l-[3px] border-l-transparent border-r-[3px] border-r-transparent border-b-[5px] border-b-cyan-500 z-20"></div>
+                                        <div class="bg-slate-700 text-white text-[8px] px-1 h-4 flex items-center font-bold pl-3 truncate">现场同期声采访</div>
+                                        <div class="flex-1 bg-black p-1"><span class="bg-black/80 text-slate-400 text-[7px] font-mono rounded">ARRI</span></div>
+                                        <div class="absolute bottom-0 right-1 text-emerald-500 text-[8px] font-black">✔</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 03: ROADMAP ==================== -->
+        <section id="view-roadmap" class="view-section hidden flex-col p-6 md:p-10 lg:p-14 max-w-5xl mx-auto">
+            <div class="mb-10">
+                <p class="text-teal-600 font-bold tracking-widest text-xs uppercase mb-2">Domain 03</p>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">软件开发方向规划</h2>
+                <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">展示产品从 V14 MVP（最小可行性产品）向“剧组中枢”演进的路线图。点击下方时间线节点，可深入了解每个阶段的具体技术拆解与功能规划。</p>
+            </div>
+
+            <div class="bg-white p-6 md:p-10 rounded-2xl shadow-sm border border-slate-200">
+                <div class="relative border-l-2 border-slate-200 ml-4 md:ml-8 space-y-8 py-4">
+                    
+                    <!-- Phase 1 -->
+                    <div class="relative pl-8 md:pl-10">
+                        <div class="absolute w-8 h-8 bg-slate-900 rounded-full text-white flex items-center justify-center font-bold border-4 border-white shadow-sm -left-[17px] top-2 z-10 transition-transform hover:scale-110 cursor-pointer" onclick="toggleAccordion('phase1', this)">1</div>
+                        <div class="bg-slate-50 rounded-xl border border-slate-200 overflow-hidden cursor-pointer hover-card" onclick="toggleAccordion('phase1', this)">
+                            <div class="p-5 flex justify-between items-center bg-white">
+                                <div>
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">近期 (Near-term)</span>
+                                    <h3 class="text-lg font-bold text-slate-800">原生化与全端打通</h3>
+                                </div>
+                                <div class="flex items-center gap-3">
+                                    <span class="hidden sm:inline-block bg-teal-100 text-teal-800 text-[10px] px-2 py-1 rounded font-bold uppercase tracking-wider">进行中</span>
+                                    <span class="text-slate-400 text-xl font-mono transform transition-transform duration-300" id="icon-phase1">&#43;</span>
+                                </div>
+                            </div>
+                            <div id="phase1" class="accordion-content px-5 bg-slate-50 border-t border-slate-200">
+                                <ul class="space-y-4 pb-2">
+                                    <li class="flex items-start gap-3">
+                                        <div class="text-lg shrink-0">&#128241;</div>
+                                        <div>
+                                            <strong class="text-slate-900 block mb-1 text-sm">原生存储与分享集成</strong>
+                                            <p class="text-sm text-slate-600 leading-relaxed">使用 Capacitor 将网页打包为 iOS 原生应用。接入 iOS 的 Share Sheet，让导出的 ZIP 文件可一键 AirDrop 或分享。</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="text-lg shrink-0">&#9728;</div>
+                                        <div>
+                                            <strong class="text-slate-900 block mb-1 text-sm">iCloud 同步</strong>
+                                            <p class="text-sm text-slate-600 leading-relaxed">接入苹果原生的 CloudKit。实现 iPad 场记与 Mac 端的无缝数据流转（免费且稳定的最大杀手锏）。</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 2 -->
+                    <div class="relative pl-8 md:pl-10">
+                        <div class="absolute w-8 h-8 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center font-bold border-4 border-white shadow-sm -left-[17px] top-2 z-10 transition-colors hover:bg-slate-800 hover:text-white cursor-pointer" onclick="toggleAccordion('phase2', this)">2</div>
+                        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden cursor-pointer hover-card" onclick="toggleAccordion('phase2', this)">
+                            <div class="p-5 flex justify-between items-center">
+                                <div>
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">中期 (Mid-term)</span>
+                                    <h3 class="text-lg font-bold text-slate-800">专业功能补齐</h3>
+                                </div>
+                                <span class="text-slate-400 text-xl font-mono transform transition-transform duration-300" id="icon-phase2">&#43;</span>
+                            </div>
+                            <div id="phase2" class="accordion-content px-5 bg-slate-50 border-t border-slate-200">
+                                <ul class="space-y-4 pb-2">
+                                    <li class="flex items-start gap-3">
+                                        <div class="text-lg shrink-0">&#128196;</div>
+                                        <div>
+                                            <strong class="text-slate-900 block mb-1 text-sm">场记单 / Call Sheet 导出</strong>
+                                            <p class="text-sm text-slate-600 leading-relaxed">自动排版生成包含剧照图片和详细镜头号的 PDF 文件，方便实地打印分发给剧组。</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="text-lg shrink-0">&#9201;</div>
+                                        <div>
+                                            <strong class="text-slate-900 block mb-1 text-sm">时间码 (Timecode) 强同步</strong>
+                                            <p class="text-sm text-slate-600 leading-relaxed">支持手动输入或蓝牙同步专业摄影机的真实系统时间码，确保 EDL 导出套底精准无瑕。</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Phase 3 -->
+                    <div class="relative pl-8 md:pl-10">
+                        <div class="absolute w-8 h-8 bg-slate-200 text-slate-500 rounded-full flex items-center justify-center font-bold border-4 border-white shadow-sm -left-[17px] top-2 z-10 transition-colors hover:bg-slate-800 hover:text-white cursor-pointer" onclick="toggleAccordion('phase3', this)">3</div>
+                        <div class="bg-white rounded-xl border border-slate-200 overflow-hidden cursor-pointer hover-card" onclick="toggleAccordion('phase3', this)">
+                            <div class="p-5 flex justify-between items-center">
+                                <div>
+                                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider block mb-1">远期 (Long-term)</span>
+                                    <h3 class="text-lg font-bold text-slate-800">AI 赋能与协作</h3>
+                                </div>
+                                <span class="text-slate-400 text-xl font-mono transform transition-transform duration-300" id="icon-phase3">&#43;</span>
+                            </div>
+                            <div id="phase3" class="accordion-content px-5 bg-slate-50 border-t border-slate-200">
+                                <ul class="space-y-4 pb-2">
+                                    <li class="flex items-start gap-3">
+                                        <div class="text-lg shrink-0">&#129302;</div>
+                                        <div>
+                                            <strong class="text-slate-900 block mb-1 text-sm">AI 场记金句提取</strong>
+                                            <p class="text-sm text-slate-600 leading-relaxed">接入端侧 AI (如 Apple CoreML)，无网环境下自动语音转文字，提取采访金句。</p>
+                                        </div>
+                                    </li>
+                                    <li class="flex items-start gap-3">
+                                        <div class="text-lg shrink-0">&#128209;</div>
+                                        <div>
+                                            <strong class="text-slate-900 block mb-1 text-sm">智能剧本拆解</strong>
+                                            <p class="text-sm text-slate-600 leading-relaxed">导入剧本，AI 自动生成“阶段包”和“实战模块”的树状大纲结构。</p>
+                                        </div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 04: PROFITABILITY ==================== -->
+        <section id="view-profit" class="view-section hidden flex-col p-6 md:p-10 lg:p-14 max-w-6xl mx-auto">
+            <div class="mb-8 flex flex-col lg:flex-row lg:items-end justify-between gap-6">
+                <div>
+                    <p class="text-teal-600 font-bold tracking-widest text-xs uppercase mb-2">Domain 04</p>
+                    <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">盈利模式验证</h2>
+                    <p class="text-lg text-slate-600 leading-relaxed max-w-2xl">评估商业变现策略。本应用坚决不建议做广告变现破坏体验。请使用下方控制台切换不同收费模型，动态查看预估转化漏斗。</p>
+                </div>
+                
+                <!-- Strategy Toggle -->
+                <div class="flex bg-slate-200 p-1.5 rounded-xl shrink-0 items-center shadow-inner self-start lg:self-end">
+                    <button class="toggle-btn active px-4 md:px-6 py-2.5 rounded-lg text-sm font-bold w-1/2 lg:w-auto whitespace-nowrap" data-model="freemium">
+                        模式 A: 免费增值
+                    </button>
+                    <button class="toggle-btn px-4 md:px-6 py-2.5 rounded-lg text-sm font-bold text-slate-600 w-1/2 lg:w-auto whitespace-nowrap" data-model="paid">
+                        模式 B: 纯付费买断
+                    </button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 xl:grid-cols-12 gap-8 items-start">
+                <!-- Dynamic Pricing Display -->
+                <div class="xl:col-span-5 flex flex-col gap-6" id="pricing-container">
+                    <!-- Populated by JS -->
+                </div>
+
+                <!-- Simulation Chart -->
+                <div class="xl:col-span-7 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 flex flex-col h-full min-h-[400px]">
+                    <div class="mb-4">
+                        <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><span>&#128200;</span> 营收漏斗模拟</h3>
+                        <p class="text-sm text-slate-500 mt-1">基准假设: 每月 10,000 次应用商店触达。切换左侧模式更新图表。</p>
+                    </div>
+                    <div class="chart-container flex-1 w-full">
+                        <canvas id="profitChart"></canvas>
+                    </div>
+                    <div class="mt-4 pt-4 border-t border-slate-100">
+                        <p id="chart-logic-text" class="text-xs text-slate-500 font-medium leading-relaxed bg-slate-50 p-3 rounded-lg border border-slate-100">
+                            <!-- Populated by JS -->
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ==================== VIEW 05: EXECUTION ==================== -->
+        <section id="view-execution" class="view-section hidden flex-col p-6 md:p-10 lg:p-14 max-w-6xl mx-auto pb-24">
+            <div class="mb-10">
+                <p class="text-teal-600 font-bold tracking-widest text-xs uppercase mb-2">Domain 05</p>
+                <h2 class="text-3xl md:text-4xl font-black text-slate-900 mb-4 tracking-tight">App Store 上架实操</h2>
+                <p class="text-lg text-slate-600 leading-relaxed max-w-3xl">将想法变成账户美金的标准化落地路径。点击下方步骤标签，逐步浏览账号注册、技术加壳、ASO 包装与冷启动营销策略。</p>
+            </div>
+
+            <div class="flex flex-col md:flex-row gap-6">
+                <!-- Step Tabs Vertical -->
+                <div class="w-full md:w-64 flex flex-row md:flex-col gap-2 overflow-x-auto md:overflow-visible pb-2 md:pb-0 shrink-0">
+                    <button class="step-tab active text-left p-4 rounded-r-lg bg-white border border-slate-200 shadow-sm min-w-[180px] md:min-w-0" data-step="1">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Step 1</span>
+                        <span class="text-slate-800 font-bold text-sm">注册账号与资质</span>
+                    </button>
+                    <button class="step-tab text-left p-4 rounded-r-lg bg-white border border-slate-200 hover:bg-slate-50 min-w-[180px] md:min-w-0" data-step="2">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Step 2</span>
+                        <span class="text-slate-800 font-bold text-sm">技术重构与加壳</span>
+                    </button>
+                    <button class="step-tab text-left p-4 rounded-r-lg bg-white border border-slate-200 hover:bg-slate-50 min-w-[180px] md:min-w-0" data-step="3">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Step 3</span>
+                        <span class="text-slate-800 font-bold text-sm">ASO 与审核合规</span>
+                    </button>
+                    <button class="step-tab text-left p-4 rounded-r-lg bg-white border border-slate-200 hover:bg-slate-50 min-w-[180px] md:min-w-0" data-step="4">
+                        <span class="text-[10px] font-black text-slate-400 uppercase tracking-widest block mb-1">Step 4</span>
+                        <span class="text-slate-800 font-bold text-sm">冷启动营销推广</span>
+                    </button>
+                </div>
+
+                <!-- Step Content Panes -->
+                <div class="w-full flex-1 bg-white p-6 md:p-8 rounded-2xl shadow-sm border border-slate-200 min-h-[400px]">
+                    
+                    <!-- Step 1 -->
+                    <div id="step-content-1" class="step-pane block animate-fadeIn">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                            <span class="w-10 h-10 bg-slate-900 rounded-lg flex items-center justify-center text-white text-lg shadow-md">&#128179;</span>
+                            注册 Apple Developer
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                                <h4 class="font-bold text-slate-800 mb-2">成本与时间门槛</h4>
+                                <p class="text-slate-600 text-sm leading-relaxed">每年 688 元人民币 ($99)。审核周期 1-3 天。这是后续一切操作的必须门票。</p>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                                <h4 class="font-bold text-slate-800 mb-2">主体身份选择</h4>
+                                <p class="text-slate-600 text-sm leading-relaxed"><strong>个人：</strong>显示真实姓名。<br><strong>公司：</strong>需申请邓白氏编码(D-U-N-S)，显示公司名称，更具专业信任感。</p>
+                            </div>
+                            <div class="bg-slate-50 p-5 rounded-xl border border-slate-100">
+                                <h4 class="font-bold text-slate-800 mb-2">环境准备</h4>
+                                <p class="text-slate-600 text-sm leading-relaxed">在 iMac Pro 的 Mac App Store 中下载安装完整的 <strong>Xcode</strong>。</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div id="step-content-2" class="step-pane hidden animate-fadeIn">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                            <span class="w-10 h-10 bg-teal-600 rounded-lg flex items-center justify-center text-white text-lg shadow-md">&#128736;</span>
+                            技术重构 (打包加壳)
+                        </h3>
+                        <div class="space-y-4">
+                            <div class="border border-slate-200 p-5 rounded-xl bg-white">
+                                <h4 class="font-bold text-slate-800 mb-2">采用 Capacitor / Cordova</h4>
+                                <p class="text-sm text-slate-600 leading-relaxed">将纯前端 HTML 封装为包含 WKWebView 的原生 Xcode 工程 (.ipa)。</p>
+                            </div>
+                            <div class="border-l-4 border-l-amber-500 bg-amber-50/30 p-5 rounded-xl border border-amber-200/50">
+                                <h4 class="font-bold text-slate-800 mb-3 text-sm flex items-center gap-2"><span>&#9888;</span> 需处理的 API 暗坑</h4>
+                                <ul class="list-disc pl-5 text-sm text-slate-700 space-y-2">
+                                    <li><strong>ZIP 导出：</strong> 替换浏览器下载为 iOS 原生 Share Sheet 插件。</li>
+                                    <li><strong>摄像头权限：</strong> 必须在 <code>Info.plist</code> 声明 <code>NSCameraUsageDescription</code> 防止闪退。</li>
+                                    <li><strong>内购集成：</strong> 植入 <strong>RevenueCat</strong> 第三方库处理内购验证。</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div id="step-content-3" class="step-pane hidden animate-fadeIn">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                            <span class="w-10 h-10 bg-indigo-600 rounded-lg flex items-center justify-center text-white text-lg shadow-md">&#127912;</span>
+                            ASO 与审核合规
+                        </h3>
+                        <div class="space-y-5">
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 border-l-indigo-500 border-l-4">
+                                <h4 class="font-bold text-slate-800 mb-2 text-sm">视觉包装与命名 (ASO)</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed">名称：<code>DOCUFlow - 导演与场记跨平台工作站</code>。<br>提供深色模式高清截图（参考“界面展示”模块），并在图上标注核心痛点：“一键导出达芬奇”。</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100">
+                                <h4 class="font-bold text-slate-800 mb-2 text-sm">跨越 4.2.2 审核规则</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed">苹果拒审简单网页。提审时必须在备注中强调工具属性：IndexedDB 离线存储、JSZip 本地文件生成、摄像头调用及 NLE 时间线交互拖拽。</p>
+                            </div>
+                            <div class="bg-slate-50 p-4 rounded-xl border border-slate-100 border-l-rose-500 border-l-4">
+                                <h4 class="font-bold text-slate-800 mb-1 text-sm">隐私政策 (必查)</h4>
+                                <p class="text-slate-600 text-xs leading-relaxed">需提供静态网页链接严正声明：“本应用所有数据（含图文）均保存在设备本地，绝不包含任何收集或上传隐私的代码。”</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div id="step-content-4" class="step-pane hidden animate-fadeIn">
+                        <h3 class="text-2xl font-bold text-slate-900 mb-6 flex items-center gap-3">
+                            <span class="w-10 h-10 bg-rose-600 rounded-lg flex items-center justify-center text-white text-lg shadow-md">&#128226;</span>
+                            冷启动营销推广
+                        </h3>
+                        <p class="text-slate-600 mb-5 text-sm">绝不干等自然流量。需主动出击垂直圈层。</p>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="border border-slate-200 p-4 rounded-xl bg-white shadow-sm">
+                                <div class="text-xl mb-2">&#128249;</div>
+                                <h4 class="font-bold text-slate-800 mb-2 text-sm">短视频媒体流</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mb-3">在小红书/B站发布第一视角 iPad 操作流。展示拖拽与导出。</p>
+                                <div class="text-[10px] text-slate-500 font-mono bg-slate-50 p-2 rounded">标题如：“扔掉纸质场记单，一键生成达芬奇时间线”</div>
+                            </div>
+                            <div class="border border-slate-200 p-4 rounded-xl bg-white shadow-sm">
+                                <div class="text-xl mb-2">&#128101;</div>
+                                <h4 class="font-bold text-slate-800 mb-2 text-sm">垂直社区 KOL 分发</h4>
+                                <p class="text-xs text-slate-600 leading-relaxed mb-3">影视工业网、新片场、贴吧发布图文推荐帖。</p>
+                                <div class="text-[10px] text-slate-500 font-mono bg-slate-50 p-2 rounded">利用 Apple Developer 生成 Promo Code 赠予大V寻求背书。</div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <script>
+        const appState = {
+            currentView: 'view-market',
+            profitModel: 'freemium',
+            charts: { audience: null, profit: null },
+            data: {
+                audience: [
+                    { label: '独立导演/制片人', val: 35, desc: '预算受限，需要轻量敏捷的整合方案。' },
+                    { label: '专业摄制组(弱网)', val: 40, desc: '深山/工地拍摄，严重依赖纯本地离线架构。' },
+                    { label: '后期剪辑师/DIT', val: 20, desc: '厌恶混乱纸条，渴求规整的 XML/EDL 打点文件。' },
+                    { label: '资方/其他客户', val: 5, desc: '看重工作流产出，需要直观感知专业度。' }
+                ],
+                profit: {
+                    freemium: {
+                        labels: ['基础版体验下载', '核心功能活跃留存', 'PRO 高级版内购 ($19.99)'],
+                        data: [10000, 6000, 1200],
+                        colors: ['#e2e8f0', '#94a3b8', '#f59e0b'],
+                        logic: "推荐逻辑：先用基础版建立信任，视频从业者极愿为'省时间/防出错'支付低于一份盒饭的 ¥98 内购，转化率预估可达 10-15%。"
+                    },
+                    paid: {
+                        labels: ['商店展示曝光', '直接付费购买 ($9.99)', '高粘性沉淀用户'],
+                        data: [10000, 350, 300],
+                        colors: ['#e2e8f0', '#0f172a', '#0d9488'],
+                        logic: "逻辑：依靠极具视觉冲击力的 ASO 截图直接筛选高净值用户。初始门槛高，但用户付费意愿明确，转化率预估在 3-5% 左右。"
+                    }
+                }
+            }
+        };
+
+        const dom = {
+            navBtns: document.querySelectorAll('.nav-btn'),
+            views: document.querySelectorAll('.view-section'),
+            sidebar: document.getElementById('sidebar'),
+            overlay: document.getElementById('mobileOverlay'),
+            menuBtn: document.getElementById('mobileMenuBtn'),
+            toggleBtns: document.querySelectorAll('.toggle-btn'),
+            pricingContainer: document.getElementById('pricing-container'),
+            logicText: document.getElementById('chart-logic-text'),
+            stepTabs: document.querySelectorAll('.step-tab'),
+            stepPanes: document.querySelectorAll('.step-pane')
+        };
+
+        // UI Interactions
+        function toggleMobileMenu() {
+            const isClosed = dom.sidebar.classList.contains('-translate-x-full');
+            if (isClosed) {
+                dom.sidebar.classList.remove('-translate-x-full');
+                dom.overlay.classList.remove('hidden');
+                setTimeout(() => dom.overlay.classList.remove('opacity-0'), 10);
+            } else {
+                dom.sidebar.classList.add('-translate-x-full');
+                dom.overlay.classList.add('opacity-0');
+                setTimeout(() => dom.overlay.classList.add('hidden'), 300);
+            }
+        }
+
+        function switchView(targetId) {
+            appState.currentView = targetId;
+            
+            // Handle Views
+            dom.views.forEach(v => {
+                if(v.id === targetId) {
+                    v.classList.add('active');
+                    v.classList.remove('hidden');
+                } else {
+                    v.classList.remove('active');
+                    v.classList.add('hidden');
+                }
+            });
+
+            // Handle Nav
+            dom.navBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.target === targetId);
+            });
+
+            // Close mobile menu if open
+            if (window.innerWidth < 768 && !dom.sidebar.classList.contains('-translate-x-full')) {
+                toggleMobileMenu();
+            }
+
+            // Init Charts based on view
+            if(targetId === 'view-market') setTimeout(initAudienceChart, 50);
+            if(targetId === 'view-profit') {
+                renderPricingUI();
+                setTimeout(initProfitChart, 50);
+            }
+        }
+
+        function toggleAccordion(id, element) {
+            const content = document.getElementById(id);
+            const icon = element.querySelector(`[id^="icon-"]`);
+            const isExpanded = content.classList.contains('expanded');
+            
+            document.querySelectorAll('.accordion-content').forEach(el => el.classList.remove('expanded'));
+            document.querySelectorAll(`[id^="icon-"]`).forEach(el => { el.style.transform = 'rotate(0deg)'; el.innerHTML = '&#43;'; });
+            
+            if (!isExpanded) {
+                content.classList.add('expanded');
+                if(icon) {
+                    icon.style.transform = 'rotate(45deg)';
+                }
+            }
+        }
+
+        function setProfitModel(model) {
+            appState.profitModel = model;
+            dom.toggleBtns.forEach(btn => {
+                if(btn.dataset.model === model) {
+                    btn.classList.add('active');
+                    btn.classList.remove('text-slate-600');
+                } else {
+                    btn.classList.remove('active');
+                    btn.classList.add('text-slate-600');
+                }
+            });
+            renderPricingUI();
+            initProfitChart();
+        }
+
+        function switchExecutionStep(stepIdx) {
+            dom.stepTabs.forEach(t => t.classList.toggle('active', t.dataset.step === stepIdx));
+            dom.stepPanes.forEach(p => {
+                if(p.id === `step-content-${stepIdx}`) {
+                    p.classList.remove('hidden');
+                    p.classList.add('block');
+                } else {
+                    p.classList.add('hidden');
+                    p.classList.remove('block');
+                }
+            });
+        }
+
+        // Render HTML content based on state
+        function renderPricingUI() {
+            if(appState.profitModel === 'freemium') {
+                dom.pricingContainer.innerHTML = `
+                    <div class="bg-white rounded-xl border border-slate-200 shadow-sm p-6 relative overflow-hidden animate-fadeIn">
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-slate-800 text-lg">基础版 (Basic)</h4>
+                            <span class="text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded font-bold uppercase tracking-wider">Free</span>
+                        </div>
+                        <div class="mt-1 text-3xl font-black text-slate-900 mb-3">¥0</div>
+                        <p class="text-xs text-slate-500 mb-4 pb-4 border-b border-slate-100">核心使命：降低门槛，获取大规模自然流量与用户体验背书。</p>
+                        <ul class="space-y-3 text-sm text-slate-600">
+                            <li class="flex items-center gap-2"><span class="text-teal-600 font-bold">&#10003;</span> 创建 1 个全案工程</li>
+                            <li class="flex items-center gap-2"><span class="text-teal-600 font-bold">&#10003;</span> 容量限制 (最大 20 张剧照)</li>
+                            <li class="flex items-center gap-2 text-slate-400"><span>&#10007;</span> 无法导出 XML / EDL</li>
+                        </ul>
+                    </div>
+                    <div class="bg-slate-900 rounded-xl border border-slate-800 shadow-lg p-6 relative transform xl:scale-105 z-10 overflow-hidden animate-fadeIn">
+                        <div class="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-amber-400 to-teal-400"></div>
+                        <div class="flex justify-between items-start mb-2">
+                            <h4 class="font-bold text-white text-lg">PRO 高级版</h4>
+                            <span class="text-[10px] border border-amber-500/30 bg-amber-500/10 text-amber-400 px-2 py-1 rounded font-bold uppercase tracking-wider">In-App Purchase</span>
+                        </div>
+                        <div class="mt-1 text-3xl font-black text-white mb-3">¥98 <span class="text-xs text-slate-400 font-normal">买断</span></div>
+                        <p class="text-xs text-slate-400 mb-4 pb-4 border-b border-slate-700">核心逻辑：击中痛点，提升效率。定价极具性价比（低于器材租赁费）。</p>
+                        <ul class="space-y-3 text-sm text-slate-300">
+                            <li class="flex items-center gap-2"><span class="text-amber-500 font-bold">&#10003;</span> 解锁无限工程与图片容量</li>
+                            <li class="flex items-center gap-2"><span class="text-amber-500 font-bold">&#10003;</span> <strong>解锁达芬奇/PR 强制定底导出</strong></li>
+                            <li class="flex items-center gap-2"><span class="text-amber-500 font-bold">&#10003;</span> 导出全案 ZIP 流转包</li>
+                        </ul>
+                    </div>
+                `;
+            } else {
+                dom.pricingContainer.innerHTML = `
+                    <div class="bg-white rounded-xl border-2 border-slate-900 shadow-xl p-8 relative h-full flex flex-col animate-fadeIn">
+                        <div class="absolute top-4 right-4 text-[10px] bg-slate-100 text-slate-500 px-2 py-1 rounded font-bold uppercase tracking-wider">Paid Upfront</div>
+                        <h4 class="font-bold text-slate-800 text-xl mb-2">专业完整版 (Paid App)</h4>
+                        <div class="mt-2 text-4xl font-black text-slate-900 mb-4">¥68</div>
+                        <p class="text-sm text-slate-600 mb-6 pb-6 border-b border-slate-100 leading-relaxed">
+                            直接在 App Store 收费标价。依靠惊艳的 ASO 截图与直击痛点的文案，主动放弃白嫖用户，专注筛选真正有需求、愿意为生产力买单的高净值专业人群。
+                        </p>
+                        <strong class="block text-slate-800 text-xs uppercase tracking-widest mb-4">全功能解锁包含:</strong>
+                        <ul class="space-y-4 text-sm text-slate-700 flex-1">
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-slate-900 rounded-full"></span> 纯本地 IndexedDB 强力引擎</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-slate-900 rounded-full"></span> 工业级 XML/EDL 秒转后期</li>
+                            <li class="flex items-center gap-3"><span class="w-1.5 h-1.5 bg-slate-900 rounded-full"></span> 沉浸式工业暗黑工作站 UI</li>
+                        </ul>
+                    </div>
+                `;
+            }
+            dom.logicText.innerText = appState.data.profit[appState.profitModel].logic;
+        }
+
+        // Charts
+        Chart.defaults.font.family = "'Inter', system-ui, sans-serif";
+        Chart.defaults.color = '#64748b';
+
+        function initAudienceChart() {
+            const ctx = document.getElementById('audienceChart');
+            if(!ctx) return;
+            if(appState.charts.audience) { appState.charts.audience.resize(); return; }
+
+            const d = appState.data.audience;
+            appState.charts.audience = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: d.map(x => x.label),
+                    datasets: [{
+                        data: d.map(x => x.val),
+                        backgroundColor: ['#0f172a', '#0d9488', '#f59e0b', '#cbd5e1'],
+                        borderWidth: 2, borderColor: '#ffffff', hoverOffset: 6
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, cutout: '65%',
+                    layout: { padding: 10 },
+                    plugins: {
+                        legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: {size: 13} } },
+                        tooltip: {
+                            backgroundColor: 'rgba(15, 23, 42, 0.95)', titleFont: { size: 14 }, bodyFont: { size: 13 },
+                            padding: 12, cornerRadius: 8, displayColors: false,
+                            callbacks: {
+                                label: (ctx) => `${ctx.label}: ${ctx.parsed}%`,
+                                afterLabel: (ctx) => `\n${d[ctx.dataIndex].desc}`
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function initProfitChart() {
+            const ctx = document.getElementById('profitChart');
+            if(!ctx) return;
+            if(appState.charts.profit) appState.charts.profit.destroy();
+
+            const d = appState.data.profit[appState.profitModel];
+            appState.charts.profit = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: d.labels,
+                    datasets: [{
+                        label: '模拟用户数', data: d.data, backgroundColor: d.colors,
+                        borderRadius: 6, barPercentage: 0.5, categoryPercentage: 0.8
+                    }]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false,
+                    animation: { duration: 500 },
+                    scales: {
+                        y: { beginAtZero: true, grid: { color: '#f1f5f9' }, border: { display: false } },
+                        x: { grid: { display: false }, border: { display: false }, ticks: { font: { weight: '600' } } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: { backgroundColor: 'rgba(15, 23, 42, 0.9)', padding: 10, cornerRadius: 6 }
+                    }
+                }
+            });
+        }
+
+        // Attach Listeners
+        dom.menuBtn.addEventListener('click', toggleMobileMenu);
+        dom.overlay.addEventListener('click', toggleMobileMenu);
+        dom.navBtns.forEach(btn => btn.addEventListener('click', () => switchView(btn.dataset.target)));
+        dom.toggleBtns.forEach(btn => btn.addEventListener('click', () => setProfitModel(btn.dataset.model)));
+        dom.stepTabs.forEach(tab => tab.addEventListener('click', () => switchExecutionStep(tab.dataset.step)));
+        
+        window.addEventListener('resize', () => {
+            if(appState.currentView === 'view-market' && appState.charts.audience) {
+                appState.charts.audience.resize();
+            }
+        });
+
+        // Boot
+        switchView('view-market');
+        toggleAccordion('phase1', document.querySelector('[onclick="toggleAccordion(\'phase1\', this)"]'));
+
+    </script>
+</body>
+</html>
