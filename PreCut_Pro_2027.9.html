@@ -2024,48 +2024,53 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         // 全局拖拽分配引擎 (核心重构：支持跨级移入与同级排序)
         // ==========================================
         // 🚀 iPad 顺滑拖动补丁：优化反馈速度与视觉感应
+        // 🚀 iPad 强力闭环拖拽引擎：解决“抓得起放不下”
         window.dragNodeStart = function(e, id) {
             window.draggedNodeId = id;
-            // 找到被拖拽的卡片元素
             const target = e.target.closest('[draggable="true"]');
-            if (target) {
-                // 瞬间激活 CSS 里的“缩放+发光”效果，解决按住不动的迟钝感
-                target.classList.add('dragging-active');
-                if (e.dataTransfer) {
-                    e.dataTransfer.effectAllowed = 'move';
-                    e.dataTransfer.setData('text/plain', id);
-                }
-            }
+            if (target) { target.classList.add('dragging-active'); }
         };
 
         window.allowKanbanDrop = function(e, el) {
             e.preventDefault();
-            // 当拖拽经过目标“包”时，目标包立刻虚线高亮
             el.classList.add('drag-over-zone'); 
         };
 
         window.leaveKanbanDrop = function(e, el) {
-            // 手指离开时撤销高亮
             el.classList.remove('drag-over-zone');
         };
 
         window.dropOnKanban = function(e, targetFolderId, el) {
             e.preventDefault();
             el.classList.remove('drag-over-zone');
-            const nodeId = window.draggedNodeId;
-            // 逻辑处理：执行节点跨包转移
+            window.executeMoveNode(window.draggedNodeId, targetFolderId);
+            document.querySelectorAll('.dragging-active').forEach(d => d.classList.remove('dragging-active'));
+        };
+
+        // 核心修复：手指松开时强制寻找目标并执行 (专治 iPad 放不下)
+        window.handleTouchEnd = function(e, id) {
+            const touch = e.changedTouches[0];
+            const el = document.elementFromPoint(touch.clientX, touch.clientY);
+            const dropZone = el ? el.closest('[ondrop]') : null;
+            if (dropZone) {
+                const targetFolderId = dropZone.getAttribute('data-folder-id');
+                if(targetFolderId) window.executeMoveNode(id, targetFolderId);
+            }
+            document.querySelectorAll('.dragging-active').forEach(d => d.classList.remove('dragging-active'));
+            document.querySelectorAll('.drag-over-zone').forEach(d => d.classList.remove('drag-over-zone'));
+        };
+
+        // 统一的搬运执行函数
+        window.executeMoveNode = function(nodeId, targetFolderId) {
             if (!nodeId || nodeId === targetFolderId) return;
             const node = window.globalDB.projects.find(p => p.id === nodeId);
             if (node) {
                 node.parentId = targetFolderId;
                 window.triggerAutoSave();
                 window.renderDashboard();
-                window.showToast("📦 模块已成功归档至新包");
+                window.showToast("📦 模块已重新分配");
             }
-            // 强制清理所有卡片的拖拽激活状态
-            document.querySelectorAll('.dragging-active').forEach(d => d.classList.remove('dragging-active'));
         };
-
         // 【第一部分：新建逻辑】点新建后，自动触发弹窗
         window.createNode = function(type, parentId) {
             const id = (type === 'folder' ? 'f_' : 'p_') + Date.now();
@@ -2141,6 +2146,18 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             }
         };
 
+        // 🚀 修复：思维导图（进入包）的下钻逻辑
+        window.enterFolder = function(folderId) {
+            window.currentFolderId = folderId;
+            // 如果进入具体的包，强制切换到“全景故事板”模式以显示思维导图
+            if (folderId !== 'root') {
+                window.dashboardMode = 'kanban';
+                localStorage.setItem('precut_dash_mode', 'kanban');
+            }
+            window.activeOutlineFolderId = folderId === 'root' ? null : folderId;
+            window.renderDashboard();
+        };
+
         // 核心更新：进入项目时进行新版节点化结构的数据迁移
         window.enterProject = function(projId) {
             const proj = window.globalDB.projects.find(p => p.id === projId);
@@ -2209,6 +2226,15 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     window.triggerAutoSave(); window.renderDashboard();
                 }
             });
+        };
+        // 🛠️ 修复：把丢失的视图切换“大脑”重新加回来！
+        window.setDashboardMode = function(mode) {
+            window.dashboardMode = mode;
+            localStorage.setItem('precut_dash_mode', mode);
+            // 🚀 核心修复：切换时重置路径，彻底解决点不开思维导图的问题
+            window.currentFolderId = 'root';
+            window.activeOutlineFolderId = null;
+            window.renderDashboard();
         };
 
         window.renderDashboard = function() {
@@ -2402,6 +2428,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     <div draggable="true" 
                          onpointerdown="this.style.transition='none';"
                          ondragstart="window.dragNodeStart(event, '${proj.id}')"
+                         ontouchend="window.handleTouchEnd(event, '${proj.id}')"
                          ondragend="this.classList.remove('dragging-active')"
                          class="${stickyCls} border rounded-xl cursor-grab transition-all group relative flex shrink-0 active:scale-95 z-10 ${widthCls} overflow-hidden hover:-translate-y-1 backdrop-blur-md" 
                          style="padding: 0;">
@@ -2438,7 +2465,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
           // 渲染常规的包（列），核心修复：加入了独立的删除按钮
                 const renderKanbanCol = (folderId, title, desc, projects) => {
                     return `
-                    <div class="w-[280px] lg:w-[320px] flex flex-col max-h-full rounded-[20px] shrink-0 shadow-2xl overflow-hidden transition-all relative snap-start border group/col hover:border-theme-accent" style="background-color: var(--bg-panel); border-color: var(--border-dim)" ondragover="window.allowKanbanDrop(event, this)" ondragleave="window.leaveKanbanDrop(event, this)" ondrop="window.dropOnKanban(event, '${folderId}', this)">
+                    <div data-folder-id="${folderId}" class="w-[280px] lg:w-[320px] flex flex-col max-h-full rounded-[20px] shrink-0 shadow-2xl overflow-hidden transition-all relative snap-start border group/col hover:border-theme-accent" style="background-color: var(--bg-panel); border-color: var(--border-dim)" ondragover="window.allowKanbanDrop(event, this)" ondragleave="window.leaveKanbanDrop(event, this)" ondrop="window.dropOnKanban(event, '${folderId}', this)">
                         <div class="p-4 border-b shrink-0 cursor-pointer transition flex justify-between items-start border-[var(--border-dim)] hover:bg-[rgba(245,158,11,0.05)] group/header" style="background-color: var(--bg-base)" onclick="window.enterFolder('${folderId}')" title="进入该包的思维导图视图">
                             <div class="flex-1 min-w-0 pr-2">
                                 <h3 class="font-black text-[15px] truncate flex items-center gap-2 transition" style="color: var(--accent)"><svg class="w-4 h-4 shrink-0 opacity-70" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"></path></svg><span class="truncate">${title}</span></h3>
