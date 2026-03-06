@@ -803,7 +803,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         .nle-marker { position: absolute; top: -4px; left: 10px; width: 0; height: 0; border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 6px solid #22d3ee; z-index: 5; }
 
         .modal-overlay {
-            position: fixed; inset: 0; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px);
+            position: fixed; inset: 0; background: rgba(0,0,0,0.4); 
             display: flex; align-items: center; justify-content: center; z-index: 10000;
             opacity: 0; pointer-events: none; transition: opacity 0.2s ease-in-out;
         }
@@ -1661,25 +1661,25 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         
         // 挂载补丁：让输入密码激活成功后，设置面板也能瞬间刷新
        window.verifyProCode = function() {
-            // 1. 核心修复：自动滤除 iPad 输入法可能产生的空格，并统一转大写
+            // 核心修复：1. 强制去除所有不可见字符（换行、空格、制表符） 2. 强制转大写
             const rawInput = document.getElementById('activationCodeInput').value;
-            const input = rawInput.trim().replace(/\s+/g, '').toUpperCase();
+            const input = rawInput.replace(/[\s\n\r\t]/g, '').toUpperCase();
             
             let activated = false; 
             let msg = '';
 
-            // 2. 校验逻辑 (保持原逻辑)
+            // 检查逻辑
             if (input === window.getExpectedProCode('LIFE')) { 
                 localStorage.setItem('precut_pro_expiry', 'lifetime'); 
                 msg = "👑 永久买断激活成功！欢迎入驻 PreCut PRO！"; 
                 activated = true; 
             } else if (input === window.getExpectedProCode('MONTH')) { 
                 localStorage.setItem('precut_pro_expiry', Date.now() + 30 * 24 * 3600 * 1000); 
-                msg = "👑 月度订阅激活成功！30天内尽情使用！"; 
+                msg = "👑 月度订阅激活成功！"; 
                 activated = true; 
             } else if (input === window.getExpectedProCode('WEEK')) { 
                 localStorage.setItem('precut_pro_expiry', Date.now() + 7 * 24 * 3600 * 1000); 
-                msg = "👑 周度体验激活成功！7天内畅享 PRO 功能！"; 
+                msg = "👑 周度体验激活成功！"; 
                 activated = true; 
             }
 
@@ -1688,14 +1688,11 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 document.getElementById('proActivationModal').classList.remove('show');
                 const btnUpgrade = document.getElementById('btnUpgradePro');
                 if (btnUpgrade) btnUpgrade.style.display = 'none';
-                
                 if(window.renderLicenseStatus) window.renderLicenseStatus();
-                
-                // 激活成功使用 toast 提示
                 window.showToast(msg);
             } else {
-                // 3. 强力提示：如果失败，在 iPad 上直接弹出系统级对话框，防止被模糊图层遮挡
-                alert("❌ 激活校验失败\n\n您输入的码是：[" + input + "]\n\n提示：请确保输入的是 PRO- 开头的激活码，而非 PC- 开头的申请码。");
+                // 强制弹出清晰提示框，告诉你系统到底识别到了什么码
+                alert("❌ 校验失败\n\n识别到的码：[" + input + "]\n\n请核对是否与 PRO- 开头的激活码完全一致。");
             }
         };
 
