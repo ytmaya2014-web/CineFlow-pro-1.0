@@ -1280,28 +1280,42 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
         <!-- 新增：快速编辑节点模态框 (Quick Edit Modal) -->
         <div id="quickEditModal" class="modal-overlay z-[10005]">
-            <div class="modal-content !max-w-[450px]">
-                <h3 class="text-lg font-black mb-4 flex items-center gap-2" style="color: var(--text-main)">
-                    <svg class="w-5 h-5 text-theme-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
-                    快速编辑模块
-                </h3>
+            <div class="modal-content !max-w-[420px] !p-6 border-t-4 border-theme-accent">
+                <div class="flex justify-between items-center mb-5">
+                    <h3 class="text-base font-black flex items-center gap-2 uppercase tracking-tighter" style="color: var(--text-main)">
+                        <span class="w-1.5 h-1.5 bg-theme-accent rounded-full animate-ping"></span>
+                        Module Config // 模块配置
+                    </h3>
+                    <button onclick="document.getElementById('quickEditModal').classList.remove('show')" class="text-zinc-500 hover:text-white transition">✕</button>
+                </div>
+                
                 <input type="hidden" id="quickEditNodeId">
-                <div class="mb-4">
-                    <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-1">模块名称 (Title)</label>
-                    <input type="text" id="quickEditTitle" class="w-full border p-2.5 rounded font-black outline-none focus:border-theme-accent text-sm transition" style="background-color: var(--bg-base); border-color: var(--border-dim); color: var(--text-main)">
-                </div>
-                <div class="mb-6">
-                    <label class="block text-xs font-bold uppercase tracking-widest text-zinc-500 mb-1">核心描述 (Description)</label>
-                    <textarea id="quickEditDesc" rows="3" class="w-full border p-2.5 rounded outline-none focus:border-theme-accent text-sm resize-none transition custom-scrollbar" style="background-color: var(--bg-base); border-color: var(--border-dim); color: var(--text-muted)"></textarea>
-                </div>
-                <div class="flex justify-between items-center mt-2">
-                    <button onclick="window.enterProject(document.getElementById('quickEditNodeId').value); document.getElementById('quickEditModal').classList.remove('show');" class="text-xs font-bold text-blue-500 hover:text-blue-400 transition flex items-center gap-1">
-                        进入深度剪辑台 ➡️
-                    </button>
-                    <div class="flex gap-2">
-                        <button onclick="document.getElementById('quickEditModal').classList.remove('show')" class="px-4 py-2.5 rounded-lg text-sm font-bold text-zinc-500 hover:text-theme-accent transition border" style="background-color: var(--bg-panel); border-color: var(--border-dim)">取消</button>
-                        <button onclick="window.saveQuickEdit()" class="px-5 py-2.5 rounded-lg text-sm font-black bg-theme-accent text-[var(--accent-text)] hover:opacity-90 transition shadow-md">保存修改</button>
+                
+                <div class="grid grid-cols-1 gap-5">
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-2">Title // 标题</label>
+                        <input type="text" id="quickEditTitle" class="w-full border p-3 rounded-lg font-black outline-none focus:border-theme-accent text-sm transition" style="background-color: var(--bg-base); border-color: var(--border-dim); color: var(--text-main)">
                     </div>
+
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-2">Color Palette // 工业色块</label>
+                        <div class="flex justify-between items-center p-3 rounded-xl border" style="background-color: var(--bg-base); border-color: var(--border-dim)" id="colorPickerRack">
+                            </div>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-[9px] font-black uppercase tracking-[0.2em] text-zinc-500 mb-2">Director Notes // 导演笔记</label>
+                        <textarea id="quickEditDesc" rows="2" class="w-full border p-3 rounded-lg outline-none focus:border-theme-accent text-[11px] resize-none transition custom-scrollbar" style="background-color: var(--bg-base); border-color: var(--border-dim); color: var(--text-muted)"></textarea>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center mt-6">
+                    <button id="quickEditJumpBtn" class="text-[10px] font-black text-blue-500 hover:text-cyan-400 transition flex items-center gap-1 uppercase tracking-widest">
+                        Go To Timeline ➡️
+                    </button>
+                    <button onclick="window.saveQuickEdit()" class="px-8 py-3 rounded-lg text-[11px] font-black bg-theme-accent text-[var(--accent-text)] hover:opacity-90 transition shadow-lg uppercase tracking-widest">
+                        Apply & Save
+                    </button>
                 </div>
             </div>
         </div>
@@ -2075,68 +2089,78 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             }
         };
 
-        window.createNode = function(nodeType, targetParentId) {
-            const parentId = targetParentId || window.currentFolderId;
-            let titleStr = nodeType === 'folder' ? window.t('new_subfolder') : window.t('new_subproj');
-            if(window.currentFolderId === 'root' && nodeType === 'folder') titleStr = window.t('new_folder');
-
-            window.showModal({
-                type: 'prompt',
-                title: titleStr,
-                message: window.sysLang==='en'?'Enter Name & Description:':'请输入名称及简要说明：',
-                defaultInput: '',
-                showDescInput: true,
-                onConfirm: (titleVal, descVal) => {
-                    if(!titleVal) return;
-                    const newNode = {
-                        id: (nodeType === 'folder' ? 'f_' : 'p_') + Date.now(),
-                        type: nodeType,
-                        parentId: parentId,
-                        title: titleVal,
-                        desc: descVal || '',
-                        ...(nodeType === 'project' ? { scouts: [], logs: [], storyBeats: [] } : {})
-                    };
-                    window.globalDB.projects.push(newNode);
-                    
-                    if (nodeType === 'folder' && window.currentFolderId !== 'root') {
-                        window.activeOutlineFolderId = newNode.id;
-                    }
-                    window.triggerAutoSave(); window.renderDashboard();
-                }
-            });
+        // 【第一部分：新建逻辑】点新建后，自动触发弹窗
+        window.createNode = function(type, parentId) {
+            const id = (type === 'folder' ? 'f_' : 'p_') + Date.now();
+            const newNode = { 
+                id, type, parentId, 
+                title: type === 'folder' ? 'NEW FOLDER' : 'NEW MODULE', 
+                desc: '', color: 'blue', // 默认设为蓝色
+                scouts: [], logs: [], storyBeats: [] 
+            };
+            window.globalDB.projects.push(newNode);
+            window.triggerAutoSave();
+            window.renderDashboard();
+            
+            // 🚀 这里是灵魂：新建完立刻调用下方的 openQuickEdit，并传入 true 表示这是新创建的
+            window.openQuickEdit(new Event('click'), id, true); 
         };
 
-        window.enterFolder = function(folderId) {
-            window.currentFolderId = folderId; window.activeOutlineFolderId = null; window.renderDashboard();
-        };
-
-        // 核心更新：新增快速编辑面板逻辑
-        window.openQuickEdit = function(e, id) {
-            e.stopPropagation(); // 阻止事件冒泡，防止触发其他点击
+        // 【第二部分：打开弹窗逻辑】负责渲染那个变大的颜色点选器
+        window.openQuickEdit = function(e, id, isNew = false) {
+            if (e) e.stopPropagation();
             const node = window.globalDB.projects.find(p => p.id === id);
-            if (node) {
-                document.getElementById('quickEditNodeId').value = node.id;
-                document.getElementById('quickEditTitle').value = node.title;
-                document.getElementById('quickEditDesc').value = node.desc || '';
-                document.getElementById('quickEditModal').classList.add('show');
-                // 聚焦标题输入框以便快速修改
-                setTimeout(() => document.getElementById('quickEditTitle').focus(), 100);
+            if (!node) return;
+
+            document.getElementById('quickEditNodeId').value = node.id;
+            document.getElementById('quickEditTitle').value = node.title;
+            document.getElementById('quickEditDesc').value = node.desc || '';
+            
+            // 处理跳转按钮：如果是文件夹就不显示跳转
+            const jumpBtn = document.getElementById('quickEditJumpBtn');
+            if (jumpBtn) {
+                if (node.type === 'folder') {
+                    jumpBtn.style.display = 'none';
+                } else {
+                    jumpBtn.style.display = 'flex';
+                    jumpBtn.onclick = () => {
+                        window.enterProject(node.id);
+                        document.getElementById('quickEditModal').classList.remove('show');
+                    };
+                }
+            }
+
+            // 🎨 渲染大方块色选器
+            const rack = document.getElementById('colorPickerRack');
+            if (rack) {
+                rack.innerHTML = window.modulePalette.map(color => `
+                    <div onclick="window.selectedColor='${color.id}'; Array.from(this.parentElement.children).forEach(d=>d.style.boxShadow='none'); this.style.boxShadow='0 0 0 3px white, 0 0 15px ' + getComputedStyle(this).backgroundColor;" 
+                         class="w-8 h-8 rounded-lg cursor-pointer transition-all border border-white/10 ${color.cls}" 
+                         style="box-shadow: ${node.color === color.id ? '0 0 0 3px white' : 'none'}"></div>
+                `).join('');
+            }
+            window.selectedColor = node.color || 'blue';
+            document.getElementById('quickEditModal').classList.add('show');
+            
+            // 如果是新建的，自动选中文字方便你直接修改名字
+            if (isNew) {
+                setTimeout(() => document.getElementById('quickEditTitle').select(), 200);
             }
         };
 
+        // 【第三部分：保存逻辑】
         window.saveQuickEdit = function() {
             const id = document.getElementById('quickEditNodeId').value;
-            const newTitle = document.getElementById('quickEditTitle').value.trim();
-            const newDesc = document.getElementById('quickEditDesc').value.trim();
             const node = window.globalDB.projects.find(p => p.id === id);
-            
-            if (node && newTitle) {
-                node.title = newTitle;
-                node.desc = newDesc;
+            if (node) {
+                node.title = document.getElementById('quickEditTitle').value || 'UNTITLED';
+                node.desc = document.getElementById('quickEditDesc').value;
+                node.color = window.selectedColor; // 核心：保存选中的颜色
+                
                 window.triggerAutoSave();
                 window.renderDashboard();
                 document.getElementById('quickEditModal').classList.remove('show');
-                window.showToast("✅ 模块信息已更新");
+                window.showToast("✅ 配置已同步");
             }
         };
 
@@ -2355,11 +2379,37 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     'bg-purple-950/50 border-purple-700/60 hover:border-purple-400 shadow-[0_4px_12px_rgba(168,85,247,0.15)]'
                 ];
                 
-                const getStickyStyle = (id) => {
-                    let hash = 0; for (let i = 0; i < id.length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
-                    return stickyStyles[Math.abs(hash) % stickyStyles.length];
-                };
+                // 1. 定义 5 种工业级预设色（好莱坞风格）
+        window.modulePalette = [
+            { id: 'amber', cls: 'bg-amber-950/50 border-amber-700/60' },
+            { id: 'emerald', cls: 'bg-emerald-950/50 border-emerald-700/60' },
+            { id: 'blue', cls: 'bg-blue-950/50 border-blue-700/60' },
+            { id: 'rose', cls: 'bg-rose-950/50 border-rose-700/60' },
+            { id: 'purple', cls: 'bg-purple-950/50 border-purple-700/60' }
+        ];
 
+        // 🎨 1. 定义工业级 5 色预设
+        window.modulePalette = [
+            { id: 'amber', cls: 'bg-amber-950/50 border-amber-700/60' },
+            { id: 'emerald', cls: 'bg-emerald-950/50 border-emerald-700/60' },
+            { id: 'blue', cls: 'bg-blue-950/50 border-blue-700/60' },
+            { id: 'rose', cls: 'bg-rose-950/50 border-rose-700/60' },
+            { id: 'purple', cls: 'bg-purple-950/50 border-purple-700/60' }
+        ];
+
+        // 🎨 2. 颜色计算函数
+        window.getStickyStyle = (id, userColor = null) => {
+            if (userColor) {
+                const found = window.modulePalette.find(c => c.id === userColor);
+                if (found) return found.cls + " hover:border-theme-accent shadow-lg";
+            }
+            // 默认根据ID计算初始色
+            let hash = 0; for (let i = 0; i < id.length; i++) hash = id.charCodeAt(i) + ((hash << 5) - hash);
+            return window.modulePalette[Math.abs(hash) % 5].cls + " hover:border-theme-accent shadow-lg";
+        };
+
+        // 🎨 3. 卡片渲染调用修改 (注意这一行必须包含在 renderKanbanCard 内部的第一行)
+        // 请确保在下方的 renderKanbanCard 函数内使用了 window.getStickyStyle(proj.id, proj.color)
                 // 渲染单独的卡片
                 // 核心修复：单击弹出快速编辑，双击进入深度剪辑台
                 const renderKanbanCard = (proj, isDock = false, customWidth = null) => {
@@ -2367,7 +2417,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     const logCount = (proj.logs || []).length;
                     let clipCount = 0; if(proj.storyBeats) proj.storyBeats.forEach(b => { clipCount += (b.V1.length + b.V2.length + (b.V3 ? b.V3.length : 0)); });
                     const isWrapped = logCount > 0 && proj.logs.every(l => l.isWrapped);
-                    const stickyCls = getStickyStyle(proj.id);
+                    const stickyCls = window.getStickyStyle(proj.id, proj.color);
                     
                     const widthCls = customWidth ? customWidth : (isDock ? "w-[150px] lg:w-[160px]" : "flex-1 min-w-[120px] max-w-full");
                     
