@@ -3307,35 +3307,38 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 </div>`;
         };
 
-       // 🚀 iPad 兼容增强版：预览传送门
-        window.previewInViewer = function(logId) {
-            if(!window.db || !window.db.logs) return;
-            // 核心修复：强制转字符串查找，确保数字 ID 在 iPad 上也能命中
+       window.previewInViewer = function(logId) {
+            // 核心修复：强制转为字符串进行查找，确保数字 ID 也能匹配
             const item = window.db.logs.find(x => String(x.id) === String(logId));
             if(!item) return;
             
             const scr = document.getElementById('viewerScreen');
             const info = document.getElementById('viewerInfo');
             
-            // 更新图片与基础信息
+            // 1. 更新监视器画面
             scr.innerHTML = item.photo 
-                ? `<img src="${item.photo}" class="w-full h-full object-contain">` 
-                : `<span class="text-zinc-500 font-black uppercase text-xl opacity-30">NO MEDIA</span>`;
+                ? `<img src="${item.photo}" class="w-full h-full object-contain animate-pulse-once">` 
+                : `<div class="flex flex-col items-center opacity-30"><svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h14a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2"/></svg><span class="text-xs font-black tracking-widest uppercase">NO IMAGE</span></div>`;
             
+            // 2. 更新卡片文字信息
             document.getElementById('viewerTitle').innerText = item.location || '未命名场景';
             const okTakes = (item.takes||[]).filter(t => t.isOk).map(t => t.clipName);
             const takesTxt = okTakes.length > 0 ? `保用件: ${okTakes.join(' / ')}` : `[未标记可用文件]`;
             const takesEl = document.getElementById('viewerTakes');
             takesEl.innerText = takesTxt;
-            takesEl.className = okTakes.length > 0 ? 'text-emerald-500 font-mono-data text-[10px] font-bold mb-1' : 'text-red-500 font-mono-data text-[10px] font-bold mb-1';
-            document.getElementById('viewerDesc').innerText = item.desc || '无笔记';
+            takesEl.className = okTakes.length > 0 ? 'text-emerald-500 font-mono-data text-[10px] font-bold tracking-widest mb-1' : 'text-red-500 font-mono-data text-[10px] font-bold tracking-widest mb-1';
             
+            document.getElementById('viewerDesc').innerText = item.desc || '无场记描述';
+            
+            // 3. 更新标签样式
             const tagEl = document.getElementById('viewerTag');
             tagEl.innerText = item.tags || '素材';
-            tagEl.className = `text-[9px] px-1.5 py-0.5 rounded border uppercase font-bold ${item.tags==='B-Roll'?'text-emerald-500 border-emerald-500/30':(item.tags==='Interview'?'text-cyan-500 border-cyan-500/30':'text-theme-accent border-theme-accent')}`;
+            tagEl.className = `text-[9px] px-1.5 py-0.5 rounded border uppercase tracking-widest font-bold ${item.tags==='B-Roll'?'text-emerald-500 border-emerald-500/30':(item.tags==='Interview'?'text-cyan-500 border-cyan-500/30':'text-theme-accent border-theme-accent opacity-80')}`;
 
             info.classList.remove('hidden');
+            window.showToast("📺 已传送至监视器");
         };
+
         // 剪辑工作台：D&D 拖拽处理
         // 🚀 iPad 纸上剪辑专用：多轨触控引擎补丁
        // 🚀 iPad 纸上剪辑专用：不塌陷的满血触控引擎
@@ -3531,99 +3534,199 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         };
 
        // 核心：纸上剪辑超级渲染器 (防崩溃重构版)
-       // 🚀 iPad 专项优化版：纸上剪辑渲染引擎 (解决触控冲突与预览失效)
         window.renderEditSandbox = function() {
             if(window.currentView !== 'edit') return;
             if(!window.db.storyBeats) window.db.storyBeats = [];
             
             const assignedIds = new Set();
             window.db.storyBeats.forEach(b => {
-                if(b.V1) b.V1.forEach(id => assignedIds.add(String(id)));
-                if(b.V2) b.V2.forEach(id => assignedIds.add(String(id)));
-                if(b.V3) b.V3.forEach(id => assignedIds.add(String(id)));
+                if(b.V1) b.V1.forEach(id => assignedIds.add(id));
+                if(b.V2) b.V2.forEach(id => assignedIds.add(id));
+                if(b.V3) b.V3.forEach(id => assignedIds.add(id));
             });
 
-            const mediaPoolContainer = document.getElementById('mediaPoolContainer');
-            if(!mediaPoolContainer) return;
-
-            // 1. 渲染左侧素材池 (改用 onpointerup 解决 iPad 预览不灵敏问题)
-            const finalPool = window.db.logs.filter(item => !assignedIds.has(String(item.id)) && item.isWrapped);
+            const statusVal = document.getElementById('mediaPoolStatus')?.value || 'wrapped';
+            const tagVal = document.getElementById('mediaPoolTag')?.value || 'all';
+            const locSelect = document.getElementById('mediaPoolLocation');
+            const currentLoc = locSelect ? locSelect.value : 'all';
+            const searchVal = (document.getElementById('poolSearchInputNLE')?.value || "").toLowerCase();
             
-            mediaPoolContainer.innerHTML = finalPool.map(item => {
-                const okTakes = (item.takes||[]).filter(t=>t.isOk);
-                const mainFilename = okTakes.length > 0 ? okTakes[0].clipName : (item.takes[0]?.clipName || '未确认');
-                
-                return `
-                <div draggable="true" 
-                     ondragstart="window.dragEditStart(event, '${item.id}')"
-                     onpointerup="window.previewInViewer('${item.id}')" 
-                     class="w-[140px] h-[100px] border rounded-xl overflow-hidden flex flex-col cursor-grab hover:border-theme-accent transition active:scale-95 group relative shrink-0 shadow-md" style="background-color: var(--bg-card); border-color: var(--border-dim)">
-                    <div class="h-14 bg-black relative flex items-center justify-center border-b shrink-0" style="border-color: var(--border-dim)">
-                        ${item.photo ? `<img src="${item.photo}" class="w-full h-full object-cover opacity-60">` : `<span class="text-[9px] text-zinc-500 font-bold">NO MEDIA</span>`}
-                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-1.5 opacity-80 group-hover:opacity-100">
-                            <span class="bg-theme-accent text-black px-1 py-[1px] rounded-[3px] text-[7px] font-black mr-1 shadow-md">${item.camera}</span>
-                            <span class="text-white font-mono-data font-black text-[9px] truncate w-full">${mainFilename}</span>
-                        </div>
-                    </div>
-                    <div class="px-2 py-1 flex flex-col justify-center flex-1 min-h-0" style="background-color: var(--bg-panel)">
-                        <div class="text-[10px] font-black truncate" style="color: var(--text-main)">${item.location || '未命名'}</div>
-                        <div class="text-[8px] font-bold truncate opacity-50 uppercase">${item.tags || '素材'}</div>
-                    </div>
-                </div>`;
-            }).join('') || `<div class="w-full text-center py-10 opacity-30 text-xs">媒体池已空</div>`;
+            const basePool = window.db.logs.filter(item => {
+                if(assignedIds.has(item.id)) return false;
+                if(statusVal === 'wrapped' && !item.isWrapped) return false; 
+                if(item.isPlaceholder && !item.isWrapped) return false;
+                return true;
+            });
 
-            // 2. 渲染轨道容器
+            if (locSelect) {
+                const uniqueLocs = [...new Set(basePool.map(item => item.location?.trim()).filter(Boolean))];
+                let optionsHtml = `<option value="all">🌍 所有地点</option>`;
+                uniqueLocs.forEach(loc => {
+                    const selected = loc === currentLoc ? 'selected' : '';
+                    optionsHtml += `<option value="${loc}" ${selected}>📍 ${loc}</option>`;
+                });
+                locSelect.innerHTML = optionsHtml;
+            }
+
+            const finalPool = basePool.filter(item => {
+                const refreshedLocVal = document.getElementById('mediaPoolLocation')?.value || 'all';
+                if(tagVal !== 'all' && item.tags !== tagVal) return false;
+                if(refreshedLocVal !== 'all' && (item.location || '') !== refreshedLocVal) return false;
+                if(searchVal) {
+                    const locStr = (item.location||"").toLowerCase(); 
+                    const tagStr = (item.tags||"").toLowerCase();
+                    const descStr = (item.desc||"").toLowerCase();
+                    const takesMatch = (item.takes||[]).some(t => t.clipName.toLowerCase().includes(searchVal));
+                    return locStr.includes(searchVal) || tagStr.includes(searchVal) || descStr.includes(searchVal) || takesMatch;
+                } 
+                return true;
+            });
+            
+            const poolCountEl = document.getElementById('poolCountNLE');
+            if (poolCountEl) { poolCountEl.innerText = finalPool.length; }
+
+            const poolCon = document.getElementById('mediaPoolContainer');
+            if (poolCon) {
+                poolCon.innerHTML = finalPool.map(item => {
+                    const okTakes = (item.takes||[]).filter(t=>t.isOk); const okCount = okTakes.length; const hasOk = okCount > 0;
+                    const mainFilename = hasOk ? okTakes[0].clipName : (item.takes && item.takes.length > 0 ? item.takes[item.takes.length-1].clipName : '未确认');
+                    const mainCam = hasOk ? (okTakes[0].camera || item.camera) : (item.camera || 'CAM');
+
+                    return `
+                    <div draggable="true" 
+                         onpointerdown="this.style.transition='none';"
+                         ondragstart="window.dragEditStart(event, '${item.id}')"
+                         ontouchend="window.handleEditTouchEnd(event, '${item.id}')"
+                         ondragend="this.classList.remove('dragging-active')"
+                         onclick="window.previewInViewer(${item.id})" 
+                         class="w-[140px] h-[100px] border rounded-xl overflow-hidden flex flex-col cursor-grab hover:border-theme-accent transition active:scale-95 group relative shrink-0 shadow-md" style="background-color: var(--bg-card); border-color: var(--border-dim)">
+                        <div class="h-14 bg-black relative flex items-center justify-center border-b shrink-0" style="border-color: var(--border-dim)">
+                            ${item.photo ? `<img src="${item.photo}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition duration-300">` : `<span class="text-[9px] text-zinc-500 font-bold">NO MEDIA</span>`}
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-1.5 opacity-80 group-hover:opacity-100">
+                                <span class="bg-theme-accent text-black px-1 py-[1px] rounded-[3px] text-[7px] font-black tracking-widest shrink-0 mr-1 shadow-md">${mainCam}</span>
+                                <span class="text-white font-mono-data font-black text-[9px] truncate drop-shadow-md w-full">${mainFilename}</span>
+                            </div>
+                            <button onclick="event.stopPropagation(); window.quickInsert(${item.id})" class="absolute top-1 right-1 bg-blue-500 text-white w-5 h-5 rounded-[4px] flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 hover:bg-blue-400 hover:scale-110 transition z-10" title="一键下发主线">+</button>
+                        </div>
+                        <div class="px-2 py-1 flex flex-col justify-center flex-1 min-h-0" style="background-color: var(--bg-panel)">
+                            <div class="flex items-center gap-1.5 mb-0.5">
+                                <span class="w-1.5 h-1.5 rounded-full shrink-0 ${hasOk?'bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.8)]':'bg-red-500 opacity-50'}"></span>
+                                <span class="text-[10px] font-black truncate flex-1 leading-tight" style="color: var(--text-main)">${item.location || '未命名'}</span>
+                            </div>
+                            <div class="text-[8px] font-bold truncate tracking-widest uppercase" style="color: var(--text-muted)">${item.tags || '素材'} <span class="font-mono-data mx-0.5 opacity-50">|</span> <span class="${hasOk?'text-emerald-500':''}">${okCount} OK</span></div>
+                        </div>
+                    </div>`;
+                }).join('') || `<div class="w-full h-full flex flex-col items-center justify-center border-2 border-dashed rounded-2xl opacity-50" style="border-color: var(--border-dim); color: var(--text-muted)"><span class="text-xs font-black uppercase tracking-widest">媒体库已空或无匹配项</span></div>`;
+            }
+
             const timelineWrapper = document.getElementById('timelineWrapper');
-            const renderClip = (id, beatId, trackId) => {
-                const item = window.db.logs.find(x => String(x.id) === String(id));
-                if(!item) return '';
+            if(!timelineWrapper) return;
+
+            const renderClip = (item, beatId, trackId) => {
+                if (!item) return '';
                 const isPlaceholder = item.isPlaceholder && !item.isWrapped;
-                const topColor = (item.takes||[]).some(t=>t.isOk) ? '#10b981' : '#ef4444';
+                if (isPlaceholder) {
+                    return `
+                    <div class="nle-clip group !border-dashed !border-red-500/80 !bg-red-950/30" 
+                         draggable="true" 
+                         onpointerdown="this.style.transition='none';"
+                         ondragstart="window.dragEditStart(event, '${item.id}')" 
+                         ontouchend="window.handleEditTouchEnd(event, '${item.id}')"
+                         ondragend="this.classList.remove('dragging-active')"
+                         ondragover="window.allowClipDrop(event, this)" 
+                         ondragleave="window.leaveClipDrop(event, this)" 
+                         ondrop="window.dropOnClip(event, ${item.id}, '${beatId}', '${trackId}', this)" 
+                         onclick="window.jumpToShoot(${item.id})" title="拖拽排序或点击去拍摄">
+                        <div class="nle-clip-header !bg-red-900/80 !text-red-200">
+                            <span class="truncate pr-1">⭕缺: ${item.location}</span>
+                            <button onclick="event.stopPropagation(); window.removeFromTimeline(${item.id})" class="text-red-300 hover:text-white opacity-80 lg:opacity-0 group-hover:opacity-100 transition">✕</button>
+                        </div>
+                        <div class="flex-1 flex flex-col items-center justify-center relative p-1 pointer-events-none">
+                            <span class="text-[9px] font-black text-red-400 tracking-widest uppercase">补齐</span>
+                        </div>
+                    </div>`;
+                }
+
+                const okTakes = (item.takes||[]).filter(t=>t.isOk); const hasOk = okTakes.length > 0;
+                const topColor = hasOk ? '#10b981' : '#ef4444'; 
+                const cam = item.camera || 'C';
                 
+                let clipClass = 'nle-clip group';
+                if(trackId === 'V3') clipClass = 'nle-clip nle-clip-v3 group';
+                if(trackId === 'V2') clipClass = 'nle-clip nle-clip-v2 group';
+                
+                const markerHtml = (item.desc && item.desc.trim() !== '') ? `<div class="nle-marker" title="包含场记笔记"></div>` : '';
+
                 return `
-                <div class="nle-clip group ${trackId==='V3'?'nle-clip-v3':(trackId==='V2'?'nle-clip-v2':'')}" 
+                <div class="${clipClass}" 
                      draggable="true" 
+                     onpointerdown="this.style.transition='none';"
                      ondragstart="window.dragEditStart(event, '${item.id}')" 
-                     onpointerup="window.previewInViewer('${item.id}')"
-                     ondrop="window.dropOnClip(event, '${item.id}', '${beatId}', '${trackId}', this)" 
-                     style="border-top: 3px solid ${topColor}">
+                     ontouchend="window.handleEditTouchEnd(event, '${item.id}')"
+                     ondragend="this.classList.remove('dragging-active')"
+                     ondragover="window.allowClipDrop(event, this)" 
+                     ondragleave="window.leaveClipDrop(event, this)" 
+                     ondrop="window.dropOnClip(event, ${item.id}, '${beatId}', '${trackId}', this)" 
+                     onclick="window.previewInViewer(${item.id})" style="border-top: 3px solid ${topColor}" title="拖拽排序">
+                    ${markerHtml}
                     <div class="nle-clip-header">
-                        <span class="truncate pr-1">${item.location || 'CLIP'}</span>
-                        <button onpointerdown="event.stopPropagation(); window.removeFromTimeline('${item.id}')" 
-                                class="text-zinc-400 hover:text-red-500 p-3 -m-3 transition-all z-[60] relative">✕</button>
+                        <span class="truncate pr-1">${item.location || '未命名'}</span>
+                        <button onclick="event.stopPropagation(); window.removeFromTimeline(${item.id})" class="text-zinc-400 hover:text-red-500 opacity-80 lg:opacity-0 group-hover:opacity-100 transition">✕</button>
                     </div>
                     <div class="nle-clip-body bg-black">
                         ${item.photo ? `<img src="${item.photo}" class="nle-clip-img">` : ``}
+                        <div class="absolute bottom-1 left-1 bg-black/80 px-1 rounded text-[8px] font-mono-data text-zinc-400">${cam}</div>
+                        ${hasOk ? `<div class="absolute bottom-1 right-1 text-emerald-500 text-[10px] font-black">✔</div>` : `<div class="absolute bottom-1 right-1 text-red-500 text-[10px] font-black">!</div>`}
                     </div>
                 </div>`;
             };
 
             let beatsHtml = `
                 <div class="nle-beat-container sticky left-0 z-30 shadow-[4px_0_20px_rgba(0,0,0,0.8)] shrink-0" style="min-width: 70px; width: 70px; border-color: var(--border-dim); background-color: var(--bg-card);">
-                    <div class="h-[36px] flex items-center justify-center border-b" style="border-color: var(--border-dim)"><span class="text-[10px] font-black text-blue-500">轨道</span></div>
-                    <div class="flex-1 flex flex-col items-center justify-center gap-1 border-b border-dashed" style="border-color: var(--border-dim); min-height: calc(84px * var(--tl-zoom-y));">V3</div>
-                    <div class="flex-1 flex flex-col items-center justify-center gap-1 border-b border-dashed" style="border-color: var(--border-dim); min-height: calc(84px * var(--tl-zoom-y));">V2</div>
-                    <div class="flex-1 flex flex-col items-center justify-center gap-1" style="min-height: calc(84px * var(--tl-zoom-y));">V1</div>
+                    <div class="nle-beat-header h-[36px] flex items-center justify-center !px-1 shrink-0 bg-transparent border-b" style="border-color: var(--border-dim)">
+                        <span class="text-[10px] font-black text-blue-500 tracking-widest text-center">ST节点</span>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center justify-center gap-1 border-b" style="border-color: var(--border-dim); border-bottom-style: dashed; min-height: calc(84px * var(--tl-zoom-y));">
+                        <div class="text-[10px] font-black text-[#0284c7]">V3</div>
+                        <button onclick="window.addPlaceholderToTrack('V3')" class="text-[9px] bg-red-900/40 text-red-400 border border-red-500/50 px-1 py-0.5 rounded mt-1 hover:bg-red-500 hover:text-white transition">+补拍</button>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center justify-center gap-1 border-b" style="border-color: var(--border-dim); border-bottom-style: dashed; min-height: calc(84px * var(--tl-zoom-y));">
+                        <div class="text-[10px] font-black text-[#059669]">V2</div>
+                        <button onclick="window.addPlaceholderToTrack('V2')" class="text-[9px] bg-red-900/40 text-red-400 border border-red-500/50 px-1 py-0.5 rounded mt-1 hover:bg-red-500 hover:text-white transition">+补拍</button>
+                    </div>
+                    <div class="flex-1 flex flex-col items-center justify-center gap-1" style="min-height: calc(84px * var(--tl-zoom-y));">
+                        <div class="text-[10px] font-black text-theme-accent">V1</div>
+                        <button onclick="window.addPlaceholderToTrack('V1')" class="text-[9px] bg-red-900/40 text-red-400 border border-red-500/50 px-1 py-0.5 rounded mt-1 hover:bg-red-500 hover:text-white transition">+补拍</button>
+                    </div>
                 </div>`;
 
-            beatsHtml += window.db.storyBeats.map(beat => `
-                <div class="nle-beat-container flex flex-col">
+            beatsHtml += window.db.storyBeats.map(beat => {
+                const v3Items = (beat.V3||[]).map(id => window.db.logs.find(l => l.id === id)).filter(Boolean);
+                const v2Items = (beat.V2||[]).map(id => window.db.logs.find(l => l.id === id)).filter(Boolean);
+                const v1Items = (beat.V1||[]).map(id => window.db.logs.find(l => l.id === id)).filter(Boolean);
+                
+                return `
+                <div class="nle-beat-container relative group/beat flex flex-col">
                     <div class="nle-beat-header h-[36px] shrink-0">
-                        <span class="text-[11px] uppercase tracking-widest text-blue-500">${beat.title}</span>
-                        <button onclick="window.deleteBeat('${beat.id}')" class="text-zinc-500 hover:text-red-500 px-1">✕</button>
+                        <span contenteditable="true" onblur="window.updateBeatTitle('${beat.id}', this.innerText)" class="editable-text border-b-transparent outline-none flex-1 truncate mr-2 text-[11px] uppercase tracking-widest text-blue-500" title="点击修改节点名称">${beat.title}</span>
+                        <button onclick="window.deleteBeat('${beat.id}')" class="text-zinc-500 hover:text-red-500 transition px-1 bg-black/20 rounded">✕</button>
                     </div>
-                    <div class="nle-track-v3 flex-1 min-h-[84px] border-b border-dashed" style="border-color: var(--border-dim);" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V3', this)">
-                        ${(beat.V3||[]).map(id => renderClip(id, beat.id, 'V3')).join('')}
+                    <div class="nle-track-v3 transition-colors flex-1 min-h-[84px] border-b border-dashed" style="border-color: var(--border-dim);" ondragenter="event.preventDefault()" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V3', this)">
+                        ${v3Items.map(item => renderClip(item, beat.id, 'V3')).join('')}
                     </div>
-                    <div class="nle-track-v2 flex-1 min-h-[84px] border-b border-dashed" style="border-color: var(--border-dim);" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V2', this)">
-                        ${(beat.V2||[]).map(id => renderClip(id, beat.id, 'V2')).join('')}
+                    <div class="nle-track-v2 transition-colors flex-1 min-h-[84px] border-b border-dashed" style="border-color: var(--border-dim);" ondragenter="event.preventDefault()" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V2', this)">
+                        ${v2Items.map(item => renderClip(item, beat.id, 'V2')).join('')}
                     </div>
-                    <div class="nle-track-v1 flex-1 min-h-[84px]" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V1', this)">
-                        ${(beat.V1||[]).map(id => renderClip(id, beat.id, 'V1')).join('')}
+                    <div class="nle-track-v1 transition-colors flex-1 min-h-[84px]" ondragenter="event.preventDefault()" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V1', this)">
+                        ${v1Items.map(item => renderClip(item, beat.id, 'V1')).join('')}
                     </div>
-                </div>`).join('');
+                </div>`;
+            }).join('');
 
-            if(timelineWrapper) timelineWrapper.innerHTML = beatsHtml + `<button onclick="window.addBeat()" class="min-w-[150px] border-2 border-dashed rounded-[12px] flex flex-col items-center justify-center text-blue-500 h-full" style="border-color: var(--border-dim)">+ 新建节点</button>`;
+            timelineWrapper.innerHTML = beatsHtml + `
+                <button onclick="window.addBeat()" class="min-w-[150px] border-2 border-dashed rounded-[12px] flex flex-col items-center justify-center text-blue-500 hover:bg-blue-900/10 hover:border-blue-500 transition-all font-black text-xs gap-2 shrink-0 h-full" style="border-color: var(--border-dim)">
+                    新建叙事节点
+                </button>`;
         };
 
         // ==========================================
