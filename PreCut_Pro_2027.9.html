@@ -1,5 +1,22 @@
 <!DOCTYPE html>
-<html lang="zh-CN" data-theme="graphite" style="font-size: 16px;"><head><script>(function(firebaseConfig, initialAuthToken, appId) {
+<html lang="zh-CN" data-theme="graphite" style="font-size: 16px;">
+    <head>
+        <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="PreCut Pro">
+    
+    <link rel="apple-touch-icon" href="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=512&h=512&fit=crop">
+    
+    <link rel="apple-touch-startup-image" href="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1284&h=2778&fit=crop">
+    
+    <meta name="theme-color" content="#111111">
+    <meta name="background-color" content="#111111">
+    <meta name="mobile-web-app-capable" content="yes">
+
+    <link rel="manifest" href='data:application/manifest+json,{"name":"PreCut Pro","short_name":"PreCut","display":"standalone","background_color":"#111111","theme_color":"#111111"}'>
+
+        
+    <script>(function(firebaseConfig, initialAuthToken, appId) {
         window.__firebase_config = firebaseConfig;
         window.__initial_auth_token = initialAuthToken;
         window.__app_id = appId;
@@ -904,6 +921,16 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 <div class="flex items-center gap-2 lg:gap-4 no-print shrink-0">
                 
                 <div id="dashboardHeaderActions" class="flex items-center gap-2 overflow-x-auto custom-scrollbar pr-2">
+                    <button onclick="window.openWorkspaceHub()" class="group text-xs font-black transition-all flex items-center gap-2 px-3 py-1.5 rounded-lg border shadow-sm shrink-0 whitespace-nowrap active:scale-95" style="background-color: var(--bg-card); border-color: var(--border-dim); color: var(--text-main)" onmouseover="this.style.borderColor='var(--accent)'; this.style.color='var(--accent)'" onmouseout="this.style.borderColor='var(--border-dim)'; this.style.color='var(--text-main)'">
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-5 h-5 rounded flex items-center justify-center bg-black/30 border border-white/5 group-hover:bg-theme-accent/20 transition-colors">
+                                <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            </div>
+                            <span id="currentWorkspaceNameDisplay" class="tracking-wide">默认项目库</span>
+                        </div>
+                        <span id="workspaceLicenseBadge" class="px-1.5 py-0.5 rounded bg-amber-500/10 text-amber-500 border border-amber-500/20 text-[9px] font-black hidden">PRO</span>
+                        <svg class="w-3 h-3 opacity-40 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+                    </button>
                     <button onclick="window.openProActivation()" id="btnUpgradePro" class="text-[11px] font-black text-black bg-yellow-500 hover:bg-yellow-400 transition flex items-center gap-1.5 px-3 py-1.5 rounded-lg shadow-md shrink-0 whitespace-nowrap">👑 激活 PRO</button>
                     
                     <div class="w-px h-4 mx-1 shrink-0" style="background-color: var(--border-dim)"></div>
@@ -1171,6 +1198,37 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         </section>
 <div id="licenseStatusPanel"></div>
         <!-- 系统设置 Modal -->
+
+        <div id="workspaceHubModal" class="modal-overlay z-[100000]">
+            <div class="modal-content !max-w-[700px] !p-0 overflow-hidden border-t-4" style="border-color: var(--text-main); background-color: var(--bg-base)">
+                <div class="p-6 border-b flex justify-between items-center shrink-0" style="background-color: var(--bg-panel); border-color: var(--border-dim)">
+                    <div>
+                        <h3 class="text-2xl font-black flex items-center gap-2 tracking-widest uppercase" style="color: var(--text-main)">
+                            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 002-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg>
+                            项目工程库
+                        </h3>
+                        <p class="text-xs text-zinc-500 font-bold mt-1">Project Hub · 本地多工程沙盒中心，数据绝对物理隔离</p>
+                    </div>
+                    <button onclick="document.getElementById('workspaceHubModal').classList.remove('show')" class="text-zinc-500 hover:text-white transition w-10 h-10 flex items-center justify-center rounded-full bg-black/20 hover:bg-red-500 text-xl">✕</button>
+                </div>
+                
+                <div class="p-6 overflow-y-auto pro-scroll min-h-[300px] max-h-[60vh]" style="background-color: var(--bg-base)">
+                    <div id="workspaceListContainer" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        </div>
+                </div>
+
+                <div class="p-6 border-t flex flex-col sm:flex-row gap-3 items-center justify-between" style="background-color: var(--bg-panel); border-color: var(--border-dim)">
+                    <div class="flex items-center gap-3 w-full sm:w-auto flex-1">
+                        <input type="text" id="newWorkspaceName" placeholder="输入新工程名 (如: 宝马广告)" class="flex-1 sm:w-64 border p-3 rounded-xl font-bold outline-none focus:border-theme-accent transition shadow-inner text-sm" style="background-color: var(--bg-card); border-color: var(--border-dim); color: var(--text-main)" onkeypress="if(event.key === 'Enter') window.createNewWorkspace()">
+                    </div>
+                    <button onclick="window.createNewWorkspace()" class="w-full sm:w-auto px-6 py-3 rounded-xl font-black transition shadow-lg flex items-center justify-center gap-2 hover:scale-105 active:scale-95" style="background-color: var(--text-main); color: var(--bg-base)">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"></path></svg>
+                        开辟新工程区
+                    </button>
+                </div>
+            </div>
+        </div>
+
         <div id="sysSettingsModal" class="modal-overlay">
             <div class="modal-content !max-w-[600px] border-t-4 border-theme-accent !p-0 overflow-hidden flex flex-col max-h-[85vh]">
                 <div class="p-5 sm:p-6 border-b flex justify-between items-center shrink-0" style="background-color: var(--bg-panel); border-color: var(--border-dim)">
@@ -1685,6 +1743,11 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         window.openSettings = () => {
             if(window.renderLicenseStatus) window.renderLicenseStatus();
             document.getElementById('sysSettingsModal').classList.add('show');
+        };
+
+        // 🛠️ 修复：补回丢失的关闭设置面板函数
+        window.closeSettings = () => {
+            document.getElementById('sysSettingsModal').classList.remove('show');
         };
         
         // 挂载补丁：让输入密码激活成功后，设置面板也能瞬间刷新
@@ -3269,119 +3332,128 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
         // 剪辑工作台：D&D 拖拽处理
         // 🚀 iPad 纸上剪辑专用：多轨触控引擎补丁
+       // 🚀 iPad 纸上剪辑专用：不塌陷的满血触控引擎
+       // 🚀 全平台通用的终极剪辑拖拽引擎 (Desktop原生 + iPad满血 融合版)
+        // 🚀 全平台通用的终极剪辑拖拽引擎 (修复了致命的ID类型严格对比 Bug)
+       // 🚀 终极唯一纯净版：剪辑拖拽引擎（已彻底切除所有多余重复的旧代码）
+       // 🚀 终极满血版：剪辑拖拽引擎 + 删除模块 (已修复所有类型对比与丢失 Bug)
         window.dragEditStart = (e, id) => { 
             window.draggedEditId = id; 
             const target = e.target.closest('[draggable="true"]');
             if (target) target.classList.add('dragging-active');
+            if (e.dataTransfer) {
+                e.dataTransfer.setData('text/plain', String(id)); 
+                e.dataTransfer.effectAllowed = 'move';
+            }
         };
 
-        // 核心：处理复杂多轨环境的瞬间隐身与精准空投
-        window.handleEditTouchEnd = function(e, id) {
-            const touch = e.changedTouches[0];
-            
-            // 瞬间隐身防遮挡
-            const target = e.target.closest('[draggable="true"]');
-            if (target) target.style.display = 'none';
-            const ghost = document.querySelector('.dnd-poly-drag-image');
-            if (ghost) ghost.style.display = 'none';
-
-            // 雷达扫描手指下方的轨道或片段
-            const el = document.elementFromPoint(touch.clientX, touch.clientY);
-            
-            // 恢复真身
-            if (target) target.style.display = '';
-            if (ghost) ghost.style.display = '';
-
-            const dropZone = el ? el.closest('[ondrop]') : null;
-            if (dropZone) {
-                const ondropStr = dropZone.getAttribute('ondrop');
-                if (ondropStr) {
-                    // 智能解析是投放在空轨道，还是插入到其他片段之间
-                    if (ondropStr.includes('dropOnBeatTrack')) {
-                        const match = ondropStr.match(/dropOnBeatTrack\(.*?,\s*'([^']+)'\s*,\s*'([^']+)'/);
-                        if (match) window.executeDropOnTrack(id, match[1], match[2]);
-                    } else if (ondropStr.includes('dropOnClip')) {
-                        const match = ondropStr.match(/dropOnClip\(.*?,\s*(\d+)\s*,\s*'([^']+)'\s*,\s*'([^']+)'/);
-                        if (match) window.executeDropOnClip(id, Number(match[1]), match[2], match[3]);
-                    }
-                }
-            }
-            
-            // 清理发光与高亮痕迹
+        window.cleanupEditDrag = () => {
             document.querySelectorAll('.dragging-active').forEach(d => d.classList.remove('dragging-active'));
             document.querySelectorAll('.bg-blue-900\\/30').forEach(d => d.classList.remove('bg-blue-900/30'));
             document.querySelectorAll('[style*="inset"]').forEach(d => d.style.boxShadow = 'none');
         };
 
-        // 抽离出的底层执行逻辑：放进轨道
-        window.executeDropOnTrack = function(draggedId, beatId, trackId) {
-            draggedId = Number(draggedId);
-            window.db.storyBeats.forEach(b => {
-                if(b.V1) b.V1 = b.V1.filter(id => id !== draggedId);
-                if(b.V2) b.V2 = b.V2.filter(id => id !== draggedId);
-                if(b.V3) b.V3 = b.V3.filter(id => id !== draggedId);
-            });
-            const beat = window.db.storyBeats.find(b => b.id === beatId);
-            if(beat) { 
-                if(!beat[trackId]) beat[trackId] = [];
-                beat[trackId].push(draggedId); 
+        window.handleEditTouchEnd = function(e, id) {
+            if (!e.changedTouches) return window.cleanupEditDrag(); 
+            const touch = e.changedTouches[0];
+            
+            const target = e.target.closest('[draggable="true"]');
+            if (target) target.style.visibility = 'hidden';
+            const ghost = document.querySelector('.dnd-poly-drag-image');
+            if (ghost) ghost.style.visibility = 'hidden';
+
+            const el = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            if (target) target.style.visibility = '';
+            if (ghost) ghost.style.visibility = '';
+
+            const dropZone = el ? el.closest('[ondrop]') : null;
+            if (dropZone) {
+                const ondropStr = dropZone.getAttribute('ondrop');
+                if (ondropStr) {
+                    if (ondropStr.includes('dropOnBeatTrack')) {
+                        const match = ondropStr.match(/dropOnBeatTrack\(.*?,\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]/);
+                        if (match) window.executeDropOnTrack(id, match[1], match[2]);
+                    } else if (ondropStr.includes('dropOnClip')) {
+                        const match = ondropStr.match(/dropOnClip\(.*?,\s*['"]?([^,'"\s]+)['"]?\s*,\s*['"]([^'"]+)['"]\s*,\s*['"]([^'"]+)['"]/);
+                        if (match) window.executeDropOnClip(id, match[1], match[2], match[3]);
+                    }
+                }
             }
-            window.triggerAutoSave(); window.renderEditSandbox();
+            window.cleanupEditDrag();
         };
 
-        // 抽离出的底层执行逻辑：片段间排序
-        window.executeDropOnClip = function(draggedId, targetId, beatId, trackId) {
-            draggedId = Number(draggedId);
-            if(draggedId === targetId) return;
-            window.db.storyBeats.forEach(b => {
-                if(b.V1) b.V1 = b.V1.filter(id => id !== draggedId);
-                if(b.V2) b.V2 = b.V2.filter(id => id !== draggedId);
-                if(b.V3) b.V3 = b.V3.filter(id => id !== draggedId);
-            });
-            const beat = window.db.storyBeats.find(b => b.id === beatId);
-            if(beat) {
-                if(!beat[trackId]) beat[trackId] = [];
-                const targetIdx = beat[trackId].indexOf(targetId);
-                if (targetIdx !== -1) { beat[trackId].splice(targetIdx, 0, draggedId); } 
-                else { beat[trackId].push(draggedId); }
-            }
-            window.triggerAutoSave(); window.renderEditSandbox();
-        };
-
-        // 兼容 PC 鼠标拖拽的回调
         window.allowBeatTrackDrop = (e, el) => { e.preventDefault(); el.classList.add('bg-blue-900/30'); };
         window.leaveBeatTrackDrop = (e, el) => { el.classList.remove('bg-blue-900/30'); };
         window.dropOnBeatTrack = (e, beatId, trackId, el) => {
-            e.preventDefault(); el.classList.remove('bg-blue-900/30');
-            const draggedId = window.draggedEditId;
+            e.preventDefault(); 
+            const draggedId = window.draggedEditId || (e.dataTransfer ? e.dataTransfer.getData('text/plain') : null);
+            window.cleanupEditDrag();
             if(!draggedId) return;
             window.executeDropOnTrack(draggedId, beatId, trackId);
         };
+
         window.allowClipDrop = (e, el) => { e.preventDefault(); e.stopPropagation(); el.style.boxShadow = 'inset 4px 0 0 var(--accent)'; };
         window.leaveClipDrop = (e, el) => { el.style.boxShadow = 'none'; };
         window.dropOnClip = (e, targetId, beatId, trackId, el) => {
-            e.preventDefault(); e.stopPropagation(); el.style.boxShadow = 'none';
-            const draggedId = window.draggedEditId;
+            e.preventDefault(); e.stopPropagation(); 
+            const draggedId = window.draggedEditId || (e.dataTransfer ? e.dataTransfer.getData('text/plain') : null);
+            window.cleanupEditDrag();
             if(!draggedId) return;
             window.executeDropOnClip(draggedId, targetId, beatId, trackId);
         };
 
-        window.removeFromTimeline = (id) => {
-            if(window.db.storyBeats) {
-                window.db.storyBeats.forEach(b => {
-                    if(b.V1) b.V1 = b.V1.filter(x => x !== id);
-                    if(b.V2) b.V2 = b.V2.filter(x => x !== id);
-                    if(b.V3) b.V3 = b.V3.filter(x => x !== id);
-                });
-                window.triggerAutoSave(); window.renderEditSandbox();
+        window.executeDropOnTrack = function(draggedId, beatId, trackId) {
+            if(!draggedId) return;
+            window.db.storyBeats.forEach(b => {
+                if(b.V1) b.V1 = b.V1.filter(id => String(id) !== String(draggedId));
+                if(b.V2) b.V2 = b.V2.filter(id => String(id) !== String(draggedId));
+                if(b.V3) b.V3 = b.V3.filter(id => String(id) !== String(draggedId));
+            });
+            const beat = window.db.storyBeats.find(b => String(b.id) === String(beatId));
+            if(beat) { 
+                if(!beat[trackId]) beat[trackId] = [];
+                const finalId = isNaN(Number(draggedId)) ? draggedId : Number(draggedId);
+                beat[trackId].push(finalId); 
             }
+            window.triggerAutoSave(); window.renderEditSandbox();
         };
 
+        window.executeDropOnClip = function(draggedId, targetId, beatId, trackId) {
+            if(!draggedId || String(draggedId) === String(targetId)) return;
+            window.db.storyBeats.forEach(b => {
+                if(b.V1) b.V1 = b.V1.filter(id => String(id) !== String(draggedId));
+                if(b.V2) b.V2 = b.V2.filter(id => String(id) !== String(draggedId));
+                if(b.V3) b.V3 = b.V3.filter(id => String(id) !== String(draggedId));
+            });
+            const beat = window.db.storyBeats.find(b => String(b.id) === String(beatId));
+            if(beat) {
+                if(!beat[trackId]) beat[trackId] = [];
+                const targetIdx = beat[trackId].findIndex(id => String(id) === String(targetId));
+                const finalId = isNaN(Number(draggedId)) ? draggedId : Number(draggedId);
+                
+                if (targetIdx !== -1) { beat[trackId].splice(targetIdx, 0, finalId); } 
+                else { beat[trackId].push(finalId); }
+            }
+            window.triggerAutoSave(); window.renderEditSandbox();
+        };
+
+        // 🛠️ 修复核心：安全剔除轨道片段功能
+        window.removeFromTimeline = function(id) {
+            if(window.db && window.db.storyBeats) {
+                window.db.storyBeats.forEach(b => {
+                    // 强制转为 String 防止因数字和字符串不匹配导致的删不掉！
+                    if(b.V1) b.V1 = b.V1.filter(x => String(x) !== String(id));
+                    if(b.V2) b.V2 = b.V2.filter(x => String(x) !== String(id));
+                    if(b.V3) b.V3 = b.V3.filter(x => String(x) !== String(id));
+                });
+                window.triggerAutoSave(); 
+                window.renderEditSandbox();
+            }
+        };
         window.promptClearTimeline = () => {
             window.showModal({ type: 'warning', title: '清空时间线', message: '将清空所有节点内的所有片段，是否继续？', onConfirm: () => {
-                if(window.db.storyBeats) {
-                    window.db.storyBeats.forEach(b => { b.V1 = []; b.V2 = []; b.V3 = []; });
-                }
+                if(window.db.storyBeats) window.db.storyBeats.forEach(b => { b.V1 = []; b.V2 = []; b.V3 = []; });
                 window.triggerAutoSave(); window.renderEditSandbox();
             }});
         };
@@ -3394,21 +3466,19 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     if(!window.db.storyBeats) window.db.storyBeats = [];
                     window.db.storyBeats.push({ id: 'sb_' + Date.now(), title: val, V1: [], V2: [], V3: [] });
                     window.triggerAutoSave(); window.renderEditSandbox();
-                    
-                    setTimeout(() => {
-                        const area = document.getElementById('timelineScrollArea');
-                        if(area) area.scrollLeft = area.scrollWidth;
-                    }, 50);
+                    setTimeout(() => { const area = document.getElementById('timelineScrollArea'); if(area) area.scrollLeft = area.scrollWidth; }, 50);
                 }
             });
         };
 
-        // 核心更新：补拍按钮逻辑 - 将占位符自动添加到最末尾的节点对应轨道
+        // 核心修复：防止因清空了轨道导致的补拍弹窗崩溃
         window.addPlaceholderToTrack = function(trackId) {
-            if(!window.db.storyBeats || window.db.storyBeats.length === 0) {
-                window.showToast("❌ 请先在右侧新建至少一个【叙事节点】");
-                return;
+            if(!window.db.storyBeats) window.db.storyBeats = [];
+            // 如果节点被删光了，自动生成一个兜底节点
+            if(window.db.storyBeats.length === 0) {
+                window.db.storyBeats.push({ id: 'sb_' + Date.now(), title: '自动生成的补拍节点', V1: [], V2: [], V3: [] });
             }
+            
             window.showModal({
                 type: 'prompt', title: `在 ${trackId} 轨插入补拍`, message: '请输入你需要补拍的场景或镜头描述：', defaultInput: '',
                 onConfirm: (val) => {
@@ -3426,7 +3496,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     if(!lastBeat[trackId]) lastBeat[trackId] = [];
                     lastBeat[trackId].push(id); 
                     
-                    window.triggerAutoSave(); window.renderEditSandbox(); window.showToast(`⚡️ 补拍占位已生成并放入末尾节点！`);
+                    window.triggerAutoSave(); window.renderEditSandbox(); window.showToast(`⚡️ 补拍占位已生成！`);
                 }
             });
         };
@@ -3454,11 +3524,11 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             window.showToast("⚡️ 已快速插入到末尾节点主线(V1)");
         };
 
+       // 核心：纸上剪辑超级渲染器 (防崩溃重构版)
         window.renderEditSandbox = function() {
             if(window.currentView !== 'edit') return;
             if(!window.db.storyBeats) window.db.storyBeats = [];
             
-            // 提取所有已分配到时间线的 IDs
             const assignedIds = new Set();
             window.db.storyBeats.forEach(b => {
                 if(b.V1) b.V1.forEach(id => assignedIds.add(id));
@@ -3466,14 +3536,12 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 if(b.V3) b.V3.forEach(id => assignedIds.add(id));
             });
 
-            // 获取过滤控件的 DOM 值
             const statusVal = document.getElementById('mediaPoolStatus')?.value || 'wrapped';
             const tagVal = document.getElementById('mediaPoolTag')?.value || 'all';
             const locSelect = document.getElementById('mediaPoolLocation');
             const currentLoc = locSelect ? locSelect.value : 'all';
             const searchVal = (document.getElementById('poolSearchInputNLE')?.value || "").toLowerCase();
             
-            // 1. 获取剔除了时间线已使用元素的基础媒体池
             const basePool = window.db.logs.filter(item => {
                 if(assignedIds.has(item.id)) return false;
                 if(statusVal === 'wrapped' && !item.isWrapped) return false; 
@@ -3481,7 +3549,6 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 return true;
             });
 
-            // 2. 动态扫描提取实际存在的拍摄地点，并更新下拉菜单
             if (locSelect) {
                 const uniqueLocs = [...new Set(basePool.map(item => item.location?.trim()).filter(Boolean))];
                 let optionsHtml = `<option value="all">🌍 所有地点</option>`;
@@ -3492,13 +3559,10 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 locSelect.innerHTML = optionsHtml;
             }
 
-            // 3. 应用所有维度的深度筛选
             const finalPool = basePool.filter(item => {
                 const refreshedLocVal = document.getElementById('mediaPoolLocation')?.value || 'all';
-                
                 if(tagVal !== 'all' && item.tags !== tagVal) return false;
                 if(refreshedLocVal !== 'all' && (item.location || '') !== refreshedLocVal) return false;
-
                 if(searchVal) {
                     const locStr = (item.location||"").toLowerCase(); 
                     const tagStr = (item.tags||"").toLowerCase();
@@ -3514,7 +3578,6 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
             const poolCon = document.getElementById('mediaPoolContainer');
             if (poolCon) {
-                // 采用紧凑的“卡片云”布局渲染媒体池
                 poolCon.innerHTML = finalPool.map(item => {
                     const okTakes = (item.takes||[]).filter(t=>t.isOk); const okCount = okTakes.length; const hasOk = okCount > 0;
                     const mainFilename = hasOk ? okTakes[0].clipName : (item.takes && item.takes.length > 0 ? item.takes[item.takes.length-1].clipName : '未确认');
@@ -3544,33 +3607,32 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                             <div class="text-[8px] font-bold truncate tracking-widest uppercase" style="color: var(--text-muted)">${item.tags || '素材'} <span class="font-mono-data mx-0.5 opacity-50">|</span> <span class="${hasOk?'text-emerald-500':''}">${okCount} OK</span></div>
                         </div>
                     </div>`;
-                }).join('') || `<div class="w-full h-full flex flex-col items-center justify-center border-2 border-dashed rounded-2xl opacity-50" style="border-color: var(--border-dim); color: var(--text-muted)"><svg class="w-10 h-10 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path></svg><span class="text-xs font-black uppercase tracking-widest">媒体库已空或无匹配项</span></div>`;
+                }).join('') || `<div class="w-full h-full flex flex-col items-center justify-center border-2 border-dashed rounded-2xl opacity-50" style="border-color: var(--border-dim); color: var(--text-muted)"><span class="text-xs font-black uppercase tracking-widest">媒体库已空或无匹配项</span></div>`;
             }
 
-            // ====== 容器化叙事节点渲染 ======
             const timelineWrapper = document.getElementById('timelineWrapper');
             if(!timelineWrapper) return;
 
             const renderClip = (item, beatId, trackId) => {
+                if (!item) return '';
                 const isPlaceholder = item.isPlaceholder && !item.isWrapped;
                 if (isPlaceholder) {
                     return `
-                    <div class="${clipClass}" 
-                     draggable="true" 
-                     onpointerdown="this.style.transition='none';"
-                     ondragstart="window.dragEditStart(event, '${item.id}')" 
-                     ontouchend="window.handleEditTouchEnd(event, '${item.id}')"
-                     ondragend="this.classList.remove('dragging-active')"
-                     ondragover="window.allowClipDrop(event, this)" 
-                     ondragleave="window.leaveClipDrop(event, this)" 
-                     ondrop="window.dropOnClip(event, ${item.id}, '${beatId}', '${trackId}', this)" 
-                     onclick="window.previewInViewer(${item.id})" style="border-top: 3px solid ${topColor}" title="拖拽排序">
+                    <div class="nle-clip group !border-dashed !border-red-500/80 !bg-red-950/30" 
+                         draggable="true" 
+                         onpointerdown="this.style.transition='none';"
+                         ondragstart="window.dragEditStart(event, '${item.id}')" 
+                         ontouchend="window.handleEditTouchEnd(event, '${item.id}')"
+                         ondragend="this.classList.remove('dragging-active')"
+                         ondragover="window.allowClipDrop(event, this)" 
+                         ondragleave="window.leaveClipDrop(event, this)" 
+                         ondrop="window.dropOnClip(event, ${item.id}, '${beatId}', '${trackId}', this)" 
+                         onclick="window.jumpToShoot(${item.id})" title="拖拽排序或点击去拍摄">
                         <div class="nle-clip-header !bg-red-900/80 !text-red-200">
                             <span class="truncate pr-1">⭕缺: ${item.location}</span>
                             <button onclick="event.stopPropagation(); window.removeFromTimeline(${item.id})" class="text-red-300 hover:text-white opacity-80 lg:opacity-0 group-hover:opacity-100 transition">✕</button>
                         </div>
                         <div class="flex-1 flex flex-col items-center justify-center relative p-1 pointer-events-none">
-                            <svg class="w-5 h-5 text-red-500/80 mb-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"></path></svg>
                             <span class="text-[9px] font-black text-red-400 tracking-widest uppercase">补齐</span>
                         </div>
                     </div>`;
@@ -3580,7 +3642,6 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 const topColor = hasOk ? '#10b981' : '#ef4444'; 
                 const cam = item.camera || 'C';
                 
-                // Assign specific colors for tracks
                 let clipClass = 'nle-clip group';
                 if(trackId === 'V3') clipClass = 'nle-clip nle-clip-v3 group';
                 if(trackId === 'V2') clipClass = 'nle-clip nle-clip-v2 group';
@@ -3612,24 +3673,20 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             };
 
             let beatsHtml = `
-                <!-- 核心修复：内嵌式 Sticky 轨道侧边栏 -->
                 <div class="nle-beat-container sticky left-0 z-30 shadow-[4px_0_20px_rgba(0,0,0,0.8)] shrink-0" style="min-width: 70px; width: 70px; border-color: var(--border-dim); background-color: var(--bg-card);">
                     <div class="nle-beat-header h-[36px] flex items-center justify-center !px-1 shrink-0 bg-transparent border-b" style="border-color: var(--border-dim)">
                         <span class="text-[10px] font-black text-blue-500 tracking-widest text-center">ST节点</span>
                     </div>
                     <div class="flex-1 flex flex-col items-center justify-center gap-1 border-b" style="border-color: var(--border-dim); border-bottom-style: dashed; min-height: calc(84px * var(--tl-zoom-y));">
                         <div class="text-[10px] font-black text-[#0284c7]">V3</div>
-                        <div class="text-[8px] font-bold text-[#0284c7] opacity-60">B-ROLL</div>
                         <button onclick="window.addPlaceholderToTrack('V3')" class="text-[9px] bg-red-900/40 text-red-400 border border-red-500/50 px-1 py-0.5 rounded mt-1 hover:bg-red-500 hover:text-white transition">+补拍</button>
                     </div>
                     <div class="flex-1 flex flex-col items-center justify-center gap-1 border-b" style="border-color: var(--border-dim); border-bottom-style: dashed; min-height: calc(84px * var(--tl-zoom-y));">
                         <div class="text-[10px] font-black text-[#059669]">V2</div>
-                        <div class="text-[8px] font-bold text-[#059669] opacity-60">B-ROLL</div>
                         <button onclick="window.addPlaceholderToTrack('V2')" class="text-[9px] bg-red-900/40 text-red-400 border border-red-500/50 px-1 py-0.5 rounded mt-1 hover:bg-red-500 hover:text-white transition">+补拍</button>
                     </div>
                     <div class="flex-1 flex flex-col items-center justify-center gap-1" style="min-height: calc(84px * var(--tl-zoom-y));">
                         <div class="text-[10px] font-black text-theme-accent">V1</div>
-                        <div class="text-[8px] font-bold text-theme-accent opacity-60">A-ROLL</div>
                         <button onclick="window.addPlaceholderToTrack('V1')" class="text-[9px] bg-red-900/40 text-red-400 border border-red-500/50 px-1 py-0.5 rounded mt-1 hover:bg-red-500 hover:text-white transition">+补拍</button>
                     </div>
                 </div>`;
@@ -3640,31 +3697,27 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 const v1Items = (beat.V1||[]).map(id => window.db.logs.find(l => l.id === id)).filter(Boolean);
                 
                 return `
-                <div class="nle-beat-container relative group/beat">
-                    <div class="nle-beat-header h-[36px]">
+                <div class="nle-beat-container relative group/beat flex flex-col">
+                    <div class="nle-beat-header h-[36px] shrink-0">
                         <span contenteditable="true" onblur="window.updateBeatTitle('${beat.id}', this.innerText)" class="editable-text border-b-transparent outline-none flex-1 truncate mr-2 text-[11px] uppercase tracking-widest text-blue-500" title="点击修改节点名称">${beat.title}</span>
                         <button onclick="window.deleteBeat('${beat.id}')" class="text-zinc-500 hover:text-red-500 transition px-1 bg-black/20 rounded">✕</button>
                     </div>
-                    
-                    <div class="nle-track-v3 transition-colors flex-1" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V3', this)">
-                        ${v3Items.length > 0 ? v3Items.map(item => renderClip(item, beat.id, 'V3')).join('') : ``}
+                    <div class="nle-track-v3 transition-colors flex-1 min-h-[84px] border-b border-dashed" style="border-color: var(--border-dim);" ondragenter="event.preventDefault()" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V3', this)">
+                        ${v3Items.map(item => renderClip(item, beat.id, 'V3')).join('')}
                     </div>
-                    <div class="nle-track-v2 transition-colors flex-1" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V2', this)">
-                        ${v2Items.length > 0 ? v2Items.map(item => renderClip(item, beat.id, 'V2')).join('') : ``}
+                    <div class="nle-track-v2 transition-colors flex-1 min-h-[84px] border-b border-dashed" style="border-color: var(--border-dim);" ondragenter="event.preventDefault()" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V2', this)">
+                        ${v2Items.map(item => renderClip(item, beat.id, 'V2')).join('')}
                     </div>
-                    
-                    <div class="nle-track-v1 transition-colors flex-1" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V1', this)">
-                        ${v1Items.length > 0 ? v1Items.map(item => renderClip(item, beat.id, 'V1')).join('') : ``}
+                    <div class="nle-track-v1 transition-colors flex-1 min-h-[84px]" ondragenter="event.preventDefault()" ondragover="window.allowBeatTrackDrop(event, this)" ondragleave="window.leaveBeatTrackDrop(event, this)" ondrop="window.dropOnBeatTrack(event, '${beat.id}', 'V1', this)">
+                        ${v1Items.map(item => renderClip(item, beat.id, 'V1')).join('')}
                     </div>
                 </div>`;
             }).join('');
 
             timelineWrapper.innerHTML = beatsHtml + `
                 <button onclick="window.addBeat()" class="min-w-[150px] border-2 border-dashed rounded-[12px] flex flex-col items-center justify-center text-blue-500 hover:bg-blue-900/10 hover:border-blue-500 transition-all font-black text-xs gap-2 shrink-0 h-full" style="border-color: var(--border-dim)">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
                     新建叙事节点
-                </button>
-            `;
+                </button>`;
         };
 
         // ==========================================
@@ -4401,6 +4454,254 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 }
             }, 100);
         };
+
+        // ==========================================
+        // 🌌 核心引擎：多重宇宙 (Workspace Hub) 切换系统
+        // ==========================================
+
+        window.initWorkspaceEngine = function() {
+            // 1. 核心：开机自动核对订阅天数 (校验过期时间)
+            if (window.db && window.db.license) {
+                const now = Date.now();
+                const expiry = window.db.license.expiry; // 获取存档里的过期时间戳
+                if (expiry) {
+                    const diff = expiry - now;
+                    if (diff <= 0) {
+                        // 如果已过期，自动降级为标准版
+                        window.db.license.isPro = false;
+                        window.db.license.level = 'Standard';
+                        window.db.license.days = 0;
+                    } else {
+                        // 动态计算剩余天数并更新界面
+                        window.db.license.days = Math.ceil(diff / (1000 * 60 * 60 * 24));
+                    }
+                }
+            }
+
+            let wsIndex = localStorage.getItem('precut_workspaces');
+            if (!wsIndex) {
+                wsIndex = [{ id: 'default', name: '默认项目库', dbKey: 'docuflow_autosave_v13', updatedAt: Date.now() }];
+                localStorage.setItem('precut_workspaces', JSON.stringify(wsIndex));
+            } else {
+                wsIndex = JSON.parse(wsIndex);
+                let defaultWs = wsIndex.find(w => w.id === 'default');
+                if (defaultWs && defaultWs.name === '默认工作区') {
+                    defaultWs.name = '默认项目库';
+                    localStorage.setItem('precut_workspaces', JSON.stringify(wsIndex));
+                }
+            }
+            
+            let currentWsId = localStorage.getItem('precut_current_ws') || 'default';
+            if (!wsIndex.find(w => w.id === currentWsId)) currentWsId = wsIndex[0].id;
+            
+            window.workspaces = wsIndex;
+            window.currentWorkspaceId = currentWsId;
+            window.updateWorkspaceUI();
+        };
+
+        window.updateWorkspaceUI = function() {
+            const ws = window.workspaces.find(w => w.id === window.currentWorkspaceId);
+            const nameDisplay = document.getElementById('currentWorkspaceNameDisplay');
+            if (nameDisplay && ws) nameDisplay.innerText = ws.name;
+            
+            // 同步显示 PRO 徽章
+            const badge = document.getElementById('workspaceLicenseBadge');
+            if (badge && window.db && window.db.license && window.db.license.isPro) {
+                badge.innerText = window.db.license.days + 'D PRO';
+                badge.classList.remove('hidden');
+            } else if (badge) {
+                badge.classList.add('hidden');
+            }
+        };
+
+        window.openWorkspaceHub = function() {
+            window.renderWorkspaceList();
+            document.getElementById('workspaceHubModal').classList.add('show');
+        };
+
+        window.renderWorkspaceList = function() {
+            const container = document.getElementById('workspaceListContainer');
+            if (!container) return;
+            // 按照最后修改时间排序，最近使用的排在最前
+            const sortedWs = [...window.workspaces].sort((a, b) => b.updatedAt - a.updatedAt);
+            container.innerHTML = sortedWs.map(ws => {
+                const isActive = ws.id === window.currentWorkspaceId;
+                const activeClass = isActive ? 'border-theme-accent shadow-[0_0_15px_rgba(245,158,11,0.2)]' : 'border-[var(--border-dim)] hover:border-zinc-500';
+                const badge = isActive ? '<span class="bg-theme-accent text-black px-2 py-0.5 rounded text-[9px] font-black tracking-widest uppercase shadow-md">当前使用中</span>' : '';
+                const dateStr = new Date(ws.updatedAt).toLocaleString('zh-CN', {month:'short', day:'numeric', hour:'2-digit', minute:'2-digit'});
+                return `
+                <div class="p-4 rounded-xl border transition-all cursor-pointer flex flex-col relative group ${activeClass}" style="background-color: var(--bg-card);" onclick="window.switchWorkspace('${ws.id}')">
+                    <div class="flex justify-between items-start mb-2">
+                        <h4 class="text-base font-black text-[var(--text-main)] flex items-center gap-2 truncate pr-2">${ws.name}</h4>
+                        ${badge}
+                    </div>
+                    <div class="text-[11px] text-zinc-500 font-mono-data mt-auto pt-3 border-t border-[var(--border-dim)] flex justify-between items-center">
+                        <span>最后修改: ${dateStr}</span>
+                        ${!isActive ? `<button onclick="event.stopPropagation(); window.deleteWorkspace('${ws.id}')" class="text-red-500 font-black hover:bg-red-500/20 px-2 py-1 rounded transition opacity-0 group-hover:opacity-100">抹除档案</button>` : ''}
+                    </div>
+                </div>`;
+            }).join('');
+        };
+
+        window.createNewWorkspace = function() {
+            const input = document.getElementById('newWorkspaceName');
+            const name = input ? input.value.trim() : '';
+            if (!name) return window.showToast('⚠️ 请输入新工程的名称');
+            
+            const newId = 'ws_' + Date.now();
+            const newDbKey = 'precut_db_' + newId; // 分配全新且独立的数据库表
+            const newWs = { id: newId, name: name, dbKey: newDbKey, updatedAt: Date.now() };
+            
+            window.workspaces.push(newWs);
+            localStorage.setItem('precut_workspaces', JSON.stringify(window.workspaces));
+            if (input) input.value = '';
+            
+            window.showToast('✨ 新工程区已开辟！系统正在下潜...');
+            window.switchWorkspace(newId);
+        };
+
+        window.switchWorkspace = function(wsId) {
+            if (wsId === window.currentWorkspaceId) {
+                document.getElementById('workspaceHubModal').classList.remove('show');
+                return;
+            }
+            // 强行锁死并保存旧数据，防止跳跃时丢失
+            window.triggerAutoSave();
+            
+            window.currentWorkspaceId = wsId;
+            localStorage.setItem('precut_current_ws', wsId);
+            window.updateWorkspaceUI();
+            
+            const ws = window.workspaces.find(w => w.id === wsId);
+            if(ws) {
+                ws.updatedAt = Date.now();
+                localStorage.setItem('precut_workspaces', JSON.stringify(window.workspaces));
+            }
+
+            document.getElementById('workspaceHubModal').classList.remove('show');
+            window.showToast('🚀 正在跃迁至平行宇宙...');
+            // 延迟加载，给 UI 动画留出呼吸时间
+            setTimeout(() => window.loadCurrentWorkspaceDB(), 200);
+        };
+
+        window.deleteWorkspace = function(wsId) {
+            window.showModal({
+                type: 'warning', title: '物理抹除工程区',
+                message: '☢️ 警告：此操作将彻底从设备底层数据库中删除该工作区的所有视频和节点数据！且无法恢复！\n是否继续？',
+                onConfirm: () => {
+                    const ws = window.workspaces.find(w => w.id === wsId);
+                    if (ws) localforage.removeItem(ws.dbKey); // 斩草除根
+                    window.workspaces = window.workspaces.filter(w => w.id !== wsId);
+                    localStorage.setItem('precut_workspaces', JSON.stringify(window.workspaces));
+                    window.renderWorkspaceList();
+                    window.showToast('🗑️ 工程区已物理抹除');
+                }
+            });
+        };
+
+        window.loadCurrentWorkspaceDB = function() {
+            const ws = window.workspaces.find(w => w.id === window.currentWorkspaceId) || window.workspaces[0];
+            localforage.getItem(ws.dbKey).then(function(savedData) {
+                if (savedData) {
+                    window.globalDB = savedData;
+                    window.globalDB.projects.forEach(p => {
+                        if(!p.type) p.type = 'project';
+                        if(!p.parentId) p.parentId = 'root';
+                    });
+                } else {
+                    // 如果数据库为空，则生成一个干干净净的初始化大厅
+                    window.globalDB = {
+                        globalTitle: ws.name,
+                        globalCameras: [{ id: 'ARRI', desc: '主采' }, { id: 'SONY', desc: '特写' }, { id: 'R5', desc: '运动' }, { id: 'BMD', desc: '补位' }, { id: 'DJI', desc: '航拍' }],
+                        projects: [] 
+                    };
+                }
+                
+                // 重置所有指针与锁
+                window.currentFolderId = 'root';
+                window.activeOutlineFolderId = null;
+                window.db = null;
+                window.activeProjectId = null;
+                
+                // 清理历史撤销记录（防止在新工程里撤销出上一个工程的幽灵数据）
+                window.historyStack = []; 
+                window.historyIndex = -1;
+                window.imagePool = {};
+                if (typeof window.pushHistory === 'function') window.pushHistory();
+
+                // 强制退回全景大厅并重绘
+                window.exitToDashboard();
+                window.renderDashboard();
+                window.showToast('🪐 已成功挂载工作区：' + ws.name);
+            }).catch(function(err) {
+                console.error("Workspace Load Error:", err);
+                window.showToast("❌ 数据读取失败");
+            });
+        };
+
+        // 【核心拦截补丁】接管并升级现有的 triggerAutoSave，让它懂得向“当前活动的文件夹”里写数据
+        window.triggerAutoSave = function() {
+            if (!window.isUndoing && typeof window.pushHistory === 'function') window.pushHistory(); 
+            
+            if (window.workspaces) {
+                const ws = window.workspaces.find(w => w.id === window.currentWorkspaceId);
+                if (ws) {
+                    ws.updatedAt = Date.now();
+                    localStorage.setItem('precut_workspaces', JSON.stringify(window.workspaces));
+                }
+            }
+            
+            clearTimeout(window.autoSaveTimeout);
+            window.autoSaveTimeout = setTimeout(() => {
+                if(!window.globalDB) return;
+
+                if (window.db) {
+                    const p = window.globalDB.projects.find(x => x.id === window.db.id);
+                    const titleEl = document.getElementById('projectTitle');
+                    if(p && titleEl && titleEl.value) p.title = titleEl.value;
+                }
+
+                if (window.isSavingDB) {
+                    window.pendingSave = true;
+                    return;
+                }
+
+                window.isSavingDB = true;
+                // 动态获取当前的数据库抽屉钥匙
+                const ws = window.workspaces.find(w => w.id === window.currentWorkspaceId) || { dbKey: 'docuflow_autosave_v13' };
+                
+                localforage.setItem(ws.dbKey, window.globalDB).then(() => {
+                    window.isSavingDB = false;
+                    const indicator = document.getElementById('autoSaveIndicator');
+                    if(indicator) {
+                        requestAnimationFrame(() => {
+                            indicator.classList.remove('opacity-0', 'translate-y-4');
+                            indicator.classList.add('opacity-100', 'translate-y-0');
+                            setTimeout(() => {
+                                indicator.classList.remove('opacity-100', 'translate-y-0');
+                                indicator.classList.add('opacity-0', 'translate-y-4');
+                            }, 2500);
+                        });
+                    }
+                    if (window.pendingSave) {
+                        window.pendingSave = false;
+                        window.triggerAutoSave();
+                    }
+                }).catch(err => {
+                    window.isSavingDB = false;
+                    console.error("IndexedDB Save Error:", err);
+                });
+            }, 800); 
+        };
+
+        // 🚀 立即点火：在页面加载完成时强行启动多工程引擎！
+        setTimeout(() => {
+            window.initWorkspaceEngine();
+            // 如果上次退出时不是默认工作区，开机后自动切换回热加载区域
+            if (window.currentWorkspaceId !== 'default') {
+                window.loadCurrentWorkspaceDB();
+            }
+        }, 600);
     </script>
 
 
