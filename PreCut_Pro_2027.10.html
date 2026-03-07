@@ -3522,15 +3522,28 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
             }});
         };
 
-        window.quickInsert = function(logId) {
-            if (!window.db.storyBeats || window.db.storyBeats.length === 0) {
-                window.db.storyBeats = [{ id: 'sb_' + Date.now(), title: '主叙事线', V1: [], V2: [], V3: [] }];
+        // 🚀 新增：多轨道快捷下发引擎 (对应 V1/V2/V3 菜单)
+        window.quickInsertTrack = function(id, trackId) {
+            if(!window.db.storyBeats || window.db.storyBeats.length === 0) return window.showToast("⚠️ 请先在右侧新建一个节点");
+            let beat = window.db.storyBeats.find(b => String(b.id) === String(window.activeBeatId));
+            if(!beat) beat = window.db.storyBeats[0]; // 如果没选中，默认进入第一个节点
+            
+            if(!beat[trackId]) beat[trackId] = [];
+            beat[trackId].push(id);
+            window.triggerAutoSave();
+            window.renderEditSandbox();
+            window.showToast(`✅ 已快速下发至 [${beat.title}] 的 ${trackId} 轨道`);
+        };
+
+        // 🚀 新增：双击回溯到实拍堪景进行修改
+        window.pushToScout = function(id) {
+            if(!window.globalDB || !window.globalDB.projects) return;
+            const project = window.globalDB.projects.find(p => String(p.id) === String(id));
+            if (project) {
+                window.enterProject(id); 
+                window.switchView('scout');
+                window.showToast(`🎬 已切回 [${project.title}] 现场实拍进行修改`);
             }
-            const lastBeat = window.db.storyBeats[window.db.storyBeats.length - 1];
-            if(!lastBeat.V1) lastBeat.V1 = [];
-            lastBeat.V1.push(logId);
-            window.triggerAutoSave(); window.renderEditSandbox();
-            window.showToast("⚡️ 已快速插入到末尾节点主线(V1)");
         };
 
        // 核心：纸上剪辑超级渲染器 (防崩溃重构版)
@@ -3594,21 +3607,31 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
                     return `
                     <div draggable="true" 
-                         onpointerdown="this.style.transition='none';"
+                         <div draggable="true" 
                          ondragstart="window.dragEditStart(event, '${item.id}')"
-                         ontouchend="window.handleEditTouchEnd(event, '${item.id}')"
+                         ontouchend="window.handleEditTouchEnd(event, '${item.id}'); window.previewInViewer('${item.id}');"
                          ondragend="this.classList.remove('dragging-active')"
-                         onclick="window.previewInViewer('${item.id}')" ontouchend="window.previewInViewer('${item.id}')" ondblclick="window.pushToScout('${item.id}')" ontouchend="window.previewInViewer('${item.id}')" 
+                         onclick="window.previewInViewer('${item.id}')" 
+                         ondblclick="window.pushToScout('${item.id}')"
+                         title="单击预览，双击回退实拍修改"
                          class="w-[140px] h-[100px] border rounded-xl overflow-hidden flex flex-col cursor-grab hover:border-theme-accent transition active:scale-95 group relative shrink-0 shadow-md" style="background-color: var(--bg-card); border-color: var(--border-dim)">
                         <div class="h-14 bg-black relative flex items-center justify-center border-b shrink-0" style="border-color: var(--border-dim)">
                             ${item.photo ? `<img src="${item.photo}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition duration-300">` : `<span class="text-[9px] text-zinc-500 font-bold">NO MEDIA</span>`}
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-1.5 opacity-80 group-hover:opacity-100">
+                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-1.5 opacity-80 group-hover:opacity-100 pointer-events-none">
                                 <span class="bg-theme-accent text-black px-1 py-[1px] rounded-[3px] text-[7px] font-black tracking-widest shrink-0 mr-1 shadow-md">${mainCam}</span>
                                 <span class="text-white font-mono-data font-black text-[9px] truncate drop-shadow-md w-full">${mainFilename}</span>
                             </div>
-                            <button onclick="event.stopPropagation(); window.quickInsert(${item.id})" class="absolute top-1 right-1 bg-blue-500 text-white w-5 h-5 rounded-[4px] flex items-center justify-center shadow-lg opacity-0 group-hover:opacity-100 hover:bg-blue-400 hover:scale-110 transition z-10" title="一键下发主线">+</button>
+                            
+                            <div class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 transition z-[60] group/menu">
+                                <button class="bg-black/60 backdrop-blur-md text-white border border-white/20 w-6 h-6 rounded flex items-center justify-center shadow-lg hover:bg-theme-accent hover:text-black transition">🔽</button>
+                                <div class="absolute right-0 top-full mt-1 hidden group-hover/menu:flex flex-col gap-1 bg-black/90 p-1.5 rounded-lg shadow-xl border border-white/20">
+                                    <button onclick="event.stopPropagation(); window.quickInsertTrack('${item.id}', 'V3')" class="text-[10px] font-black text-white hover:bg-blue-600 px-3 py-1 rounded transition">入 V3 轨</button>
+                                    <button onclick="event.stopPropagation(); window.quickInsertTrack('${item.id}', 'V2')" class="text-[10px] font-black text-white hover:bg-emerald-600 px-3 py-1 rounded transition">入 V2 轨</button>
+                                    <button onclick="event.stopPropagation(); window.quickInsertTrack('${item.id}', 'V1')" class="text-[10px] font-black text-white hover:bg-theme-accent hover:text-black px-3 py-1 rounded transition">入 V1 轨</button>
+                                </div>
+                            </div>
                         </div>
-                        <div class="px-2 py-1 flex flex-col justify-center flex-1 min-h-0" style="background-color: var(--bg-panel)">
+                        <div class="px-2 py-1 flex flex-col justify-center flex-1 min-h-0 pointer-events-none" style="background-color: var(--bg-panel)">
                             <div class="flex items-center gap-1.5 mb-0.5">
                                 <span class="w-1.5 h-1.5 rounded-full shrink-0 ${hasOk?'bg-emerald-500 shadow-[0_0_5px_rgba(16,185,129,0.8)]':'bg-red-500 opacity-50'}"></span>
                                 <span class="text-[10px] font-black truncate flex-1 leading-tight" style="color: var(--text-main)">${item.location || '未命名'}</span>
@@ -3660,21 +3683,27 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 return `
                 <div class="${clipClass}" 
                      draggable="true" 
-                     onpointerdown="this.style.transition='none';"
                      ondragstart="window.dragEditStart(event, '${item.id}')" 
-                     ontouchend="window.handleEditTouchEnd(event, '${item.id}')"
+                     ontouchend="window.handleEditTouchEnd(event, '${item.id}'); window.previewInViewer('${item.id}');"
                      ondragend="this.classList.remove('dragging-active')"
                      ondragover="window.allowClipDrop(event, this)" 
                      ondragleave="window.leaveClipDrop(event, this)" 
-                     ondrop="window.dropOnClip(event, ${item.id}, '${beatId}', '${trackId}', this)" 
-                     onclick="window.previewInViewer('${item.id}')" ontouchend="window.previewInViewer('${item.id}')" style="border-top: 3px solid ${topColor}" title="拖拽排序">
+                     ondrop="window.dropOnClip(event, '${item.id}', '${beatId}', '${trackId}', this)" 
+                     onclick="window.previewInViewer('${item.id}')" 
+                     ondblclick="window.pushToScout('${item.id}')" 
+                     style="border-top: 3px solid ${topColor}" title="单点预览，双击回退实拍修改">
                     ${markerHtml}
-                    <div class="nle-clip-header" title="双击回实拍修改">
-                        <span class="truncate pr-1">${item.location || 'CLIP'}</span>
-                        <div class="flex items-center gap-1.5 z-[60] relative">
-                            <button onclick="event.stopPropagation(); window.removeFromTimeline('${item.id}')" ontouchend="event.stopPropagation(); window.removeFromTimeline('${item.id}')" class="text-zinc-300 hover:text-white bg-white/5 px-1.5 rounded text-[10px] transition-all shadow-sm" title="送回素材池">⬆️</button>
-                            <button onclick="event.stopPropagation(); window.removeFromTimeline('${item.id}')" ontouchend="event.stopPropagation(); window.removeFromTimeline('${item.id}')" class="text-zinc-500 hover:text-red-500 transition-all">✕</button>
+                    <div class="nle-clip-header z-50">
+                        <span class="truncate pr-1 pointer-events-none">${item.location || 'CLIP'}</span>
+                        <div class="flex items-center gap-1">
+                            <button onclick="event.stopPropagation(); window.removeFromTimeline('${item.id}')" ontouchend="event.stopPropagation(); window.removeFromTimeline('${item.id}')" class="text-zinc-300 hover:text-white bg-white/10 px-1 rounded text-[9px] transition-all shadow-sm" title="退回素材池">⬆️</button>
+                            <button onclick="event.stopPropagation(); window.removeFromTimeline('${item.id}')" ontouchend="event.stopPropagation(); window.removeFromTimeline('${item.id}')" class="text-zinc-400 hover:text-red-500 transition-all text-[11px] px-0.5">✕</button>
                         </div>
+                    </div>
+                    <div class="flex-1 relative overflow-hidden bg-zinc-900 pointer-events-none">
+                        ${item.photo ? `<img src="${item.photo}" class="w-full h-full object-cover opacity-80 mix-blend-screen">` : `<div class="w-full h-full flex items-center justify-center opacity-10"><svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/></svg></div>`}
+                        <div class="absolute bottom-0 left-0 bg-black/80 px-1 rounded-tr text-[7px] font-mono-data text-zinc-300">${cam}</div>
+                        ${hasOk ? `<div class="absolute bottom-0 right-0 text-emerald-500 text-[9px] font-black bg-black/50 px-0.5 rounded-tl">✔</div>` : ``}
                     </div>
                 </div>`;
             };
