@@ -2048,14 +2048,36 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         };
 
         // 核心修复：手指松开时强制寻找目标并执行 (专治 iPad 放不下)
+        // 🚀 iPad 终极释放补丁：加入“瞬间隐身法”，解决资源库拖不进包的问题
         window.handleTouchEnd = function(e, id) {
             const touch = e.changedTouches[0];
+            
+            // 1. 瞬间隐身：临时隐藏当前按住的卡片和系统生成的拖拽残影，防止它们挡住手指的视线
+            const target = e.target.closest('[draggable="true"]');
+            if (target) target.style.display = 'none';
+            const ghost = document.querySelector('.dnd-poly-drag-image');
+            if (ghost) ghost.style.display = 'none';
+
+            // 2. 雷达扫描：穿透遮挡，精准获取手指释放位置正下方的元素
             const el = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            // 3. 瞬间恢复真身
+            if (target) target.style.display = '';
+            if (ghost) ghost.style.display = '';
+
+            // 4. 判定掉落区
             const dropZone = el ? el.closest('[ondrop]') : null;
             if (dropZone) {
-                const targetFolderId = dropZone.getAttribute('data-folder-id');
-                if(targetFolderId) window.executeMoveNode(id, targetFolderId);
+                // 智能双重提取目标包的 ID（完美兼容资源库与包列的双向拖拽）
+                let targetFolderId = dropZone.getAttribute('data-folder-id');
+                if (!targetFolderId) {
+                    const match = dropZone.getAttribute('ondrop').match(/'([^']+)'/);
+                    if (match) targetFolderId = match[1];
+                }
+                if (targetFolderId) window.executeMoveNode(id, targetFolderId);
             }
+            
+            // 5. 强制清理所有的拖拽发光样式
             document.querySelectorAll('.dragging-active').forEach(d => d.classList.remove('dragging-active'));
             document.querySelectorAll('.drag-over-zone').forEach(d => d.classList.remove('drag-over-zone'));
         };
@@ -3246,48 +3268,76 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         };
 
         // 剪辑工作台：D&D 拖拽处理
-        window.dragEditStart = (e, id) => { e.dataTransfer.setData('text/plain', String(id)); e.dataTransfer.effectAllowed = 'move'; };
-        window.allowBeatTrackDrop = (e, el) => { e.preventDefault(); el.classList.add('bg-blue-900/30'); };
-        window.leaveBeatTrackDrop = (e, el) => { el.classList.remove('bg-blue-900/30'); };
-        
-        window.dropOnBeatTrack = (e, beatId, trackId, el) => {
-            e.preventDefault(); 
-            el.classList.remove('bg-blue-900/30');
-            const data = e.dataTransfer.getData('text/plain'); if(!data || data.startsWith('beat_')) return;
-            const draggedId = Number(data); if(isNaN(draggedId)) return;
+        // 🚀 iPad 纸上剪辑专用：多轨触控引擎补丁
+        window.dragEditStart = (e, id) => { 
+            window.draggedEditId = id; 
+            const target = e.target.closest('[draggable="true"]');
+            if (target) target.classList.add('dragging-active');
+        };
 
-            // Remove from all existing beats
+        // 核心：处理复杂多轨环境的瞬间隐身与精准空投
+        window.handleEditTouchEnd = function(e, id) {
+            const touch = e.changedTouches[0];
+            
+            // 瞬间隐身防遮挡
+            const target = e.target.closest('[draggable="true"]');
+            if (target) target.style.display = 'none';
+            const ghost = document.querySelector('.dnd-poly-drag-image');
+            if (ghost) ghost.style.display = 'none';
+
+            // 雷达扫描手指下方的轨道或片段
+            const el = document.elementFromPoint(touch.clientX, touch.clientY);
+            
+            // 恢复真身
+            if (target) target.style.display = '';
+            if (ghost) ghost.style.display = '';
+
+            const dropZone = el ? el.closest('[ondrop]') : null;
+            if (dropZone) {
+                const ondropStr = dropZone.getAttribute('ondrop');
+                if (ondropStr) {
+                    // 智能解析是投放在空轨道，还是插入到其他片段之间
+                    if (ondropStr.includes('dropOnBeatTrack')) {
+                        const match = ondropStr.match(/dropOnBeatTrack\(.*?,\s*'([^']+)'\s*,\s*'([^']+)'/);
+                        if (match) window.executeDropOnTrack(id, match[1], match[2]);
+                    } else if (ondropStr.includes('dropOnClip')) {
+                        const match = ondropStr.match(/dropOnClip\(.*?,\s*(\d+)\s*,\s*'([^']+)'\s*,\s*'([^']+)'/);
+                        if (match) window.executeDropOnClip(id, Number(match[1]), match[2], match[3]);
+                    }
+                }
+            }
+            
+            // 清理发光与高亮痕迹
+            document.querySelectorAll('.dragging-active').forEach(d => d.classList.remove('dragging-active'));
+            document.querySelectorAll('.bg-blue-900\\/30').forEach(d => d.classList.remove('bg-blue-900/30'));
+            document.querySelectorAll('[style*="inset"]').forEach(d => d.style.boxShadow = 'none');
+        };
+
+        // 抽离出的底层执行逻辑：放进轨道
+        window.executeDropOnTrack = function(draggedId, beatId, trackId) {
+            draggedId = Number(draggedId);
             window.db.storyBeats.forEach(b => {
                 if(b.V1) b.V1 = b.V1.filter(id => id !== draggedId);
                 if(b.V2) b.V2 = b.V2.filter(id => id !== draggedId);
                 if(b.V3) b.V3 = b.V3.filter(id => id !== draggedId);
             });
-
-            // Add to target beat
             const beat = window.db.storyBeats.find(b => b.id === beatId);
             if(beat) { 
                 if(!beat[trackId]) beat[trackId] = [];
                 beat[trackId].push(draggedId); 
             }
-            
             window.triggerAutoSave(); window.renderEditSandbox();
         };
 
-        // Clip 内部排序
-        window.allowClipDrop = (e, el) => { e.preventDefault(); e.stopPropagation(); el.style.boxShadow = 'inset 4px 0 0 var(--accent)'; };
-        window.leaveClipDrop = (e, el) => { el.style.boxShadow = 'none'; };
-        
-        window.dropOnClip = (e, targetId, beatId, trackId, el) => {
-            e.preventDefault(); e.stopPropagation(); el.style.boxShadow = 'none';
-            const data = e.dataTransfer.getData('text/plain'); if(!data || data.startsWith('beat_')) return;
-            const draggedId = Number(data); if(isNaN(draggedId) || draggedId === targetId) return;
-
+        // 抽离出的底层执行逻辑：片段间排序
+        window.executeDropOnClip = function(draggedId, targetId, beatId, trackId) {
+            draggedId = Number(draggedId);
+            if(draggedId === targetId) return;
             window.db.storyBeats.forEach(b => {
                 if(b.V1) b.V1 = b.V1.filter(id => id !== draggedId);
                 if(b.V2) b.V2 = b.V2.filter(id => id !== draggedId);
                 if(b.V3) b.V3 = b.V3.filter(id => id !== draggedId);
             });
-            
             const beat = window.db.storyBeats.find(b => b.id === beatId);
             if(beat) {
                 if(!beat[trackId]) beat[trackId] = [];
@@ -3296,6 +3346,24 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 else { beat[trackId].push(draggedId); }
             }
             window.triggerAutoSave(); window.renderEditSandbox();
+        };
+
+        // 兼容 PC 鼠标拖拽的回调
+        window.allowBeatTrackDrop = (e, el) => { e.preventDefault(); el.classList.add('bg-blue-900/30'); };
+        window.leaveBeatTrackDrop = (e, el) => { el.classList.remove('bg-blue-900/30'); };
+        window.dropOnBeatTrack = (e, beatId, trackId, el) => {
+            e.preventDefault(); el.classList.remove('bg-blue-900/30');
+            const draggedId = window.draggedEditId;
+            if(!draggedId) return;
+            window.executeDropOnTrack(draggedId, beatId, trackId);
+        };
+        window.allowClipDrop = (e, el) => { e.preventDefault(); e.stopPropagation(); el.style.boxShadow = 'inset 4px 0 0 var(--accent)'; };
+        window.leaveClipDrop = (e, el) => { el.style.boxShadow = 'none'; };
+        window.dropOnClip = (e, targetId, beatId, trackId, el) => {
+            e.preventDefault(); e.stopPropagation(); el.style.boxShadow = 'none';
+            const draggedId = window.draggedEditId;
+            if(!draggedId) return;
+            window.executeDropOnClip(draggedId, targetId, beatId, trackId);
         };
 
         window.removeFromTimeline = (id) => {
@@ -3453,7 +3521,13 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                     const mainCam = hasOk ? (okTakes[0].camera || item.camera) : (item.camera || 'CAM');
 
                     return `
-                    <div draggable="true" ondragstart="window.dragEditStart(event, '${item.id}')" onclick="window.previewInViewer(${item.id})" class="w-[140px] h-[100px] border rounded-xl overflow-hidden flex flex-col cursor-grab hover:border-theme-accent transition active:scale-95 group relative shrink-0 shadow-md" style="background-color: var(--bg-card); border-color: var(--border-dim)">
+                    <div draggable="true" 
+                         onpointerdown="this.style.transition='none';"
+                         ondragstart="window.dragEditStart(event, '${item.id}')"
+                         ontouchend="window.handleEditTouchEnd(event, '${item.id}')"
+                         ondragend="this.classList.remove('dragging-active')"
+                         onclick="window.previewInViewer(${item.id})" 
+                         class="w-[140px] h-[100px] border rounded-xl overflow-hidden flex flex-col cursor-grab hover:border-theme-accent transition active:scale-95 group relative shrink-0 shadow-md" style="background-color: var(--bg-card); border-color: var(--border-dim)">
                         <div class="h-14 bg-black relative flex items-center justify-center border-b shrink-0" style="border-color: var(--border-dim)">
                             ${item.photo ? `<img src="${item.photo}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition duration-300">` : `<span class="text-[9px] text-zinc-500 font-bold">NO MEDIA</span>`}
                             <div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent flex items-end p-1.5 opacity-80 group-hover:opacity-100">
@@ -3481,7 +3555,16 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 const isPlaceholder = item.isPlaceholder && !item.isWrapped;
                 if (isPlaceholder) {
                     return `
-                    <div class="nle-clip group !border-dashed !border-red-500/80 !bg-red-950/30" draggable="true" ondragstart="window.dragEditStart(event, '${item.id}')" ondragover="window.allowClipDrop(event, this)" ondragleave="window.leaveClipDrop(event, this)" ondrop="window.dropOnClip(event, ${item.id}, '${beatId}', '${trackId}', this)" onclick="window.jumpToShoot(${item.id})" title="拖拽排序或点击去拍摄">
+                    <div class="${clipClass}" 
+                     draggable="true" 
+                     onpointerdown="this.style.transition='none';"
+                     ondragstart="window.dragEditStart(event, '${item.id}')" 
+                     ontouchend="window.handleEditTouchEnd(event, '${item.id}')"
+                     ondragend="this.classList.remove('dragging-active')"
+                     ondragover="window.allowClipDrop(event, this)" 
+                     ondragleave="window.leaveClipDrop(event, this)" 
+                     ondrop="window.dropOnClip(event, ${item.id}, '${beatId}', '${trackId}', this)" 
+                     onclick="window.previewInViewer(${item.id})" style="border-top: 3px solid ${topColor}" title="拖拽排序">
                         <div class="nle-clip-header !bg-red-900/80 !text-red-200">
                             <span class="truncate pr-1">⭕缺: ${item.location}</span>
                             <button onclick="event.stopPropagation(); window.removeFromTimeline(${item.id})" class="text-red-300 hover:text-white opacity-80 lg:opacity-0 group-hover:opacity-100 transition">✕</button>
@@ -3505,7 +3588,16 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 const markerHtml = (item.desc && item.desc.trim() !== '') ? `<div class="nle-marker" title="包含场记笔记"></div>` : '';
 
                 return `
-                <div class="${clipClass}" draggable="true" ondragstart="window.dragEditStart(event, '${item.id}')" ondragover="window.allowClipDrop(event, this)" ondragleave="window.leaveClipDrop(event, this)" ondrop="window.dropOnClip(event, ${item.id}, '${beatId}', '${trackId}', this)" onclick="window.previewInViewer(${item.id})" style="border-top: 3px solid ${topColor}" title="拖拽排序">
+                <div class="${clipClass}" 
+                     draggable="true" 
+                     onpointerdown="this.style.transition='none';"
+                     ondragstart="window.dragEditStart(event, '${item.id}')" 
+                     ontouchend="window.handleEditTouchEnd(event, '${item.id}')"
+                     ondragend="this.classList.remove('dragging-active')"
+                     ondragover="window.allowClipDrop(event, this)" 
+                     ondragleave="window.leaveClipDrop(event, this)" 
+                     ondrop="window.dropOnClip(event, ${item.id}, '${beatId}', '${trackId}', this)" 
+                     onclick="window.previewInViewer(${item.id})" style="border-top: 3px solid ${topColor}" title="拖拽排序">
                     ${markerHtml}
                     <div class="nle-clip-header">
                         <span class="truncate pr-1">${item.location || '未命名'}</span>
