@@ -3576,6 +3576,35 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         };
 
        // 核心：纸上剪辑超级渲染器 (防崩溃重构版)
+       // 🚀 修复引擎 1：多轨下发 (解决下发后轨道不显示的问题：强转纯数字)
+        window.quickInsertTrack = function(id, trackId) {
+            if(!window.db.storyBeats || window.db.storyBeats.length === 0) return window.showToast("⚠️ 请先在右侧新建一个节点");
+            let beat = window.db.storyBeats.find(b => String(b.id) === String(window.activeBeatId));
+            if(!beat) beat = window.db.storyBeats[0]; 
+            
+            if(!beat[trackId]) beat[trackId] = [];
+            // 核心修复：强制将 ID 转回数字类型，解决严格对比找不到素材的 Bug
+            const numericId = isNaN(Number(id)) ? id : Number(id);
+            beat[trackId].push(numericId);
+            
+            window.triggerAutoSave();
+            window.renderEditSandbox();
+            window.showToast(`✅ 已成功下发至 ${trackId} 轨道`);
+        };
+
+        // 🚀 新增引擎 2：双击精准溯源到“现场实拍 (Log)”修改素材
+        window.jumpToLogEdit = function(logId) {
+            if(!window.db || !window.db.logs) return;
+            // 强制转为数字进行精准查找
+            const numericId = isNaN(Number(logId)) ? logId : Number(logId);
+            const item = window.db.logs.find(x => x.id === numericId);
+            
+            if(item) {
+                window.activeLogId = numericId; // 核心：瞬间选中该镜头
+                window.switchView('log');       // 核心：跳转到“现场实拍”而不是堪景
+                window.showToast(`🎬 已定位并切回实拍台，可直接修改场记`);
+            }
+        };
 
        
         window.renderEditSandbox = function() {
@@ -3643,7 +3672,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                          ontouchend="window.handleEditTouchEnd(event, '${item.id}'); window.previewInViewer('${item.id}');"
                          ondragend="this.classList.remove('dragging-active')"
                          onclick="window.previewInViewer('${item.id}')" 
-                         ondblclick="window.pushToScout('${item.id}')"
+                         ondblclick="window.jumpToLogEdit('${item.id}')"
                          class="w-[140px] h-[100px] border rounded-xl overflow-hidden flex flex-col cursor-grab hover:border-theme-accent transition active:scale-95 group relative shrink-0 shadow-md" style="background-color: var(--bg-card); border-color: var(--border-dim)">
                         <div class="h-14 bg-black relative flex items-center justify-center border-b shrink-0" style="border-color: var(--border-dim)">
                             ${item.photo ? `<img src="${item.photo}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition duration-300 pointer-events-none">` : `<span class="text-[9px] text-zinc-500 font-bold pointer-events-none">NO MEDIA</span>`}
@@ -3660,7 +3689,6 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                                     <button onclick="window.quickInsertTrack('${item.id}', 'V1')" class="text-[10px] font-black text-black bg-theme-accent hover:brightness-110 py-1 rounded transition w-full">V1</button>
                                 </div>
                             </div>
-
                         </div>
                         <div class="px-2 py-1 flex flex-col justify-center flex-1 min-h-0 pointer-events-none" style="background-color: var(--bg-panel)">
                             <div class="flex items-center gap-1.5 mb-0.5">
@@ -3721,7 +3749,7 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                      ondragleave="window.leaveClipDrop(event, this)" 
                      ondrop="window.dropOnClip(event, '${item.id}', '${beatId}', '${trackId}', this)" 
                      onclick="window.previewInViewer('${item.id}')" 
-                     ondblclick="window.pushToScout('${item.id}')" 
+                     ondblclick="window.jumpToLogEdit('${item.id}')" 
                      style="border-top: 3px solid ${topColor}" title="单点预览，双击回退实拍修改">
                     ${markerHtml}
                     <div class="nle-clip-header z-50">
