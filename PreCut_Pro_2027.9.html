@@ -2518,13 +2518,13 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                          class="${stickyCls} border rounded-xl cursor-grab transition-all group relative flex shrink-0 active:scale-95 z-10 ${widthCls} overflow-hidden hover:-translate-y-1 backdrop-blur-md" 
                          style="padding: 0;">
                         
-                        <div onclick="event.stopPropagation(); window.enterProject('${proj.id}')" 
-                             class="w-8 lg:w-10 flex flex-col items-center justify-center shrink-0 transition-colors border-r border-white/10 hover:bg-[#00E5FF]/20 cursor-pointer" 
-                             title="直接进入实战台 (堪景/实拍/剪辑)">
-                            <svg class="w-4 h-4 text-[#00E5FF] drop-shadow-[0_0_5px_rgba(0,229,255,0.6)]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <div onclick="event.stopPropagation(); window.pushToScout('${proj.id}')" 
+                             class="w-10 lg:w-12 flex flex-col items-center justify-center shrink-0 transition-all border-r border-white/10 hover:bg-[#00E5FF]/30 active:scale-90 cursor-pointer z-50" 
+                             title="进入实战台 (堪景/实拍/剪辑)">
+                            <svg class="w-5 h-5 text-[#00E5FF] drop-shadow-[0_0_8px_rgba(0,229,255,0.8)] pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M13 5l7 7-7 7M5 5l7 7-7 7"></path>
                             </svg>
-                            <span class="text-[7px] font-black uppercase tracking-tighter mt-1 opacity-60" style="writing-mode: vertical-lr; color: #00E5FF;">ENTER</span>
+                            <span class="text-[8px] font-black uppercase tracking-tighter mt-1 pointer-events-none" style="writing-mode: vertical-lr; color: #00E5FF;">ENTER</span>
                         </div>
 
                         <div onclick="window.openQuickEdit(event, '${proj.id}')" class="flex-1 p-3 flex flex-col gap-1.5 relative min-w-0">
@@ -3307,27 +3307,36 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 </div>`;
         };
 
-        window.previewInViewer = function(logId) {
-            const item = window.db.logs.find(x => x.id === logId);
+       window.previewInViewer = function(logId) {
+            // 核心修复：强制转为字符串进行查找，确保数字 ID 也能匹配
+            const item = window.db.logs.find(x => String(x.id) === String(logId));
             if(!item) return;
+            
             const scr = document.getElementById('viewerScreen');
             const info = document.getElementById('viewerInfo');
             
+            // 1. 更新监视器画面
+            scr.innerHTML = item.photo 
+                ? `<img src="${item.photo}" class="w-full h-full object-contain animate-pulse-once">` 
+                : `<div class="flex flex-col items-center opacity-30"><svg class="w-12 h-12 mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h14a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" stroke-width="2"/></svg><span class="text-xs font-black tracking-widest uppercase">NO IMAGE</span></div>`;
+            
+            // 2. 更新卡片文字信息
+            document.getElementById('viewerTitle').innerText = item.location || '未命名场景';
             const okTakes = (item.takes||[]).filter(t => t.isOk).map(t => t.clipName);
             const takesTxt = okTakes.length > 0 ? `保用件: ${okTakes.join(' / ')}` : `[未标记可用文件]`;
+            const takesEl = document.getElementById('viewerTakes');
+            takesEl.innerText = takesTxt;
+            takesEl.className = okTakes.length > 0 ? 'text-emerald-500 font-mono-data text-[10px] font-bold tracking-widest mb-1' : 'text-red-500 font-mono-data text-[10px] font-bold tracking-widest mb-1';
             
-            scr.innerHTML = item.photo ? `<img src="${item.photo}" class="w-full h-full object-contain">` : `<span class="text-zinc-500 font-black tracking-[0.3em] uppercase text-xl opacity-30">NO MEDIA</span>`;
-            document.getElementById('viewerTitle').innerText = item.location || '未命名场景';
-            document.getElementById('viewerTakes').innerText = takesTxt;
-            document.getElementById('viewerTakes').className = okTakes.length > 0 ? 'text-emerald-500 font-mono-data text-[10px] font-bold tracking-widest mb-1' : 'text-red-500 font-mono-data text-[10px] font-bold tracking-widest mb-1';
+            document.getElementById('viewerDesc').innerText = item.desc || '无场记描述';
             
-            document.getElementById('viewerDesc').innerText = item.desc || '无';
-            
+            // 3. 更新标签样式
             const tagEl = document.getElementById('viewerTag');
             tagEl.innerText = item.tags || '素材';
             tagEl.className = `text-[9px] px-1.5 py-0.5 rounded border uppercase tracking-widest font-bold ${item.tags==='B-Roll'?'text-emerald-500 border-emerald-500/30':(item.tags==='Interview'?'text-cyan-500 border-cyan-500/30':'text-theme-accent border-theme-accent opacity-80')}`;
 
             info.classList.remove('hidden');
+            window.showToast("📺 已传送至监视器");
         };
 
         // 剪辑工作台：D&D 拖拽处理
@@ -4022,6 +4031,18 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         };
 
         window.isPro = window.checkLicense();
+        // 🚀 核心导航：全环境镜头推送函数
+        window.pushToScout = function(id) {
+            if(!window.globalDB || !window.globalDB.projects) return;
+            const project = window.globalDB.projects.find(p => String(p.id) === String(id));
+            if (project) {
+                window.enterProject(id); // 锁定数据
+                window.switchView('scout'); // 强制跳转到堪景视图
+                window.showToast(`🔍 已进入 [${project.title}]`);
+            } else {
+                window.showToast("⚠️ 未找到模块数据");
+            }
+        };
 
         window.openProActivation = function(reason) {
             document.getElementById('proActivationReason').innerText = reason || "升级至 PRO 版本，解锁全案打包与无限多轨协作。";
