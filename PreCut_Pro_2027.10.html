@@ -3605,6 +3605,22 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 window.showToast(`🎬 已定位并切回实拍台，可直接修改场记`);
             }
         };
+        // 🚀 iPad 专属触控识别：绕过 Safari 拦截，手动计算双击
+        window.handleCardTap = function(event, id) {
+            const now = new Date().getTime();
+            const lastTap = window.lastCardTapTime || 0;
+            const delta = now - lastTap;
+            
+            if (delta > 0 && delta < 350) {
+                // 350毫秒内连按两次 -> 触发双击 (去实拍台)
+                window.jumpToLogEdit(id);
+                window.lastCardTapTime = 0; // 重置
+            } else {
+                // 否则 -> 触发单击 (预览)
+                window.previewInViewer(id);
+                window.lastCardTapTime = now;
+            }
+        };
 
        
         window.renderEditSandbox = function() {
@@ -3667,9 +3683,8 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
 
                     return `
                     <div draggable="true" 
-                        <div draggable="true" 
                          ondragstart="window.dragEditStart(event, '${item.id}')"
-                         ontouchend="window.handleEditTouchEnd(event, '${item.id}'); window.previewInViewer('${item.id}');"
+                         ontouchend="window.handleCardTap(event, '${item.id}')"
                          ondragend="this.classList.remove('dragging-active')"
                          onclick="window.previewInViewer('${item.id}')" 
                          ondblclick="window.jumpToLogEdit('${item.id}')"
@@ -3681,12 +3696,12 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                                 <span class="text-white font-mono-data font-black text-[9px] truncate drop-shadow-md w-full">${mainFilename}</span>
                             </div>
                             
-                            <div class="absolute top-1 right-1 z-[60]" onclick="event.stopPropagation()">
-                                <button onclick="this.nextElementSibling.classList.toggle('hidden')" class="bg-black/60 backdrop-blur-md text-white border border-white/20 w-6 h-6 rounded flex items-center justify-center shadow-lg active:scale-95 transition">🔽</button>
+                            <div class="absolute top-1 right-1 z-[60]" onpointerdown="event.stopPropagation()">
+                                <button onpointerup="event.stopPropagation(); this.nextElementSibling.classList.toggle('hidden')" class="bg-black/60 backdrop-blur-md text-white border border-white/20 w-6 h-6 rounded flex items-center justify-center shadow-lg active:scale-95 transition">🔽</button>
                                 <div class="hidden absolute right-0 top-full mt-1 flex-col gap-1 bg-black/95 p-1.5 rounded-lg shadow-xl border border-white/20 w-14">
-                                    <button onclick="window.quickInsertTrack('${item.id}', 'V3')" class="text-[10px] font-black text-white hover:bg-blue-600 py-1 rounded transition w-full">V3</button>
-                                    <button onclick="window.quickInsertTrack('${item.id}', 'V2')" class="text-[10px] font-black text-white hover:bg-emerald-600 py-1 rounded transition w-full">V2</button>
-                                    <button onclick="window.quickInsertTrack('${item.id}', 'V1')" class="text-[10px] font-black text-black bg-theme-accent hover:brightness-110 py-1 rounded transition w-full">V1</button>
+                                    <button onpointerup="event.stopPropagation(); window.quickInsertTrack('${item.id}', 'V3')" class="text-[10px] font-black text-white hover:bg-blue-600 py-1 rounded transition w-full">V3</button>
+                                    <button onpointerup="event.stopPropagation(); window.quickInsertTrack('${item.id}', 'V2')" class="text-[10px] font-black text-white hover:bg-emerald-600 py-1 rounded transition w-full">V2</button>
+                                    <button onpointerup="event.stopPropagation(); window.quickInsertTrack('${item.id}', 'V1')" class="text-[10px] font-black text-black bg-theme-accent hover:brightness-110 py-1 rounded transition w-full">V1</button>
                                 </div>
                             </div>
                         </div>
