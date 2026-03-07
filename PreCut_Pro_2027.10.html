@@ -4835,6 +4835,40 @@ if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 window.loadCurrentWorkspaceDB();
             }
         }, 600);
+
+        // =====================================================================
+        // 🚀 iPad 终极界面锁定引擎 (彻底杜绝拖拽时网页乱跑)
+        // =====================================================================
+        document.addEventListener('touchmove', function(e) {
+            // 1. 【核心】如果当前有任何卡片正在被拖拽，绝对无条件锁死整个页面的滑动！
+            if (document.querySelector('.dragging-active')) {
+                e.preventDefault();
+                return;
+            }
+
+            // 2. 智能放行：只允许用户在“素材池”或“时间线”等内部区域进行滚动
+            let target = e.target;
+            let isScrollable = false;
+            while (target && target !== document.body) {
+                const style = window.getComputedStyle(target);
+                if (style.overflowY === 'auto' || style.overflowY === 'scroll' || 
+                    style.overflowX === 'auto' || style.overflowX === 'scroll') {
+                    isScrollable = true;
+                    break;
+                }
+                target = target.parentNode;
+            }
+            
+            // 3. 如果在非滚动区域瞎滑，直接拦截，防止整个网页被拖走
+            if (!isScrollable) {
+                e.preventDefault();
+            }
+        }, { passive: false });
+
+        // 4. 强制关闭 iOS 网页边缘烦人的“橡皮筋”回弹效果
+        document.documentElement.style.overscrollBehavior = 'none';
+        document.body.style.overscrollBehavior = 'none';
+        // =====================================================================
     </script>
 
 
