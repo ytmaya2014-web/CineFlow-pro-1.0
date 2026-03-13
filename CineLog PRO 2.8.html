@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CineLOG Pro | 工业级影视制片管理系统</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Plus+Jakarta+Sans:wght@400;600;800&display=swap');
+        :root { --primary: #f97316; --bg-main: #0f172a; --bg-card: #1e293b; --text-main: #f8fafc; --text-muted: #94a3b8; --border: #334155; }
+        body.theme-black { --bg-main: #000000; --bg-card: #111111; --border: #222222; }
+        body.theme-white { --bg-main: #ffffff; --bg-card: #f8fafc; --text-main: #0f172a; --text-muted: #64748b; --border: #e2e8f0; }
+        body.theme-gray { --bg-main: #4b5563; --bg-card: #374151; --border: #6b7280; }
+        body.theme-lightgray { --bg-main: #d1d5db; --bg-card: #e5e7eb; --text-main: #1f2937; --border: #9ca3af; }
+        body.theme-darkgray { --bg-main: #1f2937; --bg-card: #111827; --border: #374151; }
+        body.theme-metal { --bg-main: #242424; --bg-card: #2d2d2d; --border: #4a4a4a; box-shadow: inset 0 0 100px rgba(0,0,0,0.5); }
+        body { font-family: 'Plus Jakarta Sans', 'Microsoft YaHei', sans-serif; background-color: var(--bg-main); color: var(--text-main); transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); overflow: hidden; }
+        .glass-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 1rem; }
+        .mono { font-family: 'JetBrains Mono', monospace; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        input, select, textarea { background: transparent; border-bottom: 1px solid var(--border); outline: none; color: inherit; }
+        input:focus { border-bottom-color: var(--primary); }
+        .app-btn-active { background: var(--primary); color: white; box-shadow: 0 10px 15px -3px rgba(249, 115, 22, 0.3); }
+        .accent-orange { color: var(--primary); }
+        .bg-orange { background-color: var(--primary); }
+        #welcome-screen { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 9999; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #000; transition: opacity 1s ease-out; }
+        @media print { aside, header, .nav-item, button, .tab-content:not(#content-report), select, .no-print { display: none !important; } body { background: white !important; color: black !important; overflow: visible !important; } #app { opacity: 1 !important; display: block !important; } main { padding: 0 !important; height: auto !important; overflow: visible !important; } #content-report { display: block !important; } .glass-card { border: none !important; background: transparent !important; box-shadow: none !important; } table { color: black !important; width: 100% !important; border-collapse: collapse !important; } th, td { border: 1px solid #ddd !important; padding: 8px !important; } .accent-orange, .text-orange { color: black !important; font-weight: bold !important; } .bg-orange\/5 { background: transparent !important; } }
+    </style>
+</head>
+<body class="theme-darkgray">
+
+    <div id="welcome-screen">
+        <div class="mb-6 animate-pulse"><div class="w-20 h-20 bg-orange rounded-2xl flex items-center justify-center text-white shadow-2xl shadow-orange/50"><i data-lucide="aperture" size="48"></i></div></div>
+        <h1 class="text-4xl font-black tracking-[0.2em] text-white">寰影 <span class="accent-orange">CineLOG Pro</span></h1>
+        <p class="mt-4 text-slate-500 text-xs tracking-widest uppercase mono">Industrial Production OS v2.8.2</p>
+        <div class="mt-10 w-48 h-1 bg-white/10 rounded-full overflow-hidden"><div id="loading-bar" class="h-full bg-orange w-0 transition-all duration-[1500ms]"></div></div>
+    </div>
+
+    <div id="app" class="flex min-h-screen opacity-0 transition-opacity duration-1000">
+        <aside class="w-20 md:w-64 glass-card m-4 mr-0 flex flex-col items-center md:items-stretch overflow-hidden shadow-2xl">
+            <div class="p-6 flex items-center gap-3"><div class="w-10 h-10 bg-orange rounded-lg flex items-center justify-center text-white shrink-0 shadow-lg"><i data-lucide="aperture" size="24"></i></div><span class="font-extrabold text-xl tracking-tighter hidden md:block uppercase">CineLOG <span class="accent-orange">PRO</span></span></div>
+            <nav class="flex-1 px-4 space-y-2 mt-4">
+                <button onclick="switchTab('projects')" id="nav-projects" class="nav-item w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all hover:bg-white/5"><i data-lucide="layout-grid"></i><span class="font-bold text-sm hidden md:block">项目目录 <span class="text-[10px] block opacity-40 uppercase">Projects</span></span></button>
+                <button onclick="switchTab('daily')" id="nav-daily" class="nav-item w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all hover:bg-white/5"><i data-lucide="camera"></i><span class="font-bold text-sm hidden md:block">拍摄记录 <span class="text-[10px] block opacity-40 uppercase">Daily Log</span></span></button>
+                <button onclick="switchTab('library')" id="nav-library" class="nav-item w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all hover:bg-white/5"><i data-lucide="component"></i><span class="font-bold text-sm hidden md:block">资源资产 <span class="text-[10px] block opacity-40 uppercase">Resources</span></span></button>
+                <button onclick="switchTab('report')" id="nav-report" class="nav-item w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all hover:bg-white/5"><i data-lucide="clipboard-check"></i><span class="font-bold text-sm hidden md:block">核算结算 <span class="text-[10px] block opacity-40 uppercase">Audit</span></span></button>
+            </nav>
+            <div class="p-4 border-t border-white/5 text-[10px] text-center opacity-40 hidden md:block">
+                <p>Architect: YTmaya</p>
+                <p>Tel: 15589906090</p>
+                <p class="mt-1 lowercase">ytmaya2014@gmail.com</p>
+            </div>
+            <div class="p-4 border-t border-white/5"><button onclick="switchTab('settings')" id="nav-settings" class="nav-item w-full flex items-center gap-4 px-4 py-3 rounded-xl transition-all hover:bg-white/5"><i data-lucide="sliders"></i><span class="font-bold text-sm hidden md:block">系统设置 <span class="text-[10px] block opacity-40 uppercase">Settings</span></span></button></div>
+        </aside>
+
+        <main class="flex-1 p-4 md:p-8 overflow-y-auto h-screen no-scrollbar">
+            <header class="flex justify-between items-start mb-8"><div><h2 id="current-project-display" class="text-3xl font-black tracking-tight italic">--</h2><p class="text-slate-500 font-medium flex items-center gap-2 mt-1"><i data-lucide="activity" size="14" class="accent-orange"></i><span>专业影视制片全流程监控中 <span class="text-[10px] uppercase opacity-50">Monitoring Active</span></span></p></div></header>
+
+            <section id="content-projects" class="tab-content hidden space-y-6">
+                <div class="flex justify-between items-center"><h3 class="text-xl font-bold">我的项目库 <span class="text-xs opacity-40 uppercase">Project Gallery</span></h3><button onclick="createNewProject()" class="bg-orange text-white px-5 py-2.5 rounded-lg font-bold text-sm flex items-center gap-2 shadow-lg active:scale-95 transition-all"><i data-lucide="plus-circle" size="18"></i> <span>发起新项目 <span class="text-[10px] ml-1 opacity-60">NEW</span></span></button></div>
+                <div id="project-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
+            </section>
+
+            <section id="content-daily" class="tab-content hidden space-y-6">
+                <div class="flex flex-wrap items-center gap-4 glass-card p-4"><div class="flex items-center gap-2"><i data-lucide="calendar" class="accent-orange" size="18"></i><input type="date" id="date-picker" class="border-none font-bold"></div><button onclick="createDailyLog()" class="text-xs font-black bg-orange text-white px-4 py-2 rounded-lg hover:bg-orange/80 transition-all uppercase">+ Start Shooting Day (开始拍摄)</button></div>
+                <div id="daily-log-container" class="space-y-6"></div>
+            </section>
+
+            <section id="content-library" class="tab-content hidden space-y-8">
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="glass-card p-6">
+                        <div class="flex justify-between items-center mb-6">
+                            <h4 class="font-black flex items-center gap-2 accent-orange uppercase tracking-widest text-xs"><i data-lucide="users"></i> 剧组人员名单 <span class="opacity-40 ml-1">Crew Roster</span></h4>
+                            <select id="crew-preset-select" onchange="addItemByPreset('crew')" class="text-[10px] bg-white/5 border border-white/10 p-1 rounded">
+                                <option value="">+ 快速添加职位...</option>
+                                <option value="导演">导演</option>
+                                <option value="摄影师">摄影师</option>
+                                <option value="灯光师">灯光师</option>
+                                <option value="助理">助理</option>
+                                <option value="场记员">场记员</option>
+                                <option value="制片主任">制片主任</option>
+                                <option value="剧务">剧务</option>
+                                <option value="后期制作">后期制作</option>
+                            </select>
+                        </div>
+                        <div id="lib-crew-list" class="space-y-3"></div>
+                    </div>
+                    <div class="glass-card p-6"><div class="flex justify-between items-center mb-6"><h4 class="font-black flex items-center gap-2 accent-orange uppercase tracking-widest text-xs"><i data-lucide="package"></i> 器材租赁清单</h4><select id="equip-preset-select" onchange="addItemByPreset('equip')" class="text-[10px] bg-white/5 border border-white/10 p-1 rounded"><option value="">+ 选择常用设备...</option><option value="Arri Alexa Mini">Arri Alexa Mini</option><option value="RED Komodo">RED Komodo</option><option value="镜头组 (定焦)">镜头组 (定焦)</option><option value="灯光套装">灯光套装</option><option value="监视器/图传">监视器/图传</option><option value="收音套装">收音套装</option></select></div><div id="lib-equip-list" class="space-y-3"></div></div>
+                </div>
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                    <div class="glass-card p-6"><div class="flex justify-between items-center mb-6"><h4 class="font-black flex items-center gap-2 accent-orange uppercase tracking-widest text-xs"><i data-lucide="truck"></i> 车辆租赁录入</h4><select id="vehicle-preset-select" onchange="addItemByPreset('vehicle')" class="text-[10px] bg-white/5 border border-white/10 p-1 rounded"><option value="">+ 添加车辆类型...</option><option value="器材车">器材车</option><option value="生活车">生活车</option><option value="商务车">商务车</option><option value="厢式货车">厢式货车</option><option value="发电机车">发电机车</option></select></div><div id="lib-vehicle-list" class="space-y-3"></div></div>
+                    <div class="glass-card p-6"><div class="flex justify-between items-center mb-6"><h4 class="font-black flex items-center gap-2 accent-orange uppercase tracking-widest text-xs"><i data-lucide="shirt"></i> 服化道/美术录入</h4><select id="art-preset-select" onchange="addItemByPreset('art')" class="text-[10px] bg-white/5 border border-white/10 p-1 rounded"><option value="">+ 添加开支项...</option><option value="服装租赁/购置">服装租赁/购置</option><option value="化妆消耗品">化妆消耗品</option><option value="场景美术搭设">场景美术搭设</option><option value="特殊道具">特殊道具</option><option value="平面/置景">平面/置景</option></select></div><div id="lib-art-list" class="space-y-3"></div></div>
+                </div>
+            </section>
+
+            <section id="content-report" class="tab-content hidden space-y-6"><div id="report-summary" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div><div class="glass-card overflow-x-auto"><table class="w-full text-left text-sm" id="main-report-table"><thead><tr class="bg-white/5 border-b border-white/10 uppercase text-[9px] font-black tracking-widest text-slate-500"><th class="px-6 py-4 w-12 text-center">Audit</th><th class="px-6 py-4">日期</th><th class="px-6 py-4">地点/项目</th><th class="px-6 py-4">单价</th><th class="px-6 py-4">数量</th><th class="px-6 py-4 text-right">小计</th></tr></thead><tbody id="report-table-body" class="divide-y divide-white/5"></tbody></table></div></section>
+            <section id="content-settings" class="tab-content hidden max-w-2xl mx-auto py-10"><div class="glass-card p-8 space-y-10"><div class="flex justify-between items-start"><h3 class="text-xl font-bold accent-orange"><i data-lucide="settings"></i> 系统配置</h3><div class="text-right"><span class="text-[10px] font-black block opacity-50">DESIGNED BY</span><span class="text-sm font-bold">YTmaya (15589906090)</span></div></div><div class="space-y-4"><label class="text-xs font-bold opacity-60 uppercase">报表存档导出</label><div class="grid grid-cols-2 gap-4"><button onclick="exportToPDF()" class="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-orange/20 border border-white/10 py-6 rounded-xl transition-all group"><i data-lucide="file-text"></i><span class="text-[10px] font-black">导出 PDF 报表</span></button><button onclick="exportToExcel()" class="flex flex-col items-center justify-center gap-2 bg-white/5 hover:bg-emerald-500/20 border border-white/10 py-6 rounded-xl transition-all group"><i data-lucide="table"></i><span class="text-[10px] font-black">导出 EXCEL 表格</span></button></div></div><div class="space-y-4"><label class="text-xs font-bold opacity-60 uppercase">环境主题配色</label><div class="grid grid-cols-3 md:grid-cols-6 gap-2"><button onclick="setTheme('black')" class="h-10 bg-black border border-white/20 rounded hover:scale-105 transition-all text-[8px]">纯黑</button><button onclick="setTheme('darkgray')" class="h-10 bg-[#1f2937] border border-white/20 rounded hover:scale-105 transition-all text-[8px]">深灰</button><button onclick="setTheme('white')" class="h-10 bg-white border border-slate-300 rounded hover:scale-105 transition-all text-[8px] text-black">纯白</button><button onclick="setTheme('metal')" class="h-10 bg-[#444] border-t-2 border-white/30 rounded hover:scale-105 transition-all text-[8px] italic shadow-inner">金属</button></div></div><div class="pt-8 border-t border-white/5 flex gap-4"><button onclick="exportData()" class="flex-1 bg-white/5 hover:bg-white/10 py-4 rounded-xl text-xs font-black transition-all">原始数据备份 JSON</button><button onclick="clearSystem()" class="flex-1 bg-red-950/20 text-red-500 hover:bg-red-950/40 py-4 rounded-xl text-xs font-black transition-all">工厂重置 RESET</button></div></div></section>
+        </main>
+    </div>
+
+    <script>
+        const PRESETS = {
+            crew: { "导演": { pos: "导演", name: "待录入", contact: "-", rate: 5000 }, "摄影师": { pos: "摄影师", name: "待录入", contact: "-", rate: 3500 }, "灯光师": { pos: "灯光师", name: "待录入", contact: "-", rate: 2000 }, "助理": { pos: "助理", name: "待录入", contact: "-", rate: 1000 }, "场记员": { pos: "场记员", name: "待录入", contact: "-", rate: 800 }, "制片主任": { pos: "制片主任", name: "待录入", contact: "-", rate: 2500 }, "剧务": { pos: "剧务", name: "待录入", contact: "-", rate: 600 }, "后期制作": { pos: "后期制作", name: "待录入", contact: "-", rate: 3000 } },
+            equip: { "Arri Alexa Mini": { name: "Arri Alexa Mini Kit", rate: 4500 }, "RED Komodo": { name: "RED Komodo 6K", rate: 1800 }, "镜头组 (定焦)": { name: "电影定焦组 (CP.3)", rate: 2500 }, "灯光套装": { name: "灯光租赁套装", rate: 2000 }, "监视器/图传": { name: "无线图传+导演监", rate: 800 }, "收音套装": { name: "无线麦+挑杆", rate: 500 } },
+            vehicle: { "器材车": { name: "5吨器材厢货", rate: 800 }, "生活车": { name: "剧组生活车", rate: 600 }, "商务车": { name: "别克 GL8", rate: 500 }, "厢式货车": { name: "厢货租赁", rate: 400 }, "发电机车": { name: "静音发电机车", rate: 1200 } },
+            art: { "服装租赁/购置": { name: "服装支出", rate: 1000 }, "化妆消耗品": { name: "化妆品/假发", rate: 500 }, "场景美术搭设": { name: "置景材料/人工", rate: 3000 }, "特殊道具": { name: "道具租赁", rate: 800 }, "平面/置景": { name: "美术平面设计", rate: 1000 } }
+        };
+
+        let appState = { currentProjectId: null, projects: [{ id: 'p1', name: '默认演示项目', library: { crew: [], equip: [], vehicle: [], art: [] }, dailyLogs: [] }], settings: { theme: 'darkgray', unchecked: {} } };
+        const STORAGE_KEY = 'cinelog_pro_v2_6_enhanced';
+
+        window.onload = () => {
+            const saved = localStorage.getItem(STORAGE_KEY);
+            if (saved) appState = JSON.parse(saved);
+            if (!appState.settings.unchecked) appState.settings.unchecked = {};
+            if (!appState.currentProjectId && appState.projects.length > 0) appState.currentProjectId = appState.projects[0].id;
+            document.getElementById('loading-bar').style.width = '100%';
+            setTimeout(() => { document.getElementById('welcome-screen').style.opacity = '0'; document.getElementById('app').style.opacity = '1'; setTimeout(() => { document.getElementById('welcome-screen').style.display = 'none'; }, 1000); }, 1000);
+            applySettings(); switchTab('projects'); document.getElementById('date-picker').value = new Date().toISOString().split('T')[0];
+        };
+
+        function save() { localStorage.setItem(STORAGE_KEY, JSON.stringify(appState)); render(); }
+        function applySettings() { document.body.className = 'theme-' + appState.settings.theme; }
+        function setTheme(theme) { appState.settings.theme = theme; save(); applySettings(); }
+        function getCurrentProject() { return appState.projects.find(p => p.id === appState.currentProjectId); }
+        function switchTab(tab) { document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden')); document.getElementById(`content-${tab}`).classList.remove('hidden'); document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('app-btn-active')); document.getElementById(`nav-${tab}`).classList.add('app-btn-active'); render(); }
+
+        function renderLibrary(project) {
+            document.getElementById('lib-crew-list').innerHTML = project.library.crew.map(i => `
+                <div class="grid grid-cols-12 items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5">
+                    <input type="text" onchange="updateLibItem('crew', ${i.id}, 'pos', this.value)" value="${i.pos}" class="col-span-3 font-bold text-[11px] accent-orange">
+                    <input type="text" onchange="updateLibItem('crew', ${i.id}, 'name', this.value)" value="${i.name === '待录入' ? '姓名' : i.name}" placeholder="姓名" class="col-span-3 text-[11px]">
+                    <input type="text" onchange="updateLibItem('crew', ${i.id}, 'contact', this.value)" value="${i.contact}" placeholder="电话名称" class="col-span-3 text-[10px] opacity-60">
+                    <div class="col-span-2 flex items-center gap-1"><span class="text-[9px] opacity-30">¥</span><input type="number" onchange="updateLibItem('crew', ${i.id}, 'rate', this.value)" value="${i.rate}" class="w-full text-right mono text-[10px]"></div>
+                    <button onclick="removeLibItem('crew', ${i.id})" class="col-span-1 text-slate-600 hover:text-red-500 flex justify-end"><i data-lucide="x" size="12"></i></button>
+                </div>`).join('');
+            const renderGeneral = (type, targetId) => {
+                document.getElementById(targetId).innerHTML = project.library[type].map(i => `<div class="flex items-center gap-2 bg-white/5 p-2 rounded-lg border border-white/5"><input type="text" onchange="updateLibItem('${type}', ${i.id}, 'name', this.value)" value="${i.name}" class="flex-1 font-bold text-[11px]"><div class="flex items-center gap-1"><span class="text-[9px] opacity-40">¥</span><input type="number" onchange="updateLibItem('${type}', ${i.id}, 'rate', this.value)" value="${i.rate}" class="w-16 text-right mono text-[11px] accent-orange"></div><button onclick="removeLibItem('${type}', ${i.id})" class="text-slate-600 hover:text-red-500"><i data-lucide="x" size="12"></i></button></div>`).join('');
+            };
+            renderGeneral('equip', 'lib-equip-list'); renderGeneral('vehicle', 'lib-vehicle-list'); renderGeneral('art', 'lib-art-list');
+        }
+
+        function createNewProject() { const name = prompt("请输入拍摄项目名称:"); if (!name) return; const newId = 'p' + Date.now(); appState.projects.push({ id: newId, name, library: { crew: [], equip: [], vehicle: [], art: [] }, dailyLogs: [] }); appState.currentProjectId = newId; save(); }
+        function addItemByPreset(type) { const select = document.getElementById(type + '-preset-select'); if (!select.value) return; const project = getCurrentProject(); const newItem = { id: Date.now(), ...PRESETS[type][select.value] }; project.library[type].push(newItem); select.value = ""; save(); }
+        function updateLibItem(type, id, field, val) { const item = getCurrentProject().library[type].find(i => i.id === id); item[field] = (field === 'rate') ? (parseFloat(val) || 0) : val; save(); }
+        function removeLibItem(type, id) { const p = getCurrentProject(); p.library[type] = p.library[type].filter(i => i.id !== id); p.dailyLogs.forEach(log => { const key = type + 'Ids'; if(log[key]) log[key] = log[key].filter(x => x !== id); }); save(); }
+        
+        // 核心修复：新建拍摄日时继承上一天的元数据
+        function createDailyLog() {
+            const project = getCurrentProject();
+            const date = document.getElementById('date-picker').value;
+            if (project.dailyLogs.find(l => l.date === date)) return;
+
+            // 智能继承逻辑：获取最后一次拍摄记录
+            const lastLog = project.dailyLogs.length > 0 ? project.dailyLogs[project.dailyLogs.length - 1] : null;
+
+            project.dailyLogs.push({
+                id: 'd' + Date.now(),
+                date,
+                location: lastLog ? lastLog.location : '默认外景地', // 继承地点
+                content: lastLog ? lastLog.content : '',           // 继承备注作为模板
+                crewIds: project.library.crew.map(i => i.id),
+                equipIds: project.library.equip.map(i => i.id),
+                vehicleIds: project.library.vehicle.map(i => i.id),
+                artIds: project.library.art.map(i => i.id),
+                pettyCash: []
+            });
+            project.dailyLogs.sort((a,b) => new Date(a.date) - new Date(b.date));
+            save();
+        }
+
+        function updateDailyMeta(logId, field, val) { const log = getCurrentProject().dailyLogs.find(l => l.id === logId); if(log) { log[field] = val; save(); } }
+        function toggleDailyItem(logId, type, itemId) { const log = getCurrentProject().dailyLogs.find(l => l.id === logId); const key = type + 'Ids'; if(!log[key]) log[key] = []; if(log[key].includes(itemId)) { log[key] = log[key].filter(id => id !== itemId); } else { log[key].push(itemId); } save(); }
+        function addPettyCash(logId) { const log = getCurrentProject().dailyLogs.find(l => l.id === logId); log.pettyCash.push({ id: Date.now(), item: '新开支', cost: 0 }); save(); }
+        function updatePettyCash(logId, cashId, field, val) { const log = getCurrentProject().dailyLogs.find(l => l.id === logId); const cash = log.pettyCash.find(c => c.id === cashId); cash[field] = (field === 'cost') ? (parseFloat(val) || 0) : val; save(); }
+        function removeDailyLog(id) { if(confirm('确认删除该拍摄日？')) { const project = getCurrentProject(); project.dailyLogs = project.dailyLogs.filter(l => l.id !== id); save(); } }
+        function toggleAudit(auditId) { if (appState.settings.unchecked[auditId]) { delete appState.settings.unchecked[auditId]; } else { appState.settings.unchecked[auditId] = true; } save(); }
+        function renderProjectGrid() { document.getElementById('project-grid').innerHTML = appState.projects.map(p => `<div class="glass-card p-6 cursor-pointer group ${appState.currentProjectId === p.id ? 'ring-2 ring-orange shadow-2xl' : ''}"><div class="flex justify-between items-start mb-6"><div onclick="selectProject('${p.id}')" class="w-10 h-10 bg-white/5 rounded flex items-center justify-center group-hover:bg-orange transition-colors"><i data-lucide="clapperboard" size="20"></i></div><button onclick="renameProject('${p.id}')" class="opacity-0 group-hover:opacity-100 p-2 text-slate-500 hover:text-orange"><i data-lucide="edit-3" size="14"></i></button></div><h4 class="font-black text-lg">${p.name}</h4><p class="text-[10px] text-slate-500 font-bold mt-2 uppercase tracking-widest">${p.dailyLogs.length} SHOOT DAYS</p></div>`).join(''); }
+        function selectProject(id) { appState.currentProjectId = id; save(); }
+        function renameProject(id) { const p = appState.projects.find(x => x.id === id); const n = prompt("重命名项目:", p.name); if(n) { p.name = n; save(); } }
+
+        function renderDailyLogs(project) {
+            document.getElementById('daily-log-container').innerHTML = project.dailyLogs.map(log => `
+                <div class="glass-card overflow-hidden">
+                    <div class="bg-white/5 px-6 py-4 flex justify-between items-center border-b border-white/5">
+                        <div class="flex items-center gap-4">
+                            <span class="text-orange font-black mono italic underline">${log.date}</span>
+                            <div class="flex items-center gap-2">
+                                <i data-lucide="map-pin" size="14" class="opacity-50"></i>
+                                <input type="text" onchange="updateDailyMeta('${log.id}', 'location', this.value)" value="${log.location}" class="text-sm font-black border-none w-64 bg-transparent">
+                            </div>
+                        </div>
+                        <button onclick="removeDailyLog('${log.id}')" class="text-slate-600 hover:text-red-500"><i data-lucide="trash-2" size="14"></i></button>
+                    </div>
+                    <div class="p-6 grid grid-cols-1 md:grid-cols-5 gap-6">
+                        <div class="space-y-4">
+                            <label class="text-[9px] font-black opacity-40 uppercase tracking-widest">拍摄备注 Note</label>
+                            <textarea onchange="updateDailyMeta('${log.id}', 'content', this.value)" class="w-full bg-white/5 border border-white/5 rounded-lg p-3 text-[11px] h-32 focus:border-orange transition-all">${log.content || ''}</textarea>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black accent-orange uppercase tracking-widest block mb-2">人员 Crew</label>
+                            <div class="space-y-0.5 overflow-y-auto max-h-40 no-scrollbar pr-1">
+                                ${project.library.crew.map(c => `
+                                    <label class="flex items-center justify-between p-1 hover:bg-white/5 rounded cursor-pointer text-[10px]">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" onchange="toggleDailyItem('${log.id}', 'crew', ${c.id})" ${log.crewIds.includes(c.id) ? 'checked' : ''} class="accent-orange">
+                                            <span class="truncate opacity-80">${c.pos} · ${c.name}</span>
+                                        </div>
+                                        <span class="text-[8px] opacity-20 italic">¥${c.rate}</span>
+                                    </label>`).join('')}
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black accent-orange uppercase tracking-widest block mb-2">设备 Equip</label>
+                            <div class="space-y-0.5 overflow-y-auto max-h-40 no-scrollbar pr-1">
+                                ${project.library.equip.map(e => `
+                                    <label class="flex items-center justify-between p-1 hover:bg-white/5 rounded cursor-pointer text-[10px]">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" onchange="toggleDailyItem('${log.id}', 'equip', ${e.id})" ${log.equipIds.includes(e.id) ? 'checked' : ''} class="accent-orange">
+                                            <span class="truncate opacity-80">${e.name}</span>
+                                        </div>
+                                        <span class="text-[8px] opacity-20 italic">¥${e.rate}</span>
+                                    </label>`).join('')}
+                            </div>
+                        </div>
+                        <div class="space-y-1">
+                            <label class="text-[9px] font-black accent-orange uppercase tracking-widest block mb-2">车辆/美术 Misc</label>
+                            <div class="space-y-0.5 overflow-y-auto max-h-40 no-scrollbar pr-1">
+                                ${project.library.vehicle.map(v => `
+                                    <label class="flex items-center justify-between p-1 hover:bg-white/5 rounded cursor-pointer text-[10px]">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" onchange="toggleDailyItem('${log.id}', 'vehicle', ${v.id})" ${log.vehicleIds?.includes(v.id) ? 'checked' : ''} class="accent-orange">
+                                            <span class="truncate opacity-80">${v.name}</span>
+                                        </div>
+                                        <span class="text-[8px] opacity-20 italic">¥${v.rate}</span>
+                                    </label>`).join('')}
+                                ${project.library.art.map(a => `
+                                    <label class="flex items-center justify-between p-1 hover:bg-white/5 rounded cursor-pointer text-[10px]">
+                                        <div class="flex items-center gap-2">
+                                            <input type="checkbox" onchange="toggleDailyItem('${log.id}', 'art', ${a.id})" ${log.artIds?.includes(a.id) ? 'checked' : ''} class="accent-orange">
+                                            <span class="truncate opacity-80 text-blue-300">${a.name}</span>
+                                        </div>
+                                        <span class="text-[8px] opacity-20 italic">¥${a.rate}</span>
+                                    </label>`).join('')}
+                            </div>
+                        </div>
+                        <div class="space-y-2">
+                            <div class="flex justify-between items-center"><label class="text-[9px] font-black accent-orange uppercase tracking-widest">临时开支 Cash</label><button onclick="addPettyCash('${log.id}')" class="text-[10px] text-white/40 hover:text-white">+ ADD</button></div>
+                            <div class="space-y-1 overflow-y-auto max-h-32 pr-1 no-scrollbar">
+                                ${log.pettyCash.map(c => `<div class="flex gap-1 items-center bg-white/5 p-1 rounded"><input type="text" onchange="updatePettyCash('${log.id}', ${c.id}, 'item', this.value)" value="${c.item}" class="flex-1 text-[9px] border-none"><input type="number" onchange="updatePettyCash('${log.id}', ${c.id}, 'cost', this.value)" value="${c.cost}" class="w-10 text-[9px] text-right mono border-none"></div>`).join('')}
+                            </div>
+                        </div>
+                    </div>
+                </div>`).join('');
+        }
+
+        function renderReport(project) {
+            let total = 0;
+            const rows = [];
+            project.dailyLogs.forEach(log => {
+                let dayTotal = 0;
+                rows.push(`<tr class="bg-orange/5 font-bold"><td class="px-6 py-2"></td><td class="px-6 py-2 text-orange mono text-xs">${log.date}</td><td colspan="4" class="px-6 py-2 text-xs uppercase italic">${log.location}</td></tr>`);
+                const processItems = (type, colorClass, prefix) => {
+                    (log[type + 'Ids'] || []).forEach(id => {
+                        const item = project.library[type].find(x => x.id === id);
+                        if(item) {
+                            const auditId = `${log.id}-${type}-${id}`;
+                            const isChecked = !appState.settings.unchecked[auditId];
+                            if(isChecked) { dayTotal += item.rate; total += item.rate; }
+                            rows.push(`<tr class="text-[11px] ${isChecked ? 'opacity-100' : 'opacity-20'}"><td class="px-6 py-2 text-center"><input type="checkbox" onchange="toggleAudit('${auditId}')" ${isChecked ? 'checked' : ''}></td><td class="px-6 py-2"></td><td class="px-6 py-2 ${colorClass}">${prefix} | ${item.pos || ''} ${item.name}</td><td class="px-6 py-2 mono">¥${item.rate}</td><td class="px-6 py-2">1</td><td class="px-6 py-2 text-right mono">¥${item.rate}</td></tr>`);
+                        }
+                    });
+                };
+                processItems('crew', 'text-blue-400', 'CREW');
+                processItems('equip', 'text-purple-400', 'EQUIP');
+                processItems('vehicle', 'text-emerald-400', 'VEHICLE');
+                processItems('art', 'text-pink-400', 'ART/PROP');
+                log.pettyCash.forEach(c => {
+                    const auditId = `${log.id}-cash-${c.id}`;
+                    const isChecked = !appState.settings.unchecked[auditId];
+                    if(isChecked) { dayTotal += c.cost; total += c.cost; }
+                    rows.push(`<tr class="text-[11px] italic ${isChecked ? 'opacity-100' : 'opacity-20'}"><td class="px-6 py-2 text-center"><input type="checkbox" onchange="toggleAudit('${auditId}')" ${isChecked ? 'checked' : ''}></td><td class="px-6 py-2"></td><td class="px-6 py-2 text-slate-500">PETTY | ${c.item}</td><td class="px-6 py-2 mono">¥${c.cost}</td><td class="px-6 py-2">1</td><td class="px-6 py-2 text-right mono">¥${c.cost}</td></tr>`);
+                });
+                rows.push(`<tr class="border-b border-white/5"><td colspan="5" class="px-6 py-2 text-right text-[10px] font-black uppercase opacity-40">Daily Subtotal</td><td class="px-6 py-2 text-right mono font-bold text-orange">¥${dayTotal.toLocaleString()}</td></tr>`);
+            });
+            document.getElementById('report-summary').innerHTML = `<div class="glass-card p-6 border-l-4 border-orange bg-orange/5"><p class="text-[10px] font-black opacity-50 uppercase tracking-widest mb-1">总计天数</p><p class="text-3xl font-black mono italic">${project.dailyLogs.length}</p></div><div class="glass-card p-6 border-l-4 border-orange bg-orange/5 md:col-span-2"><p class="text-[10px] font-black opacity-50 uppercase tracking-widest mb-1">项目总结算额 (核减后)</p><p class="text-3xl font-black mono text-orange">¥${total.toLocaleString()}</p></div>`;
+            document.getElementById('report-table-body').innerHTML = rows.join('') || '<tr><td colspan="6" class="px-6 py-10 text-center opacity-40">暂无数据</td></tr>';
+        }
+
+        function render() { const project = getCurrentProject(); if (!project) return; document.getElementById('current-project-display').innerText = project.name; renderProjectGrid(); renderDailyLogs(project); renderLibrary(project); renderReport(project); lucide.createIcons(); }
+        function exportData() { const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState)); const dlAnchorElem = document.createElement('a'); dlAnchorElem.setAttribute("href", dataStr); dlAnchorElem.setAttribute("download", `CineLOG_Pro_Backup.json`); dlAnchorElem.click(); }
+        function clearSystem() { if(confirm('警告：此操作将清空本地全部项目数据，确认？')) { localStorage.removeItem(STORAGE_KEY); location.reload(); } }
+        function exportToPDF() { switchTab('report'); setTimeout(() => { window.print(); }, 500); }
+    </script>
+</body>
+</html>
