@@ -186,7 +186,7 @@
             <aside class="min-h-[450px] lg:min-h-0 flex-[3] glass-panel rounded-xl flex flex-col overflow-hidden shrink-0">
                 <div class="bg-slate-800 border-b border-slate-700 p-2 flex gap-1 shrink-0 overflow-x-auto no-scrollbar">
                     <button id="btn-cheat-sheet" onclick="switchResourceTab(0)" class="px-3 md:px-4 py-1.5 md:py-2 bg-slate-700 text-white border border-slate-500 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-colors">🧠 AI 工具心法</button>
-                    <button id="btn-docs" onclick="switchResourceTab(1)" class="px-3 md:px-4 py-1.5 md:py-2 text-slate-400 border border-transparent hover:text-white hover:bg-slate-700/50 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-colors flex items-center gap-1">📂 剧组规章/文档库 <span class="text-[9px] bg-blue-500/20 text-blue-400 px-1 py-0.5 rounded ml-1">规划</span></button>
+                    <button id="btn-docs" onclick="switchResourceTab(1)" class="px-3 md:px-4 py-1.5 md:py-2 text-slate-400 border border-transparent hover:text-white hover:bg-slate-700/50 rounded-lg text-xs md:text-sm font-bold whitespace-nowrap transition-colors flex items-center gap-1">📂 剧组规章/文档库</button>
                 </div>
                 
                 <div class="flex-1 overflow-y-auto p-3 md:p-5 custom-scrollbar bg-slate-900/30">
@@ -758,14 +758,78 @@
             {
                 id: 'doc-1', icon: '🎬', title: 'AI导演编剧工作流指南.docx', date: '2023-11-20', size: '24 KB',
                 content: `<div class="space-y-4 md:space-y-6">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-stone-900 border-b-2 border-stone-200 pb-2 md:pb-4">AI导演编剧实战工作流</h1>
-                    <p class="text-stone-600 text-sm md:text-lg">不学繁杂软件，靠 <strong>NotebookLM、Gemini 和 ChatGPT</strong> 搭建极简案头工作流。</p>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-stone-900 border-b-2 border-stone-200 pb-2 md:pb-4">AI 导演编剧实战工作流：极简三件套版</h1>
+                    <p class="text-stone-600 text-sm md:text-lg">不需要学习繁杂的软件，仅靠 <strong>NotebookLM、Gemini 和 ChatGPT</strong>，你就可以搭建起一套极其强大、甚至超越许多传统编剧团队的“核心案头工作流”。</p>
+                    
                     <div class="bg-slate-50 p-4 md:p-6 rounded-xl border border-slate-200">
-                        <h2 class="text-base md:text-xl font-bold text-slate-800 mb-3">🛠️ 工具定位：</h2>
+                        <h2 class="text-base md:text-xl font-bold text-slate-800 mb-3">🛠️ 工具核心定位：</h2>
+                        <ul class="space-y-2 text-xs md:text-base text-stone-700">
+                            <li><span class="mr-2">📓</span><strong>NotebookLM (Google)：</strong>坚如磐石的资料库，只基于你喂的素材回答，绝不“幻觉”，适合做事实核查与碎片整理。</li>
+                            <li><span class="mr-2">✨</span><strong>Gemini (Google)：</strong>大局观极强的结构大师，超长上下文让它能一眼看穿几万字的剧情走向，适合搭骨架。</li>
+                            <li><span class="mr-2">💬</span><strong>ChatGPT (OpenAI)：</strong>情感充沛的台词写手，语感和“人味”最强，适合填血肉、写对话。</li>
+                        </ul>
+                    </div>
+
+                    <h2 class="text-lg md:text-2xl font-bold text-stone-800 mt-6 md:mt-8 text-teal-800">🎥 场景一：纪录片 —— “深度纪实与人文叙事”极简流</h2>
+                    <p class="text-stone-600 text-xs md:text-base">纪录片成败在于资料的扎实度。我们将繁重的案头工作交给 NotebookLM 和 Gemini，把情感旁白交给 ChatGPT。</p>
+                    
+                    <div class="space-y-4 pl-3 md:pl-4 border-l-4 border-teal-200 text-xs md:text-base text-stone-700">
+                        <div>
+                            <h3 class="font-bold text-sm md:text-lg">1. 构建私人纪实智库 (Research & Fact-Checking)</h3>
+                            <p><strong>主力工具：</strong> NotebookLM</p>
+                            <p><strong>操作：</strong> 将前期收集的几十份历史文献 PDF、网页长文、专家采访录音的逐字稿，全部打包上传到一个 NotebookLM 项目中。</p>
+                            <p><strong>应用技巧：</strong> <br>• <strong>提取金句：</strong>提问“请提取出受访专家关于‘XXX历史事件’最具有情感冲击力的 5 句话，并标注来源出处。”<br>• <strong>生成播客：</strong>点击 NotebookLM 的“Audio Overview（音频概览）”，它会自动用一男一女播客的形式讨论你的资料。这能帮你在开车或闭目养神时，快速找到资料里的“趣味点”和“戏剧冲突”。</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm md:text-lg">2. 宏观叙事结构搭建 (Structuring & Outlining)</h3>
+                            <p><strong>主力工具：</strong> Gemini</p>
+                            <p><strong>操作：</strong> 把 NotebookLM 整理出来的核心矛盾点、时间线笔记复制出来，喂给 Gemini。利用它的长逻辑能力，搭建分集大纲。</p>
+                            <p class="bg-slate-100 p-3 rounded mt-2 font-mono text-stone-600">Prompt 示例：“你是一位资深纪录片导演。请基于我提供的上述时间线和核心冲突，策划一部 3 集的纪录片大纲。要求：采用‘起-承-转-合’的经典结构，每一集的结尾必须要有一个悬念（Hook）留住观众，并写出每集的主题句。”</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm md:text-lg">3. 解说词（VO）撰写与精修 (VO Writing & Polish)</h3>
+                            <p><strong>主力工具：</strong> ChatGPT</p>
+                            <p><strong>操作：</strong> 拿到 Gemini 的精良大纲后，转战 ChatGPT 进行逐字撰写。因为 ChatGPT 的人文语感和断句节奏目前依然是最贴近人类编剧的。</p>
+                            <p class="bg-slate-100 p-3 rounded mt-2 font-mono text-stone-600">Prompt 示例：“请根据大纲的第 1 集第 1 场，撰写开场 2 分钟的解说词（VO）。要求：风格模仿 BBC 纪录片，语调深沉、克制、带有宿命感。句子要短，适合人声朗读，多用白描，少用形容词。请用表格形式输出，左栏为‘预想画面（Video）’，右栏为‘解说词（Audio）’。”</p>
+                        </div>
+                    </div>
+
+                    <h2 class="text-lg md:text-2xl font-bold text-stone-800 mt-6 md:mt-8 text-amber-800">📱 场景二：爆款短剧 —— “情绪泵机与节奏控制”极简流</h2>
+                    <p class="text-stone-600 text-xs md:text-base">短剧的核心是极高的情绪密度和精准的卡点。我们将利用 NotebookLM 锁住“爆款公式”，Gemini 控场“百集大纲”，ChatGPT 量产“爽文台词”。</p>
+
+                    <div class="space-y-4 pl-3 md:pl-4 border-l-4 border-amber-200 text-xs md:text-base text-stone-700">
+                        <div>
+                            <h3 class="font-bold text-sm md:text-lg">1. 建立爆款模型库 (Tropes & Formula Ingestion)</h3>
+                            <p><strong>主力工具：</strong> NotebookLM</p>
+                            <p><strong>操作：</strong> 搜集市场上最近爆火的 10 部同类短剧（如：女频真假千金、男频赘婿战神）的剧本或拉片笔记，上传到 NotebookLM。</p>
+                            <p><strong>应用技巧：</strong> 提问它：“请总结这 10 部剧中，最常使用的 3 种‘打脸反派’的套路是什么？男女主产生误会的最常见原因是什么？”——把这些规律变成你的“创作圣经”。</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm md:text-lg">2. 百集钩子与卡点设计 (100-Episode Plotting)</h3>
+                            <p><strong>主力工具：</strong> Gemini</p>
+                            <p><strong>操作：</strong> 短剧动辄 80-100 集，写到后期极容易崩盘或忘记伏笔。Gemini 的超大上下文能完美记住所有设定。</p>
+                            <p class="bg-slate-100 p-3 rounded mt-2 font-mono text-stone-600">Prompt 示例：“我要写一部 80 集的男频战神短剧，每集 1 分钟。请帮我铺设前 20 集的分集一句话大纲。铁律：每 3 集一个小高潮（如：被小人嘲讽后亮出身份）。每 10 集一个大高潮（如：全族下跪迎接）。每一集的最后一句台词或动作，必须是一个悬念（Hook），让人忍不住看下一集。请以表格呈现。”</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm md:text-lg">3. 剧本量产与情绪爆破台词 (Scripting & Dialogue)</h3>
+                            <p><strong>主力工具：</strong> ChatGPT</p>
+                            <p><strong>操作：</strong> 将 Gemini 写好的 5 集大纲丢给 ChatGPT，让它扩写成具体的台词剧本。短剧的台词不需要文笔好，需要的是“扎心、直接、动作夸张”。</p>
+                            <p class="bg-slate-100 p-3 rounded mt-2 font-mono text-stone-600">Prompt 示例：“请将第 1-5 集大纲扩写成短剧剧本。写作要求：台词极简，能用一个字绝不用一段话，不要绕弯子。情绪要拉满，加入强烈的动作提示（例如：[红着眼眶怒吼]、[反手就是一个响亮的耳光]、[轻蔑冷笑]）。节奏极快，不需要过场戏，直接进高潮。请按标准的‘场景-人物-动作-台词’格式输出。”</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-sm md:text-lg">4. 模拟读本会 (Table Read / 节奏测试)</h3>
+                            <p><strong>主力工具：</strong> ChatGPT (高级语音模式)</p>
+                            <p><strong>操作：</strong> 剧本写完后，你可以直接打开手机端的 ChatGPT 高级语音功能，对它说：“现在我们来过一遍刚刚写的第 3 集剧本。你扮演反派和女主，我扮演男主，我们用夸张、充满戏剧性的语气对一下台词。”</p>
+                            <p><strong>目的：</strong> 用耳朵去感受台词是否顺口，情绪节奏是否拖沓，这是极佳的剧本自检方法。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-slate-800 text-slate-200 p-4 md:p-6 rounded-xl mt-6">
+                        <h2 class="text-base md:text-xl font-bold text-white mb-3">💡 导演总结：三件套流转法则</h2>
                         <ul class="space-y-2 text-xs md:text-base">
-                            <li><strong>📓 NotebookLM：</strong>防穿帮资料库，绝不幻觉。</li>
-                            <li><strong>✨ Gemini：</strong>搭骨架，超长上下文统筹。</li>
-                            <li><strong>💬 ChatGPT：</strong>写台词，人类语感最强。</li>
+                            <li>👉 资料吃不透、需要找灵感时 ➡️ <strong>打开 NotebookLM</strong>（防幻觉，听播客找感觉）。</li>
+                            <li>👉 脑子很乱、需要排兵布阵时 ➡️ <strong>打开 Gemini</strong>（搭结构，稳住上百集的剧情线）。</li>
+                            <li>👉 开始动笔、需要填充血肉时 ➡️ <strong>打开 ChatGPT</strong>（写台词，拉扯情绪，精修文字）。</li>
                         </ul>
                     </div>
                 </div>`
@@ -773,15 +837,76 @@
             {
                 id: 'doc-2', icon: '🏢', title: '房地产高频推文工作流.docx', date: '2023-11-25', size: '18 KB',
                 content: `<div class="space-y-4 md:space-y-6">
-                    <h1 class="text-xl md:text-3xl font-extrabold text-stone-900 border-b-2 border-stone-200 pb-2 md:pb-4">🏡 房产微信号高频推文流</h1>
-                    <p class="text-stone-600 text-sm md:text-lg">忌发干广告，用AI提供“生活方式提案”。</p>
-                    <h2 class="text-base md:text-xl font-bold text-slate-800 mt-4 md:mt-6">🚀 SOP 流程</h2>
+                    <h1 class="text-xl md:text-3xl font-extrabold text-stone-900 border-b-2 border-stone-200 pb-2 md:pb-4">🏡 房地产微信公众号高频推文 AI 工作流</h1>
+                    <p class="text-stone-600 text-sm md:text-lg">房地产微信号高频推送，最忌讳的是“每天都在发干巴巴的广告”。我们要利用 AI 将枯燥的项目卖点，转化为带有情绪温度的“生活方式提案”。</p>
+                    
+                    <h2 class="text-base md:text-xl font-bold text-slate-800 mt-4 md:mt-6">🛠️ 核心工具组合与生态定位</h2>
+                    <p class="text-stone-600 text-xs md:text-base">这套流程不追求工具多，而追求 <strong>工具间的数据流转极度顺畅</strong>。</p>
                     <ul class="list-disc pl-4 md:pl-6 space-y-1 md:space-y-2 text-stone-700 text-xs md:text-base">
-                        <li><strong>Kimi：</strong>建库与策划。</li>
-                        <li><strong>Claude：</strong>模块文案，黄金结构。</li>
-                        <li><strong>Midjourney：</strong>生成情绪氛围图。</li>
-                        <li><strong>秀米：</strong>建立组件库，工业排版。</li>
+                        <li><strong>资料与选题大脑：Kimi (或 NotebookLM)</strong> —— 负责吃透你们的楼盘资料、竞品推文、当地楼市新政。</li>
+                        <li><strong>神仙文案写手：Claude 3.5 Sonnet (或 ChatGPT)</strong> —— 负责将冰冷的参数转化为极具煽动性和情绪价值的微信软文。目前写公众号软文，Claude 的“人味”和高级感是公认最强的。</li>
+                        <li><strong>视觉与封面工厂：Midjourney + 稿定设计</strong> —— MJ 负责生成高质量的“生活方式氛围图”；稿定设计负责加上大字报、制作微信首图（900x383）和次图（500x500）。</li>
+                        <li><strong>微信排版终点：秀米 (XiuMi)</strong> —— 微信排版的绝对王者。所有图文最终在这里完成“模块化拼装”。</li>
                     </ul>
+
+                    <h2 class="text-base md:text-2xl font-bold text-stone-800 mt-6 md:mt-8">🚀 标准操作流程 (SOP)</h2>
+                    
+                    <div class="space-y-4 md:space-y-6 text-xs md:text-base text-stone-700">
+                        <div class="bg-white p-4 md:p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h3 class="font-bold text-sm md:text-lg text-amber-700 mb-2">第一阶段：建库与选题策划 (Kimi)</h3>
+                            <p>房地产推文不能每天只喊“快来买”。你需要建立一个<strong>“选题矩阵”</strong>（例如：周一发城市宏观利好，周三发户型生活场景，周五发周末看房活动）。</p>
+                            <p class="mt-2"><strong>操作：</strong> 将项目所有的 PDF 楼书、户型图数据、最近当地的新闻链接喂给 Kimi。</p>
+                            <p class="bg-stone-100 p-3 rounded mt-2 font-mono text-stone-600">Prompt 示例：“你是我司房地产项目的高级策划。请阅读我上传的项目楼书。我们本月需要每周推送 3 篇微信公众号文章。请帮我规划本周的 3 个选题，分别从‘地段交通’、‘主推户型生活场景’、‘周末暖场活动’三个角度切入。要求每个选题提供 3 个极具吸引力、带有微信爆款网感的标题备选。”</p>
+                        </div>
+                        
+                        <div class="bg-white p-4 md:p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h3 class="font-bold text-sm md:text-lg text-amber-700 mb-2">第二阶段：模块化文案创作 (Claude 3.5 Sonnet / ChatGPT)</h3>
+                            <p>微信文章的阅读逻辑是“滑动阅读”，因此文案必须 <strong>短句多、分段多、情绪递进</strong>。</p>
+                            <p class="mt-2"><strong>操作：</strong> 确定选题后，让 AI 按照微信软文的“黄金结构”输出。</p>
+                            <div class="bg-stone-100 p-3 rounded mt-2 font-mono text-stone-600">
+                                <p>Prompt 示例（以户型软文为例）：<br>“你是一位拥有百万粉丝的房产/生活方式自媒体主笔。请为我们的‘建面约120㎡改善四房’写一篇微信公众号软文。结构要求：</p>
+                                <ul class="list-disc pl-5 mt-1 space-y-1">
+                                    <li>痛点引入 (Hook)：描述二胎家庭或三代同堂早晨抢卫生间、收纳空间不足的痛点（带入情绪）。</li>
+                                    <li>爽点反转：引出我们的 120㎡ 户型，重点包装‘LDKB 社交大横厅’和‘双卫设计’。</li>
+                                    <li>生活场景描绘：不要堆砌冷冰冰的数据，请用生动的语言描绘出在这个客厅里，女主人在岛台做烘焙，男主人在沙发看书，孩子在阳台玩耍的场景。</li>
+                                    <li>逼单促推 (CTA)：结尾强调本周末有样板间开放活动，制造稀缺感。</li>
+                                </ul>
+                                <p class="mt-1">排版要求：每一段不要超过 3 行字；多用空行；重要金句请用【】括起来以便我后续在排版时加粗。”</p>
+                            </div>
+                        </div>
+
+                        <div class="bg-white p-4 md:p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h3 class="font-bold text-sm md:text-lg text-amber-700 mb-2">第三阶段：配图与视觉加工 (Midjourney + 稿定设计)</h3>
+                            <p>微信文章中，<strong>图的质量决定了楼盘的调性</strong>。实景图用开发商给的，但“情绪氛围图”可以用 AI 批量生成。</p>
+                            <p class="mt-2"><strong>配合度解析：</strong></p>
+                            <ul class="list-disc pl-5 mt-1 space-y-1">
+                                <li><strong>Midjourney 产出原图：</strong> 比如输入 prompt <code>A cozy and luxurious living room with a large balcony, warm sunlight, modern minimalist style, photorealistic, 8k --ar 16:9</code>，生成一张极具向往感的客厅图。</li>
+                                <li><strong>稿定设计加字：</strong> 将 MJ 的图导入“稿定设计”，选择“微信公众号首图”模板。打上大大的标题文字（如：“在 120㎡ 的阳光里，把日子过成诗”），导出用于推文封面。</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-white p-4 md:p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h3 class="font-bold text-sm md:text-lg text-amber-700 mb-2">第四阶段：秀米工业化排版与发布 (XiuMi)</h3>
+                            <p>将前面生成的文字和图片，在秀米中进行“组装”。</p>
+                            <p class="mt-2"><strong>建立品牌专属模板池（极其重要）：</strong> 不要每次都重新排版！在秀米里建立你们项目的专属组件库：</p>
+                            <ul class="list-disc pl-5 mt-1 space-y-1">
+                                <li>固定样式的【标题栏】</li>
+                                <li>固定样式的【金句引用框】（把 Claude 写的金句放进去）</li>
+                                <li>固定样式的【图片边框】</li>
+                                <li>固定样式的【文末户型图展示+二维码贴片】</li>
+                            </ul>
+                            <p class="mt-2"><strong>操作：</strong> 把文案从 Claude 复制进秀米，一键替换文本。把处理好的图片拖入模板。一键同步到微信公众号后台。</p>
+                        </div>
+                    </div>
+
+                    <div class="bg-slate-100 p-4 md:p-6 rounded-xl mt-6 border border-slate-200">
+                        <h2 class="text-base md:text-xl font-bold text-slate-800 mb-3">💡 核心秘诀：软件配合的“粘合剂”</h2>
+                        <ul class="list-disc pl-4 md:pl-6 space-y-2 text-stone-700 text-xs md:text-base">
+                            <li><strong>文本格式的粘合：</strong> 在让 Claude 生成文案时，一定要强调“微信排版意识”。告诉 AI：“请使用 Markdown 格式，用 H2 表示大标题，H3 表示小标题”。这样你复制到秀米里时，层次结构会非常清晰。</li>
+                            <li><strong>尺寸的粘合：</strong> 微信首图死规矩是 <strong>900 x 383 像素</strong>（宽高比约 2.35:1）。在用 MJ 生成封面图底图时，记得在指令末尾加上 <code>--ar 21:9</code> 或 <code>--ar 16:9</code>，这样裁切成封面时主体才不会被截掉。</li>
+                            <li><strong>色彩的粘合：</strong> 在稿定设计和秀米中，设定好你们楼盘的“VI 品牌色”（比如：高端盘用黑金、香槟色；刚需盘用温暖的橙色/明黄色）。排版时，标题和重点文字统一使用这个色号，保持视觉心智的统一。</li>
+                        </ul>
+                    </div>
                 </div>`
             }
         ];
