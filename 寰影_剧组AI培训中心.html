@@ -1,0 +1,1043 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>寰影_剧组AI培训中心 - 三擎版 V4.1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* ================= GLOBAL STYLES ================= */
+        body { background-color: #0f172a; color: #f8fafc; overflow: hidden; } /* Default Dark */
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #475569; }
+
+        /* Shared Chart Container Styling */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 350px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) { .chart-container { height: 400px; } }
+
+        .fade-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ================= APP 1: CREW STYLES (Dark) ================= */
+        .glass-panel {
+            background: rgba(30, 41, 59, 0.7); /* slate-800 */
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .role-btn { transition: all 0.2s; }
+        .role-btn.active {
+            background: #3b82f6; /* blue-500 */
+            color: white;
+            border-color: #60a5fa;
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.5);
+        }
+        .output-format strong { color: #facc15; } /* amber-400 for bold text */
+
+        /* Input styling */
+        textarea:focus { outline: none; box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.5); }
+
+        /* ================= APP 2: DIRECTOR STYLES (Light) ================= */
+        .dir-container { background-color: #fafaf9; color: #292524; }
+        .dir-step-content {
+            transition: max-height 0.4s ease-in-out, opacity 0.4s ease-in-out;
+            max-height: 0;
+            opacity: 0;
+            overflow: hidden;
+        }
+        .dir-step-content.expanded { max-height: 800px; opacity: 1; }
+        .dir-tool-card { transition: transform 0.2s, box-shadow 0.2s; }
+        .dir-tool-card:hover { transform: translateY(-2px); }
+
+        /* ================= APP 3: REAL ESTATE STYLES (Light) ================= */
+        .re-container { background-color: #fafaf9; color: #292524; }
+        .re-step-btn.active {
+            background-color: #1e293b; /* slate-800 */
+            color: #f8fafc; /* slate-50 */
+            border-color: #1e293b;
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+        .glue-card { transition: all 0.3s ease; }
+        .glue-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+        }
+    </style>
+</head>
+<body class="font-sans antialiased h-screen flex flex-col">
+
+    <!-- Global Header with App Switcher -->
+    <header class="glass-panel px-6 py-4 flex justify-between items-center shrink-0 z-50 relative bg-slate-900 border-b border-slate-700">
+        <div class="flex items-center gap-3">
+            <span class="text-3xl" id="global-icon">🎬</span>
+            <div>
+                <h1 class="text-xl font-bold tracking-wider text-white" id="global-title">寰影_剧组AI培训中心 <span class="text-xs text-blue-400 font-mono ml-2 border border-blue-400/30 px-2 py-0.5 rounded bg-blue-500/10">V4.1 (交互升级版)</span></h1>
+            </div>
+        </div>
+
+        <!-- APP SWITCHER -->
+        <div class="flex bg-slate-800 p-1.5 rounded-xl border border-slate-700 shadow-inner overflow-x-auto max-w-[50vw] custom-scrollbar">
+            <button onclick="switchApp('crew')" id="nav-crew" class="px-5 py-2 rounded-lg bg-blue-600 text-white text-sm font-bold shadow-md transition-all flex items-center gap-2 whitespace-nowrap">
+                <span>🎬</span> 剧组实战沙盘
+            </button>
+            <button onclick="switchApp('director')" id="nav-director" class="px-5 py-2 rounded-lg text-slate-400 hover:text-white text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
+                <span>📝</span> 导演编剧工作台
+            </button>
+            <button onclick="switchApp('estate')" id="nav-estate" class="px-5 py-2 rounded-lg text-slate-400 hover:text-white text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap">
+                <span>🏢</span> 房产推文流水线
+            </button>
+        </div>
+
+        <div class="hidden md:flex items-center gap-4 text-sm font-mono text-slate-400">
+            <span>STATUS: <span class="text-emerald-400">ONLINE</span></span>
+        </div>
+    </header>
+
+    <!-- ========================================================= -->
+    <!-- APP 1: CREW TRAINING SANDBOX (Dark Mode)                  -->
+    <!-- ========================================================= -->
+    <main id="app-crew" class="flex-1 flex flex-col p-4 gap-5 overflow-hidden transition-opacity duration-300">
+        <section class="glass-panel rounded-xl p-4 shrink-0 shadow-lg z-10">
+            <h2 class="text-sm font-bold text-slate-300 mb-3 uppercase tracking-widest border-b border-slate-700 pb-2">1. 选择实战体验岗位</h2>
+            <div class="flex flex-row gap-3 overflow-x-auto custom-scrollbar pb-2" id="role-buttons"></div>
+        </section>
+
+        <div class="flex-1 flex flex-col lg:flex-row gap-5 overflow-hidden">
+            <section class="flex-[5] flex flex-col bg-slate-900 rounded-xl overflow-hidden relative border-2 border-blue-500/60 shadow-[0_0_40px_rgba(59,130,246,0.15)] z-0">
+                <div class="bg-slate-800/90 p-6 border-b border-blue-500/30 shrink-0 relative overflow-hidden">
+                    <div class="absolute -right-10 -top-10 w-40 h-40 bg-blue-500/10 rounded-full blur-3xl"></div>
+                    <div class="flex items-center justify-between mb-2 relative z-10">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xs font-bold px-3 py-1.5 rounded bg-blue-600 text-white uppercase tracking-wide shadow-md" id="sim-role-badge">统筹/制片</span>
+                            <span class="text-slate-300 font-bold text-sm">当前沙盘任务挑战：</span>
+                        </div>
+                        <button onclick="runSimulation()" id="run-btn" class="bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold py-2.5 px-8 rounded-lg shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all flex items-center gap-2 transform hover:scale-105">
+                            <span>▶</span> 运行模拟器
+                        </button>
+                    </div>
+                    <h2 class="text-3xl font-extrabold text-white mb-5 relative z-10" id="sim-task-title">剧本拆解与服化道提报</h2>
+                    <div class="bg-slate-950/60 p-5 rounded-xl border border-slate-700/80 backdrop-blur-sm relative z-10">
+                        <div class="flex flex-col md:flex-row gap-4 items-start">
+                            <div class="shrink-0 min-w-[180px]">
+                                <span class="text-xs text-slate-400 block mb-1">本关推荐强力武器</span>
+                                <div class="flex items-center gap-2" id="sim-tool-display">
+                                    <span class="text-2xl">✨</span>
+                                    <span class="font-bold text-violet-400 text-xl">Gemini</span>
+                                </div>
+                            </div>
+                            <div class="flex-1 w-full border-l-0 md:border-l border-slate-700 md:pl-5 pt-3 md:pt-0 border-t md:border-t-0">
+                                <div class="flex justify-between items-end mb-2">
+                                    <span class="text-xs text-slate-400 block">您可以直接修改下方的指令 (Prompt) 后测试运行：</span>
+                                    <span class="text-[10px] bg-blue-500/20 text-blue-300 px-2 py-0.5 rounded border border-blue-500/30">✏️ 可自由编辑</span>
+                                </div>
+                                <textarea id="sim-prompt-input" rows="3" class="w-full text-base text-amber-300 font-mono leading-relaxed bg-slate-900 p-3 rounded-lg border border-slate-600 resize-none transition-colors" placeholder="在这里输入您的 AI 提示词..."></textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 bg-[#05080f] p-8 overflow-y-auto font-mono relative custom-scrollbar" id="terminal-container">
+                    
+                    <!-- Export Button (Hidden initially) -->
+                    <button id="export-btn" onclick="exportResult()" class="hidden absolute top-4 right-6 bg-slate-800 hover:bg-slate-700 border border-slate-600 text-slate-300 px-4 py-2 rounded-lg text-sm font-bold shadow-lg transition-all flex items-center gap-2 z-20">
+                        <span>⬇️</span> 导出结果文件
+                    </button>
+
+                    <div class="absolute inset-0 flex flex-col items-center justify-center text-slate-500" id="terminal-placeholder">
+                        <span class="text-7xl mb-6 opacity-80 drop-shadow-[0_0_15px_rgba(59,130,246,0.5)]">🖥️</span>
+                        <p class="text-xl tracking-widest font-bold text-slate-400">系统已就绪，等待执行指令...</p>
+                        <p class="text-sm mt-3 bg-slate-800 px-4 py-1.5 rounded-full border border-slate-700">修改上方提示词后，点击 <span class="text-emerald-400 font-bold">「运行模拟器」</span></p>
+                    </div>
+                    <div id="terminal-output" class="output-format text-emerald-300 text-base leading-relaxed hidden w-full max-w-5xl mx-auto pb-10"></div>
+                </div>
+            </section>
+
+            <aside class="flex-[3] glass-panel rounded-xl flex flex-col overflow-hidden shrink-0">
+                <div class="bg-slate-800 border-b border-slate-700 p-2 flex gap-1 shrink-0 overflow-x-auto custom-scrollbar">
+                    <button id="btn-cheat-sheet" onclick="switchResourceTab(0)" class="px-4 py-2 bg-slate-700 text-white border border-slate-500 rounded-lg text-sm font-bold whitespace-nowrap transition-colors">🧠 AI 工具心法</button>
+                    <button id="btn-docs" onclick="switchResourceTab(1)" class="px-4 py-2 text-slate-400 border border-transparent hover:text-white hover:bg-slate-700/50 rounded-lg text-sm font-bold whitespace-nowrap transition-colors flex items-center gap-1">📂 剧组规章/文档库 <span class="text-[10px] bg-blue-500/20 text-blue-400 px-1.5 py-0.5 rounded ml-1">规划中</span></button>
+                </div>
+                
+                <div class="flex-1 overflow-y-auto p-5 custom-scrollbar bg-slate-900/30">
+                    <div id="tab-cheat-sheet" class="space-y-4">
+                        <p class="text-xs text-slate-400 mb-4 border-l-2 border-blue-500 pl-2">熟记以下三大件定位，告别工具选择困难症。</p>
+                        <div class="bg-slate-800/80 border border-teal-900/80 p-4 rounded-xl shadow-md">
+                            <div class="flex items-center gap-3 mb-2"><span class="text-2xl">📓</span><span class="font-bold text-teal-400 text-lg">NotebookLM</span></div>
+                            <div class="text-sm text-slate-300 leading-relaxed"><span class="text-teal-300 font-bold bg-teal-900/30 px-2 py-0.5 rounded">防穿帮资料库</span><br><div class="mt-2">只基于你喂的剧本、通告单、场记单回答，<strong>绝对不胡编乱造</strong>。最适合用来做前后场戏的连戏比对核查。</div></div>
+                        </div>
+                        <div class="bg-slate-800/80 border border-violet-900/80 p-4 rounded-xl shadow-md">
+                            <div class="flex items-center gap-3 mb-2"><span class="text-2xl">✨</span><span class="font-bold text-violet-400 text-lg">Gemini</span></div>
+                            <div class="text-sm text-slate-300 leading-relaxed"><span class="text-violet-300 font-bold bg-violet-900/30 px-2 py-0.5 rounded">结构拆解机</span><br><div class="mt-2">拥有超大上下文容量。直接把 <strong>100页以上的剧本PDF</strong> 全丢进去，让它一次性进行统筹排期、拆解服化道提报。</div></div>
+                        </div>
+                        <div class="bg-slate-800/80 border border-emerald-900/80 p-4 rounded-xl shadow-md">
+                            <div class="flex items-center gap-3 mb-2"><span class="text-2xl">💬</span><span class="font-bold text-emerald-400 text-lg">ChatGPT</span></div>
+                            <div class="text-sm text-slate-300 leading-relaxed"><span class="text-emerald-300 font-bold bg-emerald-900/30 px-2 py-0.5 rounded">金牌公关与文笔</span><br><div class="mt-2">模型中人类语感最好。用来精修生硬的台词本、写给投资人的公关邮件、构思有情绪张力的创意分镜。</div></div>
+                        </div>
+                    </div>
+                    <div id="tab-docs" class="hidden h-full flex flex-col">
+                        <div class="flex justify-between items-center mb-4 shrink-0">
+                            <h3 class="text-slate-300 font-bold flex items-center gap-2"><span class="text-xl">📂</span> 剧组核心知识库</h3>
+                            <button onclick="triggerUpload()" class="bg-blue-600 hover:bg-blue-500 text-white px-3 py-1.5 rounded-lg text-xs font-bold flex items-center gap-1 shadow-lg transition-colors">
+                                <span class="text-lg leading-none">+</span> 归档新文档
+                            </button>
+                        </div>
+                        <div class="flex-1 overflow-y-auto space-y-3 custom-scrollbar pr-2" id="docs-list-container">
+                            <!-- Docs injected via JS -->
+                        </div>
+                    </div>
+                </div>
+            </aside>
+        </div>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- APP 2: DIRECTOR & SCREENWRITER WORKBENCH (Light Mode)     -->
+    <!-- ========================================================= -->
+    <main id="app-director" class="flex-1 dir-container overflow-y-auto hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-20">
+            <header class="mb-10 text-center md:text-left">
+                <div class="inline-block bg-violet-100 text-violet-800 px-4 py-1 rounded-full text-sm font-bold tracking-widest mb-4 uppercase border border-violet-200">
+                    Director's Workbench
+                </div>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-stone-900 mb-4 tracking-tight">AI 导演编剧<span class="text-violet-600">实战工作台</span></h2>
+                <p class="text-lg text-stone-600 max-w-3xl">不需要学习繁杂的软件，仅靠 <strong>NotebookLM、Gemini 和 ChatGPT</strong>，即可搭建起一套超越传统团队的“核心案头工作流”。本控制台将帮助您理清这“极简三件套”的流转法则。</p>
+            </header>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+                <section class="lg:col-span-4 space-y-6">
+                    <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-6">
+                        <h3 class="text-xl font-bold text-stone-800 mb-3 border-b border-stone-100 pb-2">🛠️ 核心工具能力矩阵</h3>
+                        <p class="text-sm text-stone-500 mb-6">了解您的“三剑客”。雷达图展示了每个工具在不同维度的绝对优势，这是我们为其分配不同创作任务的根本依据。点击下方卡片可查看详情。</p>
+                        
+                        <div class="space-y-3 mb-6">
+                            <div class="dir-tool-card bg-teal-50 border border-teal-100 p-4 rounded-xl cursor-pointer" onclick="dirHighlightChart(0)">
+                                <div class="flex items-center gap-3 mb-1"><span class="text-2xl">📓</span><h4 class="font-bold text-teal-800 text-lg">NotebookLM</h4></div>
+                                <p class="text-sm text-teal-700"><strong>私人超级资料库：</strong> 坚如磐石，只基于素材回答，绝不幻觉。适合事实核查与碎片整理。</p>
+                            </div>
+                            <div class="dir-tool-card bg-violet-50 border border-violet-100 p-4 rounded-xl cursor-pointer" onclick="dirHighlightChart(1)">
+                                <div class="flex items-center gap-3 mb-1"><span class="text-2xl">✨</span><h4 class="font-bold text-violet-800 text-lg">Gemini</h4></div>
+                                <p class="text-sm text-violet-700"><strong>结构与大纲统筹：</strong> 大局观极强，超长上下文一眼看穿几万字走向。适合搭骨架、铺卡点。</p>
+                            </div>
+                            <div class="dir-tool-card bg-emerald-50 border border-emerald-100 p-4 rounded-xl cursor-pointer" onclick="dirHighlightChart(2)">
+                                <div class="flex items-center gap-3 mb-1"><span class="text-2xl">💬</span><h4 class="font-bold text-emerald-800 text-lg">ChatGPT</h4></div>
+                                <p class="text-sm text-emerald-700"><strong>金牌台词编剧：</strong> 情感充沛，语感和“人味”最强。适合填血肉、写对话、拉扯情绪。</p>
+                            </div>
+                        </div>
+
+                        <div class="chart-container" style="height: 320px;">
+                            <canvas id="dirCapabilityChart"></canvas>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="lg:col-span-8 space-y-6">
+                    <div class="bg-white rounded-3xl shadow-sm border border-stone-200 p-6 md:p-10 flex flex-col h-full">
+                        <h3 class="text-2xl font-bold text-stone-800 mb-3 border-b border-stone-100 pb-2">🗺️ 场景工作流导航</h3>
+                        <p class="text-stone-500 mb-8">根据您的创作题材，选择下方对应的工作流。点击时间轴上的每一个步骤，可以展开查看具体的操作指南和独家 Prompt 示例，让构思落地。</p>
+
+                        <div class="flex p-1 bg-stone-100 rounded-xl mb-8 w-full max-w-md mx-auto shadow-inner">
+                            <button id="dir-tab-doc" onclick="dirSwitchTab('doc')" class="flex-1 py-2.5 px-4 rounded-lg text-sm font-bold transition-all duration-200 bg-white shadow-sm text-stone-800 border border-stone-200">
+                                🎥 纪录片 (深度纪实)
+                            </button>
+                            <button id="dir-tab-drama" onclick="dirSwitchTab('drama')" class="flex-1 py-2.5 px-4 rounded-lg text-sm font-bold transition-all duration-200 text-stone-500 hover:text-stone-700">
+                                📱 爆款短剧 (情绪泵机)
+                            </button>
+                        </div>
+
+                        <div id="dir-workflow-container" class="relative pl-4 border-l-2 border-stone-200 space-y-6">
+                            <!-- Injected via JS -->
+                        </div>
+                    </div>
+                </section>
+            </div>
+
+            <section class="mt-10 bg-stone-800 rounded-3xl p-8 shadow-lg">
+                <h3 class="text-2xl font-bold text-white mb-4 border-b border-stone-600 pb-2">💡 导演总结：极简三件套流转法则</h3>
+                <p class="text-stone-300 mb-6">这是整个工作流的灵魂心法。当您在创作中卡壳时，对照以下三种状态，立即切换到对应的 AI 工具。</p>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-5">
+                    <div class="bg-stone-700 p-6 rounded-2xl border-l-4 border-teal-400 hover:bg-stone-600 transition-colors shadow-inner">
+                        <div class="text-teal-300 font-bold mb-2 text-lg">1. 资料吃不透、需要找灵感</div>
+                        <p class="text-stone-200 text-sm">👉 打开 <span class="bg-teal-900 text-teal-100 px-2 py-0.5 rounded">NotebookLM</span></p>
+                        <p class="text-stone-400 text-xs mt-3 border-t border-stone-600 pt-2">防幻觉，听播客找感觉。</p>
+                    </div>
+                    <div class="bg-stone-700 p-6 rounded-2xl border-l-4 border-violet-400 hover:bg-stone-600 transition-colors shadow-inner">
+                        <div class="text-violet-300 font-bold mb-2 text-lg">2. 脑子很乱、需要排兵布阵</div>
+                        <p class="text-stone-200 text-sm">👉 打开 <span class="bg-violet-900 text-violet-100 px-2 py-0.5 rounded">Gemini</span></p>
+                        <p class="text-stone-400 text-xs mt-3 border-t border-stone-600 pt-2">搭结构，稳住上百集的剧情线。</p>
+                    </div>
+                    <div class="bg-stone-700 p-6 rounded-2xl border-l-4 border-emerald-400 hover:bg-stone-600 transition-colors shadow-inner">
+                        <div class="text-emerald-300 font-bold mb-2 text-lg">3. 开始动笔、需要填充血肉</div>
+                        <p class="text-stone-200 text-sm">👉 打开 <span class="bg-emerald-900 text-emerald-100 px-2 py-0.5 rounded">ChatGPT</span></p>
+                        <p class="text-stone-400 text-xs mt-3 border-t border-stone-600 pt-2">写台词，拉扯情绪，精修文字。</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- APP 3: REAL ESTATE WORKFLOW (Light Mode)                  -->
+    <!-- ========================================================= -->
+    <main id="app-estate" class="flex-1 re-container overflow-y-auto hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 pb-20">
+            <header class="text-center md:text-left mb-12">
+                <div class="inline-block bg-slate-800 text-amber-400 px-4 py-1 rounded-full text-sm font-bold tracking-widest mb-4 uppercase">
+                    Real Estate Engine
+                </div>
+                <h2 class="text-3xl md:text-5xl font-extrabold text-slate-900 mb-4 tracking-tight">房地产微信推文<span class="text-amber-600">工业化工作流</span></h2>
+                <p class="text-lg text-stone-600 max-w-3xl">告别干巴巴的广告。利用 AI 将枯燥的项目卖点，转化为带有情绪温度的“生活方式提案”。本控制台旨在帮助您掌握这套高频、高质量的 4 步数据流转闭环。</p>
+            </header>
+
+            <section class="mb-16 bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-stone-200">
+                <div class="mb-6">
+                    <h3 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span class="text-3xl">⏱️</span> 效率革命：单篇推文时间成本对比</h3>
+                    <p class="text-stone-500 mt-2">传统的纯手工模式在面对高频推送时难以为继，通过核心工具（Kimi, Claude, Midjourney, 秀米）的有机结合，我们将时间成本压缩至极短。</p>
+                </div>
+                <div class="chart-container">
+                    <canvas id="reEfficiencyChart"></canvas>
+                </div>
+            </section>
+
+            <section class="mb-16">
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span class="text-3xl">⚙️</span> 核心操作流程 (SOP)</h3>
+                    <p class="text-stone-500 mt-2">探索这个 4 步工业化流水线。点击下方每一个引擎节点，查阅对应的工具组合、操作目标及独家 Prompt 模板。</p>
+                </div>
+
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-8">
+                    <button onclick="changeReStep(0)" id="re-btn-step-0" class="re-step-btn active bg-white border border-stone-300 rounded-xl p-4 text-center transition-all duration-300 hover:border-slate-400 flex flex-col items-center justify-center gap-2">
+                        <span class="text-2xl bg-amber-100 w-10 h-10 flex items-center justify-center rounded-full text-amber-700 font-bold">1</span>
+                        <span class="font-bold text-sm md:text-base">建库与选题策划</span>
+                    </button>
+                    <button onclick="changeReStep(1)" id="re-btn-step-1" class="re-step-btn bg-white border border-stone-300 rounded-xl p-4 text-center transition-all duration-300 hover:border-slate-400 flex flex-col items-center justify-center gap-2">
+                        <span class="text-2xl bg-amber-100 w-10 h-10 flex items-center justify-center rounded-full text-amber-700 font-bold">2</span>
+                        <span class="font-bold text-sm md:text-base">模块化文案创作</span>
+                    </button>
+                    <button onclick="changeReStep(2)" id="re-btn-step-2" class="re-step-btn bg-white border border-stone-300 rounded-xl p-4 text-center transition-all duration-300 hover:border-slate-400 flex flex-col items-center justify-center gap-2">
+                        <span class="text-2xl bg-amber-100 w-10 h-10 flex items-center justify-center rounded-full text-amber-700 font-bold">3</span>
+                        <span class="font-bold text-sm md:text-base">配图与视觉加工</span>
+                    </button>
+                    <button onclick="changeReStep(3)" id="re-btn-step-3" class="re-step-btn bg-white border border-stone-300 rounded-xl p-4 text-center transition-all duration-300 hover:border-slate-400 flex flex-col items-center justify-center gap-2">
+                        <span class="text-2xl bg-amber-100 w-10 h-10 flex items-center justify-center rounded-full text-amber-700 font-bold">4</span>
+                        <span class="font-bold text-sm md:text-base">工业化排版发布</span>
+                    </button>
+                </div>
+
+                <div id="re-step-content-area" class="bg-white rounded-3xl p-6 md:p-10 shadow-sm border border-stone-200 min-h-[400px]"></div>
+            </section>
+
+            <section class="mb-10">
+                <div class="mb-8">
+                    <h3 class="text-2xl font-bold text-slate-800 flex items-center gap-2"><span class="text-3xl">🔗</span> 软件配合的“粘合剂”</h3>
+                    <p class="text-stone-500 mt-2">工具再多，如果数据流转不畅也是徒劳。本区块提炼了让上述 4 步流程能够无缝衔接的 3 个核心秘诀。</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="glue-card bg-slate-800 text-white rounded-2xl p-6 relative overflow-hidden shadow-md">
+                        <div class="absolute -right-4 -top-4 text-6xl opacity-10">📝</div>
+                        <h4 class="text-xl font-bold mb-3 text-amber-400">文本格式的粘合</h4>
+                        <p class="text-slate-300 text-sm leading-relaxed">在让 AI 生成文案时，一定要强调<strong>“微信排版意识”</strong>。<br><br>要求 AI：<span class="bg-slate-700 px-2 py-1 rounded text-amber-200 font-mono text-xs">使用 Markdown，用 H2/H3 表示标题</span>。这样复制到秀米里时，层次清晰一键套用模板。</p>
+                    </div>
+                    <div class="glue-card bg-slate-800 text-white rounded-2xl p-6 relative overflow-hidden shadow-md">
+                        <div class="absolute -right-4 -top-4 text-6xl opacity-10">📏</div>
+                        <h4 class="text-xl font-bold mb-3 text-amber-400">图片尺寸的粘合</h4>
+                        <p class="text-slate-300 text-sm leading-relaxed">微信首图死规矩是 <strong>900 x 383 像素</strong>。<br><br>在用 Midjourney 生成封面底图时，记得在指令末尾加上 <span class="bg-slate-700 px-2 py-1 rounded text-amber-200 font-mono text-xs">--ar 21:9</span> 或 <span class="bg-slate-700 px-2 py-1 rounded text-amber-200 font-mono text-xs">--ar 16:9</span>，确保裁切时主体不被截掉。</p>
+                    </div>
+                    <div class="glue-card bg-slate-800 text-white rounded-2xl p-6 relative overflow-hidden shadow-md">
+                        <div class="absolute -right-4 -top-4 text-6xl opacity-10">🎨</div>
+                        <h4 class="text-xl font-bold mb-3 text-amber-400">视觉色彩的粘合</h4>
+                        <p class="text-slate-300 text-sm leading-relaxed">在稿定设计和秀米中，必须提前设定好项目的<strong>“VI 品牌色”</strong>。<br><br>例如：高端盘用黑金；刚需盘用明黄色。排版时，大字报标题统一使用该色号，保持视觉心智统一。</p>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- ========================================================= -->
+    <!-- DOCUMENT READER MODAL (Global)                            -->
+    <!-- ========================================================= -->
+    <div id="doc-reader-modal" class="fixed inset-0 z-[100] hidden flex justify-center items-center p-4 md:p-10">
+        <div class="absolute inset-0 bg-slate-900/80 backdrop-blur-sm" onclick="closeDocReader()"></div>
+        <div class="bg-stone-50 w-full max-w-4xl h-full max-h-[90vh] rounded-2xl shadow-2xl relative z-10 flex flex-col overflow-hidden border border-slate-600">
+            <div class="bg-slate-800 p-4 flex justify-between items-center shrink-0 border-b border-slate-700 shadow-md">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl" id="doc-reader-icon">📄</span>
+                    <h2 id="doc-reader-title" class="text-white font-bold text-lg">文档标题</h2>
+                </div>
+                <button onclick="closeDocReader()" class="text-slate-400 hover:text-white text-3xl leading-none transition-colors">&times;</button>
+            </div>
+            <div id="doc-reader-content" class="p-6 md:p-10 overflow-y-auto custom-scrollbar text-stone-800 leading-relaxed text-sm md:text-base bg-white">
+                <!-- Content -->
+            </div>
+        </div>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- SCRIPTS                                                   -->
+    <!-- ========================================================= -->
+    <script>
+        // ==========================================
+        // APP SWITCHER LOGIC
+        // ==========================================
+        let dirChartInitialized = false;
+        let reChartInitialized = false;
+
+        function switchApp(appType) {
+            const appCrew = document.getElementById('app-crew');
+            const appDirector = document.getElementById('app-director');
+            const appEstate = document.getElementById('app-estate');
+            
+            const navCrew = document.getElementById('nav-crew');
+            const navDirector = document.getElementById('nav-director');
+            const navEstate = document.getElementById('nav-estate');
+            
+            const globalIcon = document.getElementById('global-icon');
+
+            // Reset all styles
+            const baseNavClass = 'px-5 py-2 rounded-lg text-sm font-bold transition-all flex items-center gap-2 whitespace-nowrap ';
+            const inactiveClass = baseNavClass + 'text-slate-400 hover:text-white';
+
+            navCrew.className = inactiveClass;
+            navDirector.className = inactiveClass;
+            navEstate.className = inactiveClass;
+
+            appCrew.classList.add('hidden');
+            appDirector.classList.add('hidden');
+            appEstate.classList.add('hidden');
+
+            if (appType === 'crew') {
+                appCrew.classList.remove('hidden');
+                navCrew.className = baseNavClass + 'bg-blue-600 text-white shadow-md';
+                globalIcon.innerText = '🎬';
+            } 
+            else if (appType === 'director') {
+                appDirector.classList.remove('hidden');
+                navDirector.className = baseNavClass + 'bg-violet-600 text-white shadow-md';
+                globalIcon.innerText = '📝';
+                
+                if (!dirChartInitialized) {
+                    initDirectorApp();
+                    dirChartInitialized = true;
+                }
+            }
+            else if (appType === 'estate') {
+                appEstate.classList.remove('hidden');
+                navEstate.className = baseNavClass + 'bg-amber-500 text-slate-900 shadow-md';
+                globalIcon.innerText = '🏢';
+
+                if (!reChartInitialized) {
+                    initReChart();
+                    reChartInitialized = true;
+                }
+            }
+        }
+
+        // ==========================================
+        // APP 1: CREW SANDBOX LOGIC (V4.1 Updates)
+        // ==========================================
+        const crewTrainingData = [
+            {
+                roleName: '统筹 / 制片', icon: '📋', taskTitle: '一键生成《服化道提报表》',
+                tool: { name: 'Gemini', icon: '✨', color: 'text-violet-400' },
+                prompt: '请阅读上传的剧本1-20场。提取出所有的道具、特殊服装、以及日夜内外的场景统计。请用 Markdown 表格输出。',
+                simOutput: `[系统] 正在解析 120 页剧本 PDF... 耗时 3.2 秒。处理完成。\n\n| 场次 | 场景 | 日/夜 | 主要演员 | 道具 | 特殊要求 |\n|---|---|---|---|---|---|\n| 01 | 废弃工厂 | 夜 | 张三, 李四 | 带有血迹的对讲机, 强光手电 | 需要下雨，地面有积水 |\n| 02 | 审讯室 | 日 | 张三, 王警官 | 档案袋, 一杯还在冒热气的咖啡 | 桌面复古台灯 |\n\n💡 <strong>统筹提示：</strong> 已成功生成拆解。您可以直接全选复制到 Excel 中，免去枯燥的翻看工作。`
+            },
+            {
+                roleName: '场记 / 导演助理', icon: '📝', taskTitle: '连戏检查与防穿帮核对',
+                tool: { name: 'NotebookLM', icon: '📓', color: 'text-teal-400' },
+                prompt: '我要拍第 45 场戏（张三逃跑）。请根据我在资料库里上传的第 20 场的场记单，告诉我他当时身上穿的什么衣服？脸上有没有伤？',
+                simOutput: `[NotebookLM] 正在检索您的内部资料库：【场记单_0415.pdf】...\n\n核对结果如下：\n1. <strong>服装：</strong>第 20 场中，张三穿着<strong>深灰色连帽卫衣，右侧袖子有撕裂</strong>，下身蓝色牛仔裤。\n2. <strong>妆造：</strong>第 20 场被击打，<strong>左侧颧骨有擦伤，嘴角有轻微血迹</strong>。\n\n⚠️ <strong>防穿帮最高警告：</strong> 第 45 场在剧情时间线上紧接第 20 场！请立即通知化妆和服装组。`
+            },
+            {
+                roleName: '导演 / 摄影指导', icon: '🎥', taskTitle: '动态机位预演与概念构思',
+                tool: { name: 'ChatGPT', icon: '💬', color: 'text-emerald-400' },
+                prompt: '我正在构思一场男女主在雨中分手的戏。我想表达男主内心的“窒息感”。请给我 3 个极具视觉冲击力的镜头设计（机位与运动），并附带色彩提示。',
+                simOutput: `[ChatGPT] 为您构思的 3 个强烈“窒息感”视觉方案：\n\n🎥 <strong>方案一：上帝视角的囚笼</strong>\n* <strong>机位/运动：</strong> 极高机位俯拍，缓慢向上拉远。\n* <strong>画面构图：</strong> 男女主站在十字路口，四周全是密集的黑色雨伞。男女主显得越来越渺小。\n* <strong>色彩氛围：</strong> 高反差冷色调，仅女主的一把红色雨伞作为视觉刺点。\n\n希望这些画面能精准传达您想要的“窒息感”！`
+            },
+            {
+                roleName: '编剧 / 责编', icon: '✍️', taskTitle: '台词修改与“人味”增强',
+                tool: { name: 'ChatGPT', icon: '💬', color: 'text-emerald-400' },
+                prompt: '这段反派威胁男主的台词太像念课本了：“我要杀了你的全家，让你付出代价”。请帮我改写，要求：不要出现“杀”字，语气要极其平静、变态，带有高智商的压迫感。',
+                simOutput: `[ChatGPT] 正在转化为高智商的潜台词压迫感。\n\n<strong>修改后的剧本片段：</strong>\n(反派给男主的女儿削苹果，果皮连绵不断。头也不抬，仿佛聊家常。)\n反派：“你女儿刚才告诉我，她最喜欢星期天去天文馆看星星。”\n(反派把长长的苹果皮放在桌上...)\n反派：“很漂亮的习惯。不过……如果下个星期天，天文馆突然检修，或者……带她去的人永远迷路了，小姑娘该多失望啊。”\n\n💡 <strong>编剧提示：</strong> 这种改写去掉了所有暴力的字眼，用具体的“生活细节”来构建深层恐惧。`
+            }
+        ];
+
+        let crewCurrentIndex = 0;
+
+        function initCrew() {
+            const container = document.getElementById('role-buttons');
+            container.innerHTML = '';
+            crewTrainingData.forEach((data, index) => {
+                const btn = document.createElement('button');
+                btn.className = `role-btn shrink-0 min-w-[200px] text-left px-5 py-3 rounded-xl border border-slate-700 bg-slate-800/80 text-slate-300 font-bold flex items-center justify-center gap-3 hover:bg-slate-700 hover:text-white transition-all ${index === crewCurrentIndex ? 'active' : ''}`;
+                btn.onclick = () => loadCrewScenario(index);
+                btn.innerHTML = `<span class="text-2xl">${data.icon}</span> <span class="text-base whitespace-nowrap">${data.roleName}</span>`;
+                container.appendChild(btn);
+            });
+            loadCrewScenario(0);
+            renderDocsList();
+        }
+
+        function loadCrewScenario(index) {
+            crewCurrentIndex = index;
+            document.querySelectorAll('#app-crew .role-btn').forEach((btn, i) => {
+                if(i === index) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+            
+            const data = crewTrainingData[index];
+            document.getElementById('sim-role-badge').innerText = data.roleName;
+            document.getElementById('sim-task-title').innerText = data.taskTitle;
+            document.getElementById('sim-tool-display').innerHTML = `
+                <span class="text-3xl">${data.tool.icon}</span>
+                <span class="font-bold ${data.tool.color} text-2xl">${data.tool.name}</span>
+            `;
+            // Set values to textarea now
+            document.getElementById('sim-prompt-input').value = data.prompt;
+
+            document.getElementById('terminal-placeholder').classList.remove('hidden');
+            document.getElementById('terminal-output').classList.add('hidden');
+            document.getElementById('terminal-output').classList.remove('fade-in');
+            document.getElementById('export-btn').classList.add('hidden');
+            
+            const runBtn = document.getElementById('run-btn');
+            runBtn.innerHTML = `<span>▶</span> 运行模拟器`;
+            runBtn.className = 'bg-emerald-500 hover:bg-emerald-400 text-slate-900 font-extrabold py-2.5 px-8 rounded-lg shadow-[0_0_15px_rgba(16,185,129,0.4)] transition-all flex items-center gap-2 transform hover:scale-105';
+            runBtn.disabled = false;
+        }
+
+        function runSimulation() {
+            const data = crewTrainingData[crewCurrentIndex];
+            const outputEl = document.getElementById('terminal-output');
+            const customPrompt = document.getElementById('sim-prompt-input').value;
+            
+            document.getElementById('terminal-placeholder').classList.add('hidden');
+            
+            // In a real app we'd send customPrompt to an API. Here we just show the output.
+            // But we acknowledge the user input visually.
+            let simulatedResponse = `[系统] 收到指令: "${customPrompt.substring(0, 20)}..."\n\n` + data.simOutput;
+
+            outputEl.innerHTML = simulatedResponse.replace(/\n/g, '<br>');
+            outputEl.classList.remove('hidden');
+            outputEl.classList.remove('fade-in');
+            void outputEl.offsetWidth; 
+            outputEl.classList.add('fade-in');
+
+            // Show export button
+            document.getElementById('export-btn').classList.remove('hidden');
+
+            const runBtn = document.getElementById('run-btn');
+            runBtn.innerHTML = `<span>✅</span> 执行完毕`;
+            runBtn.className = 'bg-slate-700 hover:bg-slate-600 text-slate-300 font-extrabold py-2.5 px-8 rounded-lg shadow-md transition-all flex items-center gap-2 cursor-not-allowed';
+            // Keeping it enabled allows them to run again if they modify the text
+            runBtn.disabled = false; 
+            runBtn.innerHTML = `<span>🔄</span> 重新运行`;
+        }
+
+        function exportResult() {
+            const outputText = document.getElementById('terminal-output').innerText;
+            const blob = new Blob([outputText], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `AI_模拟输出_${new Date().getTime()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            // Visual feedback
+            const exportBtn = document.getElementById('export-btn');
+            const origHTML = exportBtn.innerHTML;
+            exportBtn.innerHTML = `<span>✅</span> 导出成功`;
+            exportBtn.classList.add('text-emerald-400');
+            setTimeout(() => {
+                exportBtn.innerHTML = origHTML;
+                exportBtn.classList.remove('text-emerald-400');
+            }, 2000);
+        }
+
+        function switchResourceTab(tabId) {
+            const tabs = ['tab-cheat-sheet', 'tab-docs'];
+            const buttons = ['btn-cheat-sheet', 'btn-docs'];
+            tabs.forEach(id => document.getElementById(id).classList.add('hidden'));
+            buttons.forEach(id => {
+                const btn = document.getElementById(id);
+                btn.classList.remove('bg-slate-700', 'text-white', 'border-slate-500');
+                btn.classList.add('text-slate-400', 'border-transparent');
+            });
+            document.getElementById(tabs[tabId]).classList.remove('hidden');
+            const activeBtn = document.getElementById(buttons[tabId]);
+            activeBtn.classList.remove('text-slate-400', 'border-transparent');
+            activeBtn.classList.add('bg-slate-700', 'text-white', 'border-slate-500');
+        }
+
+        // ==========================================
+        // APP 2: DIRECTOR WORKBENCH LOGIC
+        // ==========================================
+        const dirChartData = {
+            labels: ['长文本记忆与逻辑', '情感共鸣与语感', '事实核查准确度', '发散性创意', '资料归纳提炼'],
+            datasets: [
+                {
+                    label: 'NotebookLM', data: [80, 20, 100, 30, 95],
+                    backgroundColor: 'rgba(20, 184, 166, 0.2)', borderColor: 'rgba(20, 184, 166, 1)', pointBackgroundColor: 'rgba(20, 184, 166, 1)', borderWidth: 2
+                },
+                {
+                    label: 'Gemini', data: [100, 60, 70, 80, 85],
+                    backgroundColor: 'rgba(139, 92, 246, 0.2)', borderColor: 'rgba(139, 92, 246, 1)', pointBackgroundColor: 'rgba(139, 92, 246, 1)', borderWidth: 2
+                },
+                {
+                    label: 'ChatGPT', data: [60, 100, 50, 95, 70],
+                    backgroundColor: 'rgba(16, 185, 129, 0.2)', borderColor: 'rgba(16, 185, 129, 1)', pointBackgroundColor: 'rgba(16, 185, 129, 1)', borderWidth: 2
+                }
+            ]
+        };
+
+        const dirChartConfig = {
+            type: 'radar',
+            data: dirChartData,
+            options: {
+                responsive: true, maintainAspectRatio: false,
+                scales: {
+                    r: { angleLines: { color: 'rgba(0, 0, 0, 0.05)' }, grid: { color: 'rgba(0, 0, 0, 0.05)' },
+                         pointLabels: { font: { family: 'sans-serif', size: 11 }, color: '#57534e' }, ticks: { display: false, min: 0, max: 100 }
+                    }
+                },
+                plugins: {
+                    legend: { position: 'bottom', labels: { usePointStyle: true, padding: 15, font: { size: 12 } } },
+                    tooltip: { backgroundColor: 'rgba(28, 25, 23, 0.9)', padding: 10, cornerRadius: 8 }
+                }
+            }
+        };
+
+        let dirRadarChart;
+
+        const dirWorkflows = {
+            doc: [
+                { title: "1. 构建私人纪实智库", tool: "NotebookLM", toolColor: "text-teal-600 bg-teal-50 border-teal-200", action: "将几十份历史文献 PDF、网页长文、专家采访逐字稿打包上传到项目。", tips: "提取金句；使用“Audio Overview”生成播客，寻找趣味点和戏剧冲突。", prompt: "请提取出受访专家关于‘XXX历史事件’最具有情感冲击力的 5 句话，并标注来源出处。" },
+                { title: "2. 宏观叙事结构搭建", tool: "Gemini", toolColor: "text-violet-600 bg-violet-50 border-violet-200", action: "把整理出的核心矛盾点、时间线复制给 Gemini。利用其长逻辑搭建分集大纲。", tips: "强调经典结构和钩子设置。", prompt: "策划一部 3 集大纲。采用‘起-承-转-合’结构，每集结尾必须有悬念（Hook），并写出主题句。" },
+                { title: "3. 解说词撰写与精修", tool: "ChatGPT", toolColor: "text-emerald-600 bg-emerald-50 border-emerald-200", action: "拿到精良大纲后，转战 ChatGPT 进行逐字撰写。利用其最贴近人类的语感。", tips: "要求克制、短句、白描，采用分栏表格格式。", prompt: "根据第 1 集第 1 场，撰写开场 2 分钟解说词。风格模仿BBC，深沉、克制。用表格输出：左栏‘预想画面’，右栏‘解说词’。" }
+            ],
+            drama: [
+                { title: "1. 建立爆款模型库", tool: "NotebookLM", toolColor: "text-teal-600 bg-teal-50 border-teal-200", action: "搜集市场上最新爆火的 10 部同类短剧剧本或拉片笔记，上传分析。", tips: "把规律变成创作圣经。", prompt: "请总结这 10 部剧中，最常使用的 3 种‘打脸反派’的套路是什么？男女主产生误会的最常见原因是什么？" },
+                { title: "2. 百集钩子与卡点设计", tool: "Gemini", toolColor: "text-violet-600 bg-violet-50 border-violet-200", action: "Gemini 的超大上下文完美记住长达 80-100 集的所有设定和伏笔。", tips: "设定严格的集数节奏铁律。", prompt: "写一部 80 集战神短剧。铺设前 20 集一句话大纲。铁律：每 3 集小高潮，每 10 集大高潮，每集最后一句台词必须是悬念。" },
+                { title: "3. 剧本量产与情绪台词", tool: "ChatGPT", toolColor: "text-emerald-600 bg-emerald-50 border-emerald-200", action: "将 5 集大纲扩写成具体台词剧本。短剧台词需要“扎心、直接、夸张”。", tips: "不要过场戏，直接进高潮。", prompt: "将 1-5 集大纲扩写。要求：台词极简不绕弯；情绪拉满，加夸张动作提示；节奏极快。" },
+                { title: "4. 模拟读本会 (节奏测试)", tool: "ChatGPT 语音", toolColor: "text-emerald-600 bg-emerald-50 border-emerald-200", action: "使用 ChatGPT 手机端高级语音功能，分饰角色对台词。", tips: "用耳朵去感受台词是否顺口，情绪节奏是否拖沓。", prompt: "(直接语音对话) 现在我们过一遍第 3 集剧本。你演反派和女主，我演男主，用夸张戏剧性的语气对台词。" }
+            ]
+        };
+
+        function initDirectorApp() {
+            const ctx = document.getElementById('dirCapabilityChart').getContext('2d');
+            dirRadarChart = new Chart(ctx, dirChartConfig);
+            dirRenderWorkflow('doc');
+        }
+
+        function dirHighlightChart(index) {
+            if (!dirRadarChart) return;
+            dirRadarChart.data.datasets.forEach((dataset, i) => {
+                if (i === index) {
+                    dataset.borderWidth = 4;
+                    dataset.backgroundColor = dataset.backgroundColor.replace('0.2', '0.5');
+                } else {
+                    dataset.borderWidth = 1;
+                    dataset.backgroundColor = dataset.backgroundColor.replace('0.5', '0.1').replace('0.2', '0.1');
+                    dataset.borderColor = dataset.borderColor.replace('1)', '0.3)');
+                }
+            });
+            dirRadarChart.update();
+            setTimeout(() => {
+                dirRadarChart.data.datasets = JSON.parse(JSON.stringify(dirChartData.datasets));
+                dirRadarChart.update();
+            }, 2000);
+        }
+
+        function dirSwitchTab(type) {
+            const docBtn = document.getElementById('dir-tab-doc');
+            const dramaBtn = document.getElementById('dir-tab-drama');
+            const activeClass = "flex-1 py-2.5 px-4 rounded-lg text-sm font-bold transition-all duration-200 bg-white shadow-sm text-stone-800 border border-stone-200";
+            const inactiveClass = "flex-1 py-2.5 px-4 rounded-lg text-sm font-bold transition-all duration-200 text-stone-500 hover:text-stone-700";
+            
+            if(type === 'doc') {
+                docBtn.className = activeClass;
+                dramaBtn.className = inactiveClass;
+            } else {
+                dramaBtn.className = activeClass;
+                docBtn.className = inactiveClass;
+            }
+            dirRenderWorkflow(type);
+        }
+
+        function dirRenderWorkflow(type) {
+            const container = document.getElementById('dir-workflow-container');
+            const data = dirWorkflows[type];
+            let html = '';
+            data.forEach((step, index) => {
+                const isFirst = index === 0;
+                html += `
+                    <div class="relative pl-6 pb-2 group">
+                        <div class="absolute w-3 h-3 bg-stone-300 rounded-full -left-[7px] top-1.5 border-2 border-white group-hover:bg-stone-500 transition-colors"></div>
+                        <div class="bg-stone-50 border border-stone-200 rounded-xl overflow-hidden cursor-pointer hover:border-stone-300 transition-all shadow-sm" onclick="dirToggleStep(${index})">
+                            <div class="p-4 flex items-center justify-between bg-white">
+                                <div class="flex items-center gap-3">
+                                    <h4 class="font-bold text-stone-800 text-base">${step.title}</h4>
+                                    <span class="text-xs px-2 py-1 rounded-full border ${step.toolColor}">${step.tool}</span>
+                                </div>
+                                <span class="text-stone-400 transform transition-transform duration-300 ${isFirst ? 'rotate-180' : ''}" id="dir-icon-${index}">▼</span>
+                            </div>
+                            <div id="dir-content-${index}" class="dir-step-content bg-stone-50 border-t border-stone-100 ${isFirst ? 'expanded' : ''}">
+                                <div class="p-5 space-y-4">
+                                    <div><p class="text-sm text-stone-700 mb-1 font-semibold">⚙️ 核心操作：</p><p class="text-sm text-stone-600 ml-5">${step.action}</p></div>
+                                    <div><p class="text-sm text-stone-700 mb-1 font-semibold">💡 应用技巧：</p><p class="text-sm text-stone-600 ml-5">${step.tips}</p></div>
+                                    <div class="bg-stone-800 rounded-lg p-4 relative">
+                                        <span class="absolute top-0 right-0 bg-stone-600 text-stone-200 text-[10px] px-2 py-1 rounded-bl-lg rounded-tr-lg">Prompt 示例</span>
+                                        <p class="text-sm text-stone-200 mt-2 font-mono leading-relaxed">"${step.prompt}"</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            container.innerHTML = html;
+        }
+
+        function dirToggleStep(index) {
+            const content = document.getElementById(`dir-content-${index}`);
+            const icon = document.getElementById(`dir-icon-${index}`);
+            if (content.classList.contains('expanded')) {
+                content.classList.remove('expanded');
+                icon.style.transform = 'rotate(0deg)';
+            } else {
+                content.classList.add('expanded');
+                icon.style.transform = 'rotate(180deg)';
+            }
+        }
+
+        // ==========================================
+        // APP 3: REAL ESTATE WORKFLOW LOGIC
+        // ==========================================
+        const reSopData = [
+            {
+                title: "资料与选题大脑", tool: "Kimi (或 NotebookLM)",
+                objective: "建立“选题矩阵”。吃透楼盘资料、竞品推文、当地楼市新政，规划高频推送方向。",
+                action: "将项目所有的 PDF 楼书、户型图数据、最近当地的新闻链接喂给 AI。",
+                prompt: "你是我司房地产项目的高级策划。请阅读我上传的项目楼书。我们本月需要每周推送 3 篇微信公众号文章。请帮我规划本周的 3 个选题，分别从‘地段交通’、‘主推户型生活场景’、‘周末暖场活动’三个角度切入。要求每个选题提供 3 个极具吸引力的标题备选。"
+            },
+            {
+                title: "神仙文案写手", tool: "Claude 3.5 Sonnet",
+                objective: "将冰冷的参数转化为极具情绪价值的软文。适应滑动阅读，短句多、分段多。",
+                action: "让 AI 按照“黄金结构”（痛点 Hook -> 爽点反转 -> 场景描绘 -> 逼单 CTA）模块化输出。",
+                prompt: "你是一位房产自媒体主笔。请为我们的‘建面约120㎡改善四房’写一篇微信软文。\n结构要求：\n1. 痛点：描述二胎家庭抢卫生间的痛点。\n2. 爽点：引出120㎡户型，包装‘社交大横厅’。\n3. 场景：生动描绘女主人烘焙、男主看书的场景。\n排版要求：每段不超过3行字；重要金句用【】括起来。"
+            },
+            {
+                title: "视觉与封面工厂", tool: "Midjourney + 稿定设计",
+                objective: "生成决定楼盘调性的高质量“生活方式氛围图”，并完成大字报微信首图/次图排版。",
+                action: "MJ 产出极具向往感的原图；将图导入“稿定设计”微信模板，打上情绪标题。",
+                prompt: "[Midjourney 原图指令]: A cozy and luxurious living room with a large balcony, warm sunlight, modern minimalist style, photorealistic, 8k --ar 16:9 \n\n[稿定设计加字示例]: “在 120㎡ 的阳光里，把日子过成诗”"
+            },
+            {
+                title: "工业化排版发布", tool: "秀米 (XiuMi)",
+                objective: "微信排版的终点。将生成的文字和图片进行快速“模块化拼装”，实现工业化量产。",
+                action: "建立品牌专属模板池。把文案从 Claude 复制进秀米一键替换，拖入图片，同步发布。",
+                prompt: "此阶段无 AI Prompt。核心口诀：\n1. 调出项目专属组件库。\n2. 粘贴 Markdown 格式文案，自动匹配 H2/H3。\n3. 将【】内的金句提取放入金句引用框。\n4. 插入设计好的图片，一键同步至公众平台。"
+            }
+        ];
+
+        function changeReStep(index) {
+            document.querySelectorAll('.re-step-btn').forEach((btn, i) => {
+                if(i === index) btn.classList.add('active');
+                else btn.classList.remove('active');
+            });
+
+            const contentArea = document.getElementById('re-step-content-area');
+            const data = reSopData[index];
+            contentArea.classList.remove('fade-in');
+            void contentArea.offsetWidth;
+
+            contentArea.innerHTML = `
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4 border-b border-stone-100 pb-6">
+                    <div>
+                        <span class="text-sm font-bold text-amber-600 uppercase tracking-wider">Step ${index + 1}</span>
+                        <h4 class="text-2xl font-bold text-slate-800 mt-1">${data.title}</h4>
+                    </div>
+                    <div class="bg-slate-100 px-4 py-2 rounded-lg border border-slate-200">
+                        <span class="text-xs text-slate-500 block mb-1">主导工具 / Tool</span>
+                        <span class="font-bold text-slate-700 flex items-center gap-2">🛠️ ${data.tool}</span>
+                    </div>
+                </div>
+                <div class="space-y-6">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-stone-50 p-5 rounded-xl border border-stone-100">
+                            <h5 class="font-bold text-stone-700 mb-2 flex items-center gap-2">🎯 核心目标</h5>
+                            <p class="text-stone-600 text-sm leading-relaxed">${data.objective}</p>
+                        </div>
+                        <div class="bg-stone-50 p-5 rounded-xl border border-stone-100">
+                            <h5 class="font-bold text-stone-700 mb-2 flex items-center gap-2">🕹️ 具体操作</h5>
+                            <p class="text-stone-600 text-sm leading-relaxed">${data.action}</p>
+                        </div>
+                    </div>
+                    <div class="bg-slate-800 rounded-xl p-6 relative overflow-hidden group">
+                        <div class="absolute right-0 top-0 bg-amber-500 text-white text-xs font-bold px-3 py-1 rounded-bl-lg">PROMPT 模板</div>
+                        <h5 class="font-bold text-amber-400 mb-3 flex items-center gap-2">💬 提示词/工作指令</h5>
+                        <div class="bg-slate-900 p-4 rounded-lg font-mono text-sm text-stone-300 leading-relaxed whitespace-pre-wrap border border-slate-700">${data.prompt}</div>
+                        <button onclick="copyRePrompt(this)" class="mt-3 text-xs text-slate-400 hover:text-white transition-colors flex items-center gap-1">📋 点击复制提示词</button>
+                    </div>
+                </div>
+            `;
+            contentArea.classList.add('fade-in');
+        }
+
+        function copyRePrompt(btnElement) {
+            const promptText = btnElement.previousElementSibling.innerText;
+            const textArea = document.createElement("textarea");
+            textArea.value = promptText;
+            document.body.appendChild(textArea);
+            textArea.select();
+            try {
+                document.execCommand('copy');
+                const originalText = btnElement.innerHTML;
+                btnElement.innerHTML = "✅ 已复制到剪贴板";
+                btnElement.classList.add("text-emerald-400");
+                setTimeout(() => {
+                    btnElement.innerHTML = originalText;
+                    btnElement.classList.remove("text-emerald-400");
+                }, 2000);
+            } catch (err) {}
+            document.body.removeChild(textArea);
+        }
+
+        function initReChart() {
+            const ctx = document.getElementById('reEfficiencyChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['1. 资料与选题', '2. 文案创作', '3. 配图与视觉', '4. 排版发布'],
+                    datasets: [
+                        { label: '传统纯手工模式 (分钟)', data: [120, 180, 240, 120], backgroundColor: '#cbd5e1', borderRadius: 4, barPercentage: 0.6, categoryPercentage: 0.8 },
+                        { label: 'AI 工业化工作流 (分钟)', data: [10, 20, 30, 20], backgroundColor: '#f59e0b', borderRadius: 4, barPercentage: 0.6, categoryPercentage: 0.8 }
+                    ]
+                },
+                options: {
+                    responsive: true, maintainAspectRatio: false, indexAxis: 'y',
+                    plugins: {
+                        legend: { position: 'top', labels: { color: '#475569' } },
+                        tooltip: { backgroundColor: 'rgba(30, 41, 59, 0.9)', padding: 12, cornerRadius: 8, callbacks: { label: (c) => (c.dataset.label || '') + ': ' + c.parsed.x + ' 分钟' } }
+                    },
+                    scales: {
+                        x: { grid: { color: '#f1f5f9' }, title: { display: true, text: '耗时 (分钟)', color: '#94a3b8' } },
+                        y: { grid: { display: false }, ticks: { font: { weight: 'bold' }, color: '#334155' } }
+                    }
+                }
+            });
+        }
+
+        // ==========================================
+        // INIT ALL
+        // ==========================================
+        window.onload = () => {
+            initCrew(); // Init App 1 (Default visible)
+            changeReStep(0); // Prepare HTML for App 3
+            // App 2 and App 3 Charts are lazy-loaded when tab is clicked
+        };
+
+        // ==========================================
+        // DOCUMENT LIBRARY LOGIC (App 1)
+        // ==========================================
+        const docsDatabase = [
+            {
+                id: 'doc-1',
+                icon: '🎬',
+                title: 'AI导演编剧工作流指南：纪录片与短剧.docx',
+                date: '2023-11-20',
+                size: '24 KB',
+                content: `<div class="space-y-6">
+                    <h1 class="text-3xl font-extrabold text-stone-900 border-b-2 border-stone-200 pb-4">AI 导演编剧实战工作流：极简三件套版</h1>
+                    <p class="text-stone-600 text-lg">不需要学习繁杂的软件，仅靠 <strong>NotebookLM、Gemini 和 ChatGPT</strong>，你就可以搭建起一套极其强大、甚至超越许多传统编剧团队的“核心案头工作流”。</p>
+                    
+                    <div class="bg-slate-50 p-6 rounded-xl border border-slate-200">
+                        <h2 class="text-xl font-bold text-slate-800 mb-4">🛠️ 工具核心定位：</h2>
+                        <ul class="space-y-3">
+                            <li class="flex items-start gap-2"><span class="text-teal-600 mt-1">📓</span> <div><strong>NotebookLM (Google)：</strong>坚如磐石的资料库，只基于你喂的素材回答，绝不“幻觉”，适合做事实核查与碎片整理。</div></li>
+                            <li class="flex items-start gap-2"><span class="text-violet-600 mt-1">✨</span> <div><strong>Gemini (Google)：</strong>大局观极强的结构大师，超长上下文让它能一眼看穿几万字的剧情走向，适合搭骨架。</div></li>
+                            <li class="flex items-start gap-2"><span class="text-emerald-600 mt-1">💬</span> <div><strong>ChatGPT (OpenAI)：</strong>情感充沛的台词写手，语感和“人味”最强，适合填血肉、写对话。</div></li>
+                        </ul>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-stone-800 mt-8 text-teal-800">🎥 场景一：纪录片 —— “深度纪实与人文叙事”极简流</h2>
+                    <p class="text-stone-600">纪录片成败在于资料的扎实度。我们将繁重的案头工作交给 NotebookLM 和 Gemini，把情感旁白交给 ChatGPT。</p>
+                    
+                    <div class="space-y-4 pl-4 border-l-4 border-teal-200">
+                        <div>
+                            <h3 class="font-bold text-lg">1. 构建私人纪实智库 (Research & Fact-Checking)</h3>
+                            <p><strong>主力工具：</strong> NotebookLM</p>
+                            <p><strong>操作：</strong> 将前期收集的几十份历史文献 PDF、网页长文、专家采访录音的逐字稿，全部打包上传到一个 NotebookLM 项目中。</p>
+                            <p><strong>应用技巧：</strong> 提取金句（提问“请提取出受访专家关于‘XXX事件’最具有情感冲击力的5句话”）；生成播客（使用 Audio Overview）。</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">2. 宏观叙事结构搭建 (Structuring & Outlining)</h3>
+                            <p><strong>主力工具：</strong> Gemini</p>
+                            <p><strong>操作：</strong> 把核心矛盾点、时间线笔记喂给 Gemini，搭建分集大纲。</p>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg">3. 解说词（VO）撰写与精修</h3>
+                            <p><strong>主力工具：</strong> ChatGPT</p>
+                            <p><strong>操作：</strong> 拿到精良大纲后进行逐字撰写，要求语调深沉、克制、带有宿命感。</p>
+                        </div>
+                    </div>
+
+                    <h2 class="text-2xl font-bold text-stone-800 mt-8 text-amber-800">📱 场景二：爆款短剧 —— “情绪泵机与节奏控制”极简流</h2>
+                    <p class="text-stone-600">短剧的核心是极高的情绪密度和精准的卡点。利用 NotebookLM 锁住“爆款公式”，Gemini 控场“百集大纲”，ChatGPT 量产“爽文台词”。</p>
+
+                    <div class="space-y-4 pl-4 border-l-4 border-amber-200">
+                        <div><h3 class="font-bold text-lg">1. 建立爆款模型库</h3><p>搜集市场上最近爆火的 10 部同类短剧剧本，上传到 NotebookLM 总结套路规律。</p></div>
+                        <div><h3 class="font-bold text-lg">2. 百集钩子与卡点设计</h3><p>用 Gemini 铺设 80-100 集的大纲，设定铁律：每3集小高潮，每10集大高潮，每集必留悬念。</p></div>
+                        <div><h3 class="font-bold text-lg">3. 剧本量产与情绪爆破台词</h3><p>用 ChatGPT 扩写，台词极简，动作提示夸张（如：[红着眼眶怒吼]）。</p></div>
+                        <div><h3 class="font-bold text-lg">4. 模拟读本会</h3><p>打开 ChatGPT 手机端高级语音功能，扮演角色模拟对台词。</p></div>
+                    </div>
+                </div>`
+            },
+            {
+                id: 'doc-2',
+                icon: '🏢',
+                title: '房地产微信公众号高频推文工作流.docx',
+                date: '2023-11-25',
+                size: '18 KB',
+                content: `<div class="space-y-6">
+                    <h1 class="text-3xl font-extrabold text-stone-900 border-b-2 border-stone-200 pb-4">🏡 房地产微信公众号高频推文 AI 工作流</h1>
+                    <p class="text-stone-600 text-lg">房地产微信号高频推送，最忌讳的是“每天都在发干巴巴的广告”。我们要利用 AI 将枯燥的项目卖点，转化为带有情绪温度的“生活方式提案”。</p>
+                    
+                    <h2 class="text-xl font-bold text-slate-800 mt-6">🛠️ 核心工具组合与生态定位</h2>
+                    <p class="text-stone-600">这套流程不追求工具多，而追求 <strong>工具间的数据流转极度顺畅</strong>。</p>
+                    <ul class="list-disc pl-6 space-y-2 text-stone-700">
+                        <li><strong>资料与选题大脑：Kimi (或 NotebookLM)</strong> —— 负责吃透你们的楼盘资料、竞品推文、当地楼市新政。</li>
+                        <li><strong>神仙文案写手：Claude 3.5 Sonnet (或 ChatGPT)</strong> —— 负责将冰冷的参数转化为极具煽动性和情绪价值的微信软文。</li>
+                        <li><strong>视觉与封面工厂：Midjourney + 稿定设计</strong> —— MJ 负责生成高质量的“生活方式氛围图”；稿定设计加字。</li>
+                        <li><strong>微信排版终点：秀米 (XiuMi)</strong> —— 微信排版的绝对王者，完成“模块化拼装”。</li>
+                    </ul>
+
+                    <h2 class="text-2xl font-bold text-stone-800 mt-8">🚀 标准操作流程 (SOP)</h2>
+                    
+                    <div class="space-y-6">
+                        <div class="bg-white p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h3 class="font-bold text-lg text-amber-700">第一阶段：建库与选题策划 (Kimi)</h3>
+                            <p class="mt-2 text-sm">你需要建立一个“选题矩阵”。将项目所有的 PDF 楼书、最近当地的新闻链接喂给 Kimi。让其从‘地段交通’、‘主推户型生活场景’等角度切入规划选题。</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h3 class="font-bold text-lg text-amber-700">第二阶段：模块化文案创作 (Claude / ChatGPT)</h3>
+                            <p class="mt-2 text-sm">文案必须 <strong>短句多、分段多、情绪递进</strong>。按照“黄金结构”输出：<br>1. 痛点引入 (Hook)<br>2. 爽点反转<br>3. 生活场景描绘<br>4. 逼单促推 (CTA)。</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h3 class="font-bold text-lg text-amber-700">第三阶段：配图与视觉加工 (Midjourney + 稿定设计)</h3>
+                            <p class="mt-2 text-sm">图的质量决定了楼盘的调性。用 MJ 生成极具向往感的图（如 <code>--ar 16:9</code>），用稿定设计打上大标题（如：“在120㎡的阳光里，把日子过成诗”）。</p>
+                        </div>
+                        <div class="bg-white p-5 rounded-lg border border-stone-200 shadow-sm">
+                            <h3 class="font-bold text-lg text-amber-700">第四阶段：秀米工业化排版与发布 (XiuMi)</h3>
+                            <p class="mt-2 text-sm">建立品牌专属模板池（标题栏、金句框等）。把文案复制进秀米，一键替换文本，一键同步。</p>
+                        </div>
+                    </div>
+
+                    <h2 class="text-xl font-bold text-slate-800 mt-8 bg-slate-100 p-3 rounded">💡 核心秘诀：软件配合的“粘合剂”</h2>
+                    <ul class="list-disc pl-6 space-y-2 text-stone-700 mt-4">
+                        <li><strong>文本格式的粘合：</strong> 要求 AI 使用 Markdown 格式，用 H2 表示大标题，H3 表示小标题。</li>
+                        <li><strong>尺寸的粘合：</strong> 微信首图死规矩是 900 x 383 像素（宽高比约 2.35:1）。</li>
+                        <li><strong>色彩的粘合：</strong> 设定好项目的“VI 品牌色”，保持视觉心智的统一。</li>
+                    </ul>
+                </div>`
+            }
+        ];
+
+        function renderDocsList() {
+            const container = document.getElementById('docs-list-container');
+            container.innerHTML = '';
+            
+            if (docsDatabase.length === 0) {
+                container.innerHTML = '<p class="text-slate-500 text-sm text-center mt-4">暂无文档</p>';
+                return;
+            }
+
+            docsDatabase.forEach(doc => {
+                const docCard = document.createElement('div');
+                docCard.className = 'bg-slate-800/60 hover:bg-slate-700 border border-slate-600 rounded-lg p-3 cursor-pointer transition-colors flex items-center gap-3 shadow-sm group';
+                docCard.onclick = () => openDocReader(doc.id);
+                docCard.innerHTML = `
+                    <div class="text-3xl shrink-0 group-hover:scale-110 transition-transform">${doc.icon}</div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="text-slate-200 font-bold text-sm truncate">${doc.title}</h4>
+                        <div class="flex items-center gap-3 mt-1 text-xs text-slate-400">
+                            <span>📅 ${doc.date}</span>
+                            <span>💾 ${doc.size}</span>
+                        </div>
+                    </div>
+                    <div class="shrink-0 text-slate-500 group-hover:text-blue-400">
+                        ▶
+                    </div>
+                `;
+                container.appendChild(docCard);
+            });
+        }
+
+        function openDocReader(id) {
+            const doc = docsDatabase.find(d => d.id === id);
+            if (!doc) return;
+            
+            document.getElementById('doc-reader-icon').innerText = doc.icon;
+            document.getElementById('doc-reader-title').innerText = doc.title;
+            document.getElementById('doc-reader-content').innerHTML = doc.content;
+            
+            document.getElementById('doc-reader-modal').classList.remove('hidden');
+        }
+
+        function closeDocReader() {
+            document.getElementById('doc-reader-modal').classList.add('hidden');
+        }
+
+        function triggerUpload() {
+            const title = prompt("请输入要归档的文章/文档标题：\n(例如：摄影组打光标准手册.pdf)", "新规范文档.pdf");
+            if (title) {
+                const newDoc = {
+                    id: 'doc-' + Date.now(),
+                    icon: title.endsWith('.pdf') ? '📕' : (title.endsWith('.docx') ? '📘' : '📄'),
+                    title: title,
+                    date: new Date().toISOString().split('T')[0],
+                    size: Math.floor(Math.random() * 500 + 10) + ' KB',
+                    content: `<div class="p-8 bg-blue-50 border border-blue-200 rounded-xl">
+                        <h1 class="text-2xl font-bold text-blue-900 mb-4">${title}</h1>
+                        <p class="text-blue-800">这是您刚刚模拟上传的文档正文区域。</p>
+                        <div class="mt-6 p-4 bg-white rounded-lg shadow-sm text-sm text-stone-600 border border-stone-100">
+                            <p class="font-bold mb-2">💡 架构原理解析：</p>
+                            <p>在当前的沙盘中，该文件已临时保存在您的<strong>浏览器内存</strong>中。</p>
+                            <p class="mt-2">如果这是真实的企业级制片软件，点击“上传”后：</p>
+                            <ol class="list-decimal pl-5 mt-2 space-y-1">
+                                <li>文件原件会被上传加密至 <strong>阿里云 OSS</strong> 或 <strong>AWS S3</strong> 存储桶。</li>
+                                <li>后台服务会自动触发 <strong>OCR 和文本解析</strong>。</li>
+                                <li>解析后的文本被切片存入 <strong>向量数据库 (Vector DB)</strong>。</li>
+                                <li>最终，像 NotebookLM 这样的 AI 代理就能随时检索这份新文件，进行防穿帮核对和剧组知识问答。</li>
+                            </ol>
+                        </div>
+                    </div>`
+                };
+                docsDatabase.unshift(newDoc);
+                renderDocsList();
+                
+                alert('上传成功！\n\n文件已加入左侧列表，您可以点击查看。\n（注意：由于当前为前端演示原型，刷新页面后新上传的文件会消失，实际开发会对接云端数据库。）');
+            }
+        }
+    </script>
+</body>
+</html>
