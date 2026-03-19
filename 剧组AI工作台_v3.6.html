@@ -35,7 +35,7 @@ body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--tx);
 .ct{flex:1;overflow-y:auto;padding:20px 22px}
 .sec{display:none}.sec.on{display:block}
 /* BUTTONS */
-.btn{height:var(--tsm);padding:0 15px;border-radius:9px;font-size:14px;cursor:pointer;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn{height:var(--tsm);padding:0 15px;border-radius:9px;font-size:14px;cursor:pointer;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap;touch-action:manipulation;-webkit-tap-highlight-color:transparent}
 .btn:hover{background:var(--bg4);color:var(--tx);border-color:var(--bd3)}
 .btn-gd{background:linear-gradient(135deg,#c9a96e,#9a7240);color:#1a1200;border-color:transparent;font-weight:600}
 .btn-gd:hover{background:linear-gradient(135deg,#d9b97e,#aa8250);color:#1a1200}
@@ -63,7 +63,7 @@ select.fi{cursor:pointer}
 .tab-btn.on{border-bottom-color:var(--gd);color:var(--gd2);font-weight:600}
 .tab-pane{display:none}.tab-pane.on{display:block}
 /* MODAL */
-.ov{position:fixed;inset:0;background:rgba(0,0,0,.76);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.76);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);touch-action:manipulation}
 .ov.on{display:flex}
 .mo{background:var(--bg2);border:1px solid var(--bd2);border-radius:20px;padding:26px;width:94%;max-width:600px;max-height:90vh;overflow-y:auto}
 .mo-title{font-size:18px;font-weight:700;margin-bottom:4px}
@@ -234,7 +234,7 @@ select.fi{cursor:pointer}
   .g3{grid-template-columns:1fr 1fr}
   .g2r{grid-template-columns:1fr}
   .kanban{grid-template-columns:1fr}
-  .mo{width:100%;max-width:100%;border-radius:18px 18px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:92vh;padding:20px 16px;margin:0}
+  .mo{width:100%;max-width:100%;border-radius:18px 18px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:85vh;padding:20px 16px 30px;margin:0;overflow-y:auto}
   .ov{align-items:flex-end}
   .btn{height:40px}
   .btn-sm{height:36px;font-size:12px}
@@ -544,7 +544,7 @@ select.fi{cursor:pointer}
     <label class="fl">团队成员（逗号分隔）</label><input class="fi" id="mproj-team" placeholder="例：张导演,李摄影,王编剧">
     <div class="g2"><div><label class="fl">拍摄地点</label><input class="fi" id="mproj-loc" placeholder="例：深圳南山区"></div><div><label class="fl">目标受众</label><input class="fi" id="mproj-aud" placeholder="例：30-40岁购房者"></div></div>
     <label class="fl">项目备注/合同要点</label><textarea class="fi fta" id="mproj-note" placeholder="合同要点、客户要求、注意事项..."></textarea>
-    <div class="mo-foot"><button class="btn btn-rd btn-sm" id="mproj-del" onclick="delProj()" style="display:none;margin-right:auto">删除项目</button><button class="btn" onclick="closeM('m-proj')">取消</button><button class="btn btn-gd" onclick="saveProj()">保存</button></div>
+    <div class="mo-foot"><button class="btn btn-rd btn-sm" id="mproj-del" onclick="delProj()" style="display:none;margin-right:auto">删除项目</button><button class="btn" onclick="closeM('m-proj')">取消</button><button class="btn btn-gd" onclick="saveProj()" ontouchend="event.preventDefault();saveProj()">保存</button></div>
   </div>
 </div>
 
@@ -737,7 +737,14 @@ function go(n,el){document.querySelectorAll('.sec').forEach(s=>s.classList.remov
 function stab(b,id){var p=b.closest('.tabs');p.querySelectorAll('.tab-btn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');p.parentElement.querySelectorAll('.tab-pane').forEach(function(x){x.classList.remove('on');});document.getElementById(id).classList.add('on');}
 function openM(id){document.getElementById(id).classList.add('on')}
 function closeM(id){document.getElementById(id).classList.remove('on')}
-document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on')}));
+document.querySelectorAll('.ov').forEach(function(o){
+  o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('on');});
+  o.addEventListener('touchend',function(e){if(e.target===o)o.classList.remove('on');});
+});
+document.querySelectorAll('.mo').forEach(function(m){
+  m.addEventListener('click',function(e){e.stopPropagation();});
+  m.addEventListener('touchend',function(e){e.stopPropagation();});
+});
 function toast(msg,type){var el=document.getElementById('toast');el.textContent=msg;el.style.borderColor=type==='red'?'var(--rdbd)':'var(--grbd)';el.style.color=type==='red'?'var(--rd)':'var(--gr)';el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),3000)}
 function cp(btn,text){navigator.clipboard.writeText(text).catch(()=>{var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta)});var o=btn.textContent;btn.textContent='已复制 ✓';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok')},2000)}
 function cpEl(bid,sid){cp(document.getElementById(bid),document.getElementById(sid).textContent)}
@@ -747,9 +754,45 @@ function inj(t){var p=gP()||{};return t.replace(/\$\{name\}/g,p.name||'').replac
 function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
 
 // PROJECTS
-function openNewProj(){editPid=null;document.getElementById('mproj-t').textContent='新建项目';document.getElementById('mproj-del').style.display='none';['mproj-id','mproj-name','mproj-client','mproj-period','mproj-team','mproj-loc','mproj-aud','mproj-note'].forEach(i=>document.getElementById(i).value='');openM('m-proj')}
+function openNewProj(){
+  editPid=null;
+  var t=document.getElementById('mproj-t');if(t)t.textContent='新建项目';
+  var d=document.getElementById('mproj-del');if(d)d.style.display='none';
+  var ids=['mproj-id','mproj-name','mproj-client','mproj-period','mproj-team','mproj-loc','mproj-aud','mproj-note'];
+  for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
+  openM('m-proj');
+}
 function editProj(id,e){if(e)e.stopPropagation();editPid=id;var p=S.projects.find(x=>x.id===id);if(!p)return;document.getElementById('mproj-t').textContent='编辑项目';document.getElementById('mproj-del').style.display='';document.getElementById('mproj-id').value=p.id;document.getElementById('mproj-name').value=p.name||'';document.getElementById('mproj-client').value=p.client||'';document.getElementById('mproj-type').value=p.type||'纪录片';document.getElementById('mproj-period').value=p.period||'';document.getElementById('mproj-team').value=p.team||'';document.getElementById('mproj-loc').value=p.location||'';document.getElementById('mproj-aud').value=p.audience||'';document.getElementById('mproj-note').value=p.note||'';openM('m-proj')}
-function saveProj(){var name=document.getElementById('mproj-name').value.trim();if(!name){toast('请填写项目名称','red');return}var id=document.getElementById('mproj-id').value||'p'+Date.now();var proj={id,name,client:document.getElementById('mproj-client').value,type:document.getElementById('mproj-type').value,period:document.getElementById('mproj-period').value,team:document.getElementById('mproj-team').value,location:document.getElementById('mproj-loc').value,audience:document.getElementById('mproj-aud').value,note:document.getElementById('mproj-note').value};if(editPid){var i=S.projects.findIndex(x=>x.id===editPid);if(i>=0)S.projects[i]=proj}else{S.projects.push(proj);P=proj.id}save();renderProjects();updateBadge();closeM('m-proj');toast(editPid?'项目已更新 ✓':'项目创建成功 ✓')}
+function saveProj(){
+  var name=document.getElementById('mproj-name').value.trim();
+  if(!name){toast('请填写项目名称','red');return;}
+  var id=document.getElementById('mproj-id').value||('p'+Date.now());
+  var proj={
+    id:id,
+    name:name,
+    client:document.getElementById('mproj-client').value,
+    type:document.getElementById('mproj-type').value,
+    period:document.getElementById('mproj-period').value,
+    team:document.getElementById('mproj-team').value,
+    location:document.getElementById('mproj-loc').value,
+    audience:document.getElementById('mproj-aud').value,
+    note:document.getElementById('mproj-note').value
+  };
+  if(editPid){
+    var idx=S.projects.findIndex(function(x){return x.id===editPid;});
+    if(idx>=0)S.projects[idx]=proj;
+  } else {
+    S.projects.push(proj);
+    P=proj.id;
+  }
+  try{save();}catch(e){console.log('save error',e);}
+  renderProjects();
+  updateBadge();
+  closeM('m-proj');
+  var msg=editPid?'项目已更新 ✓':'项目创建成功 ✓';
+  editPid=null;
+  toast(msg);
+}
 function delProj(){if(!editPid||!confirm('删除此项目及所有相关数据？'))return;S.projects=S.projects.filter(p=>p.id!==editPid);S.tasks=S.tasks.filter(t=>t.pid!==editPid);S.logs=S.logs.filter(l=>l.pid!==editPid);if(P===editPid)P=S.projects.length?S.projects[0].id:null;save();renderAll();closeM('m-proj');toast('已删除')}
 function selProj(id){P=id;save();renderProjects();updateBadge();renderTasks();renderLogs();renderPrompts();toast('已切换项目')}
 function togPjDet(id,e){if(e)e.stopPropagation();document.getElementById('pd-'+id).classList.toggle('on')}
@@ -894,7 +937,7 @@ function renderLocations(){
         <div class="loc-ic">${tic[l.type]||'📍'}</div>
         <div style="flex:1"><div class="loc-name">${esc(l.name)}</div><div class="loc-addr">${[l.type,l.addr].filter(Boolean).map(x=>esc(x)).join(' · ')}</div></div>
         <div style="display:flex;gap:6px" onclick="event.stopPropagation()">
-          <button class="btn btn-xs" onclick="trigLocPhoto('${l.id}')">📷</button>
+          <label style="position:relative;display:inline-flex;align-items:center;height:32px;padding:0 10px;border-radius:7px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:12px;cursor:pointer;overflow:hidden;touch-action:manipulation">📷 照片<input type="file" accept="image/*" multiple style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer" onchange="addLocPhoto('${l.id}',this)"></label>
           <button class="btn btn-xs" onclick="editLoc('${l.id}',event)">编辑</button>
         </div>
       </div>
@@ -907,18 +950,17 @@ function renderLocations(){
         </div>
         ${l.notes?`<div style="margin-top:9px;font-size:13px;color:var(--tx2);line-height:1.7;background:var(--bg3);border-radius:8px;padding:10px;white-space:pre-wrap">${esc(l.notes)}</div>`:''}
         ${photoGrid}
-        <div style="display:flex;gap:8px;margin-top:10px">
-          <button class="btn btn-sm" onclick="trigLocPhoto('${l.id}')">📷 拍照</button>
-          <button class="btn btn-sm" onclick="trigLocFile('${l.id}')">🖼 导入图片</button>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <label style="position:relative;display:inline-flex;align-items:center;height:38px;padding:0 16px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:13px;cursor:pointer;overflow:hidden;touch-action:manipulation">
+            📷 拍照/选图
+            <input type="file" accept="image/*" multiple style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0;cursor:pointer;font-size:16px" onchange="addLocPhoto('${l.id}',this)">
+          </label>
         </div>
-        <input type="file" id="loc-cam-${l.id}" accept="image/*" capture="environment" style="display:none" onchange="addLocPhoto('${l.id}',this)">
-        <input type="file" id="loc-file-${l.id}" accept="image/*" multiple style="display:none" onchange="addLocPhoto('${l.id}',this)">
       </div>
     </div>`;
   }).join('');
 }
-function trigLocPhoto(id){var el=document.getElementById('loc-cam-'+id);if(el){el.click();}else{togLocDet(id);setTimeout(()=>{var e2=document.getElementById('loc-cam-'+id);if(e2)e2.click()},300)}}
-function trigLocFile(id){var el=document.getElementById('loc-file-'+id);if(el){el.click();}else{togLocDet(id);setTimeout(()=>{var e2=document.getElementById('loc-file-'+id);if(e2)e2.click()},300)}}
+// trigLocPhoto/trigLocFile removed - using <label> wrapper approach
 function addLocPhoto(id,input){
   var files=Array.from(input.files);
   if(!files.length)return;
