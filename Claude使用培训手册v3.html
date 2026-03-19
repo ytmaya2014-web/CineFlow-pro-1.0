@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Claude 完整使用手册 v3</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0e1117;--card:#161b27;--card2:#1c2235;--card3:#222840;--border:#252d42;
+  --accent:#6c8fff;--green:#4ecb8d;--orange:#ff8c5a;--yellow:#f0c060;--purple:#b484f8;--pink:#f472b6;
+  --text:#dde3f5;--text2:#8a94b8;--text3:#454e6a;
+  --r:14px;--r2:10px;
+}
+body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'PingFang SC','Hiragino Sans GB','Microsoft YaHei',sans-serif;font-size:15px;line-height:1.7;min-height:100vh}
+/* TOPBAR */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:200;height:54px;background:rgba(14,17,23,.96);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:12px}
+.logo{font-size:17px;font-weight:700;color:var(--accent);white-space:nowrap}
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;border:none;background:none;flex-shrink:0}
+.hamburger span{display:block;width:22px;height:2px;background:var(--text2);border-radius:2px}
+.swrap{position:relative;flex:1;max-width:380px}
+.sicon{position:absolute;left:12px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:14px;pointer-events:none}
+.sbox{width:100%;background:var(--card2);border:1px solid var(--border);border-radius:20px;padding:7px 14px 7px 36px;color:var(--text);font-size:14px;outline:none;font-family:inherit}
+.sbox:focus{border-color:var(--accent)}
+/* LAYOUT */
+.layout{display:flex;padding-top:54px;min-height:100vh}
+/* SIDEBAR */
+.sidebar{width:230px;flex-shrink:0;position:fixed;top:54px;left:0;bottom:0;background:var(--card);border-right:1px solid var(--border);overflow-y:auto;padding:10px 0 40px;scrollbar-width:thin;scrollbar-color:var(--border) transparent;z-index:150;transition:transform .3s ease}
+.sidebar::-webkit-scrollbar{width:3px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px}
+.nlabel{padding:12px 16px 4px;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.12em}
+.nbtn{display:flex;align-items:center;gap:9px;width:100%;padding:8px 16px;font-size:13px;color:var(--text2);border:none;background:none;cursor:pointer;text-align:left;border-left:2px solid transparent;transition:all .15s;font-family:inherit}
+.nbtn:hover{color:var(--text);background:var(--card2)}
+.nbtn.active{color:var(--accent);background:rgba(108,143,255,.08);border-left-color:var(--accent)}
+.ni{font-size:14px;width:20px;text-align:center;flex-shrink:0}
+/* MAIN */
+.main{margin-left:230px;flex:1;padding:28px 22px 80px;max-width:840px}
+/* PAGES */
+.page{display:none}
+.page.active{display:block;animation:fu .2s ease}
+@keyframes fu{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+/* HERO */
+.hero{border-radius:var(--r);padding:28px 26px;margin-bottom:22px;position:relative;overflow:hidden}
+.h-web{background:linear-gradient(135deg,#0d1f3c,#0e2040 50%,#131825);border:1px solid #1a3060}
+.h-term{background:linear-gradient(135deg,#1a1000,#1e1400 50%,#131210);border:1px solid #3a2800}
+.h-def{background:linear-gradient(135deg,#0f1525,#111828);border:1px solid var(--border)}
+.h-demo{background:linear-gradient(135deg,#0d1a10,#0e2015 50%,#101510);border:1px solid #1a4020}
+.h-model{background:linear-gradient(135deg,#1a0d2e,#1e1035 50%,#131018);border:1px solid #3a1860}
+.htag{display:inline-flex;align-items:center;gap:6px;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:600;letter-spacing:.06em;margin-bottom:10px}
+.tw{background:rgba(108,143,255,.12);color:var(--accent);border:1px solid rgba(108,143,255,.2)}
+.tt{background:rgba(255,140,90,.12);color:var(--orange);border:1px solid rgba(255,140,90,.2)}
+.td{background:rgba(255,255,255,.06);color:var(--text2);border:1px solid var(--border)}
+.tg{background:rgba(78,203,141,.12);color:var(--green);border:1px solid rgba(78,203,141,.2)}
+.tp{background:rgba(180,132,248,.12);color:var(--purple);border:1px solid rgba(180,132,248,.2)}
+.hero h1{font-size:21px;font-weight:700;color:var(--text);line-height:1.35;margin-bottom:8px}
+.hero p{font-size:13px;color:var(--text2);line-height:1.65}
+/* SECTION TITLE */
+.stitle{font-size:15px;font-weight:600;color:var(--text);margin:22px 0 12px;display:flex;align-items:center;gap:8px}
+.stitle::before{content:'';display:block;width:3px;height:15px;border-radius:2px;background:var(--accent);flex-shrink:0}
+.stitle.or::before{background:var(--orange)}
+.stitle.gr::before{background:var(--green)}
+.stitle.pu::before{background:var(--purple)}
+/* STEPS */
+.steps{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.sc{display:flex;gap:13px;background:var(--card);border:1px solid var(--border);border-radius:var(--r2);padding:14px 16px;transition:border-color .2s}
+.sc:hover{border-color:var(--card3)}
+.sn{width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;margin-top:2px}
+.nb{background:rgba(108,143,255,.15);color:var(--accent)}
+.no{background:rgba(255,140,90,.15);color:var(--orange)}
+.ng{background:rgba(78,203,141,.15);color:var(--green)}
+.ny{background:rgba(240,192,96,.15);color:var(--yellow)}
+.np{background:rgba(180,132,248,.15);color:var(--purple)}
+.sb2{flex:1;min-width:0}
+.st{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.sd{font-size:13px;color:var(--text2);line-height:1.6}
+/* CODE */
+.cb{background:#0a0d14;border:1px solid var(--border);border-radius:var(--r2);margin:8px 0 14px;overflow:hidden}
+.ct{display:flex;align-items:center;justify-content:space-between;padding:7px 13px;background:rgba(255,255,255,.03);border-bottom:1px solid var(--border)}
+.cl{font-size:11px;color:var(--text3);font-family:monospace}
+.cpb{font-size:12px;color:var(--text3);background:none;border:none;cursor:pointer;padding:3px 10px;border-radius:5px;transition:.15s;font-family:inherit}
+.cpb:hover{color:var(--accent);background:rgba(108,143,255,.1)}
+.cpb.ok{color:var(--green)}
+pre{padding:13px 15px;overflow-x:auto;font-family:'SF Mono',Menlo,Monaco,Consolas,monospace;font-size:12px;line-height:1.75;color:#b8c5e8;white-space:pre}
+.ic{background:var(--card2);color:var(--green);padding:1px 6px;border-radius:4px;font-family:monospace;font-size:12px}
+/* TIPS */
+.tip{display:flex;gap:10px;border-radius:var(--r2);padding:11px 13px;margin:10px 0;font-size:13px;line-height:1.6}
+.tii{flex-shrink:0;font-size:14px;margin-top:2px}
+.tip.info{background:rgba(108,143,255,.07);border:1px solid rgba(108,143,255,.18);color:#9aaade}
+.tip.warn{background:rgba(240,192,96,.07);border:1px solid rgba(240,192,96,.2);color:#c8a84e}
+.tip.ok{background:rgba(78,203,141,.07);border:1px solid rgba(78,203,141,.2);color:#5aad80}
+.tip.danger{background:rgba(255,90,90,.07);border:1px solid rgba(255,90,90,.2);color:#c07070}
+.tip.demo{background:rgba(78,203,141,.05);border:1px solid rgba(78,203,141,.15);color:#6ab890}
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse;margin:10px 0 18px;font-size:13px}
+.tbl th{background:var(--card2);color:var(--text);padding:9px 12px;text-align:left;font-weight:600;border-bottom:2px solid var(--border)}
+.tbl td{padding:9px 12px;color:var(--text2);border-bottom:1px solid var(--border);vertical-align:top}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tr:hover td{background:rgba(255,255,255,.015)}
+.yes{color:var(--green)}.no{color:#d07070}
+/* BADGE */
+.badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:11px;font-weight:600;margin:1px 2px}
+.bb{background:rgba(108,143,255,.15);color:var(--accent)}
+.bg2{background:rgba(78,203,141,.15);color:var(--green)}
+.bo{background:rgba(255,140,90,.15);color:var(--orange)}
+.br{background:rgba(255,90,90,.12);color:#d07070}
+.by{background:rgba(240,192,96,.15);color:var(--yellow)}
+.bp{background:rgba(180,132,248,.15);color:var(--purple)}
+/* HOME GRID */
+.hg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:22px}
+.hc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 16px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.hc:hover{transform:translateY(-2px);border-color:var(--accent)}
+.hc.fw{background:linear-gradient(135deg,#111828,#0f1520);border-color:rgba(108,143,255,.3)}
+.hc.ft{background:linear-gradient(135deg,#1a1208,#130f08);border-color:rgba(255,140,90,.3)}
+.hci{font-size:24px;margin-bottom:9px}
+.hct{font-size:14px;font-weight:600;color:var(--text);margin-bottom:4px}
+.hcd{font-size:12px;color:var(--text2);line-height:1.5}
+.hcb{position:absolute;top:11px;right:11px;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px}
+.hcb.hot{background:rgba(108,143,255,.2);color:var(--accent)}
+.hcb.key{background:rgba(255,140,90,.2);color:var(--orange)}
+/* MODEL CARDS */
+.model-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:20px}
+.mc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px;transition:border-color .2s}
+.mc:hover{border-color:var(--card3)}
+.mc-name{font-size:16px;font-weight:700;margin-bottom:4px}
+.mc-sub{font-size:11px;margin-bottom:10px;opacity:.7}
+.mc-tag{display:inline-block;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;margin-bottom:8px}
+.mc-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.mc-use{font-size:12px;color:var(--text3);font-style:italic}
+.mc-opus{border-color:rgba(180,132,248,.3);background:linear-gradient(135deg,#1a0d2e,#1c1035)}
+.mc-opus .mc-name{color:var(--purple)}
+.mc-opus .mc-tag{background:rgba(180,132,248,.15);color:var(--purple)}
+.mc-sonnet{border-color:rgba(108,143,255,.3);background:linear-gradient(135deg,#0d1828,#111828)}
+.mc-sonnet .mc-name{color:var(--accent)}
+.mc-sonnet .mc-tag{background:rgba(108,143,255,.15);color:var(--accent)}
+.mc-haiku{border-color:rgba(78,203,141,.3);background:linear-gradient(135deg,#0d1e14,#0e1e16)}
+.mc-haiku .mc-name{color:var(--green)}
+.mc-haiku .mc-tag{background:rgba(78,203,141,.15);color:var(--green)}
+.mc-code{border-color:rgba(255,140,90,.3);background:linear-gradient(135deg,#1a1208,#181008)}
+.mc-code .mc-name{color:var(--orange)}
+.mc-code .mc-tag{background:rgba(255,140,90,.15);color:var(--orange)}
+/* DEMO FLOW */
+.demo-step{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:18px 20px;margin-bottom:14px;position:relative}
+.demo-step::before{content:attr(data-n);position:absolute;top:-1px;left:20px;transform:translateY(-50%);background:var(--green);color:#0a1a10;font-size:11px;font-weight:700;padding:2px 10px;border-radius:10px;letter-spacing:.04em}
+.demo-title{font-size:14px;font-weight:600;color:var(--text);margin-bottom:8px;padding-top:4px}
+.demo-desc{font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:10px}
+.flow-arrow{text-align:center;color:var(--green);font-size:18px;margin:2px 0}
+/* FAQ */
+.faq{border:1px solid var(--border);border-radius:var(--r2);margin-bottom:8px;overflow:hidden}
+.fq{display:flex;justify-content:space-between;align-items:center;padding:12px 15px;font-size:14px;font-weight:500;color:var(--text);cursor:pointer;background:var(--card);user-select:none;gap:10px}
+.fq:hover{background:var(--card2)}
+.fa2{color:var(--text3);font-size:11px;flex-shrink:0;transition:.2s}
+.faq.open .fa2{transform:rotate(180deg)}
+.fa{max-height:0;overflow:hidden;transition:max-height .3s ease,padding .2s;font-size:13px;color:var(--text2);line-height:1.7;background:var(--card);padding:0 15px}
+.faq.open .fa{max-height:600px;padding:0 15px 14px}
+/* CHECKLIST */
+.cli{display:flex;align-items:flex-start;gap:10px;padding:11px 14px;border-radius:var(--r2);border:1px solid var(--border);margin-bottom:8px;background:var(--card);cursor:pointer;transition:background .15s}
+.cli:hover{background:var(--card2)}
+.cli input{width:16px;height:16px;margin-top:2px;flex-shrink:0;accent-color:var(--accent);cursor:pointer}
+.cli span{font-size:13px;color:var(--text2);line-height:1.6}
+/* OVERLAY */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:140}
+.overlay.show{display:block}
+/* SEARCH */
+.spage{display:none}
+.spage.active{display:block}
+.nores{text-align:center;padding:50px 20px;color:var(--text3);font-size:14px}
+/* MOBILE */
+@media(max-width:700px){
+  .hamburger{display:flex}
+  .sidebar{transform:translateX(-100%);width:240px}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0;padding:18px 14px 70px}
+  .hg{grid-template-columns:1fr}
+  .model-grid{grid-template-columns:1fr}
+  .hero{padding:20px 16px}
+  .hero h1{font-size:18px}
+  pre{font-size:11px}
+  .tbl{font-size:12px}
+  .tbl th,.tbl td{padding:7px 9px}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="hamburger" onclick="toggleNav()"><span></span><span></span><span></span></div>
+  <div class="logo">📘 Claude 手册</div>
+  <div class="swrap">
+    <span class="sicon">🔍</span>
+    <input class="sbox" type="search" placeholder="搜索内容…" oninput="doSearch(this.value)" id="si">
+  </div>
+</div>
+<div class="overlay" id="ov" onclick="closeNav()"></div>
+<div class="layout">
+<nav class="sidebar" id="sb">
+  <div class="nlabel">入门</div>
+  <button class="nbtn active" onclick="go('home')"><span class="ni">🏠</span>首页总览</button>
+  <button class="nbtn" onclick="go('basics')"><span class="ni">💡</span>Claude 是什么</button>
+  <button class="nbtn" onclick="go('models')"><span class="ni">🧠</span>模型家族介绍</button>
+  <button class="nbtn" onclick="go('plans')"><span class="ni">💳</span>版本与收费</button>
+  <div class="nlabel">⭐ 核心功能</div>
+  <button class="nbtn" onclick="go('web')"><span class="ni">🌐</span>网页端 Projects</button>
+  <button class="nbtn" onclick="go('terminal')"><span class="ni">⚡</span>Claude Code 终端</button>
+  <div class="nlabel">实战演示</div>
+  <button class="nbtn" onclick="go('demo')"><span class="ni">🎬</span>时代首府完整演示</button>
+  <button class="nbtn" onclick="go('prompts')"><span class="ni">📋</span>提问模板库</button>
+  <button class="nbtn" onclick="go('cmds')"><span class="ni">⌨️</span>终端命令速查</button>
+  <div class="nlabel">编程入门</div>
+  <button class="nbtn" onclick="go('coding')"><span class="ni">🧩</span>编程核心概念</button>
+  <button class="nbtn" onclick="go('webdev')"><span class="ni">🖥️</span>网页开发入门</button>
+  <button class="nbtn" onclick="go('ios')"><span class="ni">📱</span>iOS App 开发</button>
+  <div class="nlabel">参考</div>
+  <button class="nbtn" onclick="go('tips')"><span class="ni">⚠️</span>小白注意事项</button>
+  <button class="nbtn" onclick="go('faq')"><span class="ni">❓</span>常见问题 FAQ</button>
+  <button class="nbtn" onclick="go('checklist')"><span class="ni">✅</span>启动检查清单</button>
+</nav>
+<main class="main">
+<div class="spage" id="pg-search"><div class="stitle">搜索结果</div><div id="sl"></div></div>
+
+<!-- ════════════ 首页 ════════════ -->
+<div class="page active" id="pg-home">
+  <div class="hero h-def"><div class="htag td">✦ 培训手册 v3.0</div><h1>Claude 完整使用手册</h1><p>从零开始，涵盖网页端 Projects、终端 Claude Code、模型家族介绍、编程入门、iOS App 开发。以《时代首府》项目为实战演示，小白友好，手机可用。</p></div>
+  <div class="stitle">⭐ 两大核心功能</div>
+  <div class="hg">
+    <div class="hc fw" onclick="go('web')"><div class="hcb hot">重点</div><div class="hci">🌐</div><div class="hct">网页端 Projects</div><div class="hcd">上传文件、建知识库、生成 MD，零门槛</div></div>
+    <div class="hc ft" onclick="go('terminal')"><div class="hcb key">重点</div><div class="hci">⚡</div><div class="hct">Claude Code 终端</div><div class="hcd">自动读文件夹、自动写入结果，最强工作流</div></div>
+  </div>
+  <div class="stitle">所有章节</div>
+  <div class="hg">
+    <div class="hc" onclick="go('basics')"><div class="hci">💡</div><div class="hct">Claude 是什么</div><div class="hcd">能做什么、怎么注册</div></div>
+    <div class="hc" onclick="go('models')"><div class="hci">🧠</div><div class="hct">模型家族介绍</div><div class="hcd">Opus / Sonnet / Haiku 各有什么用</div></div>
+    <div class="hc" onclick="go('plans')"><div class="hci">💳</div><div class="hct">版本与收费</div><div class="hcd">免费 vs Pro vs API</div></div>
+    <div class="hc" onclick="go('demo')"><div class="hci">🎬</div><div class="hct">时代首府实战演示</div><div class="hcd">从读取资料到生成 MD 的完整流程</div></div>
+    <div class="hc" onclick="go('prompts')"><div class="hci">📋</div><div class="hct">提问模板库</div><div class="hcd">直接复制使用的句式</div></div>
+    <div class="hc" onclick="go('coding')"><div class="hci">🧩</div><div class="hct">编程核心概念</div><div class="hcd">变量、函数、API 是什么</div></div>
+    <div class="hc" onclick="go('webdev')"><div class="hci">🖥️</div><div class="hct">网页开发入门</div><div class="hcd">HTML/CSS/JS 三件套</div></div>
+    <div class="hc" onclick="go('ios')"><div class="hci">📱</div><div class="hct">iOS App 开发</div><div class="hcd">从零到上架 App Store</div></div>
+  </div>
+  <div class="stitle">两种方式对比</div>
+  <table class="tbl">
+    <tr><th>对比项</th><th>🌐 网页端 Projects</th><th>⚡ Claude Code 终端</th></tr>
+    <tr><td>上手难度</td><td><span class="yes">零门槛，鼠标操作</span></td><td>需要打开终端</td></tr>
+    <tr><td>读取本地文件</td><td><span class="no">❌ 需手动上传</span></td><td><span class="yes">✅ 自动读取文件夹</span></td></tr>
+    <tr><td>写入本地文件</td><td><span class="no">❌ 需手动复制粘贴</span></td><td><span class="yes">✅ 自动写入</span></td></tr>
+    <tr><td>手机可用</td><td><span class="yes">✅ 完全支持</span></td><td class="no">不方便</td></tr>
+    <tr><td>适合场景</td><td>快速问答、临时分析</td><td>长期项目、自动化流程</td></tr>
+  </table>
+</div>
+
+<!-- ════════════ Claude 基础 ════════════ -->
+<div class="page" id="pg-basics">
+  <div class="hero h-def"><div class="htag td">入门</div><h1>Claude 是什么</h1><p>彻底搞懂 Claude 能做什么、怎么开始用。</p></div>
+  <div class="stitle">Claude 能帮你做什么</div>
+  <div class="steps">
+    <div class="sc"><div class="sn nb">📝</div><div class="sb2"><div class="st">写作与文案</div><div class="sd">起草邮件、写报告、润色文章、翻译、生成创意文案</div></div></div>
+    <div class="sc"><div class="sn ng">📄</div><div class="sb2"><div class="st">分析文件</div><div class="sd">上传 PDF/Word，总结要点、提取信息、找出关键内容</div></div></div>
+    <div class="sc"><div class="sn no">💻</div><div class="sb2"><div class="st">编写代码</div><div class="sd">写 Python、JavaScript、Swift，帮你做网站、App、自动化脚本</div></div></div>
+    <div class="sc"><div class="sn ny">🧠</div><div class="sb2"><div class="st">策划与分析</div><div class="sd">做项目规划、分析数据、生成执行方案、拆解任务步骤</div></div></div>
+  </div>
+  <div class="stitle">怎么开始</div>
+  <div class="steps">
+    <div class="sc"><div class="sn nb">1</div><div class="sb2"><div class="st">打开网站</div><div class="sd">浏览器访问 <strong>claude.ai</strong></div></div></div>
+    <div class="sc"><div class="sn nb">2</div><div class="sb2"><div class="st">注册账号</div><div class="sd">用 Google 账号或邮箱注册，填手机号验证即可</div></div></div>
+    <div class="sc"><div class="sn nb">3</div><div class="sb2"><div class="st">直接对话</div><div class="sd">输入框里输入问题，回车发送，就这么简单</div></div></div>
+  </div>
+  <div class="tip ok"><span class="tii">✅</span>无需任何技术背景，注册后直接用。免费版每天可以发送一定数量的消息。</div>
+</div>
+
+<!-- ════════════ 模型家族 ════════════ -->
+<div class="page" id="pg-models">
+  <div class="hero h-model"><div class="htag tp">🧠 模型家族</div><h1>Claude 模型家族介绍</h1><p>Anthropic 旗下有多个不同定位的模型，选对模型能让工作效率翻倍。</p></div>
+  <div class="stitle pu">四大模型对比</div>
+  <div class="model-grid">
+    <div class="mc mc-opus">
+      <div class="mc-name">Claude Opus</div>
+      <div class="mc-sub">旗舰级 · 最强推理</div>
+      <div class="mc-tag">最强大脑</div>
+      <div class="mc-desc">Anthropic 最顶尖的模型，具备极强的复杂推理、深度分析和创意生成能力。处理长文档、复杂策略、多步骤任务时表现卓越。</div>
+      <div class="mc-use">适合：复杂创作（如心域三部曲这类深度项目）、长文档综合分析、需要深度思考的策划任务</div>
+    </div>
+    <div class="mc mc-sonnet">
+      <div class="mc-name">Claude Sonnet</div>
+      <div class="mc-sub">主力型 · 性能与速度均衡</div>
+      <div class="mc-tag">日常主力</div>
+      <div class="mc-desc">性能与速度的最佳平衡点，是绝大多数用户的首选。能处理复杂任务，速度比 Opus 快，成本比 Opus 低很多。Claude Code 终端默认使用 Sonnet。</div>
+      <div class="mc-use">适合：日常工作流、文件分析、代码编写、终端任务执行，是你最常用的模型</div>
+    </div>
+    <div class="mc mc-haiku">
+      <div class="mc-name">Claude Haiku</div>
+      <div class="mc-sub">轻量级 · 极速响应</div>
+      <div class="mc-tag">快速轻量</div>
+      <div class="mc-desc">最快、最便宜的模型，适合简单任务和高频率调用。响应速度极快，API 成本极低，适合需要大量调用的场景。</div>
+      <div class="mc-use">适合：简单问答、格式整理、内容摘要、高频 API 调用、不需要复杂推理的重复任务</div>
+    </div>
+    <div class="mc mc-code">
+      <div class="mc-name">Claude Code</div>
+      <div class="mc-sub">终端工具 · 代码专家</div>
+      <div class="mc-tag">开发利器</div>
+      <div class="mc-desc">专门为代码和文件操作设计的终端工具（不是模型名称，而是一个工具）。可以直接读写本地文件，在项目文件夹里自动执行任务，像 Cursor 一样工作。</div>
+      <div class="mc-use">适合：本地文件处理、自动写入 md 文件、执行项目工作流，就是本手册的核心工具</div>
+    </div>
+  </div>
+  <div class="stitle pu">如何在网页端选择模型</div>
+  <div class="steps">
+    <div class="sc"><div class="sn np">1</div><div class="sb2"><div class="st">打开对话框</div><div class="sd">在 claude.ai 的聊天界面，输入框左侧或上方有模型选择下拉菜单</div></div></div>
+    <div class="sc"><div class="sn np">2</div><div class="sb2"><div class="st">点击下拉选择</div><div class="sd">可以看到 Opus、Sonnet、Haiku 等选项，点击切换</div></div></div>
+    <div class="sc"><div class="sn np">3</div><div class="sb2"><div class="st">根据任务选择</div><div class="sd">日常用 Sonnet；复杂深度任务用 Opus；简单快速任务用 Haiku</div></div></div>
+  </div>
+  <div class="stitle pu">模型选择速查</div>
+  <table class="tbl">
+    <tr><th>任务类型</th><th>推荐模型</th><th>原因</th></tr>
+    <tr><td>心域三部曲深度分析</td><td><span class="yes">Opus</span></td><td>复杂创作，需要最强推理</td></tr>
+    <tr><td>日常文件分析、写作</td><td><span class="yes">Sonnet</span></td><td>速度快，效果好，最常用</td></tr>
+    <tr><td>Claude Code 终端任务</td><td><span class="yes">Sonnet</span></td><td>默认配置，性价比最高</td></tr>
+    <tr><td>简单摘要、格式整理</td><td><span class="yes">Haiku</span></td><td>最快最省钱</td></tr>
+    <tr><td>本地文件自动读写</td><td><span class="yes">Claude Code 工具</span></td><td>专为这个场景设计</td></tr>
+  </table>
+  <div class="tip info"><span class="tii">💡</span>目前最新版本是 Claude 4 系列（Opus 4、Sonnet 4、Haiku 4），以及专门用于终端的 Claude Code。API 模型字符串：<span class="ic">claude-opus-4</span>、<span class="ic">claude-sonnet-4-5</span>、<span class="ic">claude-haiku-4-5</span></div>
+</div>
+
+<!-- ════════════ 版本收费 ════════════ -->
+<div class="page" id="pg-plans">
+  <div class="hero h-def"><div class="htag td">入门</div><h1>版本与收费说明</h1><p>免费版够不够？Pro 值不值？API 怎么算钱？</p></div>
+  <table class="tbl">
+    <tr><th>功能</th><th>免费版</th><th>Pro（$20/月）</th><th>API 按量</th></tr>
+    <tr><td>基本对话</td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+    <tr><td>Projects</td><td><span class="no">❌</span></td><td><span class="yes">✅ 完整</span></td><td>—</td></tr>
+    <tr><td>消息条数</td><td>每天有限</td><td>大幅提升</td><td>无限制</td></tr>
+    <tr><td>最新模型</td><td>基础版</td><td><span class="yes">✅ 优先</span></td><td><span class="yes">✅ 可选</span></td></tr>
+    <tr><td>Opus 模型</td><td><span class="no">❌</span></td><td><span class="yes">✅</span></td><td><span class="yes">✅</span></td></tr>
+    <tr><td>适合</td><td>试用体验</td><td>网页端长期项目</td><td>Claude Code 终端</td></tr>
+  </table>
+  <div class="tip warn"><span class="tii">⚠️</span>网页端 Projects 功能需要 Pro 版（$20/月）才能完整使用。</div>
+  <div class="tip info"><span class="tii">💡</span>Claude Code 终端用的是 API，在 <strong>console.anthropic.com</strong> 充值，$5 起。普通使用一个月约 $1–5，不需要 Pro 订阅。</div>
+  <div class="tip ok"><span class="tii">✅</span>建议：先用免费版试试手感，确定要长期用再升 Pro 或充 API。</div>
+</div>
+
+<!-- ════════════ 网页端 Projects（完整原文） ════════════ -->
+<div class="page" id="pg-web">
+  <div class="hero h-web"><div class="htag tw">🌐 重点功能</div><h1>网页端 Projects 完整操作手册</h1><p>专为第一次使用 Claude 的小白准备。把文件变成可对话的知识库，上传一次，永久记住，像聊天一样提问。</p></div>
+
+  <div class="stitle">先理解：普通对话 vs Projects</div>
+  <table class="tbl">
+    <tr><th></th><th>普通对话</th><th>Projects（项目）</th></tr>
+    <tr><td>文件记忆</td><td>每次聊天结束就忘了</td><td><span class="yes">✅ 上传一次，永久记住</span></td></tr>
+    <tr><td>背景记忆</td><td>没有，每次从头开始</td><td><span class="yes">✅ 进项目就记得上次的背景</span></td></tr>
+    <tr><td>适合</td><td>随手问问题</td><td><span class="yes">✅ 长期项目、多个文件</span></td></tr>
+  </table>
+  <div class="tip info"><span class="tii">💡</span>Projects 就是一个有"记忆"的专属工作空间，你把文件放进去，它就一直记得，不用每次重新上传。</div>
+
+  <div class="stitle">第一部分：创建你的第一个项目</div>
+  <div class="steps">
+    <div class="sc"><div class="sn nb">1</div><div class="sb2"><div class="st">打开 claude.ai</div><div class="sd">用浏览器打开 <strong>claude.ai</strong>，登录你的账号。</div></div></div>
+    <div class="sc"><div class="sn nb">2</div><div class="sb2"><div class="st">找到 Projects 入口</div><div class="sd">看左侧边栏，找到 <strong>"Projects"</strong> 或 <strong>"项目"</strong>，点击它。<br>如果左侧没有显示，试试点击左上角的菜单图标展开侧边栏。</div></div></div>
+    <div class="sc"><div class="sn nb">3</div><div class="sb2"><div class="st">新建项目</div><div class="sd">点击 <strong>"+ New Project"</strong> → 输入项目名称（如：心域三部曲 / 时代首府纪录片）→ 点击确认创建。</div></div></div>
+  </div>
+
+  <div class="stitle">第二部分：上传你的文件</div>
+  <div class="steps">
+    <div class="sc">
+      <div class="sn nb">4</div>
+      <div class="sb2">
+        <div class="st">进入项目，上传文件</div>
+        <div class="sd">
+          找到 <strong>"Add content"</strong> 或上传区域，把文件拖进去。<br><br>
+          <strong>支持的格式：</strong><br>
+          <span class="badge bg2">✅ PDF</span><span class="badge bg2">✅ Word (.docx)</span><span class="badge bg2">✅ TXT 文本</span><span class="badge bg2">✅ Markdown (.md)</span><span class="badge br">❌ XMind（需先转换）</span><br><br>
+          <strong>XMind 转换方法：</strong>打开 XMind → 文件 → 导出 → PDF → 保存到桌面 → 再上传
+        </div>
+      </div>
+    </div>
+    <div class="sc"><div class="sn nb">5</div><div class="sb2"><div class="st">确认文件上传成功</div><div class="sd">上传完成后，在项目里看到文件列表，每个文件旁边有绿色勾或文件图标，说明上传成功。<br>💡 文件上传后永久保留，不需要每次重新上传。</div></div></div>
+  </div>
+
+  <div class="stitle">第三部分：写项目说明（非常重要）</div>
+  <div class="sc" style="margin-bottom:14px">
+    <div class="sn nb">6</div>
+    <div class="sb2">
+      <div class="st">填写 Project Instructions</div>
+      <div class="sd">这是整个 Projects 最关键的一步，很多人忽略它。<br><br>在项目设置里找到 <strong>"Project Instructions"</strong> 或 <strong>"项目说明"</strong> 输入框。<br><br>这是什么？就是告诉 Claude：你是谁、这个项目是干什么的、你希望它怎么工作。每次你在这个项目里发消息，它都会先读这段说明，再回答你。</div>
+    </div>
+  </div>
+  <div class="cb"><div class="ct"><span class="cl">Project Instructions 模板（直接复制，修改【】里的内容）</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>## 我的角色设定
+你是本项目的资深创作顾问。
+请熟悉项目里所有上传的文件内容。
+回答时优先基于文件内容，不要编造没有的信息。
+
+## 项目背景
+项目名称：【填写你的项目名】
+项目类型：【如：纪录片创作 / 品牌策划 / 产品文案】
+当前阶段：【如：第一集脚本开发】
+
+## 工作方式
+- 每次执行任务前，先告诉我你的计划，等我确认再执行
+- 把产出内容用 markdown 格式整理，方便我复制到本地文件
+- 回答要基于我上传的文件，不要自己发挥
+- 如果文件里找不到答案，直接告诉我"文件中没有相关内容"</pre></div>
+
+  <div class="stitle">第四部分：开始对话提问</div>
+  <div class="steps">
+    <div class="sc"><div class="sn nb">7</div><div class="sb2"><div class="st">发送第一条消息（确认文件读取）</div><div class="sd">第一次进项目，建议先发这条：</div></div></div>
+  </div>
+  <div class="cb"><div class="ct"><span class="cl">第一句话</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>请先告诉我你已经读取了哪些文件，
+每个文件大概是什么内容，然后等待我的指令。</pre></div>
+  <div class="sc" style="margin-bottom:14px"><div class="sn nb">8</div><div class="sb2"><div class="st">正式提问</div><div class="sd">确认文件读取正常后，开始提问。</div></div></div>
+  <div class="cb"><div class="ct"><span class="cl">按步骤执行任务</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>请根据项目里所有文件，完成以下任务：
+1. 提炼第一集的1句话 logline（它在讲什么，为什么重要）
+2. 抽取章节主线结构，按起—承—转—合梳理情绪曲线
+3. 列出必须出现的精神意象及其叙事功能
+
+请用 markdown 格式输出，方便我复制到本地文件。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">只问一个问题</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>根据上传的导演阐述文件，
+第一集的核心精神是什么？用3句话概括。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">跨文件对比分析</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>请对比"第一集导演阐述"和"执行脚本终稿"这两个文件，
+找出叙事结构上有没有不一致的地方。</pre></div>
+
+  <div class="stitle gr">如何生成一个可以保存的 MD 文件</div>
+  <div class="tip info"><span class="tii">💡</span>网页端 Claude 本身无法直接在你电脑上创建文件，但你可以让它生成完整的 md 文件内容，然后自己手动保存。</div>
+  <div class="steps">
+    <div class="sc"><div class="sn ng">1</div><div class="sb2"><div class="st">让 Claude 生成完整 md 内容</div><div class="sd">在对话框输入下方模板，Claude 会输出一大段 markdown 格式的文字。</div></div></div>
+    <div class="sc"><div class="sn ng">2</div><div class="sb2"><div class="st">复制全部内容</div><div class="sd">找到 Claude 回答右下角的<strong>复制按钮</strong>（两个方块叠在一起的图标），点一下，全部内容就复制到剪贴板了。</div></div></div>
+    <div class="sc"><div class="sn ng">3</div><div class="sb2"><div class="st">安装 VS Code（只需装一次）</div><div class="sd">下载地址：<strong>code.visualstudio.com</strong><br>Mac：下载后把图标拖入「应用程序」文件夹即完成安装。<br>也可用 Mac 自带 TextEdit（备忘录也可以）。</div></div></div>
+    <div class="sc"><div class="sn ng">4</div><div class="sb2"><div class="st">新建文件，粘贴，保存为 .md</div><div class="sd">VS Code：<span class="ic">Cmd+N</span> 新建 → 粘贴内容 → <span class="ic">Cmd+S</span> 保存<br>文件名写：<span class="ic">项目名_执行链.md</span>，保存到项目文件夹<br><br>Mac TextEdit：格式 → 转换为纯文本 → 保存，文件名改为 <span class="ic">项目名_执行链.md</span></div></div></div>
+    <div class="sc"><div class="sn ng">5</div><div class="sb2"><div class="st">把文件放进项目文件夹</div><div class="sd">把 .md 文件移动到你的本地项目文件夹里，和其他资料放在一起。之后用 Claude Code 终端时，它就能直接读取这个文件，按步骤执行并把答案写进去。</div></div></div>
+  </div>
+  <div class="tip warn"><span class="tii">⚠️</span>文件名必须以 <span class="ic">.md</span> 结尾，不能是 .txt，否则 Claude Code 终端读取时格式会乱。</div>
+  <div class="cb"><div class="ct"><span class="cl">生成执行链的提问模板</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>请根据项目里所有文件，帮我生成一份完整的执行链 md 文件。
+要求：
+- 用标准 markdown 格式
+- 包含 Step 0 到 Step N 的完整结构
+- 每步列明：输入文件、执行步骤、产出内容
+- 产出位置留空，等我后续填入</pre></div>
+
+  <div class="stitle">第五部分：把答案保存到本地文件</div>
+  <div class="sc" style="margin-bottom:14px"><div class="sn nb">9</div><div class="sb2"><div class="st">复制答案到本地 md 文件</div><div class="sd">这是网页端和 Claude Code 终端<strong>最大的区别</strong>：<br>• Claude Code 终端：自动把答案写进你电脑的文件<br>• 网页端 Projects：需要你手动复制粘贴<br><br>操作：Claude 回答完 → 点复制按钮 → 打开执行链 .md 文件 → 找到对应步骤位置 → 粘贴 → 保存</div></div></div>
+  <div class="cb"><div class="ct"><span class="cl">让输出更好复制的提示词</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>请把以上内容重新整理，用标准 markdown 格式输出，
+包括标题、列表、加粗，方便我直接粘贴到 md 文件里。</pre></div>
+
+  <div class="stitle">第六部分：Projects 的局限性（必须知道）</div>
+  <table class="tbl">
+    <tr><th>功能</th><th>网页端能做吗</th><th>解决方法</th></tr>
+    <tr><td>自动读取本地文件夹</td><td><span class="no">❌ 不能</span></td><td>手动上传文件</td></tr>
+    <tr><td>自动把答案写入本地文件</td><td><span class="no">❌ 不能</span></td><td>手动复制粘贴</td></tr>
+    <tr><td>文件更新后自动同步</td><td><span class="no">❌ 不能</span></td><td>重新上传新版本</td></tr>
+    <tr><td>执行终端命令</td><td><span class="no">❌ 不能</span></td><td>用 Claude Code 终端</td></tr>
+  </table>
+  <div class="stitle">第七部分：两种工作方式对比总结</div>
+  <div class="cb"><div class="ct"><span class="cl">流程对比</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>【网页端 Projects】
+你 → 上传文件 → 提问 → 复制答案 → 手动粘贴到本地文件
+
+【Claude Code 终端】
+你 → cd 进文件夹 → 提问 → 自动写入本地文件</pre></div>
+  <div class="tip ok"><span class="tii">✅</span><strong>最佳组合：</strong>用 Claude Code 终端作为主力，执行步骤、写入文件；用网页端 Projects 作为补充，随时提问、灵感整理。</div>
+
+  <div class="stitle">快速操作清单</div>
+  <div class="steps">
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">登录 claude.ai，进入对应项目（不要新建，用已有的）</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">确认文件列表里有所有需要的文件，如果有新文件先上传</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">发第一条消息确认文件读取正常</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">开始提问，答案用 markdown 格式输出</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">复制粘贴到本地 md 文件保存</div></div></div>
+  </div>
+</div>
+
+<!-- ════════════ Claude Code 终端（完整原文） ════════════ -->
+<div class="page" id="pg-terminal">
+  <div class="hero h-term"><div class="htag tt">⚡ 重点功能</div><h1>Claude Code 新项目启动 SOP</h1><p>每次新项目开始前的完整操作手册。适用于：把本地文件夹变成可对话的AI知识库，像Cursor一样用自然语言提问、让AI自动读取文件并把答案写回md文件。</p></div>
+
+  <div class="stitle or">前置条件检查（开始之前先确认）</div>
+  <table class="tbl">
+    <tr><th>检查项</th><th>验证方法</th></tr>
+    <tr><td>已安装 Claude Code</td><td>终端输入 <span class="ic">claude --version</span> 能看到版本号</td></tr>
+    <tr><td>已安装 Node.js</td><td>终端输入 <span class="ic">node --version</span> 能看到版本号</td></tr>
+    <tr><td>有可用的 API Key</td><td>Anthropic Key（console.anthropic.com）或 Gemini Key 二选一</td></tr>
+  </table>
+
+  <div class="stitle or">第一部分：一次性全局配置（只需做一次，所有项目通用）</div>
+  <div class="tip info"><span class="tii">💡</span>做完之后，你不管进哪个项目文件夹，Claude Code 启动都会自动读取这个配置。<strong>只需要做一次。</strong></div>
+
+  <div class="sc" style="margin-bottom:14px">
+    <div class="sn no">1</div>
+    <div class="sb2">
+      <div class="st">创建全局 CLAUDE.md</div>
+      <div class="sd">这是 Claude Code 的"大脑配置文件"。在终端输入：</div>
+    </div>
+  </div>
+  <div class="cb"><div class="ct"><span class="cl">bash</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>mkdir -p ~/.claude
+nano ~/.claude/CLAUDE.md</pre></div>
+  <div class="tip info"><span class="tii">💡</span>Mac 打开终端：按 <span class="ic">Cmd+空格</span>，搜索「终端」，打开后粘贴上面的命令。</div>
+
+  <div class="sc" style="margin-bottom:14px"><div class="sn no">2</div><div class="sb2"><div class="st">在打开的编辑器里粘贴工作规范</div><div class="sd">打开后是一个黑色编辑界面（nano 编辑器），把下面完整内容粘贴进去：</div></div></div>
+  <div class="cb"><div class="ct"><span class="cl">粘贴到 nano 编辑器里（完整内容）</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>Claude 使用规范（来自用户配置）
+
+1. 默认使用计划模式
+   - 对于任何非简单任务（3个以上步骤或涉及架构决策），进入计划模式
+   - 如果出现偏差，立即停止并重新规划——不要继续硬推
+   - 验证步骤也要使用计划模式，不只是构建时
+   - 提前写好详细规范以减少歧义
+
+2. 子代理策略
+   - 自由使用子代理以保持主上下文窗口整洁
+   - 将研究、探索和并行分析任务交给子代理
+   - 对于复杂问题，通过子代理投入更多算力
+   - 每个子代理只负责一个任务，以保持专注
+
+3. 自我改进循环
+   - 用户做出任何纠正后：将该模式更新到 tasks/lessons.md
+   - 为自己编写规则以防止同类错误再次发生
+   - 不断迭代这些经验教训，直到错误率下降
+   - 在每次会话开始时回顾相关项目的经验教训
+
+4. 完成前验证
+   - 不证明有效就不要标记任务为完成
+   - 问自己："一位高级工程师会批准这个吗？"
+   - 运行测试、检查日志、证明正确性
+
+5. 追求优雅（但要平衡）
+   - 对于非简单的更改：暂停并问"有没有更优雅的方式？"
+   - 对于简单、明显的修复则跳过此步骤——不要过度工程化
+
+6. 自主修复Bug
+   - 收到bug报告时：直接修复，不要等用户手把手指导
+   - 定位日志、错误、失败的测试——然后解决它们
+
+任务管理
+1. 计划优先：将计划写入 tasks/todo.md，带有可勾选的项目
+2. 验证计划：开始实施前先确认
+3. 跟踪进度：边做边标记完成项
+4. 解释变更：每一步都做高层级总结
+5. 记录结果：在 tasks/todo.md 中添加回顾部分
+6. 积累经验：纠正后更新 tasks/lessons.md
+
+核心原则
+- 简单优先：让每个改动尽可能简单。代码影响最小化。
+- 不许偷懒：找到根本原因。不做临时修复。保持高级开发者标准。
+- 最小影响：改动只触及必要部分。避免引入新bug。</pre></div>
+  <div class="tip info"><span class="tii">💡</span>保存方法：按 <span class="ic">Ctrl+X</span> → 按 <span class="ic">Y</span> → 按回车确认文件名</div>
+
+  <div class="sc" style="margin-bottom:14px"><div class="sn no">3</div><div class="sb2"><div class="st">追加项目背景描述</div><div class="sd">上一步保存后，在终端继续输入以下命令（把【项目名称】替换成你的实际项目）：</div></div></div>
+  <div class="cb"><div class="ct"><span class="cl">bash（修改【项目名称】后运行）</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>cat >> ~/.claude/CLAUDE.md << 'EOF'
+
+## 项目背景
+你是【项目名称】的创作顾问。
+每次执行任务前先制定计划，确认后再执行。
+把产出直接写入对应的 md 文件。
+如果我纠正了你，记录到 tasks/lessons.md。
+EOF</pre></div>
+  <div class="tip warn"><span class="tii">⚠️</span>这里的项目背景是写给所有项目看的通用描述。如果你有多个完全不同的项目，建议每个项目单独建一个 CLAUDE.md（见第二部分第三步）。</div>
+
+  <div class="stitle or">第二部分：每次新项目开始时（每个项目都要做）</div>
+  <div class="steps">
+    <div class="sc">
+      <div class="sn ny">1</div>
+      <div class="sb2">
+        <div class="st">进入项目文件夹</div>
+        <div class="sd">
+          <div class="cb" style="margin-top:8px"><div class="ct"><span class="cl">bash</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>cd /你的项目文件夹完整路径
+
+# 例如桌面：
+cd ~/Desktop/心域项目
+# 例如外接硬盘：
+cd /Volumes/LaCie/Claude\ work/2026时代首府</pre></div>
+          <div class="tip ok" style="margin:4px 0"><span class="tii">💡</span>小技巧：在 Finder 里找到文件夹，直接把文件夹<strong>拖进终端窗口</strong>，路径会自动输入。</div>
+        </div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sn ny">2</div>
+      <div class="sb2">
+        <div class="st">创建任务目录结构</div>
+        <div class="sd">
+          <div class="cb" style="margin-top:8px"><div class="ct"><span class="cl">bash</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>mkdir -p tasks
+touch tasks/todo.md
+touch tasks/lessons.md</pre></div>
+          <table class="tbl" style="margin-top:8px">
+            <tr><th>文件</th><th>作用</th></tr>
+            <tr><td><span class="ic">tasks/todo.md</span></td><td>Claude 自动把每次任务计划写在这里，边做边打勾</td></tr>
+            <tr><td><span class="ic">tasks/lessons.md</span></td><td>你纠正Claude后，它把经验记录在这里，下次不再犯</td></tr>
+          </table>
+        </div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sn ny">3</div>
+      <div class="sb2">
+        <div class="st">创建项目专属 CLAUDE.md（可选但推荐）</div>
+        <div class="sd">
+          如果这个项目有特殊背景，在项目根目录创建一个专属配置：
+          <div class="cb" style="margin-top:8px"><div class="ct"><span class="cl">bash</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>nano CLAUDE.md</pre></div>
+          写入以下内容（根据实际项目修改）：
+          <div class="cb" style="margin-top:6px"><div class="ct"><span class="cl">项目专属 CLAUDE.md 模板</span><button class="cpb" onclick="cp(this)">复制</button></div>
+          <pre>## 项目背景
+项目名称：【填写项目名】
+项目类型：【填写类型，如：纪录片创作 / 品牌文案 / 产品策划】
+当前阶段：【填写当前阶段，如：第一集脚本开发】
+
+## 我的角色设定
+你是本项目的【填写角色，如：资深创作顾问/执行导演助理】。
+熟悉当前目录下所有文件内容。
+回答时优先基于文件内容，不要编造。
+
+## 文件结构说明
+- PDF/ 或主要文件夹：核心资料
+- tasks/todo.md：任务进度追踪
+- tasks/lessons.md：经验积累
+- 执行链.md：主工作流程文件（每步产出写入此文件）
+
+## 工作约定
+- 每次我说"执行 Step X"，你就读取执行链.md 对应步骤，完成后写入结果
+- 产出内容直接追加到执行链.md 对应位置，不要另建文件
+- 每步完成后告诉我"Step X 完成，产出已写入"</pre></div>
+          保存：<span class="ic">Ctrl+X</span> → <span class="ic">Y</span> → 回车
+        </div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sn ny">4</div>
+      <div class="sb2">
+        <div class="st">准备执行链 md 文件</div>
+        <div class="sd">
+          这是整个项目的"大脑文件"，Claude 会把每步的分析结果写进来，越问越完整。<br><br>
+          <strong>这一步不是输入命令，而是准备一个文档文件。有三种情况：</strong><br><br>
+          <span class="badge bb">情况 A</span> 文件夹里已有执行链文件（如 <span class="ic">第一集执行链.md</span>）→ <strong>直接用它，不需要新建</strong><br><br>
+          <span class="badge bo">情况 B</span> 从零开始，用命令创建空文件：
+          <div class="cb" style="margin-top:6px"><div class="ct"><span class="cl">bash</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>touch 项目名_执行链.md
+# 例如：touch 时代首府_执行链.md</pre></div>
+          创建后用任何文本编辑器打开（TextEdit / VS Code 都行），把步骤内容写进去。<br><br>
+          <span class="badge bg2">情况 C</span> 不知道怎么写步骤，启动 <span class="ic">claude</span> 后说：「请读取当前目录所有文件，帮我生成一个完整的执行链.md，把项目拆成步骤，每步列明输入文件和产出内容。」
+        </div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sn ny">5</div>
+      <div class="sb2">
+        <div class="st">处理特殊文件格式</div>
+        <div class="sd">
+          <strong>XMind 文件（必须转换）：</strong> Claude Code 不支持直接读取 .xmind 文件<br>
+          打开 XMind → 文件 → 导出 → 选择 PDF 或 Word → 保存到项目文件夹<br><br>
+          <strong>扫描版 PDF（文字无法提取）：</strong><br>
+          用 Adobe Acrobat 或手机扫描 App（如扫描全能王）做 OCR 识别后重新导出。
+        </div>
+      </div>
+    </div>
+    <div class="sc">
+      <div class="sn ny">6</div>
+      <div class="sb2">
+        <div class="st">启动 Claude Code 开始工作</div>
+        <div class="sd">
+          <div class="cb" style="margin-top:8px"><div class="ct"><span class="cl">bash</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>claude</pre></div>
+          第一句话建议这样说：
+          <div class="cb" style="margin-top:6px"><div class="ct"><span class="cl">第一句话（复制发给 Claude）</span><button class="cpb" onclick="cp(this)">复制</button></div>
+          <pre>请先阅读当前目录下的所有文件，包括 CLAUDE.md 和执行链.md，
+告诉我你已经了解了哪些内容，然后等待我的指令。</pre></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stitle or">第三部分：日常工作提问模板</div>
+  <div class="cb"><div class="ct"><span class="cl">按步骤执行任务</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>请阅读当前目录所有文件，执行【执行链文件名.md】里的 Step 0，
+把产出结果直接写入该文件 Step 0 对应位置。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">继续下一步</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>Step 0 确认无误，继续执行 Step 1，产出写入执行链.md 对应位置。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">追加不覆盖</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>把刚才的分析结果追加写入 执行链.md 的 Step X 下方，
+不要覆盖已有内容，只在末尾补充。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">跨文件综合分析</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>请综合读取以下文件：
+- 文件A
+- 文件B
+- 文件C
+然后回答：【你的问题】</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">让 Claude 记住纠正内容</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>刚才你的回答有问题：【说明哪里不对】
+请把这个教训记录到 tasks/lessons.md，
+格式：日期 + 错误描述 + 正确做法。</pre></div>
+
+  <div class="stitle or">第四部分：完整文件夹结构（参考）</div>
+  <div class="cb"><div class="ct"><span class="cl">标准项目文件夹结构</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>你的项目文件夹/
+├── CLAUDE.md              ← 项目专属配置（Claude 自动读取）
+├── 项目名_执行链.md        ← 主工作流程文件
+├── tasks/
+│   ├── todo.md            ← 任务进度（Claude 自动维护）
+│   └── lessons.md         ← 经验积累（纠正后自动记录）
+├── PDF/                   ← 原始资料
+│   ├── 文件1.pdf
+│   └── 文件2.docx
+├── 参考片/                ← 其他素材
+└── ...其他文件夹</pre></div>
+
+  <div class="stitle or">第五部分：常见问题</div>
+  <div class="faq"><div class="fq" onclick="tf(this)">Claude Code 需要 Anthropic Key，我只有 Gemini Key 怎么办？<span class="fa2">▼</span></div><div class="fa">用 Gemini CLI 代替，效果类似：<br><br><code>npm install -g @google/gemini-cli</code><br><code>gemini</code><br><br>进入项目文件夹后同样可以用自然语言提问。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">文件太多，Claude 读得慢怎么办？<span class="fa2">▼</span></div><div class="fa">在提问时指定具体文件，不要让它扫描全部：「请只读取以下3个文件，回答我的问题：文件A、文件B、文件C」</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">每次重新打开终端都要重新 cd 进文件夹吗？<span class="fa2">▼</span></div><div class="fa">是的，但有快捷方式：在 Finder 里右键项目文件夹，选"新建位于文件夹位置的终端窗口"（需要在系统设置里开启此功能）。也可以把文件夹图标直接拖进终端，路径自动填入。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">执行链.md 里内容越来越多，Claude 会不会搞混？<span class="fa2">▼</span></div><div class="fa">不会，Claude Code 每次都重新读取文件。但如果文件太大，可以把完成的步骤移到归档文件里，只保留当前进行的步骤在主文件里。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">可以同时开多个项目吗？<span class="fa2">▼</span></div><div class="fa">可以，每个项目开一个终端窗口，分别 cd 进各自的文件夹，互不干扰。</div></div>
+
+  <div class="stitle or">快速启动检查清单</div>
+  <div class="steps">
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">全局 <span class="ic">~/.claude/CLAUDE.md</span> 已创建（只需做一次）</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">已 cd 进项目文件夹</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd"><span class="ic">tasks/todo.md</span> 和 <span class="ic">tasks/lessons.md</span> 已创建</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">项目专属 CLAUDE.md 已创建并写好背景</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">执行链 .md 文件已准备好，步骤清晰</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">XMind 文件已导出为 PDF，扫描版 PDF 已做 OCR</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="sd">输入 <span class="ic">claude</span> 启动，第一句话告诉它读取所有文件</div></div></div>
+  </div>
+</div>
+
+<!-- ════════════ 时代首府实战演示 ════════════ -->
+<div class="page" id="pg-demo">
+  <div class="hero h-demo"><div class="htag tg">🎬 实战演示</div><h1>《时代首府》完整工作流演示</h1><p>以终端窗口为例，从读取资料库到建立执行链，到逐步提问、保存结果的完整流程。每步都有具体提示词。</p></div>
+
+  <div class="stitle gr">场景说明</div>
+  <div class="tip demo"><span class="tii">📁</span>你的项目文件夹在外接硬盘里，路径为 <span class="ic">/Volumes/LaCie/Claude work/2026时代首府</span>，里面有 docx、pdf、xmind 等各类资料。目标是执行 <span class="ic">第一集执行链.md</span> 的 Step 0，生成第一集内核摘要。</div>
+
+  <div class="demo-step" data-n="准备工作">
+    <div class="demo-title">预处理 XMind 文件</div>
+    <div class="demo-desc">Claude Code 不能读取 .xmind 文件，需要先转换。打开 XMind → 找到 <strong>第一集 从自然到心域.xmind</strong> → 文件 → 导出 → PDF → 保存到同一个项目文件夹。</div>
+    <div class="tip warn" style="margin:0"><span class="tii">⚠️</span>这一步必须在启动终端前完成，否则 Claude 看不到这份思维导图的内容。</div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="demo-step" data-n="Step 1">
+    <div class="demo-title">打开终端，进入项目文件夹</div>
+    <div class="demo-desc">按 <span class="ic">Cmd+空格</span>，搜索「终端」打开，然后把项目文件夹图标直接拖进终端窗口，路径自动填入，按回车进入。</div>
+    <div class="cb"><div class="ct"><span class="cl">bash — 进入文件夹</span><button class="cpb" onclick="cp(this)">复制</button></div>
+    <pre>cd /Volumes/LaCie/Claude\ work/2026时代首府</pre></div>
+    <div class="demo-desc">进入后输入 <span class="ic">ls</span> 查看文件夹内容，确认资料都在：</div>
+    <div class="cb"><div class="ct"><span class="cl">bash — 查看文件列表</span><button class="cpb" onclick="cp(this)">复制</button></div>
+    <pre>ls</pre></div>
+    <div class="tip ok" style="margin:0"><span class="tii">✅</span>你应该能看到各种 .docx、.pdf 文件和文件夹。如果看到 tasks/ 目录，说明之前已配置过；如果没有，继续下一步创建。</div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="demo-step" data-n="Step 2">
+    <div class="demo-title">创建任务目录（如果还没有）</div>
+    <div class="cb"><div class="ct"><span class="cl">bash</span><button class="cpb" onclick="cp(this)">复制</button></div>
+    <pre>mkdir -p tasks
+touch tasks/todo.md
+touch tasks/lessons.md</pre></div>
+    <div class="tip ok" style="margin:0"><span class="tii">✅</span>如果提示"已存在"，说明之前做过，不用理会，继续下一步。</div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="demo-step" data-n="Step 3">
+    <div class="demo-title">启动 Claude Code</div>
+    <div class="cb"><div class="ct"><span class="cl">bash</span><button class="cpb" onclick="cp(this)">复制</button></div>
+    <pre>claude</pre></div>
+    <div class="demo-desc">终端界面会变成 Claude 的对话界面，出现提示符等待你输入。</div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="demo-step" data-n="Step 4">
+    <div class="demo-title">第一句话：让 Claude 读取所有文件</div>
+    <div class="demo-desc">这是建立"上下文"的关键步骤。Claude 会扫描你文件夹里的所有内容，建立对项目的整体认识。</div>
+    <div class="cb"><div class="ct"><span class="cl">第一句话 — 复制粘贴发送</span><button class="cpb" onclick="cp(this)">复制</button></div>
+    <pre>请先阅读当前目录下的所有文件，包括 CLAUDE.md 和第一集执行链.md，
+告诉我你已经读取了哪些文件，每个文件大概是什么内容，
+然后等待我的指令。</pre></div>
+    <div class="demo-desc">Claude 会列出它读取到的文件，以及每个文件的大致内容。确认资料都读进去了（包括你导出的 XMind PDF）。</div>
+    <div class="tip demo"><span class="tii">💬</span><strong>Claude 的回应示例：</strong><br>「我已读取以下文件：1. 第一集 导演阐述及解说词.docx — 包含导演对第一集的精神阐述... 2. 第一集执行链.md — 包含 Step 0 到 Step 6 的工作流程... 3. 第一集 从自然到心域.pdf（导出自 XMind）— 思维导图...」</div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="demo-step" data-n="Step 5">
+    <div class="demo-title">执行 Step 0：核心内核对齐</div>
+    <div class="demo-desc">确认文件读取正常后，开始执行第一步任务。直接指示 Claude 读取执行链文件里的 Step 0 并执行：</div>
+    <div class="cb"><div class="ct"><span class="cl">执行 Step 0 — 复制粘贴发送</span><button class="cpb" onclick="cp(this)">复制</button></div>
+    <pre>请阅读当前目录所有文件，执行 第一集执行链.md 里的 Step 0，
+按照 Step 0 的三个步骤完成任务：
+1. 提炼本集的 1 句话 logline（"它在讲什么，为什么重要"）
+2. 抽取章节/场景的主线结构与情绪曲线（起—承—转—合）
+3. 明确"必须出现"的精神意象与叙事功能（不能用内容替换）
+
+把产出结果直接写入 第一集执行链.md 文件的 Step 0 对应位置，
+格式为标准 markdown，在"### 第一集内核摘要（草案）"标题下写入。</pre></div>
+    <div class="demo-desc">Claude 会读取所有相关文件，生成分析结果，并自动写入 <span class="ic">第一集执行链.md</span> 的 Step 0 下方。</div>
+    <div class="tip demo"><span class="tii">💬</span><strong>Claude 的行动示例：</strong><br>「好的，我将读取所有相关文件并执行 Step 0... [读取文件中] ... 已完成分析，正在写入执行链文件... Step 0 完成，产出已写入 第一集执行链.md 的对应位置。」</div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="demo-step" data-n="Step 6">
+    <div class="demo-title">确认结果，继续 Step 1</div>
+    <div class="demo-desc">打开 <span class="ic">第一集执行链.md</span> 查看写入的内容，确认无误后继续：</div>
+    <div class="cb"><div class="ct"><span class="cl">继续下一步 — 复制粘贴发送</span><button class="cpb" onclick="cp(this)">复制</button></div>
+    <pre>Step 0 产出已确认，内容符合预期。
+请继续执行 第一集执行链.md 里的 Step 1，
+同样把产出结果直接写入文件的 Step 1 对应位置。</pre></div>
+    <div class="tip ok" style="margin:0"><span class="tii">✅</span>如果需要修改，可以说：「Step 0 的 logline 不够准确，需要更强调建筑与自然的精神连接，请重新提炼后更新文件。」</div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="demo-step" data-n="Step 7">
+    <div class="demo-title">保存结果：文件已自动写入</div>
+    <div class="demo-desc">Claude Code 终端会自动把所有产出写入你的本地 <span class="ic">第一集执行链.md</span> 文件。无需手动复制粘贴，打开文件夹，用 VS Code 或任意编辑器打开就能看到完整内容。</div>
+    <div class="cb"><div class="ct"><span class="cl">查看文件内容（可选）</span><button class="cpb" onclick="cp(this)">复制</button></div>
+    <pre># 在终端查看文件内容
+cat 第一集执行链.md
+
+# 或用 VS Code 打开（需要安装 code 命令行工具）
+code 第一集执行链.md</pre></div>
+    <div class="tip demo"><span class="tii">🎉</span>到这里，你已经完成了一个完整的工作循环：<strong>读取资料 → 建立认知 → 执行分析 → 自动写入文件</strong>。之后每一步只需重复 Step 5-6 的操作，逐步把所有步骤执行完毕。</div>
+  </div>
+  <div class="flow-arrow">↓</div>
+
+  <div class="demo-step" data-n="进阶技巧">
+    <div class="demo-title">进阶：纠错与经验积累</div>
+    <div class="demo-desc">如果 Claude 的回答有误或不满意：</div>
+    <div class="cb"><div class="ct"><span class="cl">纠错并记录教训</span><button class="cpb" onclick="cp(this)">复制</button></div>
+    <pre>刚才 Step 0 的情绪曲线分析有问题：
+- 雪山一节的情绪落点描述得太抽象，应该更具体说明"笃定"这个状态
+- 正确的描述应该是：从"躁动的怀疑"到"沉稳的笃定与意志力的确认"
+
+请：
+1. 更新执行链.md 里 Step 0 的情绪曲线部分
+2. 把这个纠正记录到 tasks/lessons.md：
+   日期 + 错误：情绪描述太抽象 + 正确做法：情绪状态要有具体的身体感受描述</pre></div>
+    <div class="tip ok" style="margin:0"><span class="tii">✅</span><span class="ic">tasks/lessons.md</span> 会积累所有你的纠正经验，下次进项目 Claude 自动读取，不会再犯同样的错误。</div>
+  </div>
+
+  <div class="stitle gr">完整流程图</div>
+  <div class="cb"><div class="ct"><span class="cl">时代首府项目完整工作流</span><button class="cpb" onclick="cp(this)">复制</button></div>
+  <pre>准备工作：XMind → 导出 PDF → 放入项目文件夹
+        ↓
+打开终端 → cd 进项目文件夹 → ls 确认文件
+        ↓
+mkdir -p tasks && touch tasks/todo.md tasks/lessons.md
+        ↓
+claude（启动 Claude Code）
+        ↓
+第一句话：请读取所有文件，告诉我你了解了什么
+        ↓
+Claude 读取并确认（你检查资料是否完整）
+        ↓
+执行 Step 0：提炼 logline + 情绪曲线 + 精神意象 → 写入执行链.md
+        ↓
+确认 Step 0 产出 → 执行 Step 1 → 写入执行链.md
+        ↓
+确认 Step 1 → 执行 Step 2 → ...（以此类推）
+        ↓
+发现错误 → 纠正 + 记录到 tasks/lessons.md
+        ↓
+所有步骤完成 → 执行链.md 就是完整的项目产出文档</pre></div>
+</div>
+
+<!-- ════════════ 提问模板库 ════════════ -->
+<div class="page" id="pg-prompts">
+  <div class="hero h-def"><div class="htag td">工具</div><h1>提问模板库</h1><p>直接复制使用，适用于网页端和终端两种工作方式。</p></div>
+  <div class="stitle">文件分析类</div>
+  <div class="cb"><div class="ct"><span class="cl">按步骤执行任务</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>请根据项目里所有文件，完成以下任务：
+1. 【任务1】
+2. 【任务2】
+3. 【任务3】
+请用 markdown 格式输出，方便我复制到本地文件。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">跨文件对比分析</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>请对比「文件A」和「文件B」，
+找出【叙事结构/内容/数据】上不一致的地方，
+用表格整理输出。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">综合多文件分析</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>请综合读取以下文件：
+- 文件A
+- 文件B
+- 文件C
+然后回答：【你的问题】</pre></div>
+  <div class="stitle">终端执行类</div>
+  <div class="cb"><div class="ct"><span class="cl">执行某步骤（终端）</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>请阅读当前目录所有文件，执行 执行链.md 里的 Step 0，
+把产出结果直接写入该文件 Step 0 对应位置。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">继续下一步</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>Step 0 确认无误，继续执行 Step 1，产出写入执行链.md 对应位置。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">追加不覆盖</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>把刚才的分析结果追加写入执行链.md 的 Step X 下方，
+不要覆盖已有内容，只在末尾补充。</pre></div>
+  <div class="stitle">生成 MD 文件类</div>
+  <div class="cb"><div class="ct"><span class="cl">生成执行链 md（网页端）</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>请根据项目里所有文件，帮我生成一份完整的执行链 md 文件。
+要求：
+- 用标准 markdown 格式
+- 包含 Step 0 到 Step N 的完整结构
+- 每步列明：输入文件、执行步骤、产出内容
+- 产出位置留空，等我后续填入</pre></div>
+  <div class="stitle">角色与纠错类</div>
+  <div class="cb"><div class="ct"><span class="cl">设定角色</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>你是一位资深【纪录片导演/iOS工程师/品牌策划师】，
+请基于专业视角帮我【任务描述】。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">记录纠错</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>刚才你的回答有问题：【说明哪里不对】
+正确做法是：【正确做法】
+请记录到 tasks/lessons.md：日期 + 错误描述 + 正确做法。</pre></div>
+  <div class="cb"><div class="ct"><span class="cl">让输出更好复制（网页端）</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>请把以上内容重新整理，用标准 markdown 格式输出，
+包括标题、列表、加粗，方便我直接粘贴到 md 文件里。</pre></div>
+</div>
+
+<!-- ════════════ 终端命令 ════════════ -->
+<div class="page" id="pg-cmds">
+  <div class="hero h-def"><div class="htag td">工具</div><h1>终端命令速查</h1><p>只需会这几个，就够用了。</p></div>
+  <div class="steps">
+    <div class="sc"><div class="sn nb" style="font-size:11px">cd</div><div class="sb2"><div class="st">进入文件夹</div><div class="sd"><span class="ic">cd ~/Desktop/项目名</span> 进桌面文件夹　<span class="ic">cd ..</span> 返回上一级<br>💡 把文件夹拖进终端，路径自动填入</div></div></div>
+    <div class="sc"><div class="sn nb" style="font-size:11px">ls</div><div class="sb2"><div class="st">查看文件夹内容</div><div class="sd">输入 <span class="ic">ls</span> 回车，显示所有文件和文件夹</div></div></div>
+    <div class="sc"><div class="sn nb" style="font-size:11px">pwd</div><div class="sb2"><div class="st">确认当前位置</div><div class="sd">输入 <span class="ic">pwd</span>，显示完整路径，确认自己在哪</div></div></div>
+    <div class="sc"><div class="sn nb" style="font-size:11px">mkdir</div><div class="sb2"><div class="st">创建文件夹</div><div class="sd"><span class="ic">mkdir tasks</span>　　<span class="ic">mkdir -p tasks</span>（已存在也不报错）</div></div></div>
+    <div class="sc"><div class="sn nb" style="font-size:11px">touch</div><div class="sb2"><div class="st">创建空文件</div><div class="sd"><span class="ic">touch 文件名.md</span> 创建一个空的 md 文件</div></div></div>
+    <div class="sc"><div class="sn nb" style="font-size:11px">cat</div><div class="sb2"><div class="st">查看文件内容</div><div class="sd"><span class="ic">cat 文件名.md</span> 在终端里直接显示文件内容</div></div></div>
+  </div>
+  <div class="tip info"><span class="tii">💡</span>Mac 打开终端：按 <span class="ic">Cmd+空格</span>，输入「终端」，回车。</div>
+</div>
+
+<!-- ════════════ 编程概念 ════════════ -->
+<div class="page" id="pg-coding">
+  <div class="hero h-def"><div class="htag td">编程入门</div><h1>编程核心概念</h1><p>搞懂这 5 个概念，后面学什么都快。</p></div>
+  <div class="steps">
+    <div class="sc"><div class="sn ny" style="font-size:11px">变量</div><div class="sb2"><div class="st">变量 — 存东西的盒子</div><div class="sd">贴了标签的盒子，把数据放进去随时取用。<br><span class="ic">name = "张三"</span>　把"张三"存在叫 name 的盒子里</div></div></div>
+    <div class="sc"><div class="sn ny" style="font-size:11px">函数</div><div class="sb2"><div class="st">函数 — 可复用的流程</div><div class="sd">把经常用的操作打包起来，起个名字，下次直接调用。就像「发送邮件」这个动作，不用每次重新解释怎么发。</div></div></div>
+    <div class="sc"><div class="sn ny" style="font-size:11px">循环</div><div class="sb2"><div class="st">循环 — 重复做同一件事</div><div class="sd">「对列表里每个人发一封邮件」——不用写 100 次，计算机替你重复。</div></div></div>
+    <div class="sc"><div class="sn ny" style="font-size:11px">条件</div><div class="sb2"><div class="st">条件 — 判断做不同的事</div><div class="sd">「如果下雨带伞，否则不带」——程序根据不同情况走不同的路（if/else）。</div></div></div>
+    <div class="sc"><div class="sn ny" style="font-size:11px">API</div><div class="sb2"><div class="st">API — 和外部服务沟通的接口</div><div class="sd">就像餐厅服务员：你说要什么（请求），他去厨房取来（响应）。Claude API 就是这个原理：你发消息，它返回回答。</div></div></div>
+  </div>
+  <div class="cb"><div class="ct"><span class="cl">学习提问模板</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>我是编程新手，请用最简单的方式解释【概念名称】是什么，
+用生活中的例子打比方，然后给我一个可以直接运行的最小示例，
+并逐行解释每一行在做什么。</pre></div>
+  <div class="tip info"><span class="tii">💡</span>遇到报错时，把错误信息直接粘贴给 Claude，说「我运行这段代码报错了，帮我解释原因并修复」。</div>
+</div>
+
+<!-- ════════════ 网页开发 ════════════ -->
+<div class="page" id="pg-webdev">
+  <div class="hero h-def"><div class="htag td">编程入门</div><h1>网页开发入门</h1><p>HTML/CSS/JavaScript 各做什么，怎么让 Claude 帮你做网页。</p></div>
+  <div class="steps">
+    <div class="sc"><div class="sn no" style="font-size:11px">HTML</div><div class="sb2"><div class="st">HTML — 骨架</div><div class="sd">定义网页有什么：标题、段落、图片、按钮。就像房子的框架结构。</div></div></div>
+    <div class="sc"><div class="sn no" style="font-size:11px">CSS</div><div class="sb2"><div class="st">CSS — 外观</div><div class="sd">控制颜色、字体、布局、动画。就像房子的装修风格。</div></div></div>
+    <div class="sc"><div class="sn no" style="font-size:11px">JS</div><div class="sb2"><div class="st">JavaScript — 行为</div><div class="sd">让网页动起来：点击触发事件、表单验证、数据交互。就像房子的水电系统。</div></div></div>
+  </div>
+  <div class="cb"><div class="ct"><span class="cl">让 Claude 帮你做网页</span><button class="cpb" onclick="cp(this)">复制</button></div><pre>请帮我做一个【描述你想要的功能】。
+要求：
+- 用单个 HTML 文件，CSS 和 JS 都写在里面
+- 界面要美观，适配手机屏幕
+- 代码要有中文注释，解释每部分是干什么的
+- 直接给我可以在浏览器打开的完整代码</pre></div>
+  <div class="tip ok"><span class="tii">✅</span>拿到代码后，保存为 <span class="ic">index.html</span>，双击用浏览器打开就能看到效果。</div>
+</div>
+
+<!-- ════════════ iOS 开发 ════════════ -->
+<div class="page" id="pg-ios">
+  <div class="hero h-def"><div class="htag td">编程进阶</div><h1>iOS App 开发 → 上架 App Store</h1><p>从零到上架的完整流程，以及和网页开发的核心区别。</p></div>
+  <table class="tbl">
+    <tr><th>对比项</th><th>🌐 网页</th><th>📱 iOS App</th></tr>
+    <tr><td>语言</td><td>HTML/CSS/JS</td><td>Swift / SwiftUI</td></tr>
+    <tr><td>工具</td><td>VS Code（免费）</td><td>Xcode（Mac 免费）</td></tr>
+    <tr><td>发布</td><td>上传服务器，有链接访问</td><td>提交 App Store 审核</td></tr>
+    <tr><td>费用</td><td>可免费托管</td><td>Apple 开发者账号 $99/年</td></tr>
+    <tr><td>审核</td><td>无需审核，立即生效</td><td>通常 1–3 个工作日</td></tr>
+    <tr><td>必须 Mac</td><td>不需要</td><td><strong>是，必须 Mac</strong></td></tr>
+    <tr><td>难度</td><td>⭐⭐</td><td>⭐⭐⭐⭐</td></tr>
+  </table>
+  <div class="stitle">iOS App 上架完整流程</div>
+  <div class="steps">
+    <div class="sc"><div class="sn np">1</div><div class="sb2"><div class="st">注册 Apple 开发者账号</div><div class="sd"><strong>developer.apple.com</strong> → 注册 → 缴费 $99/年<br><span class="badge br">必须</span> 没有这个无法上架</div></div></div>
+    <div class="sc"><div class="sn np">2</div><div class="sb2"><div class="st">安装 Xcode</div><div class="sd">Mac App Store 搜索「Xcode」免费下载（约 15GB）<br><span class="badge bo">注意</span> Windows 无法开发 iOS App</div></div></div>
+    <div class="sc"><div class="sn np">3</div><div class="sb2"><div class="st">用 Claude 辅助开发</div><div class="sd">「请帮我用 SwiftUI 做一个【功能描述】的界面，给我可以直接粘贴到 Xcode 的代码」</div></div></div>
+    <div class="sc"><div class="sn np">4</div><div class="sb2"><div class="st">在模拟器里测试</div><div class="sd">Xcode 自带 iPhone 模拟器，无需真机就能预览效果</div></div></div>
+    <div class="sc"><div class="sn np">5</div><div class="sb2"><div class="st">准备上架材料</div><div class="sd"><span class="badge bb">App 图标</span><span class="badge bb">截图 3 张以上</span><span class="badge bb">描述文案</span><span class="badge bb">隐私政策链接</span></div></div></div>
+    <div class="sc"><div class="sn np">6</div><div class="sb2"><div class="st">App Store Connect 创建条目</div><div class="sd"><strong>appstoreconnect.apple.com</strong> → 新建 App → 填信息 → 上传截图</div></div></div>
+    <div class="sc"><div class="sn np">7</div><div class="sb2"><div class="st">从 Xcode 归档上传</div><div class="sd">Product → Archive → Distribute App → App Store Connect → 上传</div></div></div>
+    <div class="sc"><div class="sn np">8</div><div class="sb2"><div class="st">等待审核 → 上架</div><div class="sd">通常 1–3 个工作日。<span class="badge bo">常见被拒</span> 崩溃、缺隐私政策、功能描述不符</div></div></div>
+  </div>
+</div>
+
+<!-- ════════════ 注意事项 ════════════ -->
+<div class="page" id="pg-tips">
+  <div class="hero h-def"><div class="htag td">重要提醒</div><h1>小白注意事项</h1><p>这些坑很多人踩过，提前知道就能避免。</p></div>
+  <div class="stitle gr">提问技巧</div>
+  <div class="steps">
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="st">描述越具体，回答越准确</div><div class="sd"><span class="badge br">❌</span>「帮我写个方案」<br><span class="badge bg2">✅</span>「帮我写针对25-35岁女性的护肤品推广方案，主打天然成分，预算5万，渠道小红书+抖音」</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="st">告诉它输出格式</div><div class="sd">「请用 markdown 格式」「请用表格整理」「请分点列出」「请控制在 200 字以内」</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="st">不满意直接说</div><div class="sd">「太长了，缩短到 100 字」「风格太正式，改口语化」「第 3 点展开详细说」</div></div></div>
+    <div class="sc"><div class="sn ng">✓</div><div class="sb2"><div class="st">给它设定角色</div><div class="sd">「你是资深纪录片导演，帮我…」— 角色设定能显著提升回答质量</div></div></div>
+  </div>
+  <div class="stitle or">常见错误（避坑）</div>
+  <div class="steps">
+    <div class="sc"><div class="sn no">!</div><div class="sb2"><div class="st">不要完全相信输出</div><div class="sd">Claude 可能会编造看起来合理但不存在的信息（数据、引用等）。重要信息务必核实。</div></div></div>
+    <div class="sc"><div class="sn no">!</div><div class="sb2"><div class="st">不要上传敏感信息</div><div class="sd">密码、身份证号、银行卡号等隐私信息不要上传或粘贴给 Claude。</div></div></div>
+    <div class="sc"><div class="sn no">!</div><div class="sb2"><div class="st">代码不要不看就运行</div><div class="sd">先大致理解代码在做什么，再运行。Claude 生成的代码可能有 bug 或有你不想要的行为。</div></div></div>
+    <div class="sc"><div class="sn no">!</div><div class="sb2"><div class="st">对话太长后重新整理</div><div class="sd">长对话后 Claude 可能「忘记」前面内容。新开对话，把关键背景重新粘贴进去。</div></div></div>
+  </div>
+</div>
+
+<!-- ════════════ FAQ ════════════ -->
+<div class="page" id="pg-faq">
+  <div class="hero h-def"><div class="htag td">参考</div><h1>常见问题 FAQ</h1><p>点击问题展开答案。</p></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">每次进 Projects 都要重新上传文件吗？<span class="fa2">▼</span></div><div class="fa">不需要。文件上传一次后永久保留在这个项目里。除非文件有更新，才需要重新上传新版本。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">Project Instructions 每次都要重新写吗？<span class="fa2">▼</span></div><div class="fa">不需要。写一次后永久保存，每次进这个项目自动生效。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">只有 Gemini Key，可以用终端吗？<span class="fa2">▼</span></div><div class="fa">可以，用 Gemini CLI：<br><br>npm install -g @google/gemini-cli<br><br>进入项目文件夹后输入 gemini 启动，使用方式和 Claude Code 类似。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">XMind 文件怎么让 Claude 读取？<span class="fa2">▼</span></div><div class="fa">Claude 不支持直接读取 .xmind 格式。在 XMind 里：文件 → 导出 → PDF → 保存，然后上传或放入项目文件夹。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">扫描版 PDF 读不出来怎么办？<span class="fa2">▼</span></div><div class="fa">扫描版 PDF 是图片，Claude 无法提取文字。用 Adobe Acrobat 或手机扫描 App（如扫描全能王）做 OCR 识别后重新导出。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">每次重开终端都要 cd 进文件夹吗？<span class="fa2">▼</span></div><div class="fa">是的，但有快捷方式：在 Finder 里把项目文件夹图标直接拖进终端窗口，路径自动填入。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">iOS 开发一定要 Mac 吗？<span class="fa2">▼</span></div><div class="fa">是的，Xcode 只能在 Mac 上运行。Windows 无法原生开发 iOS App。没有 Mac 可以考虑用 Flutter 做跨平台 App。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">文件太多，Claude 回答不准怎么办？<span class="fa2">▼</span></div><div class="fa">在提问时指定具体文件：「请只读取以下 3 个文件回答我的问题：文件A、文件B、文件C」，不要让它扫描全部。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">Opus / Sonnet / Haiku 有什么区别，我该用哪个？<span class="fa2">▼</span></div><div class="fa">Opus = 最强，适合复杂深度任务；Sonnet = 日常主力，性价比最高；Haiku = 最快最省，适合简单任务。日常用 Sonnet 就够了，重要的深度创作项目可以换 Opus。详见「模型家族介绍」章节。</div></div>
+  <div class="faq"><div class="fq" onclick="tf(this)">网页端对话记录会保存吗？<span class="fa2">▼</span></div><div class="fa">会，在项目里的对话历史会保留。但每次新开一个对话，Claude 不会自动记得上次聊了什么，需要你把重要结论写进 Project Instructions 或重新告知。</div></div>
+</div>
+
+<!-- ════════════ 检查清单 ════════════ -->
+<div class="page" id="pg-checklist">
+  <div class="hero h-def"><div class="htag td">工具</div><h1>启动检查清单</h1><p>每次新项目开始，对照勾选，确保不漏步骤。勾选状态自动保存到本地。</p></div>
+  <div class="stitle">一次性设置（只做一次）</div>
+  <div id="cl1"></div>
+  <div class="stitle">每次新项目（每次都做）</div>
+  <div id="cl2"></div>
+  <div style="margin-top:16px"><button onclick="resetCL()" style="background:rgba(255,90,90,.08);border:1px solid rgba(255,90,90,.2);color:#d07070;padding:8px 16px;border-radius:8px;cursor:pointer;font-size:13px;font-family:inherit">重置所有勾选</button></div>
+</div>
+
+</main>
+</div>
+<script>
+function go(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active')});
+  document.querySelectorAll('.nbtn').forEach(function(b){b.classList.remove('active')});
+  var pg=document.getElementById('pg-'+id);
+  if(pg){pg.classList.add('active')}
+  document.querySelectorAll('.nbtn').forEach(function(b){
+    if(b.getAttribute('onclick')&&b.getAttribute('onclick').indexOf("'"+id+"'")>-1){b.classList.add('active')}
+  });
+  document.getElementById('pg-search').style.display='none';
+  window.scrollTo(0,0);
+  closeNav();
+}
+function toggleNav(){
+  document.getElementById('sb').classList.toggle('open');
+  document.getElementById('ov').classList.toggle('show');
+}
+function closeNav(){
+  document.getElementById('sb').classList.remove('open');
+  document.getElementById('ov').classList.remove('show');
+}
+function cp(btn){
+  var pre=btn.closest('.cb').querySelector('pre');
+  var txt=pre?pre.textContent.trim():'';
+  if(navigator.clipboard){
+    navigator.clipboard.writeText(txt).then(function(){
+      btn.textContent='已复制 ✓';btn.classList.add('ok');
+      setTimeout(function(){btn.textContent='复制';btn.classList.remove('ok')},2000);
+    });
+  } else {
+    var ta=document.createElement('textarea');ta.value=txt;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta);
+    btn.textContent='已复制 ✓';setTimeout(function(){btn.textContent='复制'},2000);
+  }
+}
+function tf(el){el.parentElement.classList.toggle('open')}
+var SD=[
+  {k:['projects','知识库','上传','md','生成','instructions'],id:'web',t:'网页端 Projects 完整操作手册'},
+  {k:['终端','claude code','sop','执行链','写入','bash'],id:'terminal',t:'Claude Code 终端 SOP'},
+  {k:['时代首府','演示','实战','step 0','流程','完整'],id:'demo',t:'时代首府完整工作流演示'},
+  {k:['提问','模板','句式','prompt'],id:'prompts',t:'提问模板库'},
+  {k:['命令','cd','ls','mkdir','touch','cat'],id:'cmds',t:'终端命令速查'},
+  {k:['版本','收费','pro','免费','api key','价格'],id:'plans',t:'版本与收费说明'},
+  {k:['opus','sonnet','haiku','模型','区别','选择'],id:'models',t:'模型家族介绍'},
+  {k:['是什么','能做什么','注册','入门','基础'],id:'basics',t:'Claude 是什么'},
+  {k:['编程','变量','函数','api','概念'],id:'coding',t:'编程核心概念'},
+  {k:['网页','html','css','javascript','前端'],id:'webdev',t:'网页开发入门'},
+  {k:['ios','app','swift','xcode','上架','苹果'],id:'ios',t:'iOS App 开发'},
+  {k:['注意','坑','技巧','错误','小白'],id:'tips',t:'小白注意事项'},
+  {k:['faq','问题','xmind','pdf','常见'],id:'faq',t:'常见问题 FAQ'},
+  {k:['清单','检查','checklist'],id:'checklist',t:'启动检查清单'},
+];
+function doSearch(v){
+  var q=v.trim().toLowerCase();
+  var sp=document.getElementById('pg-search');
+  var sl=document.getElementById('sl');
+  if(!q){
+    sp.style.display='none';
+    document.querySelectorAll('.page').forEach(function(p){if(p.classList.contains('active'))p.style.display=''});
+    return;
+  }
+  document.querySelectorAll('.page').forEach(function(p){p.style.display='none'});
+  sp.style.display='block';
+  var res=SD.filter(function(item){
+    return item.k.some(function(k){return k.includes(q)})||item.t.toLowerCase().includes(q);
+  });
+  if(!res.length){sl.innerHTML='<div class="nores">😕 没有找到「'+v+'」相关内容</div>';return}
+  sl.innerHTML=res.map(function(r){
+    return'<div class="sc" style="cursor:pointer;margin-bottom:10px" onclick="clearSearch();go(\''+r.id+'\')">'
+      +'<div class="sn nb">›</div>'
+      +'<div class="sb2"><div class="st">'+r.t+'</div><div class="sd">点击跳转</div></div>'
+      +'</div>';
+  }).join('');
+}
+function clearSearch(){document.getElementById('si').value='';document.getElementById('pg-search').style.display='none'}
+var CL1=[
+  '全局 ~/.claude/CLAUDE.md 已创建',
+  '工作规范内容已粘贴进 CLAUDE.md',
+  '项目背景描述已追加（cat >> 命令）',
+];
+var CL2=[
+  '已 cd 进项目文件夹（ls 确认文件都在）',
+  'tasks/todo.md 已创建',
+  'tasks/lessons.md 已创建',
+  '项目专属 CLAUDE.md 已创建并写好背景',
+  '执行链 .md 文件已准备好，步骤清晰',
+  'XMind 文件已导出为 PDF 并放入文件夹',
+  '扫描版 PDF 已做 OCR 处理',
+  '输入 claude 启动，第一句话读取所有文件',
+];
+function buildCL(items,cid,prefix){
+  var saved=JSON.parse(localStorage.getItem('cl_'+prefix)||'{}');
+  document.getElementById(cid).innerHTML=items.map(function(item,i){
+    return'<label class="cli"><input type="checkbox"'+(saved[i]?' checked':'')+' onchange="saveCL(\''+prefix+'\','+i+',this.checked)"><span>'+item+'</span></label>';
+  }).join('');
+}
+function saveCL(prefix,i,v){var s=JSON.parse(localStorage.getItem('cl_'+prefix)||'{}');s[i]=v;localStorage.setItem('cl_'+prefix,JSON.stringify(s))}
+function resetCL(){localStorage.removeItem('cl_one');localStorage.removeItem('cl_each');buildCL(CL1,'cl1','one');buildCL(CL2,'cl2','each')}
+buildCL(CL1,'cl1','one');
+buildCL(CL2,'cl2','each');
+</script>
+</body>
+</html>
