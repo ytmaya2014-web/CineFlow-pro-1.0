@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1">
+<title>剧组AI工作台 v3</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Noto+Serif+SC:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0e0e12;--bg2:#17171d;--bg3:#1f1f28;--bg4:#272732;--bg5:#30303d;--bd:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.13);--bd3:rgba(255,255,255,0.2);--tx:#eeeae2;--tx2:#99968f;--tx3:#55534f;--gd:#c9a96e;--gd2:#e8c98e;--gdbg:rgba(201,169,110,0.1);--gdbd:rgba(201,169,110,0.25);--gr:#52b788;--grbg:rgba(82,183,136,0.1);--grbd:rgba(82,183,136,0.25);--bl:#5b9fd4;--blbg:rgba(91,159,212,0.1);--blbd:rgba(91,159,212,0.25);--rd:#e05555;--rdbg:rgba(224,85,85,0.1);--rdbd:rgba(224,85,85,0.25);--pu:#8b7fd4;--pubg:rgba(139,127,212,0.1);--r:12px;--rl:16px;--th:50px;--tsm:42px}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;overflow:hidden}
+body{font-family:'Noto Sans SC',sans-serif;background:var(--bg);color:var(--tx);font-size:16px;line-height:1.65}
+.app{display:flex;height:100vh;overflow:hidden}
+/* SIDEBAR */
+.sb{width:228px;background:var(--bg2);border-right:1px solid var(--bd);display:flex;flex-direction:column;flex-shrink:0;overflow-y:auto}
+.sb-logo{padding:22px 18px 16px;border-bottom:1px solid var(--bd)}
+.sb-mark{width:44px;height:44px;background:linear-gradient(135deg,#c9a96e,#8b6835);border-radius:11px;display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:10px}
+.sb-name{font-size:15px;font-weight:700}.sb-ver{font-size:11px;color:var(--tx3);margin-top:2px}
+.sb-nav{padding:10px 8px;flex:1}
+.nl{font-size:11px;color:var(--tx3);padding:8px 10px 4px;letter-spacing:.06em;text-transform:uppercase}
+.ni{display:flex;align-items:center;gap:10px;padding:0 11px;height:var(--th);border-radius:10px;cursor:pointer;color:var(--tx2);font-size:14px;transition:all .15s;border:1px solid transparent;margin-bottom:2px;user-select:none}
+.ni:hover{background:var(--bg3);color:var(--tx)}
+.ni.on{background:var(--gdbg);color:var(--gd2);border-color:var(--gdbd)}
+.ni-ic{font-size:17px;width:20px;text-align:center;flex-shrink:0}
+.nd{height:1px;background:var(--bd);margin:7px 8px}
+.sb-foot{padding:14px 18px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx3)}
+.sf-tag{display:inline-block;background:var(--gdbg);color:var(--gd);border:1px solid var(--gdbd);border-radius:4px;padding:2px 7px;font-size:10px;margin-bottom:4px}
+/* MAIN */
+.mn{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
+.tb{padding:0 22px;height:60px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;background:var(--bg);flex-shrink:0}
+.tb-l{display:flex;align-items:center;gap:11px}
+.tb-title{font-size:17px;font-weight:700}
+.tb-proj{font-size:13px;color:var(--gd);background:var(--gdbg);border:1px solid var(--gdbd);padding:5px 12px;border-radius:7px;cursor:pointer;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.tb-r{display:flex;gap:7px}
+.ct{flex:1;overflow-y:auto;padding:20px 22px}
+.sec{display:none}.sec.on{display:block}
+/* BUTTONS */
+.btn{height:var(--tsm);padding:0 15px;border-radius:9px;font-size:14px;cursor:pointer;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);transition:all .15s;font-family:inherit;display:inline-flex;align-items:center;gap:6px;white-space:nowrap}
+.btn:hover{background:var(--bg4);color:var(--tx);border-color:var(--bd3)}
+.btn-gd{background:linear-gradient(135deg,#c9a96e,#9a7240);color:#1a1200;border-color:transparent;font-weight:600}
+.btn-gd:hover{background:linear-gradient(135deg,#d9b97e,#aa8250);color:#1a1200}
+.btn-sm{height:38px;padding:0 13px;font-size:13px;border-radius:8px}
+.btn-xs{height:32px;padding:0 10px;font-size:12px;border-radius:7px}
+.btn-gh{background:transparent;border-color:transparent;color:var(--tx3)}
+.btn-gh:hover{background:var(--bg3);color:var(--tx2)}
+.btn-rd{color:var(--rd);border-color:var(--rdbd)}
+.btn-rd:hover{background:var(--rdbg)}
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;margin-bottom:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g2r{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+/* FORMS */
+.fl{font-size:11px;color:var(--tx3);letter-spacing:.04em;text-transform:uppercase;display:block;margin-bottom:5px}
+.fi{width:100%;background:var(--bg);border:1px solid var(--bd2);border-radius:9px;padding:0 13px;color:var(--tx);font-family:inherit;font-size:15px;outline:none;transition:border-color .15s;margin-bottom:12px;height:var(--th)}
+.fi:focus{border-color:var(--gdbd)}
+.fi::placeholder{color:var(--tx3)}
+.fta{height:auto;min-height:80px;padding-top:11px;padding-bottom:11px;resize:vertical}
+select.fi{cursor:pointer}
+/* TABS */
+.tabs{display:flex;border-bottom:1px solid var(--bd);margin-bottom:18px}
+.tab-btn{height:44px;padding:0 18px;font-size:14px;cursor:pointer;border-bottom:2px solid transparent;color:var(--tx2);background:none;border-top:none;border-left:none;border-right:none;font-family:inherit;transition:all .15s;margin-bottom:-1px}
+.tab-btn.on{border-bottom-color:var(--gd);color:var(--gd2);font-weight:600}
+.tab-pane{display:none}.tab-pane.on{display:block}
+/* MODAL */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.76);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px)}
+.ov.on{display:flex}
+.mo{background:var(--bg2);border:1px solid var(--bd2);border-radius:20px;padding:26px;width:94%;max-width:600px;max-height:90vh;overflow-y:auto}
+.mo-title{font-size:18px;font-weight:700;margin-bottom:4px}
+.mo-sub{font-size:13px;color:var(--tx3);margin-bottom:20px}
+.mo-foot{display:flex;gap:8px;justify-content:flex-end;margin-top:10px;padding-top:10px;border-top:1px solid var(--bd)}
+/* BADGE */
+.badge{display:inline-flex;align-items:center;font-size:12px;padding:3px 9px;border-radius:5px;font-weight:500}
+.b-gd{background:var(--gdbg);color:var(--gd);border:1px solid var(--gdbd)}
+.b-gr{background:var(--grbg);color:var(--gr);border:1px solid var(--grbd)}
+.b-bl{background:var(--blbg);color:var(--bl);border:1px solid var(--blbd)}
+.b-rd{background:var(--rdbg);color:var(--rd);border:1px solid var(--rdbd)}
+.b-gy{background:var(--bg4);color:var(--tx3);border:1px solid var(--bd)}
+/* TOAST */
+.toast{position:fixed;bottom:28px;right:28px;z-index:400;background:var(--bg2);border:1px solid var(--grbd);border-radius:12px;padding:13px 18px;font-size:14px;color:var(--gr);transform:translateY(80px);opacity:0;transition:all .3s;pointer-events:none}
+.toast.on{transform:translateY(0);opacity:1}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--bg5);border-radius:3px}
+/* PROJ */
+.pj{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:17px 18px;margin-bottom:11px;transition:border-color .15s}
+.pj.cur{border-color:var(--gdbd);background:var(--gdbg)}
+.pj-head{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.pj-name{font-size:17px;font-weight:700}
+.pj-meta{font-size:13px;color:var(--tx2);margin-top:3px}
+.pj-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.pj-btns{display:flex;gap:7px;flex-shrink:0}
+.pj-det{display:none;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)}
+.pj-det.on{display:block}
+/* TASKS */
+.tr{display:flex;align-items:flex-start;gap:11px;padding:14px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+.tr:last-child{border-bottom:none}
+.tr:hover{opacity:.85}
+.tcb{width:23px;height:23px;border-radius:6px;border:1.5px solid var(--bd2);flex-shrink:0;margin-top:2px;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
+.tcb.dn{background:var(--grbg);border-color:var(--grbd);color:var(--gr)}
+.tb2{flex:1;min-width:0}
+.tn{font-size:15px;font-weight:500}
+.tn.dn{color:var(--tx3);text-decoration:line-through}
+.ti{font-size:12px;color:var(--tx3);margin-top:3px;display:flex;gap:9px;flex-wrap:wrap}
+.tr-r{display:flex;align-items:center;gap:9px;flex-shrink:0}
+.ap{font-size:12px;padding:3px 10px;background:var(--bg4);border-radius:11px;color:var(--tx2)}
+.pd{width:8px;height:8px;border-radius:50%}
+/* KANBAN */
+.kanban{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+.kc{background:var(--bg3);border-radius:var(--r);padding:13px}
+.kc-h{font-size:13px;font-weight:600;margin-bottom:11px;display:flex;align-items:center;justify-content:space-between;color:var(--tx2)}
+.kcnt{font-size:10px;background:var(--bg4);color:var(--tx3);padding:2px 7px;border-radius:10px}
+.kcard{background:var(--bg2);border:1px solid var(--bd);border-radius:9px;padding:12px 13px;margin-bottom:8px;cursor:pointer}
+.kcard:hover{border-color:var(--bd2)}
+.kcard-n{font-size:13px;font-weight:500;margin-bottom:3px}
+.kcard-m{font-size:11px;color:var(--tx3)}
+/* CALLSHEET */
+.cs-info{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.cs-block{background:var(--bg3);border-radius:10px;padding:14px}
+.cs-lbl{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.cs-val{font-size:15px;font-weight:600}
+.cs-sel-btn{padding:6px 14px;height:38px;border-radius:8px;font-size:13px;cursor:pointer;border:1px solid var(--bd);background:var(--bg2);color:var(--tx2);font-family:inherit;transition:all .15s;margin:3px}
+.cs-sel-btn.on{background:var(--gdbg);color:var(--gd2);border-color:var(--gdbd)}
+/* LOCATION */
+.loc-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);padding:15px;margin-bottom:10px}
+.loc-h{display:flex;align-items:center;gap:11px;cursor:pointer}
+.loc-ic{width:42px;height:42px;border-radius:9px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.loc-name{font-size:15px;font-weight:600}
+.loc-addr{font-size:12px;color:var(--tx3);margin-top:2px}
+.loc-det{display:none;margin-top:11px;padding-top:11px;border-top:1px solid var(--bd)}
+.loc-det.on{display:block}
+.loc-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.lf{background:var(--bg3);border-radius:8px;padding:9px 11px}
+.lf-l{font-size:10px;color:var(--tx3);text-transform:uppercase;margin-bottom:2px}
+.lf-v{font-size:14px;font-weight:500}
+/* EQUIPMENT */
+.eq-row{display:flex;align-items:center;gap:11px;padding:13px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+.eq-row:last-child{border-bottom:none}
+.eq-ic{width:38px;height:38px;border-radius:8px;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0}
+.eq-name{font-size:14px;font-weight:500}
+.eq-det{font-size:12px;color:var(--tx3);margin-top:2px}
+.eq-st{font-size:12px;padding:4px 11px;border-radius:6px;flex-shrink:0}
+.eq-ok{background:var(--grbg);color:var(--gr)}
+.eq-out{background:var(--rdbg);color:var(--rd)}
+.eq-warn{background:var(--gdbg);color:var(--gd)}
+/* WEATHER */
+.wx-prompt{background:var(--bg);border:1px solid var(--bd2);border-radius:9px;padding:13px;font-size:13px;color:var(--tx2);line-height:1.8;font-family:'Noto Serif SC',serif;margin:11px 0}
+/* LOGS */
+.log-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:18px;margin-bottom:11px}
+.log-date{font-size:16px;font-weight:700}
+.log-pn{font-size:12px;color:var(--tx3);margin-top:2px}
+.ls{margin-bottom:11px}
+.ls-l{font-size:11px;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px}
+.ls-t{font-size:14px;color:var(--tx2);line-height:1.75;white-space:pre-wrap}
+.log-scores{display:flex;gap:9px;margin-top:12px;padding-top:12px;border-top:1px solid var(--bd)}
+.sc{flex:1;background:var(--bg3);border-radius:8px;padding:10px;text-align:center}
+.sc-v{font-size:22px;font-weight:700;font-family:'Noto Serif SC',serif}
+.sc-l{font-size:11px;color:var(--tx3);margin-top:2px}
+/* PROMPTS */
+.pkg{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);margin-bottom:11px;overflow:hidden}
+.pkg-h{display:flex;align-items:center;gap:11px;padding:15px 17px;cursor:pointer;min-height:var(--th);transition:background .15s}
+.pkg-h:hover{background:var(--bg3)}
+.pkg-ic{font-size:20px;width:40px;height:40px;border-radius:9px;background:var(--bg3);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pkg-info{flex:1}
+.pkg-title{font-size:14px;font-weight:600}
+.pkg-sub{font-size:12px;color:var(--tx3);margin-top:1px}
+.pkg-arr{font-size:12px;color:var(--tx3);transition:transform .2s}
+.pkg-body{display:none;padding:0 17px 14px;border-top:1px solid var(--bd)}
+.pkg-body.on{display:block}
+.pi{padding:13px 0;border-bottom:1px solid var(--bd)}
+.pi:last-child{border-bottom:none}
+.pi-title{font-size:14px;font-weight:600;margin-bottom:7px}
+.pi-text{background:var(--bg);border:1px solid var(--bd2);border-radius:8px;padding:12px 13px;font-size:13px;color:var(--tx2);line-height:1.8;font-family:'Noto Serif SC',serif}
+.pi-foot{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap;align-items:center}
+.pi-tag{font-size:11px;padding:3px 8px;border-radius:4px;background:var(--bg4);color:var(--tx3)}
+.copy-btn{margin-left:auto;height:33px;padding:0 13px;border-radius:6px;background:var(--bg4);border:1px solid var(--bd2);color:var(--tx3);cursor:pointer;font-family:inherit;font-size:12px;transition:all .15s}
+.copy-btn:hover{background:var(--gdbg);color:var(--gd);border-color:var(--gdbd)}
+.copy-btn.ok{background:var(--grbg);color:var(--gr);border-color:var(--grbd)}
+/* TEMPLATES */
+.tpl-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:17px 18px;margin-bottom:11px}
+.tpl-h{display:flex;align-items:center;gap:13px;cursor:pointer}
+.tpl-ic{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0}
+.tpl-name{font-size:15px;font-weight:700}
+.tpl-desc{font-size:12px;color:var(--tx3);margin-top:2px}
+.tpl-body{display:none;margin-top:15px;padding-top:15px;border-top:1px solid var(--bd)}
+.tpl-body.on{display:block}
+.tpl-out{background:var(--bg);border:1px dashed var(--bd2);border-radius:9px;padding:15px;font-size:13px;color:var(--tx2);line-height:1.9;white-space:pre-wrap;margin-top:13px;min-height:90px;font-family:'Noto Serif SC',serif}
+.cp-btn{display:inline-flex;align-items:center;gap:6px;height:40px;padding:0 16px;border-radius:8px;background:var(--gdbg);border:1px solid var(--gdbd);color:var(--gd2);cursor:pointer;font-family:inherit;font-size:13px;transition:all .15s;margin-top:11px}
+.cp-btn:hover{background:rgba(201,169,110,.18)}
+.cp-btn.ok{background:var(--grbg);color:var(--gr);border-color:var(--grbd)}
+/* AI TRAINING */
+.ai-card{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--rl);padding:17px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.ai-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;opacity:0;transition:opacity .2s}
+.ai-card.c1::before{background:linear-gradient(90deg,#e05555,#e09055)}
+.ai-card.c2::before{background:linear-gradient(90deg,#52b788,#5b9fd4)}
+.ai-card.c3::before{background:linear-gradient(90deg,#5b9fd4,#8b7fd4)}
+.ai-card.c4::before{background:linear-gradient(90deg,#c9a96e,#e8c98e)}
+.ai-card.open::before{opacity:1}
+.ai-card.open{border-color:var(--bd2)}
+.ai-logo{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;font-family:'Noto Serif SC',serif;margin-bottom:11px}
+.ai-name{font-size:16px;font-weight:700;margin-bottom:4px}
+.ai-desc{font-size:13px;color:var(--tx2);line-height:1.6}
+.ai-det{display:none;margin-top:13px;padding-top:13px;border-top:1px solid var(--bd)}
+.ai-det.on{display:block}
+.px{background:var(--bg);border:1px solid var(--bd2);border-radius:8px;padding:12px 13px;font-size:13px;color:var(--tx2);line-height:1.75;font-family:'Noto Serif SC',serif;margin:9px 0}
+.pb{height:4px;background:var(--bg4);border-radius:2px;margin-top:5px;overflow:hidden}
+.pf{height:100%;border-radius:2px}
+.rp{display:inline-flex;align-items:center;gap:6px;padding:0 16px;height:var(--tsm);border-radius:20px;border:1px solid var(--bd);background:var(--bg2);color:var(--tx2);font-size:14px;cursor:pointer;transition:all .15s;margin:3px}
+.rp.on{background:var(--gdbg);color:var(--gd2);border-color:var(--gdbd)}
+.rpanel{display:none}.rpanel.on{display:block}
+/* PDF EXPORT MODAL */
+.pdf-opt{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--bd);cursor:pointer}
+.pdf-opt:last-child{border-bottom:none}
+.pdf-cb{width:22px;height:22px;border-radius:6px;border:1.5px solid var(--bd2);flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:12px;transition:all .15s}
+.pdf-cb.on{background:var(--grbg);border-color:var(--grbd);color:var(--gr)}
+.pdf-label{font-size:15px;font-weight:500}
+.pdf-sub{font-size:12px;color:var(--tx3);margin-top:2px}
+/* PRINT */
+
+.mob-ni{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;color:var(--tx3);border-radius:8px;padding:4px 2px;font-size:10px;transition:color .15s;border:none;background:none;font-family:inherit;min-width:0}
+.mob-ni.on{color:var(--gd2)}
+.mob-ni:hover{color:var(--tx)}
+/* ── MOBILE PHONE ≤600px ── */
+@media screen and (max-width:600px){
+  html,body{overflow:hidden}
+  .sb{display:none}
+  .mn{margin-left:0;width:100%;display:flex;flex-direction:column;height:100vh}
+  .tb{padding:0 13px;height:50px}
+  .tb-title{font-size:15px}
+  .tb-proj{font-size:12px;padding:4px 9px;max-width:120px}
+  .tb-r .btn{height:34px;padding:0 10px;font-size:12px}
+  .ct{padding:13px 13px 80px;overflow-y:auto;flex:1}
+  .mob-nav{display:flex !important}
+  .card{padding:14px}
+  .g2{grid-template-columns:1fr}
+  .g3{grid-template-columns:1fr 1fr}
+  .g2r{grid-template-columns:1fr}
+  .kanban{grid-template-columns:1fr}
+  .mo{width:100%;max-width:100%;border-radius:18px 18px 0 0;position:fixed;bottom:0;left:0;right:0;max-height:85vh;padding:20px 16px 30px;margin:0;overflow-y:auto}
+  .ov{align-items:flex-end}
+  .btn{height:40px}
+  .btn-sm{height:36px;font-size:12px}
+  .fi{height:46px;font-size:15px}
+  .tpl-h{gap:10px}
+  .tpl-ic{width:38px;height:38px;font-size:19px}
+  .pj-name{font-size:15px}
+  .loc-name{font-size:14px}
+  .ai-name{font-size:15px}
+}
+/* ── TABLET iPad 601-1024px ── */
+@media screen and (min-width:601px) and (max-width:1024px){
+  .sb{width:200px}
+  .ct{padding:18px 20px}
+  .g2r{grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+}
+@media print{
+  .sb,.tb,.ov,.toast,.no-print{display:none!important}
+  .app{display:block}.mn{margin:0;overflow:visible}.ct{overflow:visible;padding:0}
+  .sec{display:none!important}
+  #pdf-view{display:block!important}
+  body{background:white;color:black;font-size:12pt;font-family:'Noto Sans SC',sans-serif}
+  .pdf-page{page-break-after:always;padding:16mm 20mm}
+  .pdf-h1{font-size:20pt;font-weight:700;border-bottom:2pt solid #333;padding-bottom:8px;margin-bottom:14px;display:flex;align-items:center;gap:10px}
+  .pdf-h2{font-size:14pt;font-weight:600;margin:14px 0 7px;color:#222;border-left:3pt solid #c9a96e;padding-left:8px}
+  .pdf-row{display:flex;gap:16px;margin-bottom:7px;font-size:11pt}
+  .pdf-lbl{color:#666;min-width:90px;flex-shrink:0}
+  .pdf-val{color:#111;flex:1}
+  .pdf-tbl{width:100%;border-collapse:collapse;margin:9px 0;font-size:10pt}
+  .pdf-tbl th{background:#f5f5f5;padding:7px 9px;text-align:left;border:1px solid #ccc;font-weight:600}
+  .pdf-tbl td{padding:7px 9px;border:1px solid #ddd;vertical-align:top}
+  .pdf-tbl tr:nth-child(even) td{background:#fafafa}
+  .pdf-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9pt;font-weight:500}
+  .pdf-done{background:#e8f5e9;color:#2e7d32}
+  .pdf-todo{background:#fff8e1;color:#f57f17}
+  .pdf-doing{background:#e3f2fd;color:#1565c0}
+  .pdf-urgent{background:#fce4ec;color:#c62828}
+  .pdf-high{background:#fff3e0;color:#e65100}
+  .pdf-note{background:#f9f9f9;border-left:3pt solid #c9a96e;padding:8px 12px;font-size:10pt;color:#444;margin:6px 0;white-space:pre-wrap}
+}
+#pdf-view{display:none}
+</style>
+</head>
+<body>
+<div class="app">
+<!-- SIDEBAR -->
+<aside class="sb">
+  <div class="sb-logo">
+    <div class="sb-mark">🎬</div>
+    <div class="sb-name">剧组AI工作台</div>
+    <div class="sb-ver">Film Crew Toolkit · v3</div>
+  </div>
+  <nav class="sb-nav">
+    <div class="nl">工作区</div>
+    <div class="ni on"  onclick="go('projects',this)"><span class="ni-ic">📁</span>项目管理</div>
+    <div class="ni"     onclick="go('tasks',this)"><span class="ni-ic">✅</span>任务&amp;进度</div>
+    <div class="ni"     onclick="go('callsheet',this)"><span class="ni-ic">📢</span>拍摄通告单</div>
+    <div class="ni"     onclick="go('location',this)"><span class="ni-ic">📍</span>场景勘景记录</div>
+    <div class="ni"     onclick="go('equipment',this)"><span class="ni-ic">🎥</span>器材借还台账</div>
+    <div class="ni"     onclick="go('weather',this)"><span class="ni-ic">🌤</span>天气&amp;日落查询</div>
+    <div class="ni"     onclick="go('logs',this)"><span class="ni-ic">📋</span>拍摄复盘日报</div>
+    <div class="nd"></div>
+    <div class="nl">AI工具</div>
+    <div class="ni"     onclick="go('prompts',this)"><span class="ni-ic">⚡</span>提示词调度台</div>
+    <div class="ni"     onclick="go('templates',this)"><span class="ni-ic">📄</span>文档模板库</div>
+    <div class="nd"></div>
+    <div class="nl">培训</div>
+    <div class="ni"     onclick="go('training',this)"><span class="ni-ic">🧭</span>AI培训中心</div>
+  </nav>
+  <div class="sb-foot"><div class="sf-tag">本地存储</div><div>数据存浏览器 · 可导出分享</div></div>
+</aside>
+<!-- MAIN -->
+<!-- Mobile bottom navigation -->
+<nav class="mob-nav" style="display:none;position:fixed;bottom:0;left:0;right:0;height:60px;background:var(--bg2);border-top:1px solid var(--bd);z-index:100;padding:0 6px;padding-bottom:env(safe-area-inset-bottom,0px)">
+  <button class="mob-ni on" id="mni-projects"  onclick="goMob('projects',this)"><span style="font-size:20px">📁</span><span>项目</span></button>
+  <button class="mob-ni"    id="mni-tasks"      onclick="goMob('tasks',this)"><span style="font-size:20px">✅</span><span>任务</span></button>
+  <button class="mob-ni"    id="mni-callsheet"  onclick="goMob('callsheet',this)"><span style="font-size:20px">📢</span><span>通告</span></button>
+  <button class="mob-ni"    id="mni-location"   onclick="goMob('location',this)"><span style="font-size:20px">📍</span><span>场景</span></button>
+  <button class="mob-ni"    id="mni-more"       onclick="togMobMore(event)"><span style="font-size:20px">⋯</span><span>更多</span></button>
+</nav>
+<!-- Mobile more panel -->
+<div id="mob-more" style="display:none;position:fixed;bottom:60px;left:0;right:0;background:var(--bg2);border-top:1px solid var(--bd);z-index:99;padding:12px">
+  <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px">
+    <button class="mob-ni" style="height:62px;border-radius:10px;background:var(--bg3);flex-direction:column" onclick="goMob('equipment',null);hideMobMore()"><span style="font-size:20px">🎥</span><span>器材</span></button>
+    <button class="mob-ni" style="height:62px;border-radius:10px;background:var(--bg3);flex-direction:column" onclick="goMob('weather',null);hideMobMore()"><span style="font-size:20px">🌤</span><span>天气</span></button>
+    <button class="mob-ni" style="height:62px;border-radius:10px;background:var(--bg3);flex-direction:column" onclick="goMob('logs',null);hideMobMore()"><span style="font-size:20px">📋</span><span>日报</span></button>
+    <button class="mob-ni" style="height:62px;border-radius:10px;background:var(--bg3);flex-direction:column" onclick="goMob('prompts',null);hideMobMore()"><span style="font-size:20px">⚡</span><span>提示词</span></button>
+    <button class="mob-ni" style="height:62px;border-radius:10px;background:var(--bg3);flex-direction:column" onclick="goMob('templates',null);hideMobMore()"><span style="font-size:20px">📄</span><span>模板</span></button>
+    <button class="mob-ni" style="height:62px;border-radius:10px;background:var(--bg3);flex-direction:column" onclick="goMob('training',null);hideMobMore()"><span style="font-size:20px">🧭</span><span>培训</span></button>
+  </div>
+</div>
+
+<main class="mn">
+  <div class="tb">
+    <div class="tb-l">
+      <div class="tb-title" id="page-title">项目管理</div>
+      <div class="tb-proj" id="proj-badge" onclick="go('projects',document.querySelector('.ni'))">未选择项目</div>
+    </div>
+    <div class="tb-r">
+      <button class="btn btn-sm" onclick="exportAll()">📤 导出</button>
+      <button class="btn btn-sm" onclick="importAll()">📥 导入</button>
+      <button class="btn btn-sm btn-gd" onclick="openPDFModal()">🖨 导出PDF</button>
+    </div>
+  </div>
+  <div class="ct">
+
+  <!-- PROJECTS -->
+  <div id="sec-projects" class="sec on">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div><div style="font-size:18px;font-weight:700">我的项目</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">点「详情」展开 · 点「编辑」修改</div></div>
+      <button class="btn btn-gd" onclick="openNewProj()">＋ 新建项目</button>
+    </div>
+    <div id="proj-list"></div>
+  </div>
+
+  <!-- TASKS -->
+  <div id="sec-tasks" class="sec">
+    <div class="tabs">
+      <button class="tab-btn on" onclick="stab(this,'tl')">任务清单</button>
+      <button class="tab-btn" onclick="stab(this,'tk');renderKanban()">进度看板</button>
+    </div>
+    <div id="tl" class="tab-pane on">
+      <div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+        <button class="btn btn-gd" onclick="openNewTask()">＋ 添加任务</button>
+        <select class="btn btn-sm" id="tf-s" onchange="renderTasks()"><option value="all">全部</option><option value="todo">未开始</option><option value="doing">进行中</option><option value="done">已完成</option></select>
+        <select class="btn btn-sm" id="tf-p" onchange="renderTasks()"><option value="all">全部人员</option></select>
+        <select class="btn btn-sm" id="tf-d" onchange="renderTasks()"><option value="all">全部日期</option></select>
+      </div>
+      <div id="task-body"></div>
+    </div>
+    <div id="tk" class="tab-pane">
+      <div class="kanban">
+        <div class="kc"><div class="kc-h">未开始 <span class="kcnt" id="kc-todo">0</span></div><div id="k-todo"></div></div>
+        <div class="kc"><div class="kc-h">进行中 <span class="kcnt" id="kc-doing">0</span></div><div id="k-doing"></div></div>
+        <div class="kc"><div class="kc-h">已完成 <span class="kcnt" id="kc-done">0</span></div><div id="k-done"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CALLSHEET -->
+  <div id="sec-callsheet" class="sec">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div><div style="font-size:18px;font-weight:700">拍摄通告单</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">一键复制发微信群 · 点击日期切换</div></div>
+      <div style="display:flex;gap:7px"><button class="btn btn-sm" onclick="copyCsText()">📋 复制文字</button><button class="btn btn-gd" onclick="openNewCs()">＋ 新建通告</button></div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px" id="cs-tabs"></div>
+    <div id="cs-view"></div>
+  </div>
+
+  <!-- LOCATION -->
+  <div id="sec-location" class="sec">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div><div style="font-size:18px;font-weight:700">场景勘景记录</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">点击卡片展开 · 点「编辑」修改</div></div>
+      <button class="btn btn-gd" onclick="openNewLoc()">＋ 添加场景</button>
+    </div>
+    <div id="loc-list"></div>
+  </div>
+
+  <!-- EQUIPMENT -->
+  <div id="sec-equipment" class="sec">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div><div style="font-size:18px;font-weight:700">器材借还台账</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">点击器材行修改状态</div></div>
+      <button class="btn btn-gd" onclick="openNewEq()">＋ 登记器材</button>
+    </div>
+    <div style="display:flex;gap:7px;margin-bottom:12px">
+      <select class="btn btn-sm" id="eq-filter" onchange="renderEquipment()"><option value="all">全部</option><option value="在库">在库</option><option value="借出">借出</option><option value="损坏">损坏</option></select>
+    </div>
+    <div id="eq-list"></div>
+  </div>
+
+  <!-- WEATHER -->
+  <div id="sec-weather" class="sec">
+    <div style="font-size:18px;font-weight:700;margin-bottom:5px">天气&amp;日落查询</div>
+    <div style="font-size:13px;color:var(--tx3);margin-bottom:18px">复制提示词到 Gemini / ChatGPT 获取实时信息</div>
+    <div class="g2r">
+      <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:12px">🌤 天气查询</div>
+        <label class="fl">拍摄地点</label><input class="fi" id="wx1l" placeholder="例：深圳南山区" oninput="updWx()">
+        <label class="fl">拍摄日期</label><input class="fi" id="wx1d" type="date" oninput="updWx()">
+        <div class="wx-prompt" id="wx1o">请查询[地点][日期]天气：①温度区间 ②降雨概率 ③风力风向 ④云层（是否适合户外拍摄）⑤是否需要备用方案</div>
+        <button class="cp-btn" id="wxb1" onclick="cpEl('wxb1','wx1o')">📋 复制提示词</button>
+      </div>
+      <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:12px">🌅 日落黄金时段</div>
+        <label class="fl">拍摄地点</label><input class="fi" id="wx2l" placeholder="例：深圳南山区" oninput="updWx()">
+        <label class="fl">拍摄日期</label><input class="fi" id="wx2d" type="date" oninput="updWx()">
+        <div class="wx-prompt" id="wx2o">请查询[地点][日期]日出日落：①日出时间 ②早黄金时段 ③日落时间 ④晚黄金时段 ⑤蓝调时段，供摄影组安排外景</div>
+        <button class="cp-btn" id="wxb2" onclick="cpEl('wxb2','wx2o')">📋 复制提示词</button>
+      </div>
+      <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:12px">🚁 无人机飞行条件</div>
+        <label class="fl">拍摄地点</label><input class="fi" id="wx3l" placeholder="例：深圳南山区" oninput="updWx()">
+        <div class="wx-prompt" id="wx3o">请查询[地点]无人机飞行信息：①空域限制（禁飞区）②当日风速 ③能见度 ④最佳飞行时段 ⑤注意事项</div>
+        <button class="cp-btn" id="wxb3" onclick="cpEl('wxb3','wx3o')">📋 复制提示词</button>
+      </div>
+      <div class="card">
+        <div style="font-size:14px;font-weight:600;margin-bottom:12px">📅 一周天气汇总</div>
+        <label class="fl">拍摄地点</label><input class="fi" id="wx4l" placeholder="例：深圳南山区" oninput="updWx()">
+        <label class="fl">开始日期</label><input class="fi" id="wx4d" type="date" oninput="updWx()">
+        <div class="wx-prompt" id="wx4o">请查询[地点]从[日期]起7天天气，输出表格：日期｜天气｜温度｜降雨概率｜适合外拍（是/否），帮助制片规划拍摄日程</div>
+        <button class="cp-btn" id="wxb4" onclick="cpEl('wxb4','wx4o')">📋 复制提示词</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LOGS -->
+  <div id="sec-logs" class="sec">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div><div style="font-size:18px;font-weight:700">拍摄复盘日报</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">记录每日拍摄 · 一键生成复盘提示词</div></div>
+      <button class="btn btn-gd" onclick="openM('m-log')">＋ 新建日报</button>
+    </div>
+    <div id="log-list"></div>
+  </div>
+
+  <!-- PROMPTS -->
+  <div id="sec-prompts" class="sec">
+    <div style="display:flex;gap:7px;margin-bottom:14px;flex-wrap:wrap;align-items:center">
+      <div style="font-size:12px;color:var(--tx3);flex:1;min-width:180px">项目信息已自动注入 · 复制后直接粘贴到Claude/ChatGPT</div>
+      <select class="btn btn-sm" id="pf-r" onchange="renderPrompts()"><option value="all">全部角色</option><option value="导演">🎬 导演</option><option value="编剧">✍️ 编剧</option><option value="摄影">📷 摄影</option><option value="灯光">💡 灯光</option><option value="制片">📋 制片</option><option value="通用">🔧 通用</option></select>
+      <select class="btn btn-sm" id="pf-st" onchange="renderPrompts()"><option value="all">全部阶段</option><option value="前期">前期</option><option value="拍摄">拍摄</option><option value="后期">后期</option><option value="短视频">短视频</option></select>
+      <button class="btn btn-gd btn-sm" onclick="openM('m-prompt')">＋ 添加</button>
+    </div>
+    <div id="prompt-list"></div>
+  </div>
+
+  <!-- TEMPLATES -->
+  <div id="sec-templates" class="sec">
+    <div style="font-size:12px;color:var(--tx3);margin-bottom:14px">填写关键信息 → 自动生成提示词 → 复制到Claude生成完整文档</div>
+    <div id="tpl-list"></div>
+  </div>
+
+  <!-- TRAINING -->
+  <div id="sec-training" class="sec">
+    <div class="tabs">
+      <button class="tab-btn on" onclick="stab(this,'tr-tools')">工具定位</button>
+      <button class="tab-btn" onclick="stab(this,'tr-roles')">角色指南</button>
+      <button class="tab-btn" onclick="stab(this,'tr-tips')">技巧库</button>
+    </div>
+    <div id="tr-tools" class="tab-pane on">
+      <div class="g2r">
+        <div class="ai-card c1" onclick="togAI(this)">
+          <div class="ai-logo" style="background:rgba(224,85,85,.12);color:#e08070">Cl</div>
+          <div class="ai-name">Claude</div><div class="ai-desc">深度创作 · 长文档 · 剧本策划 · 旁白字幕</div>
+          <div style="margin-top:9px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:3px"><span>剧组适配度</span><span style="color:var(--gd)">★★★★★</span></div><div class="pb"><div class="pf" style="width:100%;background:#e08070"></div></div></div>
+          <div class="ai-det"><div style="font-size:13px;color:var(--tx2);line-height:1.8;margin-bottom:9px">处理10万字以上文档，生成结构完整的导演阐述、剧本、旁白、采访问题。逻辑最严谨，适合深度创作任务。</div><div class="px">你是资深纪录片导演，我在拍[楼盘名]10分钟纪录片，受众[描述]。请给3个故事角度、情感核心、场景清单。</div><button class="copy-btn" onclick="cp(this,'你是资深纪录片导演，我在拍[楼盘名]10分钟纪录片，受众[描述]。请给3个故事角度、情感核心、场景清单。')">复制</button></div>
+        </div>
+        <div class="ai-card c2" onclick="togAI(this)">
+          <div class="ai-logo" style="background:rgba(82,183,136,.12);color:#70c898">GP</div>
+          <div class="ai-name">ChatGPT</div><div class="ai-desc">图像生成 · 分镜参考 · 多模态视觉</div>
+          <div style="margin-top:9px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:3px"><span>剧组适配度</span><span style="color:var(--gd)">★★★★☆</span></div><div class="pb"><div class="pf" style="width:82%;background:#70c898"></div></div></div>
+          <div class="ai-det"><div style="font-size:13px;color:var(--tx2);line-height:1.8;margin-bottom:9px">DALL·E图像生成快速出分镜草图，GPT-4V分析参考图风格。摄影师和美术指导用来做视觉对齐效率最高。</div><div class="px">生成分镜参考图：傍晚黄金时段，深圳湾高楼背景，前景夫妻站在宽阔阳台，电影感广角，暖色调胶片质感。</div><button class="copy-btn" onclick="cp(this,'生成分镜参考图：傍晚黄金时段，深圳湾高楼背景，前景夫妻站在宽阔阳台，电影感广角，暖色调胶片质感。')">复制</button></div>
+        </div>
+        <div class="ai-card c3" onclick="togAI(this)">
+          <div class="ai-logo" style="background:rgba(91,159,212,.12);color:#80b8e8">Gm</div>
+          <div class="ai-name">Gemini</div><div class="ai-desc">实时搜索 · 天气日落 · 政策查询</div>
+          <div style="margin-top:9px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:3px"><span>剧组适配度</span><span style="color:var(--gd)">★★★☆☆</span></div><div class="pb"><div class="pf" style="width:62%;background:#80b8e8"></div></div></div>
+          <div class="ai-det"><div style="font-size:13px;color:var(--tx2);line-height:1.8;margin-bottom:9px">实时联网查最新政策、精确日落时间。天气查询最准。适合制片每天早上确认当日拍摄条件。</div><div class="px">查询[城市][日期]日落时间、黄金时段，以及无人机飞行空域限制情况。</div><button class="copy-btn" onclick="cp(this,'查询[城市][日期]日落时间、黄金时段，以及无人机飞行空域限制情况。')">复制</button></div>
+        </div>
+        <div class="ai-card c4" onclick="togAI(this)">
+          <div class="ai-logo" style="background:rgba(201,169,110,.12);color:#e8c98e">NL</div>
+          <div class="ai-name">NotebookLM</div><div class="ai-desc">文档问答 · 素材整理 · 播客简报</div>
+          <div style="margin-top:9px"><div style="display:flex;justify-content:space-between;font-size:11px;color:var(--tx3);margin-bottom:3px"><span>剧组适配度</span><span style="color:var(--gd)">★★★★☆</span></div><div class="pb"><div class="pf" style="width:82%;background:#c9a96e"></div></div></div>
+          <div class="ai-det"><div style="font-size:13px;color:var(--tx2);line-height:1.8;margin-bottom:9px">把所有项目文档上传后直接自然语言提问。一键生成音频播客版项目简报，发给客户审片前热身，专业感极强。</div><div class="px">请总结客户最关注的三个卖点，用执行清单格式输出，并提示我哪些场景需要重点拍摄。</div><button class="copy-btn" onclick="cp(this,'请总结客户最关注的三个卖点，用执行清单格式输出，并提示我哪些场景需要重点拍摄。')">复制</button></div>
+        </div>
+      </div>
+    </div>
+    <div id="tr-roles" class="tab-pane">
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px">
+        <div class="rp on" onclick="sRole(this,'rr-dir')">🎬 导演</div>
+        <div class="rp" onclick="sRole(this,'rr-dp')">📷 摄影</div>
+        <div class="rp" onclick="sRole(this,'rr-lt')">💡 灯光</div>
+        <div class="rp" onclick="sRole(this,'rr-wr')">✍️ 编剧</div>
+        <div class="rp" onclick="sRole(this,'rr-pr')">📋 制片</div>
+      </div>
+      <div id="rr-dir" class="rpanel on"><div class="g2r">
+        <div class="card"><div style="font-size:14px;font-weight:600;margin-bottom:12px">工具优先级</div><div style="font-size:14px;color:var(--tx2);line-height:2.2">🥇 <b style="color:var(--tx)">Claude</b> — 导演阐述·故事结构·采访设计·旁白<br>🥈 <b style="color:var(--tx)">NotebookLM</b> — 上传全部文档·随时问答·音频简报<br>🥉 <b style="color:var(--tx)">ChatGPT</b> — 生成分镜图·与摄影对齐视觉</div></div>
+        <div class="card"><div style="font-size:14px;font-weight:600;margin-bottom:12px">高频场景</div><div style="font-size:14px;color:var(--tx2);line-height:2.2">📄 开机前：Claude 10分钟出导演阐述<br>🎤 采访准备：输入受访者背景→自动出题<br>✂️ 后期：上传转录稿→建议剪辑逻辑<br>🎙️ 客户汇报：NL生成音频简报</div></div>
+      </div></div>
+      <div id="rr-dp" class="rpanel"><div class="card"><div style="font-size:14px;font-weight:600;margin-bottom:12px">摄影师使用指南</div><div style="font-size:14px;color:var(--tx2);line-height:2.2">🥇 <b style="color:var(--tx)">ChatGPT</b> — 生成分镜草图·视觉风格板<br>🥈 <b style="color:var(--tx)">Claude</b> — 器材清单·摄影方案文案<br>🥉 <b style="color:var(--tx)">Gemini</b> — 精确日落·无人机限飞查询<br><br>🌅 每天用Gemini确认日落精确时间<br>🚁 Gemini查拍摄地空域限制</div></div></div>
+      <div id="rr-lt" class="rpanel"><div class="card"><div style="font-size:14px;font-weight:600;margin-bottom:12px">灯光师使用指南</div><div style="font-size:14px;color:var(--tx2);line-height:2.2">💡 Claude根据场景自动生成灯位布置建议<br>🔧 描述设备→Claude计算总功率防跳闸<br>🎨 Claude建议暖/冷色温搭配策略<br>📋 Gemini实时查器材技术规格</div></div></div>
+      <div id="rr-wr" class="rpanel"><div class="card"><div style="font-size:14px;font-weight:600;margin-bottom:12px">编剧使用指南</div><div style="font-size:14px;color:var(--tx2);line-height:2.2">✍️ Claude生成诗意/平实/商务三套旁白<br>🎙️ NL从转录稿挖掘最有力原话金句<br>📱 Claude生成抖音/小红书开头钩子<br>📋 Claude生成时间轴字幕文件</div></div></div>
+      <div id="rr-pr" class="rpanel"><div class="card"><div style="font-size:14px;font-weight:600;margin-bottom:12px">制片使用指南</div><div style="font-size:14px;color:var(--tx2);line-height:2.2">📅 Claude生成分天分部门计划表<br>💰 输入总预算→AI建议各部门费用分配<br>⚠️ Claude生成天气/人员/器材应急方案<br>📋 NotebookLM上传合同直接问条款</div></div></div>
+    </div>
+    <div id="tr-tips" class="tab-pane">
+      <div class="g2r">
+        <div class="card"><div style="display:flex;gap:7px;align-items:center;margin-bottom:12px"><span class="badge b-gr" style="font-size:12px">入门</span><span style="font-size:14px;font-weight:600">第1周必学</span></div><div style="font-size:14px;color:var(--tx2);line-height:2.2">💡 先说「你是资深XX专家」，质量提升50%+<br>📋 加「用分点格式」更易执行落地<br>🔄 不满意直说「太正式/重写第2段」<br>📏 明确字数「200字以内」避免废话</div></div>
+        <div class="card"><div style="display:flex;gap:7px;align-items:center;margin-bottom:12px"><span class="badge b-bl" style="font-size:12px">进阶</span><span style="font-size:14px;font-weight:600">第2-4周</span></div><div style="font-size:14px;color:var(--tx2);line-height:2.2">🎯 每次对话开头粘贴项目背景<br>🔀 「给我3个不同风格版本」再选<br>🧩 先出框架确认，再展开细节<br>📎 「用脚本格式/表格格式输出」</div></div>
+        <div class="card"><div style="display:flex;gap:7px;align-items:center;margin-bottom:12px"><span class="badge b-gd" style="font-size:12px">高手</span><span style="font-size:14px;font-weight:600">1个月后</span></div><div style="font-size:14px;color:var(--tx2);line-height:2.2">🔗 Claude写→ChatGPT出图→NL归档<br>📦 建立NotebookLM项目知识库<br>⚙️ 保存团队专属提示词模板</div></div>
+        <div class="card"><div style="display:flex;gap:7px;align-items:center;margin-bottom:12px"><span class="badge b-rd" style="font-size:12px">警示</span><span style="font-size:14px;font-weight:600">必须避免</span></div><div style="font-size:14px;color:var(--tx2);line-height:2.2"><span style="color:var(--rd)">✗</span> 「帮我写个视频」太模糊<br><span style="color:var(--rd)">✗</span> 不给项目背景直接问<br><span style="color:var(--rd)">✗</span> AI输出就是最终版<br><span style="color:var(--rd)">✗</span> 一次问10个问题</div></div>
+      </div>
+    </div>
+  </div>
+
+  </div><!-- /ct -->
+</main>
+</div><!-- /app -->
+<div id="pdf-view"></div>
+
+<!-- MODALS -->
+<div class="ov" id="m-proj">
+  <div class="mo">
+    <div class="mo-title" id="mproj-t">新建项目</div><div class="mo-sub">项目信息将自动注入所有提示词</div>
+    <input type="hidden" id="mproj-id">
+    <label class="fl">项目名称 *</label><input class="fi" id="mproj-name" placeholder="例：《深圳·海岸线》房产纪录片">
+    <label class="fl">客户/甲方</label><input class="fi" id="mproj-client" placeholder="例：某地产集团">
+    <div class="g2"><div><label class="fl">项目类型</label><select class="fi" id="mproj-type"><option>纪录片</option><option>短视频系列</option><option>宣传片</option><option>直播活动</option><option>其他</option></select></div><div><label class="fl">拍摄周期</label><input class="fi" id="mproj-period" placeholder="例：14天"></div></div>
+    <label class="fl">团队成员（逗号分隔）</label><input class="fi" id="mproj-team" placeholder="例：张导演,李摄影,王编剧">
+    <div class="g2"><div><label class="fl">拍摄地点</label><input class="fi" id="mproj-loc" placeholder="例：深圳南山区"></div><div><label class="fl">目标受众</label><input class="fi" id="mproj-aud" placeholder="例：30-40岁购房者"></div></div>
+    <label class="fl">项目备注/合同要点</label><textarea class="fi fta" id="mproj-note" placeholder="合同要点、客户要求、注意事项..."></textarea>
+    <div class="mo-foot"><button class="btn btn-rd btn-sm" id="mproj-del" onclick="delProj()" style="display:none;margin-right:auto">删除项目</button><button class="btn" onclick="closeM('m-proj')">取消</button><button class="btn btn-gd" onclick="saveProj()">保存</button></div>
+  </div>
+</div>
+
+<div class="ov" id="m-task">
+  <div class="mo">
+    <div class="mo-title" id="mtask-t">添加任务</div><div class="mo-sub" id="mtask-sub">当前项目：未选择</div>
+    <input type="hidden" id="mtask-id">
+    <label class="fl">任务名称 *</label><input class="fi" id="mtask-name" placeholder="例：业主A家庭采访">
+    <div class="g2"><div><label class="fl">负责人</label><input class="fi" id="mtask-person" placeholder="例：张导演"></div><div><label class="fl">计划日期</label><input class="fi" id="mtask-date" type="date"></div></div>
+    <div class="g2"><div><label class="fl">状态</label><select class="fi" id="mtask-status"><option value="todo">未开始</option><option value="doing">进行中</option><option value="done">已完成</option></select></div><div><label class="fl">优先级</label><select class="fi" id="mtask-prio"><option value="normal">普通</option><option value="high">重要</option><option value="urgent">紧急</option></select></div></div>
+    <label class="fl">任务说明</label><textarea class="fi fta" id="mtask-note" placeholder="任务详情..." style="min-height:60px"></textarea>
+    <div class="mo-foot"><button class="btn btn-rd btn-sm" id="mtask-del" onclick="delTask()" style="display:none;margin-right:auto">删除</button><button class="btn" onclick="closeM('m-task')">取消</button><button class="btn btn-gd" onclick="saveTask()">保存</button></div>
+  </div>
+</div>
+
+<div class="ov" id="m-cs">
+  <div class="mo">
+    <div class="mo-title" id="cs-modal-title">新建拍摄通告单</div><div class="mo-sub">填写后可一键复制文字发微信群</div>
+    <div class="g2"><div><label class="fl">拍摄日期 *</label><input class="fi" id="cs-date" type="date"></div><div><label class="fl">集合时间 *</label><input class="fi" id="cs-time" placeholder="例：07:30"></div></div>
+    <label class="fl">集合地点 *</label><input class="fi" id="cs-place" placeholder="例：南山区XX路XX号大厅门口">
+    <label class="fl">今日拍摄内容</label><textarea class="fi fta" id="cs-content" placeholder="例：上午业主采访，下午公区场景，17:30夕阳航拍"></textarea>
+    <label class="fl">注意事项</label><textarea class="fi fta" id="cs-notes" placeholder="例：请带好证件，统一着深色服装" style="min-height:60px"></textarea>
+    <label class="fl">紧急联系人</label><input class="fi" id="cs-contact" placeholder="例：制片赵主任 138XXXXXXXX">
+    <div class="mo-foot"><button class="btn btn-rd btn-sm" id="cs-del-btn" onclick="delCsModal()" style="display:none;margin-right:auto">删除</button><button class="btn" onclick="closeM('m-cs')">取消</button><button class="btn btn-gd" onclick="saveCs()">保存</button></div>
+  </div>
+</div>
+
+<div class="ov" id="m-loc">
+  <div class="mo">
+    <div class="mo-title" id="mloc-t">添加场景</div>
+    <input type="hidden" id="mloc-id">
+    <label class="fl">场景名称 *</label><input class="fi" id="mloc-name" placeholder="例：顶层观景台 / 样板房客厅A">
+    <div class="g2"><div><label class="fl">场景类型</label><select class="fi" id="mloc-type"><option>室内</option><option>室外</option><option>半室外</option><option>特殊场地</option></select></div><div><label class="fl">场地地址</label><input class="fi" id="mloc-addr" placeholder="例：32楼观景平台"></div></div>
+    <div class="g2"><div><label class="fl">最佳拍摄时间</label><input class="fi" id="mloc-time" placeholder="例：08:00-10:00"></div><div><label class="fl">光线条件</label><select class="fi" id="mloc-light"><option>自然光充足</option><option>需要补光</option><option>光线复杂</option><option>无自然光</option></select></div></div>
+    <label class="fl">备注&amp;注意事项</label><textarea class="fi fta" id="mloc-notes" placeholder="层高、停车、申请流程、特殊情况..."></textarea>
+    <label class="fl">勘景人</label><input class="fi" id="mloc-scout" placeholder="例：李摄影">
+    <div class="mo-foot"><button class="btn btn-rd btn-sm" id="mloc-del" onclick="delLoc()" style="display:none;margin-right:auto">删除</button><button class="btn" onclick="closeM('m-loc')">取消</button><button class="btn btn-gd" onclick="saveLoc()">保存</button></div>
+  </div>
+</div>
+
+<div class="ov" id="m-eq">
+  <div class="mo">
+    <div class="mo-title" id="meq-t">登记器材</div>
+    <input type="hidden" id="meq-id">
+    <label class="fl">器材名称 *</label><input class="fi" id="meq-name" placeholder="例：索尼FX6摄像机 #01">
+    <div class="g2"><div><label class="fl">器材类型</label><select class="fi" id="meq-type"><option>摄像机</option><option>镜头</option><option>灯光</option><option>录音</option><option>无人机</option><option>稳定器</option><option>其他</option></select></div><div><label class="fl">编号/序列号</label><input class="fi" id="meq-sn" placeholder="例：SN-001"></div></div>
+    <div class="g2"><div><label class="fl">当前状态</label><select class="fi" id="meq-status"><option>在库</option><option>借出</option><option>损坏</option></select></div><div><label class="fl">借出人</label><input class="fi" id="meq-borrower" placeholder="借出时填写"></div></div>
+    <div class="g2"><div><label class="fl">借出日期</label><input class="fi" id="meq-out" type="date"></div><div><label class="fl">预计归还</label><input class="fi" id="meq-ret" type="date"></div></div>
+    <label class="fl">配件&amp;备注</label><textarea class="fi fta" id="meq-notes" placeholder="例：UV镜×2，充电器×1" style="min-height:60px"></textarea>
+    <div class="mo-foot"><button class="btn btn-rd btn-sm" id="meq-del" onclick="delEq()" style="display:none;margin-right:auto">删除</button><button class="btn" onclick="closeM('m-eq')">取消</button><button class="btn btn-gd" onclick="saveEq()">保存</button></div>
+  </div>
+</div>
+
+<div class="ov" id="m-log">
+  <div class="mo">
+    <div class="mo-title">新建拍摄日报</div><div class="mo-sub">记录完成后可一键生成AI复盘提示词</div>
+    <div class="g2"><div><label class="fl">拍摄日期</label><input class="fi" id="ml-date" type="date"></div><div><label class="fl">第几拍摄日</label><input class="fi" id="ml-day" placeholder="例：第3天"></div></div>
+    <label class="fl">今日完成内容 *</label><textarea class="fi fta" id="ml-done" placeholder="今天拍了哪些场景..."></textarea>
+    <label class="fl">亮点镜头记录</label><textarea class="fi fta" id="ml-hl" placeholder="哪些镜头超出预期..." style="min-height:65px"></textarea>
+    <label class="fl">未完成&amp;原因</label><textarea class="fi fta" id="ml-undone" placeholder="哪些没完成..." style="min-height:65px"></textarea>
+    <label class="fl">明日计划</label><textarea class="fi fta" id="ml-tmr" placeholder="明天计划做什么..." style="min-height:65px"></textarea>
+    <div class="g3"><div><label class="fl">拍摄(1-10)</label><input class="fi" id="ml-s1" type="number" min="1" max="10" placeholder="8"></div><div><label class="fl">协作(1-10)</label><input class="fi" id="ml-s2" type="number" min="1" max="10" placeholder="8"></div><div><label class="fl">客户(1-10)</label><input class="fi" id="ml-s3" type="number" min="1" max="10" placeholder="-"></div></div>
+    <div id="log-pa" style="display:none;margin-bottom:12px"><div style="font-size:11px;color:var(--tx3);margin-bottom:5px">复盘提示词（复制到Claude）</div><div class="tpl-out" id="log-pt" style="font-size:12px;min-height:60px"></div><button class="cp-btn" id="log-cpb" onclick="cpEl('log-cpb','log-pt')" style="margin-top:8px">📋 复制</button></div>
+    <div class="mo-foot"><button class="btn" onclick="genLogPT()">生成复盘提示词</button><button class="btn" onclick="closeM('m-log')">取消</button><button class="btn btn-gd" onclick="saveLog()">保存日报</button></div>
+  </div>
+</div>
+
+<div class="ov" id="m-prompt">
+  <div class="mo">
+    <div class="mo-title">添加自定义提示词</div>
+    <label class="fl">标题</label><input class="fi" id="ap-title" placeholder="例：业主采访20问">
+    <div class="g2"><div><label class="fl">角色</label><select class="fi" id="ap-role"><option>导演</option><option>编剧</option><option>摄影</option><option>灯光</option><option>制片</option><option>通用</option></select></div><div><label class="fl">阶段</label><select class="fi" id="ap-stage"><option>前期</option><option>拍摄</option><option>后期</option><option>短视频</option></select></div></div>
+    <label class="fl">内容（支持 ${name} ${client} ${audience} ${location} ${period}）</label>
+    <textarea class="fi fta" id="ap-content" placeholder="粘贴你的提示词..."></textarea>
+    <div class="mo-foot"><button class="btn" onclick="closeM('m-prompt')">取消</button><button class="btn btn-gd" onclick="savePrompt()">保存</button></div>
+  </div>
+</div>
+
+<!-- PDF EXPORT MODAL -->
+<div class="ov" id="m-pdf">
+  <div class="mo">
+    <div class="mo-title">选择导出内容</div>
+    <div class="mo-sub">勾选需要导出的模块，生成PDF</div>
+    <div class="pdf-opt" onclick="togPdfOpt(this,'pdf-proj')"><div class="pdf-cb on" id="pdf-proj">✓</div><div><div class="pdf-label">📁 项目基本信息</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">项目名、客户、周期、团队、备注</div></div></div>
+    <div class="pdf-opt" onclick="togPdfOpt(this,'pdf-tasks')"><div class="pdf-cb on" id="pdf-tasks">✓</div><div><div class="pdf-label">✅ 任务清单</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">全部任务含状态、负责人、日期</div></div></div>
+    <div class="pdf-opt" onclick="togPdfOpt(this,'pdf-callsheet')"><div class="pdf-cb on" id="pdf-callsheet">✓</div><div><div class="pdf-label">📢 拍摄通告单</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">当前项目的所有通告单</div></div></div>
+    <div class="pdf-opt" onclick="togPdfOpt(this,'pdf-location')"><div class="pdf-cb on" id="pdf-location">✓</div><div><div class="pdf-label">📍 场景勘景记录</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">所有场景详情</div></div></div>
+    <div class="pdf-opt" onclick="togPdfOpt(this,'pdf-equipment')"><div class="pdf-cb on" id="pdf-equipment">✓</div><div><div class="pdf-label">🎥 器材台账</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">器材状态、借出信息</div></div></div>
+    <div class="pdf-opt" onclick="togPdfOpt(this,'pdf-logs')"><div class="pdf-cb on" id="pdf-logs">✓</div><div><div class="pdf-label">📋 拍摄日报</div><div style="font-size:12px;color:var(--tx3);margin-top:2px">所有复盘日报记录</div></div></div>
+    <div class="mo-foot"><button class="btn" onclick="closeM('m-pdf')">取消</button><button class="btn btn-gd" onclick="doPDF()">生成PDF</button></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+var S={projects:[],tasks:[],callsheets:[],locations:[],equipment:[],logs:[],custom_prompts:[]};
+var P=null,editPid=null,editTid=null,editLid=null,editEid=null,curCsId=null;
+
+// PROMPTS
+var BI=[
+  {id:'b1',title:'开场阐述生成',role:'导演',stage:'前期',content:'你是资深纪录片导演，请为[项目：${name}]生成导演阐述（1200字），包含：①创作动机与背景 ②核心叙事角度（3个）③视觉风格定位 ④情感核心与传播目标。客户：[${client}]，目标受众：[${audience}]，拍摄地：[${location}]。'},
+  {id:'b2',title:'采访问题设计',role:'导演',stage:'拍摄',content:'为[项目：${name}]受访者设计20个采访问题，分层：暖场（3条）→生活场景（6条）→核心议题（6条）→情感升华（4条）→结尾（1条），每题附追问方向。项目背景：受众[${audience}]，拍摄地[${location}]。'},
+  {id:'b3',title:'分镜场景清单',role:'导演',stage:'前期',content:'为[${name}]生成完整分镜场景清单：①外景空镜（8+）②室内生活场景（10+）③人物互动（6+）④航拍（4+）。每个场景附：时间段建议、构图方式、情绪目标。受众：${audience}，地点：${location}。'},
+  {id:'b4',title:'旁白三版本生成',role:'编剧',stage:'后期',content:'为[${name}]写3版60秒开场旁白：①诗意散文版 ②平实故事版 ③商务品牌版。场景：清晨，业主初次进入新家，阳光从落地窗照进来。客户：${client}，受众：${audience}。每版最后一句引出主题。'},
+  {id:'b5',title:'字幕金句提炼',role:'编剧',stage:'后期',content:'以下是[${name}]采访转录稿：\n[粘贴转录稿]\n请提炼5条字幕金句：①保留受访者原话风格 ②有画面感 ③情感有力度。并为每条建议字幕出现的时机（场景描述）。'},
+  {id:'b6',title:'短视频脚本批量',role:'编剧',stage:'短视频',content:'为[${name}]批量生成8条短视频脚本，每条格式：①标题 ②开头3秒钩子 ③画面描述（15秒）④口播文案 ⑤结尾CTA。受众：${audience}。风格：真实生活感，无广告腔。'},
+  {id:'b7',title:'摄影方案生成',role:'摄影',stage:'前期',content:'我是摄影指导，负责[${name}]，拍摄地[${location}]。请给我：①空间感镜头焦段建议 ②室内自然光最佳时间窗口 ③无人机航拍取景方案（含天际线/景观要素）④推荐镜头移动方式（推/拉/跟/摇各场景建议）。'},
+  {id:'b8',title:'器材清单生成',role:'摄影',stage:'前期',content:'为[${name}]的${team}剧组生成完整器材清单，分类：主摄+备机、镜头组、稳定器、灯光套件、录音设备、无人机、监视器、存储，每项附规格说明和备选方案。'},
+  {id:'b9',title:'分场景灯光方案',role:'灯光',stage:'前期',content:'我是灯光师，为[${name}]设计分场景灯光方案：\n①客厅（落地窗朝南，60㎡）\n②卧室（温馨生活场景）\n③户外露台/阳台\n④公区/大堂\n每场景：主光/辅光/背景光设置、色温建议、功率需求，风格目标：温暖有质感。'},
+  {id:'b10',title:'制作计划表',role:'制片',stage:'前期',content:'我是制片，为[${name}]的${team}团队制定制作计划。拍摄周期：${period}。请生成：①按天分配的拍摄日程 ②各部门每日任务分工 ③关键风险节点及应对 ④后期交付时间线。客户：${client}。'},
+  {id:'b11',title:'风险预案',role:'制片',stage:'前期',content:'为[${name}]生成拍摄风险预案，覆盖：①天气风险（含备用方案）②关键人员风险 ③器材故障应急 ④客户沟通风险 ⑤后期延误预案。拍摄地：${location}，周期：${period}。'},
+  {id:'b12',title:'客户提案/报价框架',role:'制片',stage:'前期',content:'为[${name}]生成客户提案框架，包含：①项目背景与理解 ②创作方案摘要 ③制作团队介绍 ④拍摄计划概述 ⑤报价说明（分项：前期/拍摄/后期/版权/运营）⑥交付成果清单。客户：${client}。'},
+  {id:'b13',title:'每日复盘报告',role:'通用',stage:'拍摄',content:'你是专业制片助理，将以下日报整理成正式复盘报告：\n项目：${name} · 客户：${client}\n今日完成：[填写]\n亮点：[填写]\n未完成：[填写]\n明日计划：[填写]\n请输出：①今日总结段落 ②亮点记录 ③风险提示 ④明日重点事项'},
+  {id:'b14',title:'项目简报（客户版）',role:'通用',stage:'后期',content:'基于[${name}]生成客户进度简报（500字），风格专业简洁：①项目背景回顾 ②本阶段完成工作 ③成果亮点 ④下阶段计划 ⑤需客户配合事项。客户：${client}，受众：${audience}。'},
+]
+
+// TEMPLATES
+var TPLS=[
+  {id:'t1',name:'导演阐述',icon:'🎬',color:'rgba(224,85,85,.12)',desc:'填空式生成完整导演阐述（约1200字）',
+    fields:[{k:'楼盘名称',l:'楼盘/项目名称',p:'例：南山·海岸ONE'},{k:'核心卖点',l:'三大核心卖点',p:'例：无敌海景、顶级学区、极致精装'},{k:'受众描述',l:'目标受众描述',p:'例：30-40岁深圳改善型购房家庭'},{k:'影片时长',l:'成片时长',p:'例：10分钟'},{k:'风格基调',l:'视觉风格基调',p:'例：温暖纪实、电影感强'}],
+    gen:function(f){return '你是资深纪录片导演，请生成导演阐述（1200字）：\n\n项目：'+(f['楼盘名称']||'[楼盘名称]')+'\n核心卖点：'+(f['核心卖点']||'[填写卖点]')+'\n目标受众：'+(f['受众描述']||'[填写受众]')+'\n成片时长：'+(f['影片时长']||'10分钟')+'\n视觉风格：'+(f['风格基调']||'[填写风格]')+'\n\n请包含：①创作背景与动机 ②核心叙事视角（3个）③视觉风格定位 ④情感核心 ⑤预期传播效果';}
+  },
+  {id:'t2',name:'14天拍摄计划表',icon:'📅',color:'rgba(91,159,212,.12)',desc:'按天分配任务，自动生成各部门日程',
+    fields:[{k:'项目名',l:'项目名称',p:'例：《海岸ONE》纪录片'},{k:'开始日期',l:'开始日期',p:'例：2024年3月1日'},{k:'成员名单',l:'团队成员（逗号分隔）',p:'例：导演、摄影、编剧、灯光、制片'},{k:'拍摄地点',l:'主要拍摄地点',p:'例：深圳南山某楼盘'},{k:'特殊要求',l:'特殊要求/注意事项',p:'例：第7天客户来探班'}],
+    gen:function(f){return '我是制片，请为以下项目生成14天详细拍摄计划表：\n\n项目：'+(f['项目名']||'[项目名]')+'\n开始日期：'+(f['开始日期']||'[日期]')+'\n团队：'+(f['成员名单']||'导演、摄影、编剧、灯光、制片')+'\n主要拍摄地：'+(f['拍摄地点']||'[地点]')+'\n特殊要求：'+(f['特殊要求']||'无')+'\n\n请生成表格格式，每天包含：上午任务、下午任务、负责人、备注。第1-2天筹备，第3-10天正式拍摄，第11-14天后期制作';}
+  },
+  {id:'t3',name:'器材清单',icon:'🎥',color:'rgba(82,183,136,.12)',desc:'根据预算和团队规模生成完整器材清单',
+    fields:[{k:'团队规模',l:'团队人数',p:'例：8人'},{k:'预算范围',l:'器材预算范围',p:'例：5万以内 / 不限'},{k:'拍摄类型',l:'主要拍摄类型',p:'例：室内+室外+无人机航拍'},{k:'画质要求',l:'画质/规格要求',p:'例：4K60fps、需要慢动作、有夜景'}],
+    gen:function(f){return '为一支'+(f['团队规模']||'8人')+'剧组生成完整器材清单，预算：'+(f['预算范围']||'不限')+'，拍摄类型：'+(f['拍摄类型']||'室内+室外+航拍')+'，技术要求：'+(f['画质要求']||'4K60fps')+'。\n\n请分类输出：①主摄像机（主机+备机+建议型号）②镜头组 ③稳定设备 ④灯光套件 ⑤录音设备 ⑥无人机 ⑦监视器/辅助设备 ⑧存储设备 ⑨其他必要设备。每项附：规格说明、数量建议、备选方案。';}
+  },
+  {id:'t4',name:'采访问题库',icon:'🎤',color:'rgba(201,169,110,.12)',desc:'按受访者类型和场景生成分层问题',
+    fields:[{k:'受访者类型',l:'受访者身份',p:'例：业主夫妻（30多岁，两个孩子）'},{k:'项目背景',l:'项目背景',p:'例：深圳南山改善型住宅'},{k:'核心议题',l:'希望聚焦的核心话题',p:'例：生活方式改变、购房决策过程'},{k:'问题数量',l:'问题总数',p:'例：20'}],
+    gen:function(f){return '为以下采访设计'+(f['问题数量']||'20')+'个问题：\n受访者：'+(f['受访者类型']||'业主')+'\n项目背景：'+(f['项目背景']||'房产纪录片')+'\n核心议题：'+(f['核心议题']||'生活方式、购房决策')+'\n\n问题分层：\n①暖场（3条）：轻松拉近距离\n②生活场景（6条）：具体日常生活细节\n③核心议题（6条）：聚焦核心话题\n④情感升华（4条）：引导深层感受\n⑤结尾（1条）：留下印象深刻的收尾\n\n每题附追问方向';}
+  },
+  {id:'t5',name:'拍摄复盘日报',icon:'📋',color:'rgba(139,127,212,.12)',desc:'结构化日报 + 一键生成AI整理版本',
+    fields:[{k:'拍摄日期',l:'拍摄日期',p:'例：第3天 · 2024年3月3日'},{k:'今日任务',l:'今日完成的主要任务',p:'例：业主A家庭采访、公区生活场景、夕阳航拍'},{k:'超预期',l:'超出预期的亮点',p:'例：业主讲到孩子上学的细节，特别真实感人'},{k:'未完成',l:'未完成的事项及原因',p:'例：第4个采访因受访者临时有事推迟'},{k:'明日重点',l:'明日重点计划',p:'例：补拍业主B，重点捕捉清晨自然光场景'}],
+    gen:function(f){return '你是专业制片助理，请将以下日报整理成正式复盘报告：\n\n日期：'+(f['拍摄日期']||'今日')+'\n\n今日完成：'+(f['今日任务']||'[填写]')+'\n\n亮点记录：'+(f['超预期']||'[填写]')+'\n\n未完成事项：'+(f['未完成']||'无')+'\n\n明日计划：'+(f['明日重点']||'[填写]')+'\n\n请输出：①今日工作总结（3句，专业简洁）②亮点记录 ③风险/注意提示（如有）④明日重点事项清单';}
+  },
+];
+
+
+// ── MOBILE NAV ──
+function goMob(name,btn){
+  var ni=document.querySelector('.ni');
+  go(name,ni||document.createElement('div'));
+  document.querySelectorAll('.mob-ni').forEach(function(b){b.classList.remove('on');});
+  var target=btn||document.getElementById('mni-'+name);
+  if(target)target.classList.add('on');
+}
+function togMobMore(e){
+  if(e)e.stopPropagation();
+  var m=document.getElementById('mob-more');
+  if(!m)return;
+  m.style.display=m.style.display==='none'||!m.style.display?'block':'none';
+}
+function hideMobMore(){
+  var m=document.getElementById('mob-more');
+  if(m)m.style.display='none';
+}
+document.addEventListener('click',function(e){
+  var m=document.getElementById('mob-more');
+  var btn=document.getElementById('mni-more');
+  if(m&&m.style.display!=='none'&&!m.contains(e.target)&&btn&&!btn.contains(e.target)){
+    m.style.display='none';
+  }
+});
+
+(function(){
+  try{var d=localStorage.getItem('fcv3');if(d)S=JSON.parse(d)}catch(e){}
+  // 兼容旧数据：确保所有字段存在
+  if(!S.projects)S.projects=[];
+  if(!S.tasks)S.tasks=[];
+  if(!S.callsheets)S.callsheets=[];
+  if(!S.locations)S.locations=[];
+  if(!S.equipment)S.equipment=[];
+  if(!S.logs)S.logs=[];
+  if(!S.custom_prompts)S.custom_prompts=[];
+  P=localStorage.getItem('fcv3_pid')||null;
+  var today=new Date().toISOString().split('T')[0];
+  ['cs-date','mtask-date','ml-date','meq-out','wx1d','wx2d','wx4d'].forEach(id=>{var el=document.getElementById(id);if(el)el.value=today});
+  renderAll();
+})();
+
+function save(){localStorage.setItem('fcv3',JSON.stringify(S));localStorage.setItem('fcv3_pid',P||'')}
+function renderAll(){renderProjects();renderTasks();renderCsTabs();renderLocations();renderEquipment();renderLogs();renderPrompts();renderTemplates();updateBadge()}
+
+var PT={projects:'项目管理',tasks:'任务&进度',callsheet:'拍摄通告单',location:'场景勘景记录',equipment:'器材借还台账',weather:'天气&日落查询',logs:'拍摄复盘日报',prompts:'提示词调度台',templates:'文档模板库',training:'AI培训中心'};
+function go(n,el){document.querySelectorAll('.sec').forEach(s=>s.classList.remove('on'));document.querySelectorAll('.ni').forEach(x=>x.classList.remove('on'));document.getElementById('sec-'+n).classList.add('on');el.classList.add('on');document.getElementById('page-title').textContent=PT[n]||n;if(n==='tasks')renderTasks();if(n==='logs')renderLogs();if(n==='prompts')renderPrompts();if(n==='templates'){tplOpen={};renderTemplates();}}
+function stab(b,id){var p=b.closest('.tabs');p.querySelectorAll('.tab-btn').forEach(function(x){x.classList.remove('on');});b.classList.add('on');p.parentElement.querySelectorAll('.tab-pane').forEach(function(x){x.classList.remove('on');});document.getElementById(id).classList.add('on');}
+function openM(id){document.getElementById(id).classList.add('on')}
+function closeM(id){document.getElementById(id).classList.remove('on')}
+document.querySelectorAll('.ov').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('on')}));
+function toast(msg,type){var el=document.getElementById('toast');el.textContent=msg;el.style.borderColor=type==='red'?'var(--rdbd)':'var(--grbd)';el.style.color=type==='red'?'var(--rd)':'var(--gr)';el.classList.add('on');clearTimeout(el._t);el._t=setTimeout(()=>el.classList.remove('on'),3000)}
+function cp(btn,text){navigator.clipboard.writeText(text).catch(()=>{var ta=document.createElement('textarea');ta.value=text;document.body.appendChild(ta);ta.select();document.execCommand('copy');document.body.removeChild(ta)});var o=btn.textContent;btn.textContent='已复制 ✓';btn.classList.add('ok');setTimeout(()=>{btn.textContent=o;btn.classList.remove('ok')},2000)}
+function cpEl(bid,sid){cp(document.getElementById(bid),document.getElementById(sid).textContent)}
+function gP(){return S.projects.find(p=>p.id===P)||null}
+function updateBadge(){var p=gP();document.getElementById('proj-badge').textContent=p?'📁 '+p.name:'未选择项目'}
+function inj(t){var p=gP()||{};return t.replace(/\$\{name\}/g,p.name||'').replace(/\$\{client\}/g,p.client||'').replace(/\$\{audience\}/g,p.audience||'').replace(/\$\{location\}/g,p.location||'').replace(/\$\{period\}/g,p.period||'').replace(/\$\{team\}/g,p.team||'')}
+function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;')}
+
+// PROJECTS
+function openNewProj(){
+  editPid=null;
+  var t=document.getElementById('mproj-t');if(t)t.textContent='新建项目';
+  var d=document.getElementById('mproj-del');if(d)d.style.display='none';
+  var ids=['mproj-id','mproj-name','mproj-client','mproj-period','mproj-team','mproj-loc','mproj-aud','mproj-note'];
+  for(var i=0;i<ids.length;i++){var el=document.getElementById(ids[i]);if(el)el.value='';}
+  openM('m-proj');
+}
+function editProj(id,e){if(e)e.stopPropagation();editPid=id;var p=S.projects.find(x=>x.id===id);if(!p)return;document.getElementById('mproj-t').textContent='编辑项目';document.getElementById('mproj-del').style.display='';document.getElementById('mproj-id').value=p.id;document.getElementById('mproj-name').value=p.name||'';document.getElementById('mproj-client').value=p.client||'';document.getElementById('mproj-type').value=p.type||'纪录片';document.getElementById('mproj-period').value=p.period||'';document.getElementById('mproj-team').value=p.team||'';document.getElementById('mproj-loc').value=p.location||'';document.getElementById('mproj-aud').value=p.audience||'';document.getElementById('mproj-note').value=p.note||'';openM('m-proj')}
+function saveProj(){
+  var name=document.getElementById('mproj-name').value.trim();
+  if(!name){toast('请填写项目名称','red');return;}
+  var id=document.getElementById('mproj-id').value||('p'+Date.now());
+  var proj={
+    id:id,
+    name:name,
+    client:document.getElementById('mproj-client').value,
+    type:document.getElementById('mproj-type').value,
+    period:document.getElementById('mproj-period').value,
+    team:document.getElementById('mproj-team').value,
+    location:document.getElementById('mproj-loc').value,
+    audience:document.getElementById('mproj-aud').value,
+    note:document.getElementById('mproj-note').value
+  };
+  if(editPid){
+    var idx=S.projects.findIndex(function(x){return x.id===editPid;});
+    if(idx>=0)S.projects[idx]=proj;
+  } else {
+    S.projects.push(proj);
+    P=proj.id;
+  }
+  try{save();}catch(e){console.log('save error',e);}
+  renderProjects();
+  updateBadge();
+  closeM('m-proj');
+  var msg=editPid?'项目已更新 ✓':'项目创建成功 ✓';
+  editPid=null;
+  toast(msg);
+}
+function delProj(){if(!editPid||!confirm('删除此项目及所有相关数据？'))return;S.projects=S.projects.filter(p=>p.id!==editPid);S.tasks=S.tasks.filter(t=>t.pid!==editPid);S.logs=S.logs.filter(l=>l.pid!==editPid);if(P===editPid)P=S.projects.length?S.projects[0].id:null;save();renderAll();closeM('m-proj');toast('已删除')}
+function selProj(id){P=id;save();renderProjects();updateBadge();renderTasks();renderLogs();renderPrompts();toast('已切换项目')}
+function togPjDet(id,e){if(e)e.stopPropagation();document.getElementById('pd-'+id).classList.toggle('on')}
+function renderProjects(){
+  var el=document.getElementById('proj-list');
+  if(!S.projects.length){el.innerHTML='<div style="text-align:center;padding:50px;color:var(--tx3)"><div style="font-size:34px;margin-bottom:10px">📁</div><div>还没有项目</div></div>';return}
+  el.innerHTML=S.projects.map(p=>{
+    var tasks=S.tasks.filter(t=>t.pid===p.id),done=tasks.filter(t=>t.status==='done').length,cur=p.id===P;
+    return`<div class="pj${cur?' cur':''}" id="pj-${p.id}">
+      <div class="pj-head">
+        <div style="flex:1;cursor:pointer" onclick="selProj('${p.id}')">
+          <div class="pj-name">${esc(p.name)}${cur?'<span class="badge b-gr" style="margin-left:8px;font-size:11px">当前</span>':''}</div>
+          <div class="pj-meta">${[p.client,p.type,p.period].filter(Boolean).map(x=>esc(x)).join(' · ')}</div>
+        </div>
+        <div class="pj-btns">
+          <button class="btn btn-sm" onclick="togPjDet('${p.id}',event)">详情</button>
+          <button class="btn btn-sm" onclick="editProj('${p.id}',event)">编辑</button>
+        </div>
+      </div>
+      <div class="pj-tags">
+        ${p.location?`<span class="badge b-gy">📍 ${esc(p.location)}</span>`:''}
+        ${p.audience?`<span class="badge b-gy">👥 ${esc(p.audience)}</span>`:''}
+        <span class="badge ${done===tasks.length&&tasks.length?'b-gr':'b-gd'}">${done}/${tasks.length} 任务</span>
+      </div>
+      <div class="pj-det" id="pd-${p.id}">
+        ${p.team?`<div style="font-size:12px;color:var(--tx3);margin-bottom:3px">团队</div><div style="font-size:14px;margin-bottom:10px">${esc(p.team)}</div>`:''}
+        ${p.note?`<div style="font-size:12px;color:var(--tx3);margin-bottom:3px">备注</div><div style="font-size:14px;color:var(--tx2);white-space:pre-wrap;background:var(--bg3);border-radius:8px;padding:11px">${esc(p.note)}</div>`:''}
+        ${!p.team&&!p.note?'<div style="color:var(--tx3);font-size:13px">暂无备注</div>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// TASKS
+function openNewTask(){editTid=null;document.getElementById('mtask-t').textContent='添加任务';document.getElementById('mtask-del').style.display='none';document.getElementById('mtask-id').value='';['mtask-name','mtask-person','mtask-note'].forEach(i=>document.getElementById(i).value='');document.getElementById('mtask-status').value='todo';document.getElementById('mtask-prio').value='normal';document.getElementById('mtask-date').value=new Date().toISOString().split('T')[0];document.getElementById('mtask-sub').textContent='当前项目：'+(gP()?gP().name:'未选择');openM('m-task')}
+function editTask(id,e){if(e)e.stopPropagation();editTid=id;var t=S.tasks.find(x=>x.id===id);if(!t)return;document.getElementById('mtask-t').textContent='编辑任务';document.getElementById('mtask-del').style.display='';document.getElementById('mtask-id').value=t.id;document.getElementById('mtask-name').value=t.name||'';document.getElementById('mtask-person').value=t.person||'';document.getElementById('mtask-date').value=t.date||'';document.getElementById('mtask-status').value=t.status||'todo';document.getElementById('mtask-prio').value=t.prio||'normal';document.getElementById('mtask-note').value=t.note||'';document.getElementById('mtask-sub').textContent='当前项目：'+(gP()?gP().name:'未选择');openM('m-task')}
+function saveTask(){var name=document.getElementById('mtask-name').value.trim();if(!name){toast('请填写任务名称','red');return}var id=editTid||'t'+Date.now();var t={id,pid:P,name,person:document.getElementById('mtask-person').value,date:document.getElementById('mtask-date').value,status:document.getElementById('mtask-status').value,prio:document.getElementById('mtask-prio').value,note:document.getElementById('mtask-note').value};if(editTid){var i=S.tasks.findIndex(x=>x.id===editTid);if(i>=0)S.tasks[i]=t}else S.tasks.push(t);save();renderTasks();renderKanban();renderProjects();closeM('m-task');toast(editTid?'任务已更新 ✓':'任务已添加 ✓')}
+function delTask(){if(!editTid||!confirm('删除此任务？'))return;S.tasks=S.tasks.filter(t=>t.id!==editTid);save();renderTasks();renderKanban();renderProjects();closeM('m-task');toast('已删除')}
+function togTask(id){var t=S.tasks.find(x=>x.id===id);if(!t)return;t.status=t.status==='done'?'todo':'done';save();renderTasks();renderKanban();renderProjects()}
+function renderTasks(){
+  var el=document.getElementById('task-body');
+  var sf=document.getElementById('tf-s').value,pf=document.getElementById('tf-p').value,df=document.getElementById('tf-d').value;
+  var all=S.tasks.filter(t=>t.pid===P);
+  var ps=[...new Set(all.map(t=>t.person).filter(Boolean))],ds=[...new Set(all.map(t=>t.date).filter(Boolean))].sort();
+  var ps_=document.getElementById('tf-p'),ds_=document.getElementById('tf-d');
+  var cp_=ps_.value,cd_=ds_.value;
+  ps_.innerHTML='<option value="all">全部人员</option>'+ps.map(p=>`<option${p===cp_?' selected':''}>${esc(p)}</option>`).join('');
+  ds_.innerHTML='<option value="all">全部日期</option>'+ds.map(d=>`<option value="${d}"${d===cd_?' selected':''}>${d}</option>`).join('');
+  var list=all.filter(t=>(sf==='all'||t.status===sf)&&(pf==='all'||t.person===pf)&&(df==='all'||t.date===df)).sort((a,b)=>{var o={urgent:0,high:1,normal:2};return(o[a.prio]||2)-(o[b.prio]||2)||(a.date||'').localeCompare(b.date||'')});
+  if(!list.length){el.innerHTML=`<div style="text-align:center;padding:40px;color:var(--tx3)"><div style="font-size:32px;margin-bottom:9px">✅</div><div>${P?'暂无匹配任务':'请先选择项目'}</div></div>`;return}
+  var pc={urgent:'var(--rd)',high:'var(--gd)',normal:'var(--tx3)'},pl={urgent:'紧急',high:'重要',normal:'普通'};
+  el.innerHTML=list.map(t=>`
+    <div class="tr" onclick="editTask('${t.id}',event)">
+      <div class="tcb${t.status==='done'?' dn':''}" onclick="event.stopPropagation();togTask('${t.id}')">${t.status==='done'?'✓':''}</div>
+      <div class="tb2">
+        <div class="tn${t.status==='done'?' dn':''}">${esc(t.name)}</div>
+        <div class="ti">${t.date?'📅 '+t.date:''}${t.note?' · '+esc(t.note.substring(0,30)):''}</div>
+      </div>
+      <div class="tr-r">
+        ${t.person?`<div class="ap">${esc(t.person)}</div>`:''}
+        <div class="pd" style="background:${pc[t.prio]}" title="${pl[t.prio]}"></div>
+      </div>
+    </div>`).join('');
+}
+function renderKanban(){
+  var all=S.tasks.filter(t=>t.pid===P);
+  ['todo','doing','done'].forEach(s=>{
+    var ts=all.filter(t=>t.status===s);
+    document.getElementById('k-'+s).innerHTML=ts.length?ts.map(t=>`<div class="kcard" onclick="editTask('${t.id}')"><div class="kcard-n">${esc(t.name)}</div><div class="kcard-m">${[t.person,t.date].filter(Boolean).map(x=>esc(x)).join(' · ')}</div></div>`).join(''):'<div style="font-size:12px;color:var(--tx3);text-align:center;padding:10px">暂无</div>';
+    document.getElementById('kc-'+s).textContent=ts.length;
+  });
+}
+
+// CALLSHEET
+var editCsId=null;
+function openNewCs(){editCsId=null;document.getElementById('cs-modal-title').textContent='新建拍摄通告单';['cs-time','cs-place','cs-content','cs-notes','cs-contact'].forEach(function(i){document.getElementById(i).value='';});document.getElementById('cs-date').value=new Date().toISOString().split('T')[0];document.getElementById('cs-del-btn').style.display='none';openM('m-cs');}
+function editCs(id,e){if(e)e.stopPropagation();editCsId=id;var cs=S.callsheets.find(function(x){return x.id===id;});if(!cs)return;document.getElementById('cs-modal-title').textContent='编辑通告单';document.getElementById('cs-date').value=cs.date||'';document.getElementById('cs-time').value=cs.time||'';document.getElementById('cs-place').value=cs.place||'';document.getElementById('cs-content').value=cs.content||'';document.getElementById('cs-notes').value=cs.notes||'';document.getElementById('cs-contact').value=cs.contact||'';document.getElementById('cs-del-btn').style.display='';openM('m-cs');}
+function delCsModal(){if(!editCsId||!confirm('删除此通告单？'))return;S.callsheets=S.callsheets.filter(function(c){return c.id!==editCsId;});if(curCsId===editCsId)curCsId=null;save();renderCsTabs();closeM('m-cs');toast('已删除');}
+function saveCs(){
+  var date=document.getElementById('cs-date').value,time=document.getElementById('cs-time').value,place=document.getElementById('cs-place').value;
+  if(!date||!time||!place){toast('请填写日期、时间和地点','red');return;}
+  if(editCsId){
+    var cs=S.callsheets.find(function(x){return x.id===editCsId;});
+    if(cs){cs.date=date;cs.time=time;cs.place=place;cs.content=document.getElementById('cs-content').value;cs.notes=document.getElementById('cs-notes').value;cs.contact=document.getElementById('cs-contact').value;}
+    save();renderCsTabs();renderCsView(editCsId);closeM('m-cs');toast('通告单已更新 ✓');
+  } else {
+    var newCs={id:'cs'+Date.now(),pid:P,pname:(gP()||{}).name||'',date:date,time:time,place:place,content:document.getElementById('cs-content').value,notes:document.getElementById('cs-notes').value,contact:document.getElementById('cs-contact').value};
+    S.callsheets.push(newCs);curCsId=newCs.id;save();renderCsTabs();renderCsView(newCs.id);closeM('m-cs');toast('通告单已创建 ✓');
+  }
+}
+function renderCsTabs(){
+  var el=document.getElementById('cs-tabs');
+  var sheets=S.callsheets.filter(c=>!P||c.pid===P).slice().reverse().slice(0,8);
+  if(!sheets.length){el.innerHTML='';document.getElementById('cs-view').innerHTML='<div style="text-align:center;padding:50px;color:var(--tx3)"><div style="font-size:34px;margin-bottom:10px">📢</div><div>还没有通告单</div></div>';return}
+  if(!curCsId||!sheets.find(s=>s.id===curCsId))curCsId=sheets[0].id;
+  el.innerHTML=sheets.map(c=>`<button class="cs-sel-btn${c.id===curCsId?' on':''}" onclick="selCs('${c.id}')">${c.date}</button>`).join('');
+  renderCsView(curCsId);
+}
+function selCs(id){curCsId=id;renderCsTabs()}
+function renderCsView(id){
+  var cs=S.callsheets.find(c=>c.id===id);var el=document.getElementById('cs-view');
+  if(!cs){el.innerHTML='';return}
+  var p=gP()||{};
+  el.innerHTML=`<div class="card" style="border-left:3px solid var(--gd);border-radius:0 var(--rl) var(--rl) 0">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:16px">
+      <div><div style="font-size:18px;font-weight:700;font-family:'Noto Serif SC',serif">${esc(p.name||cs.pname||'剧组通告')}</div><div style="font-size:13px;color:var(--tx3);margin-top:3px">拍摄通告单 · ${cs.date}</div></div>
+      <button class="btn btn-xs" onclick="editCs('${cs.id}',event)">编辑</button><button class="btn btn-xs btn-rd" onclick="delCs('${cs.id}')">删除</button>
+    </div>
+    <div class="cs-info">
+      <div class="cs-block"><div class="cs-lbl">集合时间</div><div class="cs-val" style="font-size:22px;color:var(--gd);font-family:'Noto Serif SC',serif">${esc(cs.time)}</div></div>
+      <div class="cs-block"><div class="cs-lbl">集合地点</div><div class="cs-val" style="font-size:15px">${esc(cs.place)}</div></div>
+    </div>
+    ${cs.content?`<div style="margin-bottom:13px"><div style="font-size:12px;color:var(--tx3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">今日拍摄内容</div><div style="font-size:14px;color:var(--tx2);line-height:1.8;white-space:pre-wrap">${esc(cs.content)}</div></div>`:''}
+    ${cs.notes?`<div style="margin-bottom:13px"><div style="font-size:12px;color:var(--tx3);margin-bottom:5px;text-transform:uppercase;letter-spacing:.04em">注意事项</div><div style="font-size:14px;color:var(--gd);line-height:1.8;white-space:pre-wrap">${esc(cs.notes)}</div></div>`:''}
+    ${cs.contact?`<div><div style="font-size:12px;color:var(--tx3);margin-bottom:3px">紧急联系</div><div style="font-size:14px;font-weight:600">${esc(cs.contact)}</div></div>`:''}
+  </div>`;
+}
+function delCs(id){if(!confirm('删除此通告单？'))return;S.callsheets=S.callsheets.filter(c=>c.id!==id);if(curCsId===id)curCsId=null;save();renderCsTabs();toast('已删除')}
+function copyCsText(){
+  var cs=S.callsheets.find(c=>c.id===curCsId);if(!cs){toast('请先选择通告单','red');return}
+  var p=gP()||{};
+  var text=`【${p.name||cs.pname||'拍摄通告'}】\n日期：${cs.date}\n集合时间：${cs.time}\n集合地点：${cs.place}\n\n今日内容：\n${cs.content||'（见现场安排）'}\n\n注意事项：\n${cs.notes||'无'}\n\n紧急联系：${cs.contact||'见群公告'}`;
+  navigator.clipboard.writeText(text).then(()=>toast('通告单已复制，可直接发微信 ✓')).catch(()=>toast('复制失败','red'));
+}
+
+// LOCATIONS
+function openNewLoc(){editLid=null;document.getElementById('mloc-t').textContent='添加场景';document.getElementById('mloc-del').style.display='none';['mloc-id','mloc-name','mloc-addr','mloc-time','mloc-notes','mloc-scout'].forEach(i=>document.getElementById(i).value='');openM('m-loc')}
+function editLoc(id,e){if(e)e.stopPropagation();editLid=id;var l=S.locations.find(x=>x.id===id);if(!l)return;document.getElementById('mloc-t').textContent='编辑场景';document.getElementById('mloc-del').style.display='';document.getElementById('mloc-id').value=l.id;['name','type','addr','time','light','notes','scout'].forEach(k=>{var el=document.getElementById('mloc-'+k);if(el)el.value=l[k]||''});openM('m-loc')}
+function saveLoc(){var name=document.getElementById('mloc-name').value.trim();if(!name){toast('请填写场景名称','red');return}var id=document.getElementById('mloc-id').value||'l'+Date.now();var oldLoc=(editLid?S.locations.find(x=>x.id===editLid):null)||{};var loc={id,pid:P,name,type:document.getElementById('mloc-type').value,addr:document.getElementById('mloc-addr').value,time:document.getElementById('mloc-time').value,light:document.getElementById('mloc-light').value,notes:document.getElementById('mloc-notes').value,scout:document.getElementById('mloc-scout').value,photos:oldLoc.photos||[]};if(editLid){var i=S.locations.findIndex(x=>x.id===editLid);if(i>=0)S.locations[i]=loc}else S.locations.push(loc);save();renderLocations();closeM('m-loc');toast(editLid?'场景已更新 ✓':'场景已添加 ✓')}
+function delLoc(){if(!editLid||!confirm('删除此场景？'))return;S.locations=S.locations.filter(l=>l.id!==editLid);save();renderLocations();closeM('m-loc');toast('已删除')}
+function togLocDet(id,e){if(e)e.stopPropagation();document.getElementById('ld-'+id).classList.toggle('on')}
+function renderLocations(){
+  var el=document.getElementById('loc-list');
+  var locs=S.locations.filter(l=>!P||l.pid===P);
+  if(!locs.length){el.innerHTML='<div style="text-align:center;padding:50px;color:var(--tx3)"><div style="font-size:34px;margin-bottom:10px">📍</div><div>还没有场景记录</div></div>';return}
+  var tic={室内:'🏠',室外:'🌿','半室外':'🏛️','特殊场地':'⭐'};
+  el.innerHTML=locs.map(l=>{
+    var photos=l.photos||[];
+    var photoGrid=photos.length?'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(100px,1fr));gap:8px;margin-top:10px">'+photos.map(function(ph,idx){return '<div style="position:relative;border-radius:8px;overflow:hidden;background:var(--bg4);width:100%;padding-top:75%"><img src="'+ph+'" style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover" /><button onclick="delLocPhoto(\''+l.id+'\','+idx+',event)" style="position:absolute;top:4px;right:4px;width:26px;height:26px;border-radius:50%;background:rgba(0,0,0,.75);border:none;color:#fff;font-size:14px;cursor:pointer;line-height:26px;text-align:center">×</button></div>';}).join('')+'</div>':'';
+    return`<div class="loc-card">
+      <div class="loc-h" onclick="togLocDet('${l.id}',event)">
+        <div class="loc-ic">${tic[l.type]||'📍'}</div>
+        <div style="flex:1"><div class="loc-name">${esc(l.name)}</div><div class="loc-addr">${[l.type,l.addr].filter(Boolean).map(x=>esc(x)).join(' · ')}</div></div>
+        <div style="display:flex;gap:6px" onclick="event.stopPropagation()">
+          <label style="display:inline-flex;align-items:center;height:32px;padding:0 10px;border-radius:7px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:12px;cursor:pointer">📷<input type="file" accept="image/*" capture="environment" style="display:none;width:0;height:0" onchange="addLocPhoto('${l.id}',this)"></label>
+          <button class="btn btn-xs" onclick="editLoc('${l.id}',event)">编辑</button>
+        </div>
+      </div>
+      <div class="loc-det" id="ld-${l.id}">
+        <div class="loc-grid">
+          ${l.time?`<div class="lf"><div class="lf-l">最佳拍摄时间</div><div class="lf-v">${esc(l.time)}</div></div>`:''}
+          ${l.light?`<div class="lf"><div class="lf-l">光线条件</div><div class="lf-v">${esc(l.light)}</div></div>`:''}
+          ${l.scout?`<div class="lf"><div class="lf-l">勘景人</div><div class="lf-v">${esc(l.scout)}</div></div>`:''}
+          <div class="lf"><div class="lf-l">勘景照片</div><div class="lf-v" style="color:var(--tx3)">${photos.length}张</div></div>
+        </div>
+        ${l.notes?`<div style="margin-top:9px;font-size:13px;color:var(--tx2);line-height:1.7;background:var(--bg3);border-radius:8px;padding:10px;white-space:pre-wrap">${esc(l.notes)}</div>`:''}
+        ${photoGrid}
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <label style="display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 13px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:13px;cursor:pointer;font-family:inherit">
+            📷 拍照
+            <input type="file" accept="image/*" capture="environment" style="display:none;width:0;height:0" onchange="addLocPhoto('${l.id}',this)">
+          </label>
+          <label style="display:inline-flex;align-items:center;gap:6px;height:38px;padding:0 13px;border-radius:8px;border:1px solid var(--bd2);background:var(--bg3);color:var(--tx2);font-size:13px;cursor:pointer;font-family:inherit">
+            🖼 调入图片
+            <input type="file" accept="image/*" multiple style="display:none;width:0;height:0" onchange="addLocPhoto('${l.id}',this)">
+          </label>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+// trigLocPhoto/trigLocFile removed - using <label> wrapper approach
+function addLocPhoto(id,input){
+  var files=Array.from(input.files);
+  if(!files.length)return;
+  var loc=S.locations.find(function(x){return x.id===id;});
+  if(!loc)return;
+  if(!loc.photos)loc.photos=[];
+  var total=files.length,loaded=0;
+  Array.from(files).forEach(function(file){
+    var reader=new FileReader();
+    reader.onload=function(ev){
+      loc.photos.push(ev.target.result);
+      loaded++;
+      if(loaded===total){
+        save();
+        renderLocations();
+        setTimeout(function(){
+          var det=document.getElementById('ld-'+id);
+          if(det){det.classList.add('on');}
+        },60);
+        toast('已添加'+total+'张照片 ✓');
+      }
+    };
+    reader.readAsDataURL(file);
+  });
+  input.value='';
+}
+function delLocPhoto(id,idx,e){if(e)e.stopPropagation();var loc=S.locations.find(x=>x.id===id);if(!loc||!loc.photos)return;loc.photos.splice(idx,1);save();renderLocations();var det=document.getElementById('ld-'+id);if(det)det.classList.add('on')}
+
+// EQUIPMENT
+function openNewEq(){editEid=null;document.getElementById('meq-t').textContent='登记器材';document.getElementById('meq-del').style.display='none';['meq-id','meq-name','meq-sn','meq-borrower','meq-notes'].forEach(i=>document.getElementById(i).value='');document.getElementById('meq-status').value='在库';document.getElementById('meq-out').value=new Date().toISOString().split('T')[0];document.getElementById('meq-ret').value='';openM('m-eq')}
+function editEq(id,e){if(e)e.stopPropagation();editEid=id;var eq=S.equipment.find(x=>x.id===id);if(!eq)return;document.getElementById('meq-t').textContent='编辑器材';document.getElementById('meq-del').style.display='';document.getElementById('meq-id').value=eq.id;['name','type','sn','status','borrower','notes'].forEach(k=>{var el=document.getElementById('meq-'+k);if(el)el.value=eq[k]||''});document.getElementById('meq-out').value=eq.outDate||'';document.getElementById('meq-ret').value=eq.retDate||'';openM('m-eq')}
+function saveEq(){var name=document.getElementById('meq-name').value.trim();if(!name){toast('请填写器材名称','red');return}var id=document.getElementById('meq-id').value||'e'+Date.now();var eq={id,pid:P,name,type:document.getElementById('meq-type').value,sn:document.getElementById('meq-sn').value,status:document.getElementById('meq-status').value,borrower:document.getElementById('meq-borrower').value,outDate:document.getElementById('meq-out').value,retDate:document.getElementById('meq-ret').value,notes:document.getElementById('meq-notes').value};if(editEid){var i=S.equipment.findIndex(x=>x.id===editEid);if(i>=0)S.equipment[i]=eq}else S.equipment.push(eq);save();renderEquipment();closeM('m-eq');toast(editEid?'器材已更新 ✓':'器材已登记 ✓')}
+function delEq(){if(!editEid||!confirm('删除此器材记录？'))return;S.equipment=S.equipment.filter(e=>e.id!==editEid);save();renderEquipment();closeM('m-eq');toast('已删除')}
+function renderEquipment(){
+  var el=document.getElementById('eq-list');
+  var f=document.getElementById('eq-filter').value;
+  var eqs=S.equipment.filter(e=>f==='all'||e.status===f);
+  if(!eqs.length){el.innerHTML='<div style="text-align:center;padding:50px;color:var(--tx3)"><div style="font-size:34px;margin-bottom:10px">🎥</div><div>还没有器材记录</div></div>';return}
+  var tic={摄像机:'📷',镜头:'🔭',灯光:'💡',录音:'🎙️',无人机:'🚁',稳定器:'⚖️',其他:'📦'};
+  el.innerHTML=eqs.map(e=>`
+    <div class="eq-row" onclick="editEq('${e.id}',event)">
+      <div class="eq-ic">${tic[e.type]||'📦'}</div>
+      <div style="flex:1"><div class="eq-name">${esc(e.name)}</div><div class="eq-det">${[e.type,e.sn,e.borrower?'借出：'+e.borrower:'',e.retDate?'归还：'+e.retDate:''].filter(Boolean).map(x=>esc(x)).join(' · ')}</div></div>
+      <div class="eq-st ${e.status==='在库'?'eq-ok':e.status==='借出'?'eq-out':'eq-warn'}">${e.status}</div>
+    </div>`).join('');
+}
+
+// WEATHER
+function updWx(){
+  var l1=document.getElementById('wx1l').value||'[地点]',d1=document.getElementById('wx1d').value||'[日期]';
+  document.getElementById('wx1o').textContent=`请查询${l1}在${d1}的天气：①全天温度区间 ②降雨概率 ③风力风向 ④云层情况（是否适合户外拍摄）⑤是否需要备用方案`;
+  var l2=document.getElementById('wx2l').value||'[地点]',d2=document.getElementById('wx2d').value||'[日期]';
+  document.getElementById('wx2o').textContent=`请查询${l2}在${d2}的日出日落时间：①日出时间 ②早黄金时段（日出后约30分钟）③日落时间 ④晚黄金时段（日落前30分钟）⑤蓝调时段，供摄影组安排外景拍摄`;
+  var l3=document.getElementById('wx3l').value||'[地点]';
+  document.getElementById('wx3o').textContent=`请查询${l3}无人机飞行信息：①空域限制（是否禁飞区）②当日风速（安全上限参考：6级以下）③能见度 ④最佳飞行时段 ⑤特别注意事项`;
+  var l4=document.getElementById('wx4l').value||'[地点]',d4=document.getElementById('wx4d').value||'[日期]';
+  document.getElementById('wx4o').textContent=`请查询${l4}从${d4}起连续7天天气预报，输出表格：日期｜天气状况｜最高/最低温度｜降雨概率｜风力｜适合外拍（是/否）｜备注，帮助制片规划拍摄日程`;
+}
+
+// LOGS
+function genLogPT(){
+  var p=gP(),date=document.getElementById('ml-date').value,day=document.getElementById('ml-day').value,done=document.getElementById('ml-done').value;
+  if(!done){toast('请填写今日完成内容','red');return}
+  var text=`你是专业制片助理，请将以下日报整理成正式复盘报告：\n\n项目：${p?p.name:'（未命名）'} · 客户：${p&&p.client?p.client:'/'}\n日期：${date} ${day}\n\n今日完成：\n${done}\n\n亮点镜头：\n${document.getElementById('ml-hl').value||'无特别记录'}\n\n未完成事项：\n${document.getElementById('ml-undone').value||'全部完成'}\n\n明日计划：\n${document.getElementById('ml-tmr').value||'待定'}\n\n请输出：①今日工作总结（3句，专业简洁）②亮点记录 ③风险提示（如有）④明日重点事项清单`;
+  document.getElementById('log-pt').textContent=text;document.getElementById('log-pa').style.display='block';
+}
+function saveLog(){
+  var done=document.getElementById('ml-done').value.trim();if(!done){toast('请填写今日完成内容','red');return}
+  var p=gP();
+  var log={id:'lg'+Date.now(),pid:P,pname:p?p.name:'',date:document.getElementById('ml-date').value||new Date().toLocaleDateString('zh-CN'),day:document.getElementById('ml-day').value,done,hl:document.getElementById('ml-hl').value,undone:document.getElementById('ml-undone').value,tmr:document.getElementById('ml-tmr').value,s1:document.getElementById('ml-s1').value,s2:document.getElementById('ml-s2').value,s3:document.getElementById('ml-s3').value};
+  S.logs.unshift(log);save();renderLogs();closeM('m-log');toast('日报已保存 ✓');
+  ['ml-done','ml-hl','ml-undone','ml-tmr','ml-s1','ml-s2','ml-s3','ml-day'].forEach(i=>document.getElementById(i).value='');
+  document.getElementById('log-pa').style.display='none';
+}
+function delLog(id,e){if(e)e.stopPropagation();if(!confirm('删除此日报？'))return;S.logs=S.logs.filter(l=>l.id!==id);save();renderLogs();toast('已删除')}
+function renderLogs(){
+  var el=document.getElementById('log-list');
+  var logs=P?S.logs.filter(l=>l.pid===P):S.logs;
+  if(!logs.length){el.innerHTML='<div style="text-align:center;padding:50px;color:var(--tx3)"><div style="font-size:34px;margin-bottom:10px">📋</div><div>还没有日报记录</div></div>';return}
+  el.innerHTML=logs.map(l=>`
+    <div class="log-card">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:11px">
+        <div><div class="log-date">${l.date} ${l.day||''}</div><div class="log-pn">${esc(l.pname||'（未关联项目）')}</div></div>
+        <button class="btn btn-xs btn-rd" onclick="delLog('${l.id}',event)">删除</button>
+      </div>
+      ${l.done?`<div class="ls"><div class="ls-l">今日完成</div><div class="ls-t">${esc(l.done)}</div></div>`:''}
+      ${l.hl?`<div class="ls"><div class="ls-l">亮点</div><div class="ls-t" style="color:var(--gd)">${esc(l.hl)}</div></div>`:''}
+      ${l.undone?`<div class="ls"><div class="ls-l">未完成</div><div class="ls-t" style="color:var(--rd)">${esc(l.undone)}</div></div>`:''}
+      ${l.tmr?`<div class="ls"><div class="ls-l">明日计划</div><div class="ls-t">${esc(l.tmr)}</div></div>`:''}
+      ${l.s1||l.s2||l.s3?`<div class="log-scores">${l.s1?`<div class="sc"><div class="sc-v" style="color:var(--gd)">${l.s1}</div><div class="sc-l">拍摄</div></div>`:''} ${l.s2?`<div class="sc"><div class="sc-v" style="color:var(--bl)">${l.s2}</div><div class="sc-l">协作</div></div>`:''} ${l.s3?`<div class="sc"><div class="sc-v" style="color:var(--gr)">${l.s3}</div><div class="sc-l">客户</div></div>`:''}</div>`:''}
+    </div>`).join('');
+}
+
+
+function renderPrompts(){
+  var rf=document.getElementById('pf-r').value,sf=document.getElementById('pf-st').value;
+  var all=[...BI,...S.custom_prompts].filter(function(p){return(rf==='all'||p.role===rf)&&(sf==='all'||p.stage===sf);});
+  var groups={};
+  all.forEach(function(p){if(!groups[p.role])groups[p.role]=[];groups[p.role].push(p);});
+  var ic={导演:'🎬',编剧:'✍️',摄影:'📷',灯光:'💡',制片:'📋',通用:'🔧'};
+  var el=document.getElementById('prompt-list');
+  if(!Object.keys(groups).length){el.innerHTML='<div style="text-align:center;padding:40px;color:var(--tx3)">暂无匹配提示词</div>';return;}
+  var html='';
+  Object.entries(groups).forEach(function(entry){
+    var role=entry[0],prompts=entry[1];
+    var piHtml='';
+    prompts.forEach(function(p){
+      var fullText=inj(p.content);
+      var preview=esc(fullText.substring(0,200))+(fullText.length>200?'…':'');
+      var customTag=!p.id.startsWith('b')?'<span style="font-size:10px;margin-left:6px;color:var(--gd);background:var(--gdbg);padding:1px 6px;border-radius:3px">自定义</span>':'';
+      var safeJson=JSON.stringify(fullText).replace(/</g,'\\u003c').replace(/>/g,'\\u003e');
+      piHtml+='<div class="pi">'
+        +'<div class="pi-title">'+esc(p.title)+customTag+'</div>'
+        +'<div class="pi-text">'+preview+'</div>'
+        +'<div class="pi-foot"><span class="pi-tag">'+p.stage+'</span>'
+        +'<button class="copy-btn" onclick="cp(this,'+safeJson+')">复制完整提示词</button></div>'
+        +'</div>';
+    });
+    html+='<div class="pkg">'
+      +'<div class="pkg-h" onclick="togPkg(this)">'
+      +'<div class="pkg-ic">'+(ic[role]||'📝')+'</div>'
+      +'<div class="pkg-info"><div class="pkg-title">'+role+'</div><div class="pkg-sub">'+prompts.length+' 个提示词</div></div>'
+      +'<div class="pkg-arr">▼</div>'
+      +'</div>'
+      +'<div class="pkg-body on">'+piHtml+'</div>'
+      +'</div>';
+  });
+  el.innerHTML=html;
+}
+function togPkg(h){var b=h.nextElementSibling;var a=h.querySelector('.pkg-arr');if(!b||!a)return;b.classList.toggle('on');a.style.transform=b.classList.contains('on')?'rotate(0deg)':'rotate(-90deg)';}
+function savePrompt(){var title=document.getElementById('ap-title').value.trim(),content=document.getElementById('ap-content').value.trim();if(!title||!content){toast('请填写标题和内容','red');return}S.custom_prompts.push({id:'c'+Date.now(),title,role:document.getElementById('ap-role').value,stage:document.getElementById('ap-stage').value,content});save();renderPrompts();closeM('m-prompt');toast('已保存 ✓');document.getElementById('ap-title').value='';document.getElementById('ap-content').value=''}
+
+
+var tplOpen={};
+function renderTemplates(){
+  var el=document.getElementById('tpl-list');
+  var html='';
+  TPLS.forEach(function(t){
+    var isOpen=true;
+    var fieldsHtml='';
+    t.fields.forEach(function(f){
+      fieldsHtml+='<div style="margin-bottom:11px"><label class="fl">'+f.l+'</label>'
+        +'<input class="fi" id="tf-'+t.id+'-'+f.k+'" placeholder="'+esc(f.p)+'" oninput="updTpl(\''+t.id+'\')">'
+        +'</div>';
+    });
+    var bodyHtml=fieldsHtml
+      +'<div class="tpl-out" id="to-'+t.id+'">填写上方字段后，提示词自动生成在这里，复制后粘贴到 Claude</div>'
+      +'<button class="cp-btn" id="tcb-'+t.id+'" onclick="cpTpl(\''+t.id+'\')">📋 复制提示词</button>';
+    html+='<div class="tpl-card">'
+      +'<div class="tpl-h" onclick="togTpl(\''+t.id+'\')">'
+      +'<div class="tpl-ic" style="background:'+t.color+'">'+t.icon+'</div>'
+      +'<div style="flex:1"><div class="tpl-name">'+t.name+'</div><div class="tpl-desc">'+t.desc+'</div></div>'
+      +'<button class="btn btn-sm">'+(isOpen?'收起':'填写')+'</button>'
+      +'</div>'
+      +'<div class="tpl-body'+(isOpen?' on':'')+'" id="tb-'+t.id+'">'+bodyHtml+'</div>'
+      +'</div>';
+  });
+  el.innerHTML=html;
+}
+function togTpl(id){
+  var body=document.getElementById('tb-'+id);
+  var btn=body?body.previousElementSibling.querySelector('.btn'):null;
+  if(!body)return;
+  var isOpen=body.classList.contains('on');
+  if(isOpen){body.classList.remove('on');if(btn)btn.textContent='填写';}
+  else{body.classList.add('on');if(btn)btn.textContent='收起';body.scrollIntoView({behavior:'smooth',block:'nearest'});}
+}
+function updTpl(id){var t=TPLS.find(function(x){return x.id===id;});if(!t)return;var f={};t.fields.forEach(function(fld){var el=document.getElementById('tf-'+id+'-'+fld.k);if(el)f[fld.k]=el.value;});var out=document.getElementById('to-'+id);if(out)out.textContent=t.gen(f);}
+function cpTpl(id){var text=document.getElementById('to-'+id).textContent;if(text.includes('填写上方字段')){toast('请先填写模板字段','red');return}cp(document.getElementById('tcb-'+id),text);toast('提示词已复制 ✓')}
+
+// TRAINING
+function togAI(card){var d=card.querySelector('.ai-det');if(!d)return;var open=d.classList.contains('on');var container=card.closest('.tab-pane')||document;container.querySelectorAll('.ai-det').forEach(function(x){x.classList.remove('on');});container.querySelectorAll('.ai-card').forEach(function(x){x.classList.remove('open');});if(!open){d.classList.add('on');card.classList.add('open');}}
+function sRole(el,id){var container=el.closest('.sec')||document;container.querySelectorAll('.rp').forEach(function(p){p.classList.remove('on');});el.classList.add('on');container.querySelectorAll('.rpanel').forEach(function(p){p.classList.remove('on');});document.getElementById(id).classList.add('on');}
+
+// PDF
+function openPDFModal(){openM('m-pdf')}
+function togPdfOpt(row,cbId){var cb=document.getElementById(cbId);cb.classList.toggle('on');cb.textContent=cb.classList.contains('on')?'✓':''}
+function isPdfOn(id){return document.getElementById(id).classList.contains('on')}
+function doPDF(){
+  var p=gP(),tasks=S.tasks.filter(t=>t.pid===P),logs=S.logs.filter(l=>l.pid===P),locs=S.locations.filter(l=>l.pid===P),eqs=S.equipment.filter(e=>e.pid===P),css_=S.callsheets.filter(c=>c.pid===P);
+  var sl={todo:'未开始',doing:'进行中',done:'已完成'},sc={todo:'pdf-todo',doing:'pdf-doing',done:'pdf-done'},pl={urgent:'紧急',high:'重要',normal:'普通'},pc={urgent:'pdf-urgent',high:'pdf-high',normal:''};
+  var html='';
+  if(isPdfOn('pdf-proj')&&p){
+    html+=`<div class="pdf-page"><div class="pdf-h1">🎬 ${p.name} · 项目报告</div><div style="color:#888;margin-bottom:16px;font-size:10pt">导出时间：${new Date().toLocaleString('zh-CN')} · 剧组AI工作台生成</div><div class="pdf-h2">项目基本信息</div>${[['客户/甲方',p.client],['项目类型',p.type],['拍摄周期',p.period],['拍摄地点',p.location],['目标受众',p.audience],['团队成员',p.team]].filter(r=>r[1]).map(r=>`<div class="pdf-row"><span class="pdf-lbl">${r[0]}</span><span class="pdf-val">${r[1]}</span></div>`).join('')}${p.note?`<div class="pdf-h2">项目备注</div><div class="pdf-note">${p.note}</div>`:''}</div>`;
+  }
+  if(isPdfOn('pdf-tasks')&&tasks.length){
+    html+=`<div class="pdf-page"><div class="pdf-h1">✅ 任务清单（${tasks.length}项）</div><table class="pdf-tbl"><tr><th>任务名称</th><th>负责人</th><th>计划日期</th><th>状态</th><th>优先级</th><th>说明</th></tr>${tasks.sort((a,b)=>(a.date||'').localeCompare(b.date||'')).map(t=>`<tr><td>${t.name}</td><td>${t.person||'—'}</td><td>${t.date||'—'}</td><td><span class="pdf-badge ${sc[t.status]}">${sl[t.status]}</span></td><td><span class="pdf-badge ${pc[t.prio]}">${pl[t.prio]}</span></td><td>${t.note||'—'}</td></tr>`).join('')}</table></div>`;
+  }
+  if(isPdfOn('pdf-callsheet')&&css_.length){
+    html+=`<div class="pdf-page"><div class="pdf-h1">📢 拍摄通告单（${css_.length}份）</div>${css_.map(c=>`<div class="pdf-h2">${c.date} · ${c.time} 集合</div><div class="pdf-row"><span class="pdf-lbl">集合地点</span><span class="pdf-val">${c.place}</span></div>${c.content?`<div class="pdf-row"><span class="pdf-lbl">拍摄内容</span><span class="pdf-val" style="white-space:pre-wrap">${c.content}</span></div>`:''}${c.notes?`<div class="pdf-row"><span class="pdf-lbl">注意事项</span><span class="pdf-val" style="white-space:pre-wrap;color:#c9a96e">${c.notes}</span></div>`:''}${c.contact?`<div class="pdf-row"><span class="pdf-lbl">紧急联系</span><span class="pdf-val">${c.contact}</span></div>`:''}`).join('<hr style="margin:12px 0;border-color:#eee">')}</div>`;
+  }
+  if(isPdfOn('pdf-location')&&locs.length){
+    html+=`<div class="pdf-page"><div class="pdf-h1">📍 场景勘景记录（${locs.length}处）</div>${locs.map(l=>`<div class="pdf-h2">${l.name}（${l.type}）</div>${[['地址',l.addr],['最佳拍摄时间',l.time],['光线条件',l.light],['勘景人',l.scout]].filter(r=>r[1]).map(r=>`<div class="pdf-row"><span class="pdf-lbl">${r[0]}</span><span class="pdf-val">${r[1]}</span></div>`).join('')}${l.notes?`<div class="pdf-note">${l.notes}</div>`:''}`).join('')}</div>`;
+  }
+  if(isPdfOn('pdf-equipment')&&eqs.length){
+    html+=`<div class="pdf-page"><div class="pdf-h1">🎥 器材台账（${eqs.length}件）</div><table class="pdf-tbl"><tr><th>器材名称</th><th>类型</th><th>编号</th><th>状态</th><th>借出人</th><th>预计归还</th><th>备注</th></tr>${eqs.map(e=>`<tr><td>${e.name}</td><td>${e.type}</td><td>${e.sn||'—'}</td><td>${e.status}</td><td>${e.borrower||'—'}</td><td>${e.retDate||'—'}</td><td>${e.notes||'—'}</td></tr>`).join('')}</table></div>`;
+  }
+  if(isPdfOn('pdf-logs')&&logs.length){
+    html+=`<div class="pdf-page"><div class="pdf-h1">📋 拍摄日报（${logs.length}条）</div>${logs.map(l=>`<div class="pdf-h2">${l.date} ${l.day||''}</div>${l.done?`<div class="pdf-row"><span class="pdf-lbl">今日完成</span><span class="pdf-val" style="white-space:pre-wrap">${l.done}</span></div>`:''}${l.hl?`<div class="pdf-row"><span class="pdf-lbl">亮点</span><span class="pdf-val" style="color:#c9a96e;white-space:pre-wrap">${l.hl}</span></div>`:''}${l.undone?`<div class="pdf-row"><span class="pdf-lbl">未完成</span><span class="pdf-val" style="color:#e05555">${l.undone}</span></div>`:''}${l.tmr?`<div class="pdf-row"><span class="pdf-lbl">明日计划</span><span class="pdf-val">${l.tmr}</span></div>`:''}`).join('<hr style="margin:12px 0;border-color:#eee">')}</div>`;
+  }
+  if(!html){toast('请至少勾选一项内容','red');return}
+  closeM('m-pdf');
+  openPDFWindow(html);
+}
+function openPDFWindow(html){
+  var css='body{font-family:Arial,sans-serif;background:#fff;color:#111;font-size:12pt;margin:0;padding:0}.pdf-page{padding:15mm 20mm;page-break-after:always;min-height:200px}.pdf-h1{font-size:20pt;font-weight:700;border-bottom:2pt solid #333;padding-bottom:8px;margin-bottom:14px}.pdf-h2{font-size:14pt;font-weight:600;margin:14px 0 7px;color:#222;border-left:3pt solid #c9a96e;padding-left:8px}.pdf-row{display:flex;gap:16px;margin-bottom:7px;font-size:11pt}.pdf-lbl{color:#666;min-width:90px;flex-shrink:0}.pdf-val{color:#111;flex:1}.pdf-tbl{width:100%;border-collapse:collapse;margin:9px 0;font-size:10pt}.pdf-tbl th{background:#f5f5f5;padding:7px 9px;text-align:left;border:1px solid #ccc;font-weight:600}.pdf-tbl td{padding:7px 9px;border:1px solid #ddd;vertical-align:top}.pdf-badge{display:inline-block;padding:2px 7px;border-radius:4px;font-size:9pt;font-weight:500}.pdf-done{background:#e8f5e9;color:#2e7d32}.pdf-todo{background:#fff8e1;color:#f57f17}.pdf-doing{background:#e3f2fd;color:#1565c0}.pdf-urgent{background:#fce4ec;color:#c62828}.pdf-high{background:#fff3e0;color:#e65100}.pdf-note{background:#f9f9f9;border-left:3pt solid #c9a96e;padding:8px 12px;font-size:10pt;color:#444;margin:6px 0;white-space:pre-wrap}hr{border:none;border-top:1px solid #eee;margin:12px 0}@media print{.no-print{display:none}.pdf-page{page-break-after:always}}';
+  var btnBar='<div class="no-print" style="position:fixed;top:12px;right:12px;z-index:99;display:flex;gap:8px"><button onclick="window.print()" style="padding:10px 20px;background:#c9a96e;color:#1a1200;border:none;border-radius:8px;font-size:14px;font-weight:600;cursor:pointer">🖨 打印/保存PDF</button><button onclick="window.close()" style="padding:10px 16px;background:#eee;color:#333;border:none;border-radius:8px;font-size:14px;cursor:pointer">关闭</button></div>';
+  var fullHtml='<!DOCTYPE html><html lang="zh-CN"><head><meta charset="UTF-8"><title>剧组项目报告</title><style>'+css+'</style></head><body>'+btnBar+html+'</body></html>';
+  var blob=new Blob([fullHtml],{type:'text/html;charset=utf-8'});
+  var url=URL.createObjectURL(blob);
+  var win=window.open(url,'_blank');
+  if(win){
+    toast('已在新窗口打开，点击「打印/保存PDF」按钮 ✓');
+  } else {
+    var a=document.createElement('a');
+    a.href=url;
+    a.download='剧组项目报告_'+new Date().toLocaleDateString('zh-CN').replace(/\//g,'-')+'.html';
+    a.click();
+    toast('已下载HTML，用Safari打开后可打印为PDF ✓');
+  }
+  setTimeout(function(){URL.revokeObjectURL(url);},30000);
+}
+
+// EXPORT / IMPORT
+function exportAll(){var d={v:'3',date:new Date().toISOString(),state:S};var blob=new Blob([JSON.stringify(d,null,2)],{type:'application/json'});var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='剧组工作台_'+new Date().toLocaleDateString('zh-CN').replace(/\//g,'-')+'.json';a.click();toast('已导出 · 发给队友导入即可共享 ✓')}
+function importAll(){var input=document.createElement('input');input.type='file';input.accept='.json';input.onchange=e=>{var r=new FileReader();r.onload=ev=>{try{var d=JSON.parse(ev.target.result);if(!d.state){toast('格式不正确','red');return}if(!confirm('导入数据（合并不覆盖）？'))return;var imp=d.state;['projects','tasks','callsheets','locations','equipment','logs','custom_prompts'].forEach(k=>{if(imp[k])imp[k].forEach(item=>{if(!S[k])S[k]=[];if(!S[k].find(x=>x.id===item.id))S[k].push(item)})});save();renderAll();toast('导入成功 ✓')}catch(err){toast('文件解析失败','red')}};r.readAsText(e.target.files[0])};input.click()}
+</script>
+</body>
+</html>
