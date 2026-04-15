@@ -1,0 +1,1783 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Claude 工作手册</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+:root {
+  --bg: #0f0e0c;
+  --bg-card: #1a1816;
+  --bg-elevated: #252220;
+  --border: #2f2b27;
+  --text: #ebe6df;
+  --text-dim: #8a8278;
+  --text-faint: #5a5249;
+  --accent: #d97757;
+  --chat-color: #6b9bd2;
+  --chat-bg: rgba(107, 155, 210, 0.08);
+  --cowork-color: #d4955b;
+  --cowork-bg: rgba(212, 149, 91, 0.08);
+  --bridge-color: #9c7bc7;
+  --bridge-bg: rgba(156, 123, 199, 0.08);
+  --success: #7ba05b;
+  --warning: #c9954a;
+  --danger: #b85450;
+  --code-bg: #0a0908;
+}
+
+html, body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-size: 15px;
+  line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+}
+
+body { min-height: 100vh; padding-bottom: 80px; }
+
+.header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(15, 14, 12, 0.95);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 16px 12px;
+}
+
+.header h1 { font-size: 17px; font-weight: 600; letter-spacing: -0.01em; }
+.header .subtitle { font-size: 12px; color: var(--text-faint); margin-top: 2px; }
+
+.search-box { margin-top: 12px; position: relative; }
+.search-box input {
+  width: 100%;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 14px 10px 36px;
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+}
+.search-box input:focus { border-color: var(--accent); }
+.search-box::before {
+  content: "🔍"; position: absolute; left: 12px; top: 50%;
+  transform: translateY(-50%); font-size: 13px; opacity: 0.5;
+}
+
+.tabs {
+  display: flex; gap: 4px; margin-top: 12px;
+  overflow-x: auto; scrollbar-width: none; padding-bottom: 2px;
+}
+.tabs::-webkit-scrollbar { display: none; }
+
+.tab {
+  flex-shrink: 0; padding: 7px 14px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-dim);
+  font-size: 13px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+  white-space: nowrap;
+}
+.tab.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+.content { padding: 16px; max-width: 960px; margin: 0 auto; }
+.section { display: none; }
+.section.active { display: block; animation: fadeIn 0.3s; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.section-title { font-size: 22px; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.02em; }
+.section-desc { color: var(--text-dim); font-size: 14px; margin-bottom: 20px; }
+
+.group-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 12px 14px; border-radius: 12px;
+  margin-bottom: 12px;
+  font-weight: 700; font-size: 15px;
+  border: 1px solid var(--border);
+}
+
+.group-header.chat {
+  background: var(--chat-bg);
+  border-color: rgba(107, 155, 210, 0.25);
+  color: var(--chat-color);
+}
+
+.group-header.cowork {
+  background: var(--cowork-bg);
+  border-color: rgba(212, 149, 91, 0.25);
+  color: var(--cowork-color);
+}
+
+.group-header.bridge {
+  background: var(--bridge-bg);
+  border-color: rgba(156, 123, 199, 0.25);
+  color: var(--bridge-color);
+}
+
+.group-header.base { background: var(--bg-elevated); color: var(--text); }
+
+.group-icon { font-size: 18px; }
+.group-step-count { margin-left: auto; font-size: 11px; font-weight: 500; opacity: 0.7; }
+
+.split-grid {
+  display: grid; grid-template-columns: 1fr;
+  gap: 20px; margin-bottom: 20px;
+}
+
+@media (min-width: 768px) {
+  .split-grid { grid-template-columns: 1fr 1fr; gap: 16px; }
+}
+
+.split-column { display: flex; flex-direction: column; }
+
+.card {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.card.highlight {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 2px rgba(217, 119, 87, 0.2);
+}
+
+.card-header {
+  padding: 14px 16px;
+  display: flex; align-items: center; gap: 12px;
+  cursor: pointer; user-select: none;
+}
+
+.card-icon {
+  width: 32px; height: 32px;
+  border-radius: 8px;
+  background: var(--bg-elevated);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700;
+  color: var(--text-dim);
+  flex-shrink: 0;
+}
+
+.card.chat-card .card-icon { background: var(--chat-bg); color: var(--chat-color); }
+.card.cowork-card .card-icon { background: var(--cowork-bg); color: var(--cowork-color); }
+.card.bridge-card .card-icon { background: var(--bridge-bg); color: var(--bridge-color); }
+
+.card-title {
+  flex: 1; font-weight: 600; font-size: 14px;
+  letter-spacing: -0.01em; line-height: 1.3;
+}
+
+.card-badge {
+  font-size: 10px; padding: 2px 7px;
+  border-radius: 10px;
+  background: var(--bg-elevated);
+  color: var(--text-dim);
+  font-weight: 500; white-space: nowrap;
+}
+
+.card-badge.success { background: rgba(123, 160, 91, 0.15); color: var(--success); }
+.card-badge.warning { background: rgba(201, 149, 74, 0.15); color: var(--warning); }
+.card-badge.danger { background: rgba(184, 84, 80, 0.15); color: var(--danger); }
+.card-badge.accent { background: rgba(217, 119, 87, 0.15); color: var(--accent); }
+
+.card-arrow {
+  color: var(--text-faint);
+  font-size: 12px;
+  transition: transform 0.2s;
+}
+
+.card.expanded .card-arrow { transform: rotate(90deg); }
+
+.card-body {
+  display: none;
+  padding: 0 16px 16px;
+  border-top: 1px solid var(--border);
+  padding-top: 14px;
+}
+
+.card.expanded .card-body { display: block; }
+
+.jump-link {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 6px 12px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--accent);
+  font-size: 12px; font-weight: 500;
+  cursor: pointer; transition: all 0.2s;
+  text-decoration: none;
+}
+
+.jump-link:active { background: var(--accent); color: #fff; border-color: var(--accent); transform: scale(0.96); }
+.jump-link::before { content: "→"; font-size: 11px; }
+
+.jump-link-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-top: 10px;
+}
+
+.step-detail { color: var(--text-dim); font-size: 13px; line-height: 1.7; }
+.step-detail strong { color: var(--text); }
+
+.code-block {
+  background: var(--code-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 12px 0;
+  overflow: hidden;
+}
+
+.code-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 8px 12px;
+  background: var(--bg-elevated);
+  border-bottom: 1px solid var(--border);
+  font-size: 12px; color: var(--text-dim);
+}
+
+.copy-btn {
+  background: var(--accent); color: #fff;
+  border: none; padding: 4px 12px;
+  border-radius: 6px;
+  font-size: 11px; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+}
+
+.copy-btn:active { transform: scale(0.95); }
+.copy-btn.copied { background: var(--success); }
+
+.code-content {
+  padding: 12px;
+  font-family: "SF Mono", Menlo, Consolas, monospace;
+  font-size: 12px; line-height: 1.6;
+  color: var(--text);
+  white-space: pre-wrap; word-break: break-word;
+  overflow-x: auto;
+}
+
+.compare-grid { display: grid; gap: 10px; margin: 12px 0; }
+.compare-item {
+  background: var(--bg-elevated);
+  border-radius: 10px;
+  padding: 12px 14px;
+  border-left: 3px solid var(--accent);
+}
+.compare-item.alt { border-left-color: var(--success); }
+.compare-label {
+  font-size: 11px; color: var(--text-faint);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+.compare-text { font-size: 13px; line-height: 1.6; }
+
+.tag-row { display: flex; flex-wrap: wrap; gap: 6px; margin: 8px 0; }
+.tag {
+  font-size: 11px; padding: 3px 10px;
+  background: var(--bg-elevated);
+  border-radius: 12px;
+  color: var(--text-dim);
+}
+
+.tip {
+  background: rgba(217, 119, 87, 0.08);
+  border-left: 3px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 14px;
+  margin: 12px 0;
+  font-size: 13px; line-height: 1.6;
+}
+.tip.warn { background: rgba(201, 149, 74, 0.08); border-left-color: var(--warning); }
+.tip.danger { background: rgba(184, 84, 80, 0.08); border-left-color: var(--danger); }
+.tip strong { color: var(--accent); font-weight: 600; }
+.tip.warn strong { color: var(--warning); }
+.tip.danger strong { color: var(--danger); }
+
+.hero {
+  background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.hero-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; letter-spacing: -0.01em; }
+.hero-text { font-size: 13px; color: var(--text-dim); line-height: 1.7; }
+
+.hero-flow {
+  margin-top: 16px;
+  display: flex; align-items: center; gap: 8px;
+  flex-wrap: wrap;
+}
+
+.flow-node {
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 12px;
+  font-size: 12px; font-weight: 600;
+}
+
+.flow-arrow { color: var(--accent); font-size: 14px; }
+
+.pitfall-row {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+}
+
+.pitfall-wrong {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: var(--danger);
+  margin-bottom: 6px;
+}
+
+.pitfall-right {
+  display: flex; align-items: flex-start; gap: 8px;
+  font-size: 13px; color: var(--success);
+}
+
+.pitfall-icon { flex-shrink: 0; font-weight: 700; }
+
+.quick-nav {
+  position: fixed; bottom: 16px; right: 16px;
+  z-index: 99;
+  display: flex; flex-direction: column; gap: 8px;
+}
+
+.quick-btn {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  background: var(--accent); color: #fff;
+  border: none;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 18px;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(217, 119, 87, 0.4);
+  transition: transform 0.2s;
+}
+
+.quick-btn:active { transform: scale(0.92); }
+
+.search-result-item {
+  background: var(--bg-card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 8px;
+  cursor: pointer;
+}
+
+.search-result-category {
+  font-size: 11px; color: var(--accent);
+  text-transform: uppercase; letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.search-result-title { font-weight: 600; font-size: 14px; margin-bottom: 4px; }
+.search-result-snippet { font-size: 12px; color: var(--text-dim); line-height: 1.5; }
+
+mark { background: var(--accent); color: #fff; padding: 0 2px; border-radius: 2px; }
+
+.empty { text-align: center; padding: 40px 20px; color: var(--text-faint); font-size: 13px; }
+
+.toast {
+  position: fixed; bottom: 90px; left: 50%;
+  transform: translateX(-50%);
+  background: var(--text); color: var(--bg);
+  padding: 10px 20px;
+  border-radius: 24px;
+  font-size: 13px; font-weight: 600;
+  z-index: 1000;
+  opacity: 0; pointer-events: none;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(-8px); }
+
+.inner-tabs {
+  display: flex; gap: 4px;
+  margin-bottom: 16px;
+}
+
+.inner-tabs .tab { flex: 1; text-align: center; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Claude 工作手册</h1>
+  <div class="subtitle">手机端·随时查询·一键复制</div>
+  <div class="search-box">
+    <input type="text" id="searchInput" placeholder="搜索咒语、流程、模板..." />
+  </div>
+  <div class="tabs" id="tabs">
+    <div class="tab active" data-tab="home">📍 上手</div>
+    <div class="tab" data-tab="concept">🧭 概念</div>
+    <div class="tab" data-tab="chat">💬 Chat</div>
+    <div class="tab" data-tab="cowork">⚙️ Cowork</div>
+    <div class="tab" data-tab="spells">🪄 咒语</div>
+    <div class="tab" data-tab="templates">📋 模板</div>
+    <div class="tab" data-tab="pitfalls">⚠️ 避坑</div>
+  </div>
+</div>
+
+<div class="content" id="content">
+
+  <div class="section" id="searchResults"></div>
+
+  <div class="section active" data-section="home">
+    <div class="hero">
+      <div class="hero-title">两套环境,各司其职</div>
+      <div class="hero-text">思想的事在云端做(Chat),执行的事在本地做(Cowork)。Chat 是和聪明伙伴对谈,Cowork 是给同事派活。</div>
+      <div class="hero-flow">
+        <div class="flow-node">💬 Chat</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">📄 Artifact</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">⚙️ Cowork</div>
+        <div class="flow-arrow">↻</div>
+        <div class="flow-node">📚 Knowledge</div>
+      </div>
+    </div>
+
+    <div class="section-title">完整上手流程</div>
+    <div class="section-desc">先做基础准备 → 再选一边深入 → 最后配合使用。</div>
+
+    <div class="group-header base">
+      <span class="group-icon">🎯</span>
+      <span>基础准备(两端共用)</span>
+      <span class="group-step-count">2 步</span>
+    </div>
+
+    <div class="card" id="card-base-1" data-search="注册账号 订阅 Pro Max">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">B1</div>
+        <div class="card-title">注册账号 + 选订阅</div>
+        <div class="card-badge">基础</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          1. 浏览器访问 <strong>claude.ai</strong>,注册账号<br>
+          2. 选订阅:只用 Chat → Pro($20/月);要用 Cowork → Pro 起步,密集使用建议 Max
+        </div>
+        <div class="tip">免费版无法装 Skills、无法长期项目化。深度创作至少 Pro。</div>
+      </div>
+    </div>
+
+    <div class="card" id="card-base-2" data-search="设置 Settings Web Search Artifacts Memory">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">B2</div>
+        <div class="card-title">配置基础设置</div>
+        <div class="card-badge">基础</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">进入 Settings,开启:</div>
+        <div class="tag-row">
+          <div class="tag">✅ Web Search</div>
+          <div class="tag">✅ Artifacts</div>
+          <div class="tag">✅ Past chats</div>
+          <div class="tag">✅ Memory</div>
+          <div class="tag">✅ 自定义 Style</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="split-grid">
+
+      <div class="split-column">
+        <div class="group-header chat">
+          <span class="group-icon">💬</span>
+          <span>Chat 流程(主战场)</span>
+          <span class="group-step-count">4 步</span>
+        </div>
+
+        <div class="card chat-card" id="card-chat-1" data-search="Project 项目 创建 Knowledge Instructions">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon">C1</div>
+            <div class="card-title">创建你的 Project</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              1. 左侧栏 → Projects → Create project<br>
+              2. 命名(例:纪录片·不将就)<br>
+              3. 写 Project Instructions(用模板)<br>
+              4. 上传 Project Knowledge:稿件、方法论、人物小传、参考资料
+            </div>
+            <div class="jump-link-row">
+              <span class="jump-link" onclick="jumpTo('templates', 'card-tpl-project')">Project 模板</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card chat-card" id="card-chat-2" data-search="第一次会话 验证 航向锁定">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon">C2</div>
+            <div class="card-title">第一次会话 — 验证环境</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">在 Project 里点 New chat,粘贴「航向锁定」咒语。</div>
+            <div class="tip"><strong>目的:</strong>验证 Project 配置生效。如果它复述错了 → 回去改 Instructions。</div>
+            <div class="jump-link-row">
+              <span class="jump-link" onclick="jumpTo('spells', 'card-spell-chat-1', 'chat')">航向锁定咒语</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card chat-card" id="card-chat-3" data-search="日常工作循环 开锚 给料 推进 收口">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon">C3</div>
+            <div class="card-title">日常工作循环</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="hero-flow" style="margin: 0 0 12px;">
+              <div class="flow-node">开锚</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-node">给料</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-node">推进</div>
+              <div class="flow-arrow">→</div>
+              <div class="flow-node">收口</div>
+            </div>
+            <div class="step-detail">
+              <strong>开锚</strong>:用四个咒语之一锁定本轮焦点<br>
+              <strong>给料</strong>:一次性贴齐所有上下文<br>
+              <strong>推进</strong>:一轮聚焦一件事,逼深度<br>
+              <strong>收口</strong>:每次结束都发收口咒语
+            </div>
+            <div class="jump-link-row">
+              <span class="jump-link" onclick="jumpTo('spells', 'card-spell-chat-1', 'chat')">所有 Chat 咒语</span>
+              <span class="jump-link" onclick="jumpTo('chat', 'card-chat-method-3')">逼深度话术</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card chat-card" id="card-chat-4" data-search="管理对话 改名 Knowledge 维护">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon">C4</div>
+            <div class="card-title">管理对话(防混乱)</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              • 手动给重要对话改名<br>
+              • 超长对话拆分:让它先收口,开新对话贴上总结<br>
+              • 周期性更新 Project Knowledge<br>
+              • 重要产出一律走 Artifact
+            </div>
+            <div class="jump-link-row">
+              <span class="jump-link" onclick="jumpTo('spells', 'card-spell-chat-5', 'chat')">收口咒语</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="split-column">
+        <div class="group-header cowork">
+          <span class="group-icon">⚙️</span>
+          <span>Cowork 流程(辅助战场)</span>
+          <span class="group-step-count">6 步</span>
+        </div>
+
+        <div class="card cowork-card" id="card-cowork-1" data-search="下载 桌面应用 Cowork 安装">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon">W1</div>
+            <div class="card-title">下载桌面应用</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              1. 去 <strong>claude.com/download</strong> 下载<br>
+              2. 用付费账号登录<br>
+              3. 顶部切换到 Cowork 标签
+            </div>
+            <div class="tip warn">看不到入口 → 检查订阅档位、应用版本、登录账号。</div>
+          </div>
+        </div>
+
+        <div class="card cowork-card" id="card-cowork-2" data-search="文件夹 工作区 沙盒 授权">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon">W2</div>
+            <div class="card-title">搭建本地工作文件夹</div>
+            <div class="card-badge danger">关键</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="code-block">
+              <div class="code-header"><span>推荐结构</span></div>
+              <div class="code-content">/Cowork工作区/
+  /你的项目名/
+    /00_工作模板/
+    /01_原始素材/
+    /02_当前稿件/
+    /03_参考资料/
+    /04_Claude产出/
+    /05_归档/</div>
+            </div>
+            <div class="tip danger"><strong>不要</strong>让 Cowork 访问根目录。重要原稿单独备份到它访问不到的地方。</div>
+          </div>
+        </div>
+
+        <div class="card cowork-card" id="card-cowork-3" data-search="指令 Global Folder Instructions">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon">W3</div>
+            <div class="card-title">配置 Cowork 指令</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              • <strong>Global Instructions</strong>:所有 Cowork 会话生效<br>
+              • <strong>Folder Instructions</strong>:本项目专属生效
+            </div>
+            <div class="jump-link-row">
+              <span class="jump-link" onclick="jumpTo('templates', 'card-tpl-global')">Global 模板</span>
+              <span class="jump-link" onclick="jumpTo('templates', 'card-tpl-folder')">Folder 模板</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card cowork-card" id="card-cowork-4" data-search="启动协议 首次会话 Cowork 自检">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon">W4</div>
+            <div class="card-title">第一次启动 Cowork</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">新建会话 → 授权工作文件夹 → 粘贴「启动协议」咒语</div>
+            <div class="tip"><strong>验证四步:</strong>自检 → 摸底 → 建议 → 等待指令</div>
+            <div class="jump-link-row">
+              <span class="jump-link" onclick="jumpTo('spells', 'card-spell-cowork-1', 'cowork')">启动协议咒语</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card cowork-card" id="card-cowork-5" data-search="任务下达 五要素 输入 输出 计划">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon">W5</div>
+            <div class="card-title">任务下达的五要素</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              ① <strong>输入</strong> — 读哪些文件<br>
+              ② <strong>方法</strong> — 用什么框架<br>
+              ③ <strong>输出</strong> — 产出什么、格式、命名规则<br>
+              ④ <strong>位置</strong> — 存到哪个子文件夹<br>
+              ⑤ <strong>复盘</strong> — 完成后给什么反馈
+            </div>
+            <div class="tip">永远要求它先给计划,你点头后再动。</div>
+            <div class="jump-link-row">
+              <span class="jump-link" onclick="jumpTo('spells', 'card-spell-cowork-2', 'cowork')">轻量启动咒语</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="card cowork-card" id="card-cowork-6" data-search="监督 执行 复核 风险">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon">W6</div>
+            <div class="card-title">监督 Cowork 执行</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              • 看它的规划,方向不对立刻打断<br>
+              • 不可逆操作仔细确认<br>
+              • 完成后亲自打开文件检查
+            </div>
+            <div class="tip danger"><strong>3 个硬限制:</strong>桌面应用必须保持打开 · 用量比 Chat 高得多 · 复杂任务约 50% 一次成功率</div>
+            <div class="jump-link-row">
+              <span class="jump-link" onclick="jumpTo('cowork', 'card-cowork-limits')">完整限制清单</span>
+              <span class="jump-link" onclick="jumpTo('pitfalls', null)">避坑清单</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="group-header bridge">
+      <span class="group-icon">🌉</span>
+      <span>双端协作(高阶)</span>
+      <span class="group-step-count">2 步</span>
+    </div>
+
+    <div class="card bridge-card" id="card-bridge-1" data-search="协作流程 流转 双端">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">X1</div>
+        <div class="card-title">双端流转流程</div>
+        <div class="card-badge accent">高阶</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          <strong>Chat → Cowork:</strong><br>
+          深度诊断 → Artifact 导出 → 本地 04_Claude产出 → Cowork 归档命名<br><br>
+          <strong>Cowork → Chat:</strong><br>
+          整理素材 → 上传 Project Knowledge → 下次 Chat 加载新背景
+        </div>
+      </div>
+    </div>
+
+    <div class="card bridge-card" id="card-bridge-2" data-search="节奏 周期 维护">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">X2</div>
+        <div class="card-title">每周节奏维护</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          • 整理本周对话,过时的归档<br>
+          • 更新 Project Knowledge 里的"项目当前状态"<br>
+          • 检查 04_Claude产出 有没有该归档的<br>
+          • 回看咒语模板,新场景加新版本
+        </div>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top: 20px;">
+      <strong>新手强烈建议:</strong>先 Chat 跑顺(C1-C4)再启动 Cowork(W1-W6)。不要两个一起开新坑。
+    </div>
+  </div>
+
+  <div class="section" data-section="concept">
+    <div class="section-title">核心概念</div>
+    <div class="section-desc">理解这些差别,你才知道什么时候用什么。</div>
+
+    <div class="card expanded" id="card-concept-1" data-search="三种容器 Chat Project Skill">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📦</div>
+        <div class="card-title">三种工作容器</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="compare-grid">
+          <div class="compare-item">
+            <div class="compare-label">临时对话</div>
+            <div class="compare-text">用完即弃,适合一次性问题。</div>
+          </div>
+          <div class="compare-item alt">
+            <div class="compare-label">PROJECT 项目</div>
+            <div class="compare-text">长期、多轮、共享背景。素材 + 方法论常驻。</div>
+          </div>
+          <div class="compare-item">
+            <div class="compare-label">SKILL 技能</div>
+            <div class="compare-text">可复用方法论,SKILL.md 打包,合适时自动调用。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-concept-2" data-search="Chat Cowork 区别 对比">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">⚖️</div>
+        <div class="card-title">Chat vs Cowork</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="compare-grid">
+          <div class="compare-item">
+            <div class="compare-label">CHAT 思考伙伴</div>
+            <div class="compare-text">和它对谈,把想法逼出来。看不到你电脑文件,产出在对话里。</div>
+          </div>
+          <div class="compare-item alt">
+            <div class="compare-label">COWORK 执行同事</div>
+            <div class="compare-text">给它目标,它规划+执行,直接产出文件到本地。</div>
+          </div>
+        </div>
+        <div class="tip">判断标准:"帮我想" → Chat;"帮我做" → Cowork。</div>
+        <div class="jump-link-row">
+          <span class="jump-link" onclick="jumpTo('chat', null)">Chat 详细流程</span>
+          <span class="jump-link" onclick="jumpTo('cowork', null)">Cowork 详细流程</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-concept-3" data-search="模型 Opus Sonnet Haiku 选择">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🤖</div>
+        <div class="card-title">模型选择策略</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="compare-grid">
+          <div class="compare-item">
+            <div class="compare-label">OPUS · 最强</div>
+            <div class="compare-text">深度分析、复杂推理、长文档、剧本诊断。慢但深。</div>
+          </div>
+          <div class="compare-item alt">
+            <div class="compare-label">SONNET · 平衡</div>
+            <div class="compare-text">日常对谈、迭代修改。快且足够聪明。</div>
+          </div>
+          <div class="compare-item">
+            <div class="compare-label">HAIKU · 最快</div>
+            <div class="compare-text">简单问答、翻译、格式化。最便宜。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-concept-4" data-search="Artifacts 工件">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📄</div>
+        <div class="card-title">Artifacts 工件</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">网页端独家。长文档、代码、可视化会自动开成独立面板。</div>
+        <div class="step-detail" style="margin-top: 10px;"><strong>价值:</strong>可迭代(说"改第三段"会更新同一份)·可导出·可分屏对照。</div>
+      </div>
+    </div>
+
+    <div class="card" id="card-concept-5" data-search="双阶段 骨骼 血肉 方法论">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🦴</div>
+        <div class="card-title">双阶段方法论(剧本)</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="compare-grid">
+          <div class="compare-item">
+            <div class="compare-label">第一阶段 · 骨骼</div>
+            <div class="compare-text">内核锚定 → 4幕8序列+15节拍 → 场景纪律 → 大锤迭代。结构稳固才放行。</div>
+          </div>
+          <div class="compare-item alt">
+            <div class="compare-label">第二阶段 · 血肉</div>
+            <div class="compare-text">视觉Preset → 三层声音 → CoT+AIDA → 低中高分辨率策展。结构裂缝自动回退。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-concept-6" data-search="对话节奏 开锚 给料 推进 收口">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🎯</div>
+        <div class="card-title">高质量对话节奏</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          <strong>开锚</strong>:30 秒明确本轮目标<br>
+          <strong>给料</strong>:一次性给齐,不挤牙膏<br>
+          <strong>推进</strong>:一轮一件事<br>
+          <strong>收口</strong>:存档本次结论
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-section="chat">
+    <div class="section-title">网页端 Chat 流程</div>
+    <div class="section-desc">主战场:思考、诊断、对谈、灵感激发。</div>
+
+    <div class="card expanded" id="card-chat-method-1" data-search="Chat 优势 价值">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">💡</div>
+        <div class="card-title">Chat 的真正价值</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">不是"发一句话拿产出",而是<strong>多轮对谈中思维的递进</strong>。把 Chat 当 Cowork 用,效率必低。</div>
+      </div>
+    </div>
+
+    <div class="card" id="card-chat-method-2" data-search="Project 创建 步骤">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🗂️</div>
+        <div class="card-title">建 Project 的 4 个动作</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          <strong>1. 命名</strong> — 用项目名,不要"测试"<br>
+          <strong>2. 写 Project Instructions</strong> — 用模板<br>
+          <strong>3. 上传 Knowledge</strong> — 稿件 / 方法论 / 人物 / 参考<br>
+          <strong>4. 用版本一咒语验证</strong> — 让它复述配置,不对就改
+        </div>
+        <div class="jump-link-row">
+          <span class="jump-link" onclick="jumpTo('templates', 'card-tpl-project')">Project 模板</span>
+          <span class="jump-link" onclick="jumpTo('spells', 'card-spell-chat-1', 'chat')">航向锁定咒语</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-chat-method-3" data-search="逼深度 反例 反对 推一层">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🔥</div>
+        <div class="card-title">逼深度的话术</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="tag-row">
+          <div class="tag">「反例是什么?」</div>
+          <div class="tag">「最强反对理由?」</div>
+          <div class="tag">「再深一层」</div>
+          <div class="tag">「换两个角度」</div>
+          <div class="tag">「如果错了,会错在哪?」</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-chat-method-4" data-search="Web Search 搜索">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🔍</div>
+        <div class="card-title">Web Search 用法</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">问需要最新信息的问题它会自己判断,也可以说"搜一下..."强制触发。中文小众内容覆盖一般,重要资料还是自己上传 Knowledge。</div>
+      </div>
+    </div>
+
+    <div class="card" id="card-chat-method-5" data-search="管理 命名 长对话">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🧹</div>
+        <div class="card-title">长期管理(防越用越乱)</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          • 重要对话手动改名<br>
+          • 单次对话超几十轮就拆分<br>
+          • 每周更新 Knowledge<br>
+          • 跨工具配合:成稿存本地,Knowledge 只放工作副本
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-section="cowork">
+    <div class="section-title">桌面端 Cowork 流程</div>
+    <div class="section-desc">辅助战场:整理、归档、批量执行。</div>
+
+    <div class="card expanded" id="card-cowork-method-1" data-search="Cowork 定位 派活">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🎬</div>
+        <div class="card-title">Cowork 的真正价值</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">让 Claude 不再只是对话伙伴,而是能直接整理素材、生成文档、跨工具串联工作流的"协作同事"。</div>
+        <div class="tip">心态切换:你是<strong>项目经理</strong>,不是聊天对象。</div>
+      </div>
+    </div>
+
+    <div class="card" id="card-cowork-method-2" data-search="文件夹 沙盒 测试">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📁</div>
+        <div class="card-title">文件夹搭建原则</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          1. 单独建 Cowork 工作区,<strong>不要</strong>给根目录权限<br>
+          2. 重要原稿放在它访问不到的地方<br>
+          3. 第一次先用测试沙盒文件夹试手<br>
+          4. 子目录按"01_原始 / 02_当前 / 03_参考 / 04_产出 / 05_归档"分
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-cowork-method-3" data-search="任务 五要素 计划">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📝</div>
+        <div class="card-title">下任务的标准格式</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header">
+            <span>任务模板</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">请[做什么]:
+
+输入:[读哪些文件]
+方法:[用什么框架]
+输出:[产出什么、格式、命名规则]
+位置:[存到哪个子文件夹]
+复盘:[完成后给什么反馈]
+
+执行前先给我看你的执行计划,
+我点头后再动。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-cowork-method-4" data-search="连接器 Connectors Chrome Notion">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🔌</div>
+        <div class="card-title">连接器(Connectors)</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          Settings → Connectors → Browse connectors<br><br>
+          常用:Google Drive · Notion · Chrome 浏览器 · Slack · 本地文件系统
+        </div>
+        <div class="tip">接上后任务可以跨工具:"读 Notion 的人物小传,结合本地稿件,分析动机一致性"。</div>
+      </div>
+    </div>
+
+    <div class="card" id="card-cowork-method-5" data-search="Dispatch 手机 远程">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📱</div>
+        <div class="card-title">Dispatch · 手机派任务</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">手机扫码配对 Cowork 桌面会话。可以从手机派任务,回家看完成的产出。早期版本约 50% 成功率。</div>
+        <div class="tip warn">桌面端必须保持唤醒 + 应用打开,任务才能跑。</div>
+      </div>
+    </div>
+
+    <div class="card" id="card-cowork-limits" data-search="限制 风险 注意">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">⚠️</div>
+        <div class="card-title">必须知道的 5 个限制</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          1. <strong>桌面应用必须打开</strong> — 合上盖子任务就死<br>
+          2. <strong>用量消耗远高于 Chat</strong> — 长任务前心里有数<br>
+          3. <strong>研究预览阶段</strong> — 复杂任务约 50% 成功率<br>
+          4. <strong>文件操作不可撤销</strong> — 没有 Ctrl+Z<br>
+          5. <strong>UI 在快速变动</strong> — 路径不一致查官方文档
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-section="spells">
+    <div class="section-title">咒语库</div>
+    <div class="section-desc">复制即用。点击切换 Chat / Cowork。</div>
+
+    <div class="inner-tabs">
+      <div class="tab active" onclick="switchSpellMode(this, 'chat')" data-mode="chat">💬 Chat 咒语</div>
+      <div class="tab" onclick="switchSpellMode(this, 'cowork')" data-mode="cowork">⚙️ Cowork 咒语</div>
+    </div>
+
+    <div id="chatSpells">
+      <div class="card expanded" id="card-spell-chat-1" data-search="航向锁定 首次 定向">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-icon">🎯</div>
+          <div class="card-title">版本一 · 航向锁定</div>
+          <div class="card-badge accent">首次</div>
+          <div class="card-arrow">›</div>
+        </div>
+        <div class="card-body">
+          <div class="step-detail" style="margin-bottom: 8px;">项目首次会话,让 Claude 自我对齐 + 提议焦点。</div>
+          <div class="code-block">
+            <div class="code-header">
+              <span>Chat · 航向锁定</span>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-content">本轮对话定向
+
+我刚进入这个项目(或新一轮对谈)。在我们开始之前,请用三句话回答:
+
+1. 你从 Project Instructions 和 Project Knowledge 里识别到的核心方法论是什么?
+2. 你认为这个项目当前的核心张力 / 待解问题是什么?
+3. 基于以上,你建议本次对话聚焦在哪一件事?
+
+回答完不要主动展开。等我决定本次对话的真正焦点。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="card-spell-chat-2" data-search="诊断 双阶段 骨骼">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-icon">🔬</div>
+          <div class="card-title">版本二 · 诊断式深度对谈</div>
+          <div class="card-badge">分析</div>
+          <div class="card-arrow">›</div>
+        </div>
+        <div class="card-body">
+          <div class="step-detail" style="margin-bottom: 8px;">把"出报告"转化为"对谈节奏"。</div>
+          <div class="code-block">
+            <div class="code-header">
+              <span>Chat · 诊断启动</span>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-content">诊断启动
+
+请按本项目的"双阶段诊断框架"分析我接下来贴的稿子。流程要求:
+
+1. **不要写一份完整报告甩给我**。我们用对谈方式推进。
+2. 先做骨骼层第一维度(内核锚定),给出你的判断。
+3. 等我回应后再进入第二维度(结构拆解)。
+4. 每个维度结束时,主动问我一个"逼我深想"的问题——而不是问"是否继续"。
+5. 大锤清单留到最后,基于前面所有对谈的共识来列。
+
+记住:你是诊断医生,不是写报告的实习生。
+
+[在此贴稿子内容]</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="card-spell-chat-3" data-search="议题 死磕 深挖 立场">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-icon">⚔️</div>
+          <div class="card-title">版本三 · 议题深挖</div>
+          <div class="card-badge danger">硬核</div>
+          <div class="card-arrow">›</div>
+        </div>
+        <div class="card-body">
+          <div class="step-detail" style="margin-bottom: 8px;">逼出思考深度,拒绝方案列表。</div>
+          <div class="code-block">
+            <div class="code-header">
+              <span>Chat · 死磕这一件事</span>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-content">死磕这一件事
+
+议题:[在此填具体问题]
+
+我不要方案列表。我要你和我一起把这件事想穿。
+
+请按以下节奏进行:
+
+第一轮:你给出对这个问题的初步判断(不超过 5 行)。
+第二轮:我反驳或追问后,你不要妥协,先坚持你的判断,补充证据。
+第三轮:我们才进入"如果你说的对,会推出什么?"的推演。
+第四轮:在推演基础上,我们一起评估 2-3 个具体路径。
+
+绝对禁止:
+- 一上来就给我 5 个方案的对比表
+- 用"这取决于你的偏好"这种回避性回答
+- 没有立场地中立陈述</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="card-spell-chat-4" data-search="续接 复位 进度">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-icon">🔗</div>
+          <div class="card-title">版本四 · 续接式</div>
+          <div class="card-badge">回归</div>
+          <div class="card-arrow">›</div>
+        </div>
+        <div class="card-body">
+          <div class="step-detail" style="margin-bottom: 8px;">久违回归,先重建上下文 + 重新协商焦点。</div>
+          <div class="code-block">
+            <div class="code-header">
+              <span>Chat · 对话续接</span>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-content">对话续接
+
+我们之前在 [对话名称 / 时间] 讨论过 [话题]。
+
+请基于 Project Knowledge 里的相关产出文件(或我即将贴出的总结),完成以下:
+
+1. 用三句话复述上次我们达成的核心共识。
+2. 列出上次留下的"未解决议题"。
+3. 提议本轮我们应该优先处理哪一个,并说明为什么。
+
+完成后等我确认本次焦点。不要直接开始处理。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="card-spell-chat-5" data-search="收口 总结 存档">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-icon">🎁</div>
+          <div class="card-title">收口咒语(每次必发)</div>
+          <div class="card-badge success">必备</div>
+          <div class="card-arrow">›</div>
+        </div>
+        <div class="card-body">
+          <div class="step-detail" style="margin-bottom: 8px;">每次对话结束前都该发。不收口的 Chat = 在水上写字。</div>
+          <div class="code-block">
+            <div class="code-header">
+              <span>Chat · 收口</span>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-content">请总结本次对话:
+
+1. 核心共识(不超过 3 条)
+2. 未解决议题
+3. 下一轮建议焦点
+
+简短即可。我会把这份总结存到项目笔记里。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="coworkSpells" style="display:none;">
+      <div class="card expanded" id="card-spell-cowork-1" data-search="启动协议 自检 摸底">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-icon">🚀</div>
+          <div class="card-title">版本一 · 完整启动</div>
+          <div class="card-badge warning">首次</div>
+          <div class="card-arrow">›</div>
+        </div>
+        <div class="card-body">
+          <div class="step-detail" style="margin-bottom: 8px;">首次会话,让 Cowork 自检 + 摸底 + 建议 + 等待指令。</div>
+          <div class="code-block">
+            <div class="code-header">
+              <span>Cowork · 启动协议</span>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-content">启动协议·首次会话
+
+请按以下顺序执行,每完成一步停下来等我说"继续":
+
+第一步:自检
+- 复述你当前装载的全局指令核心要点(不超过 5 条)
+- 复述本项目文件夹专属指令核心要点(不超过 5 条)
+- 确认你已识别 Skill 是否可用
+- 报告你当前可访问的工作文件夹路径
+
+第二步:项目摸底
+- 扫描所有子文件夹的文件清单
+- 识别哪些是稿件、素材、参考资料、历史产出
+- 找出最新版本(按修改时间)
+- 报告项目当前的"文件健康度"
+
+第三步:工作建议
+基于摸底结果,给我三个建议:
+1. 当前最值得优先做的一件事(以及为什么)
+2. 一件可以立刻做的"低成本快速验证"任务
+3. 一件你建议我**暂时不要做**的事
+
+第四步:等待指令
+完成上述三步后,停下,不要主动开始任何文件操作。
+等我说"开始 [具体任务]"再动手。
+
+现在开始第一步。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="card-spell-cowork-2" data-search="今日任务 派活">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-icon">⚡</div>
+          <div class="card-title">版本二 · 轻量启动</div>
+          <div class="card-badge">日常</div>
+          <div class="card-arrow">›</div>
+        </div>
+        <div class="card-body">
+          <div class="step-detail" style="margin-bottom: 8px;">熟悉之后直接派活。</div>
+          <div class="code-block">
+            <div class="code-header">
+              <span>Cowork · 今日任务</span>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-content">今日任务
+
+读取 [文件夹] 里 [筛选条件] 的文件,
+按 [方法论] 做 [什么分析]。
+
+产出要求:
+- 文件名:[命名规则]
+- 存放位置:[子文件夹]
+- 结构:[分几个部分]
+- 篇幅约束:[最多多少条/字]
+
+执行前先给我看一下你的执行计划,
+我点头后再动。</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="card-spell-cowork-3" data-search="项目复位 盘点 接回">
+        <div class="card-header" onclick="toggleCard(this)">
+          <div class="card-icon">🔄</div>
+          <div class="card-title">版本三 · 诊断式启动</div>
+          <div class="card-badge">回归</div>
+          <div class="card-arrow">›</div>
+        </div>
+        <div class="card-body">
+          <div class="step-detail" style="margin-bottom: 8px;">项目搁置一段时间后回来,先盘点再决定。</div>
+          <div class="code-block">
+            <div class="code-header">
+              <span>Cowork · 项目复位</span>
+              <button class="copy-btn" onclick="copyCode(this)">复制</button>
+            </div>
+            <div class="code-content">项目复位
+
+我已经一段时间没动这个项目了。
+请帮我做以下事情,不要执行任何写入操作:
+
+1. 扫描 04_Claude产出/ 下所有文件,按时间倒序列出
+2. 找出最近一份诊断报告,简要总结其核心结论(不超过 10 行)
+3. 对比这份诊断报告和当前最新稿:
+   - 诊断里指出的问题,新稿子有没有处理?哪些处理了,哪些没处理?
+   - 是否需要新一轮诊断,还是可以推进到下一阶段?
+4. 给我三个选项,标注每个的预估工作量(轻/中/重):
+   选项 A:某件事
+   选项 B:某件事
+   选项 C:某件事
+
+完成后等我选,不要自动开始。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="tip" style="margin-top: 20px;">
+      <strong>进阶技巧:</strong>把这些咒语封装成触发词。在 Project Instructions 里加一段映射:"用户说'诊断' → 自动执行版本二咒语"。之后你只需要敲一个词。
+      <div class="jump-link-row">
+        <span class="jump-link" onclick="jumpTo('templates', 'card-tpl-trigger')">触发词协议模板</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-section="templates">
+    <div class="section-title">指令模板库</div>
+    <div class="section-desc">三套指令模板。复制 → 替换占位符 → 粘贴到对应位置。</div>
+
+    <div class="card expanded" id="card-tpl-project" data-search="Project Instructions 项目">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📘</div>
+        <div class="card-title">Project Instructions(Chat 端)</div>
+        <div class="card-badge accent">Chat</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail" style="margin-bottom: 8px;"><strong>使用位置:</strong>Project 设置 → Custom Instructions</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>Project Instructions</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content"># 项目背景
+
+项目:[项目名称]
+我的角色:[导演/创作者/分析师...]
+你的角色:[剧本架构师/数据顾问...]
+
+我用 Project Knowledge 上传了:
+- [稿件最新版]
+- [方法论 SKILL.md]
+- [人物小传与暗线主题]
+
+# 沟通风格
+
+1. 直接,不啰嗦。不要"当然!""我很乐意帮您"开场白。
+2. 不要每段后加情绪安抚。
+3. 重要判断必须给理由,但理由要短。
+4. 不确定的事明确说"不确定"。
+5. 中文输出。
+
+# 工作方法论
+
+[你的方法论核心,或引用 Skill 名]
+
+# 关键人物 / 概念
+
+[列出项目核心人物或概念]
+
+# 输出格式约定
+
+- 长篇分析报告 → 用 Artifact 输出
+- 短答复、对谈式回应 → 直接对话窗口
+- 我说"用 artifact" → 强制走 Artifact
+
+# 绝对禁止
+
+1. 不要为"丰富"擅自添加内容。
+2. 不要把项目素材当虚构故事改。
+3. 第一轮诊断只做诊断,不做改写。
+4. 不要在我没问的时候提建议。</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-tpl-global" data-search="Global Instructions 全局">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🌐</div>
+        <div class="card-title">Global Instructions(Cowork 全局)</div>
+        <div class="card-badge warning">Cowork</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail" style="margin-bottom: 8px;"><strong>使用位置:</strong>Cowork Settings → Global Instructions · 所有 Cowork 会话生效</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>Global Instructions</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content"># 用户身份与工作模式
+
+我是 [职业身份],使用 Cowork 处理素材整理、稿件诊断、文档生成、跨工具研究。
+Chat 是想问题,Cowork 是派活——你执行,我审阅。
+
+# 沟通风格
+
+1. 直接,不啰嗦。不要"当然!""我很乐意帮您"开场白。
+2. 不要每段后加情绪安抚。
+3. 重要判断必须给理由,但理由要短。
+4. 不确定的事明确说"不确定"。
+5. 中文输出。
+
+# 文件操作硬规则(不可违反)
+
+1. 任何"删除""覆盖""归档"操作,执行前必须先列出影响的文件清单并等待我确认。
+2. 修改任何已存在的文件之前,先创建一份带时间戳的备份副本。
+3. 不允许在指定工作文件夹之外创建、读取、修改任何文件。
+4. 生成新文件命名格式:用途_日期_版本号(如 诊断报告_20260416_v1.md)。
+5. 默认产出位置:工作文件夹下的 04_Claude产出/ 子目录。
+
+# 任务执行工作流
+
+每接到一个任务,按以下顺序响应:
+
+第一步:任务理解
+- 用一句话复述我要的结果
+- 列出关键约束
+- 如有歧义,只问一次最关键的那个问题
+
+第二步:执行规划
+- 列出计划执行的步骤
+- 标注哪些步骤涉及不可逆操作
+
+第三步:征求许可
+- 等我明确说"开始""执行""go"才动手
+
+第四步:执行与汇报
+- 每完成一个主要步骤简短汇报(一行内)
+- 遇到意外立刻停下问我
+- 完成后给"完成总结"
+
+# 不要做的事
+
+1. 不要自作主张优化我的文件结构、重命名我的文件
+2. 不要在产出里加"免责声明"等兜底文字
+3. 不要滥用 emoji 和大量加粗
+4. 不要把"完成总结"写成长篇报告
+5. 不要在我没问的时候提建议
+
+# 用量意识
+
+- 不要做不必要的"二次确认型"读取
+- 不要为"严谨"把所有相关文件全扫
+- 任务结束就结束,不要主动开启新一轮</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-tpl-folder" data-search="Folder Instructions 文件夹">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📂</div>
+        <div class="card-title">Folder Instructions(Cowork 项目)</div>
+        <div class="card-badge warning">Cowork</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail" style="margin-bottom: 8px;"><strong>使用位置:</strong>Cowork → 项目文件夹 → Folder Instructions · 仅本项目生效</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>Folder Instructions</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content"># 项目档案
+
+项目名称:[项目名]
+项目类型:[类型]
+当前阶段:[阶段]
+核心主题:[一句话主题]
+
+# 工作文件夹结构
+
+/项目名/
+   /00_工作模板/
+   /01_原始素材/    ← 只读,不改
+   /02_当前稿件/    ← 改前必备份
+   /03_参考资料/
+   /04_Claude产出/  ← 你的产出全放这
+   /05_归档/
+
+文件归属判断:
+- "我新写的稿子" → 02_当前稿件,旧版移到 05_归档
+- "你做的诊断/分析" → 04_Claude产出
+- "我让你查的资料" → 03_参考资料
+- 不确定先问我
+
+# 方法论
+
+[粘贴你的方法论核心,或:本项目使用 [skill-name] Skill]
+
+# 产出文件命名规范
+
+- 诊断:诊断_[版本号]_[日期]_v[序号].md
+- 改写建议:改写建议_[针对段落]_[日期].md
+- 周报:项目周报_[周次起始日期].md
+
+# 关键人物档案(分析时保持一致)
+
+[列出每个关键人物的核心特征]
+
+# 暗线与主题
+
+明线:[一句话]
+暗线:[一句话]
+主题问题:[一个问句]
+
+任何分析都不能脱离这条暗线。
+
+# 绝对禁止
+
+1. 不要擅自给人物加台词、加情节
+2. 必须基于真实素材,不要发明
+3. 不要在第一轮诊断里改稿子
+4. 诊断和改写两件事分开做</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" id="card-tpl-trigger" data-search="触发词 封装 暗号">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🪄</div>
+        <div class="card-title">触发词协议(高阶)</div>
+        <div class="card-badge accent">高阶</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail" style="margin-bottom: 8px;">把咒语封装成触发词,加到 Project / Folder Instructions 里。</div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>触发词协议</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content"># 触发词协议
+
+- 用户说"定向" → 自动执行版本一(航向锁定)
+- 用户说"诊断" → 自动执行版本二(诊断式深度对谈)
+- 用户说"死磕 [议题]" → 自动执行版本三(议题深挖)
+- 用户说"续接" → 自动执行版本四(续接式)
+- 用户说"收口" → 自动执行收口咒语
+- 用户说"今日开工" → 自动执行 Cowork 启动协议
+- 用户说"盘点" → 自动执行 Cowork 项目复位</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section" data-section="pitfalls">
+    <div class="section-title">避坑清单</div>
+    <div class="section-desc">8 个最常见的错误用法,直接对照纠正。</div>
+
+    <div class="pitfall-row" data-search="挤牙膏 信息 一次性">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>在 Chat 里挤牙膏式给信息</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>一次性贴齐所有上下文</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="聚焦 一轮 多个问题">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>一个对话里塞 5 个不相关问题</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>一轮聚焦一件事</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="收口 总结 存档">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>Chat 对话从不收口</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>每次结束都强制收口,把总结存档</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="Cowork 根目录 授权">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>让 Cowork 访问整个硬盘</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>只授权专门的工作文件夹</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="任务 模糊 五要素">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>Cowork 任务说一句模糊指令</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>五要素齐全 + 先要计划</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="复核 信任 产出">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>Cowork 产出直接当最终稿</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>必须人工打开复核</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="工具 混用 区分">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>把 Chat 和 Cowork 当同一种工具用</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>思考用 Chat,执行用 Cowork</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="模型 选择 Opus Sonnet">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>全程用同一个模型</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>深度任务 Opus,迭代任务 Sonnet</span></div>
+    </div>
+
+    <div class="tip danger" style="margin-top: 20px;">
+      <strong>头号大坑:</strong>把 Chat 当 Cowork 用——指望发一句话就拿到完整产出。Chat 的真正价值是<strong>多轮对谈中思维的递进</strong>。
+    </div>
+  </div>
+
+</div>
+
+<div class="quick-nav">
+  <button class="quick-btn" onclick="scrollToTop()" title="回到顶部">↑</button>
+</div>
+
+<div class="toast" id="toast">已复制</div>
+
+<script>
+document.querySelectorAll('#tabs .tab').forEach(tab => {
+  tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+function switchTab(tabName) {
+  document.querySelectorAll('#tabs .tab').forEach(t => t.classList.remove('active'));
+  const tabEl = document.querySelector(`#tabs .tab[data-tab="${tabName}"]`);
+  if (tabEl) tabEl.classList.add('active');
+  document.querySelectorAll('.section[data-section]').forEach(s => s.classList.remove('active'));
+  const sectionEl = document.querySelector(`.section[data-section="${tabName}"]`);
+  if (sectionEl) sectionEl.classList.add('active');
+  document.getElementById('searchResults').innerHTML = '';
+  document.getElementById('searchInput').value = '';
+}
+
+function toggleCard(header) {
+  header.parentElement.classList.toggle('expanded');
+}
+
+function switchSpellMode(tab, mode) {
+  document.querySelectorAll('[data-mode]').forEach(t => t.classList.remove('active'));
+  tab.classList.add('active');
+  document.getElementById('chatSpells').style.display = mode === 'chat' ? 'block' : 'none';
+  document.getElementById('coworkSpells').style.display = mode === 'cowork' ? 'block' : 'none';
+}
+
+function jumpTo(tabName, cardId, spellMode) {
+  switchTab(tabName);
+
+  if (tabName === 'spells' && spellMode) {
+    setTimeout(() => {
+      const modeTab = document.querySelector(`[data-mode="${spellMode}"]`);
+      if (modeTab) switchSpellMode(modeTab, spellMode);
+    }, 50);
+  }
+
+  if (cardId) {
+    setTimeout(() => {
+      const card = document.getElementById(cardId);
+      if (card) {
+        card.classList.add('expanded');
+        card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        card.classList.add('highlight');
+        setTimeout(() => card.classList.remove('highlight'), 2000);
+      }
+    }, 150);
+  } else {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+}
+
+function copyCode(btn) {
+  const code = btn.parentElement.parentElement.querySelector('.code-content').innerText;
+  const textarea = document.createElement('textarea');
+  textarea.value = code;
+  textarea.style.position = 'fixed';
+  textarea.style.opacity = '0';
+  document.body.appendChild(textarea);
+  textarea.select();
+  try {
+    document.execCommand('copy');
+    btn.classList.add('copied');
+    btn.innerText = '✓ 已复制';
+    showToast('已复制到剪贴板');
+    setTimeout(() => {
+      btn.classList.remove('copied');
+      btn.innerText = '复制';
+    }, 1500);
+  } catch (e) {
+    showToast('复制失败,请手动选择');
+  }
+  document.body.removeChild(textarea);
+}
+
+function showToast(msg) {
+  const toast = document.getElementById('toast');
+  toast.innerText = msg;
+  toast.classList.add('show');
+  setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+const searchInput = document.getElementById('searchInput');
+const searchResults = document.getElementById('searchResults');
+
+searchInput.addEventListener('input', e => {
+  const query = e.target.value.trim().toLowerCase();
+  if (!query) {
+    searchResults.innerHTML = '';
+    document.querySelectorAll('.section[data-section]').forEach(s => {
+      const tab = document.querySelector(`#tabs .tab.active`);
+      if (tab && s.dataset.section === tab.dataset.tab) s.classList.add('active');
+    });
+    return;
+  }
+
+  document.querySelectorAll('.section[data-section]').forEach(s => s.classList.remove('active'));
+
+  const allCards = document.querySelectorAll('[data-search]');
+  const results = [];
+  allCards.forEach(card => {
+    const searchText = (card.dataset.search + ' ' + card.innerText).toLowerCase();
+    if (searchText.includes(query)) {
+      const titleEl = card.querySelector('.card-title') || card.querySelector('.pitfall-wrong');
+      const title = titleEl ? titleEl.innerText : '匹配结果';
+      const sectionEl = card.closest('.section[data-section]');
+      const sectionName = sectionEl ? sectionEl.querySelector('.section-title').innerText : '';
+      const snippet = card.innerText.substring(0, 100).replace(/\s+/g, ' ');
+      results.push({ title, sectionName, snippet, cardId: card.id });
+    }
+  });
+
+  if (results.length === 0) {
+    searchResults.innerHTML = `<div class="empty">没找到相关内容,试试其他关键词</div>`;
+  } else {
+    searchResults.innerHTML = results.map(r => `
+      <div class="search-result-item" onclick="jumpToSearchResult('${r.cardId}')">
+        <div class="search-result-category">${r.sectionName}</div>
+        <div class="search-result-title">${highlight(r.title, query)}</div>
+        <div class="search-result-snippet">${highlight(r.snippet, query)}...</div>
+      </div>
+    `).join('');
+  }
+});
+
+function highlight(text, query) {
+  const regex = new RegExp(`(${query.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+  return text.replace(regex, '<mark>$1</mark>');
+}
+
+function jumpToSearchResult(cardId) {
+  const card = document.getElementById(cardId);
+  if (!card) return;
+  const sectionEl = card.closest('.section[data-section]');
+  if (sectionEl) {
+    jumpTo(sectionEl.dataset.section, cardId);
+  }
+}
+</script>
+
+</body>
+</html>
