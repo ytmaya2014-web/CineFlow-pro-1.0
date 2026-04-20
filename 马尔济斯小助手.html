@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>马尔济斯小助手</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
+  background: linear-gradient(135deg, #ffeef5 0%, #fff5e6 100%);
+  min-height: 100vh;
+  color: #333;
+  padding-bottom: 80px;
+}
+.header {
+  background: linear-gradient(135deg, #ff9bc3 0%, #ffc3a0 100%);
+  padding: 30px 20px 40px;
+  text-align: center;
+  color: white;
+  border-radius: 0 0 30px 30px;
+  box-shadow: 0 4px 20px rgba(255,155,195,0.3);
+}
+.header h1 { font-size: 24px; margin-bottom: 8px; font-weight: 700; }
+.header p { font-size: 14px; opacity: 0.95; }
+.dog-avatar { font-size: 50px; margin-bottom: 10px; }
+.tabs-wrap {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #ffeef5;
+  /* 不用 backdrop-filter,部分手机浏览器有层叠 bug 导致子元素无法点击 */
+}
+.tabs {
+  display: flex;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 15px 10px;
+  gap: 8px;
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+  /* 关键:允许纵向手势穿透,只吃横向手势 */
+  touch-action: pan-x;
+  -webkit-tap-highlight-color: transparent;
+}
+.tabs::-webkit-scrollbar { display: none; }
+.tab {
+  flex-shrink: 0;
+  padding: 10px 18px;
+  background: white;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  cursor: pointer;
+  transition: transform 0.2s, background 0.3s, color 0.3s;
+  user-select: none;
+  -webkit-user-select: none;
+  white-space: nowrap;
+  /* 关键:保证按钮自身也响应点击,不被父容器滚动吞掉 */
+  position: relative;
+  z-index: 1;
+  touch-action: manipulation;
+}
+.tab:active {
+  transform: scale(0.96);
+  opacity: 0.85;
+}
+.tab.active {
+  background: linear-gradient(135deg, #ff9bc3, #ffc3a0);
+  color: white;
+  box-shadow: 0 3px 10px rgba(255,107,157,0.3);
+}
+.content { padding: 10px 15px; }
+.section { display: none; animation: fadeIn 0.3s; }
+.section.active { display: block; }
+@keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); }}
+.card {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 14px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+}
+.card-title {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 10px;
+  color: #ff6b9d;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.card-content { font-size: 14px; line-height: 1.7; color: #555; }
+.dog-card {
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  margin-bottom: 14px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.07);
+  border-left: 5px solid #ff9bc3;
+}
+.dog-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.dog-emoji { font-size: 36px; }
+.dog-name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #333;
+}
+.dog-tag {
+  display: inline-block;
+  background: linear-gradient(135deg, #ffe0ec, #ffe8d6);
+  color: #ff6b9d;
+  padding: 3px 10px;
+  border-radius: 10px;
+  font-size: 12px;
+  margin-top: 4px;
+}
+.dog-info {
+  font-size: 13px;
+  color: #666;
+  line-height: 1.8;
+  margin-top: 8px;
+}
+.dog-info strong { color: #ff6b9d; }
+.spell-card {
+  background: linear-gradient(135deg, #fff, #fff9f3);
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 10px;
+  border: 2px dashed #ffc3a0;
+  position: relative;
+}
+.spell-title { font-size: 14px; font-weight: 700; color: #ff6b9d; margin-bottom: 8px; }
+.spell-text {
+  background: #fff5ec;
+  padding: 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: #555;
+  margin-bottom: 8px;
+  white-space: pre-wrap;
+}
+.copy-btn {
+  background: linear-gradient(135deg, #ff9bc3, #ffc3a0);
+  color: white;
+  border: none;
+  padding: 7px 16px;
+  border-radius: 14px;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  float: right;
+}
+.copy-btn:active { transform: scale(0.95); }
+.step-item {
+  background: white;
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.step-num {
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  background: linear-gradient(135deg, #ff9bc3, #ffc3a0);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 14px;
+}
+.step-text { flex: 1; font-size: 14px; line-height: 1.6; }
+.step-text strong { color: #ff6b9d; }
+.qa-item {
+  background: white;
+  border-radius: 15px;
+  margin-bottom: 10px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.qa-question {
+  padding: 14px 16px;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+.qa-question::after {
+  content: '+';
+  font-size: 20px;
+  color: #ff9bc3;
+  transition: transform 0.3s;
+}
+.qa-item.open .qa-question::after { transform: rotate(45deg); }
+.qa-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.3s, padding 0.3s;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #666;
+  padding: 0 16px;
+}
+.qa-item.open .qa-answer { max-height: 400px; padding: 0 16px 14px; }
+.scene-card {
+  background: white;
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 15px;
+  box-shadow: 0 3px 12px rgba(0,0,0,0.06);
+}
+.scene-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ff6b9d;
+  margin-bottom: 12px;
+}
+.scene-dialog {
+  background: #fff5ec;
+  padding: 12px;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  font-size: 13px;
+  line-height: 1.6;
+}
+.scene-dialog.you { background: #ffe8f0; }
+.scene-dialog.ai { background: #fff5ec; }
+.scene-dialog strong { color: #ff6b9d; }
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(0,0,0,0.8);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 14px;
+  opacity: 0;
+  transition: opacity 0.3s;
+  z-index: 999;
+  pointer-events: none;
+}
+.toast.show { opacity: 1; }
+.intro-banner {
+  background: linear-gradient(135deg, #ffe0ec, #ffe8d6);
+  border-radius: 15px;
+  padding: 15px;
+  margin-bottom: 15px;
+  font-size: 13px;
+  line-height: 1.7;
+  color: #8b5a6b;
+}
+.intro-banner strong { color: #ff6b9d; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="dog-avatar">🐶🐶🐶</div>
+  <h1>马尔济斯小助手</h1>
+  <p>8 只宝贝的小红书创作指南</p>
+</div>
+
+<div class="tabs-wrap">
+  <div class="tabs" id="tabsBar">
+    <div class="tab active" data-target="home" role="button" onclick="switchTab(this)">🏠 首页</div>
+    <div class="tab" data-target="dogs" role="button" onclick="switchTab(this)">🐶 8只档案</div>
+    <div class="tab" data-target="steps" role="button" onclick="switchTab(this)">📝 发帖流程</div>
+    <div class="tab" data-target="spells" role="button" onclick="switchTab(this)">✨ 咒语库</div>
+    <div class="tab" data-target="scenes" role="button" onclick="switchTab(this)">🎬 场景示范</div>
+    <div class="tab" data-target="qa" role="button" onclick="switchTab(this)">❓ 常见问题</div>
+  </div>
+</div>
+
+<div class="content">
+
+<!-- 首页 -->
+<div class="section active" id="home">
+  <div class="intro-banner">
+    老婆你好呀 💕<br>
+    这是专门给你做的随身小助手<br>
+    不懂的时候,<strong>随便点随便看</strong>,不会搞坏的~
+  </div>
+  <div class="card">
+    <div class="card-title">📌 今天想做什么?</div>
+    <div class="card-content">
+      • 想发笔记不会写 → 去 <strong>📝 发帖流程</strong><br>
+      • 想不起某只狗的人设 → 去 <strong>🐶 8只档案</strong><br>
+      • 想直接复制话给 AI → 去 <strong>✨ 咒语库</strong><br>
+      • 想看真实例子 → 去 <strong>🎬 场景示范</strong><br>
+      • 遇到问题 → 去 <strong>❓ 常见问题</strong>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">🎯 一句话操作指南</div>
+    <div class="card-content">
+      1️⃣ 打开 <strong>claude.ai</strong><br>
+      2️⃣ 进入 <strong>"我家的马尔济斯小红书"</strong> 项目<br>
+      3️⃣ 把今天的事告诉它(比如"团子又拆家了")<br>
+      4️⃣ 按它的引导,选标题、收正文<br>
+      5️⃣ 复制到小红书,配图发布 ✅
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title">💡 小贴士</div>
+    <div class="card-content">
+      • AI 不会骂你,随便问<br>
+      • 写得不好,直接说"重写"<br>
+      • 每次发之前<strong>自己再看一遍</strong><br>
+      • 素材平时随手记,存着慢慢用
+    </div>
+  </div>
+</div>
+
+<!-- 8只狗档案 -->
+<div class="section" id="dogs">
+  <div class="intro-banner">
+    下面是示范版,<strong>真实情况请让老公帮你改</strong>~
+  </div>
+
+  <div class="dog-card">
+    <div class="dog-header">
+      <div class="dog-emoji">👑</div>
+      <div>
+        <div class="dog-name">豆豆</div>
+        <div class="dog-tag">家族大姐大</div>
+      </div>
+    </div>
+    <div class="dog-info">
+      <strong>性别年龄:</strong> 母,6岁<br>
+      <strong>外貌:</strong> 纯白长毛,最胖<br>
+      <strong>性格:</strong> 霸气、护崽、嘴硬心软<br>
+      <strong>人设:</strong> 永远第一个吃饭,但小的被欺负她第一个冲上去<br>
+      <strong>爆款梗:</strong> "豆豆一发话,全家都得听"
+    </div>
+  </div>
+
+  <div class="dog-card">
+    <div class="dog-header">
+      <div class="dog-emoji">💣</div>
+      <div>
+        <div class="dog-name">团子</div>
+        <div class="dog-tag">专业拆家 20 年</div>
+      </div>
+    </div>
+    <div class="dog-info">
+      <strong>性别年龄:</strong> 公,5岁<br>
+      <strong>外貌:</strong> 杏色,耳朵超大<br>
+      <strong>性格:</strong> 调皮、好奇、精力无限<br>
+      <strong>人设:</strong> 家里拖鞋的终极敌人,沙发底下是赃物库<br>
+      <strong>爆款梗:</strong> "团子不拆家,一定是生病了"
+    </div>
+  </div>
+
+  <div class="dog-card">
+    <div class="dog-header">
+      <div class="dog-emoji">🌸</div>
+      <div>
+        <div class="dog-name">花花</div>
+        <div class="dog-tag">家族团宠</div>
+      </div>
+    </div>
+    <div class="dog-info">
+      <strong>性别年龄:</strong> 母,2岁<br>
+      <strong>外貌:</strong> 最小只,毛蓬松,眼大<br>
+      <strong>性格:</strong> 胆小、粘人、爱撒娇<br>
+      <strong>人设:</strong> 打雷必须抱着睡,一哭豆豆就去教训其他狗<br>
+      <strong>爆款梗:</strong> "花花掉一滴眼泪,全家都得哄"
+    </div>
+  </div>
+
+  <div class="dog-card">
+    <div class="dog-header">
+      <div class="dog-emoji">❄️</div>
+      <div>
+        <div class="dog-name">雪球</div>
+        <div class="dog-tag">颜值担当</div>
+      </div>
+    </div>
+    <div class="dog-info">
+      <strong>性别年龄:</strong> 母,3岁<br>
+      <strong>外貌:</strong> 纯白无杂色,毛量爆炸<br>
+      <strong>性格:</strong> 高冷、优雅、不爱搭理人<br>
+      <strong>人设:</strong> 拍照永远 C 位,对零食挑剔<br>
+      <strong>爆款梗:</strong> "雪球一个眼神,能让我花半个月工资"
+    </div>
+  </div>
+
+  <div class="dog-card">
+    <div class="dog-header">
+      <div class="dog-emoji">🥟</div>
+      <div>
+        <div class="dog-name">包子</div>
+        <div class="dog-tag">吃货代言人</div>
+      </div>
+    </div>
+    <div class="dog-info">
+      <strong>性别年龄:</strong> 公,4岁<br>
+      <strong>外貌:</strong> 圆滚滚,像会走路的馒头<br>
+      <strong>性格:</strong> 贪吃、憨厚、永远很饿<br>
+      <strong>人设:</strong> 零食袋声音自动雷达,装可怜一绝<br>
+      <strong>爆款梗:</strong> "包子的字典里没有饱这个字"
+    </div>
+  </div>
+
+  <div class="dog-card">
+    <div class="dog-header">
+      <div class="dog-emoji">🍬</div>
+      <div>
+        <div class="dog-name">糖糖</div>
+        <div class="dog-tag">24 小时戏精</div>
+      </div>
+    </div>
+    <div class="dog-info">
+      <strong>性别年龄:</strong> 母,3岁<br>
+      <strong>外貌:</strong> 毛微卷,表情丰富<br>
+      <strong>性格:</strong> 戏多、敏感、爱表演<br>
+      <strong>人设:</strong> 被碰一下能演出骨折,会面壁思过<br>
+      <strong>爆款梗:</strong> "糖糖不去当演员可惜了"
+    </div>
+  </div>
+
+  <div class="dog-card">
+    <div class="dog-header">
+      <div class="dog-emoji">🍦</div>
+      <div>
+        <div class="dog-name">奶油</div>
+        <div class="dog-tag">永远在睡觉</div>
+      </div>
+    </div>
+    <div class="dog-info">
+      <strong>性别年龄:</strong> 公,7岁(最大)<br>
+      <strong>外貌:</strong> 毛色略黄,总睡不醒<br>
+      <strong>性格:</strong> 佛系、温柔、懒得动<br>
+      <strong>人设:</strong> 一天睡 20 小时,只有吃饭才清醒<br>
+      <strong>爆款梗:</strong> "奶油的生活:吃饭、睡觉、继续睡觉"
+    </div>
+  </div>
+
+  <div class="dog-card">
+    <div class="dog-header">
+      <div class="dog-emoji">🍮</div>
+      <div>
+        <div class="dog-name">布丁</div>
+        <div class="dog-tag">话痨担当</div>
+      </div>
+    </div>
+    <div class="dog-info">
+      <strong>性别年龄:</strong> 公,2岁(最小)<br>
+      <strong>外貌:</strong> 毛稍短,尾巴爱摇<br>
+      <strong>性格:</strong> 话多、热情、社交牛狗<br>
+      <strong>人设:</strong> 看到啥都要汪,见人就扑<br>
+      <strong>爆款梗:</strong> "布丁的嘴,全小区都认识"
+    </div>
+  </div>
+</div>
+
+<!-- 发帖流程 -->
+<div class="section" id="steps">
+  <div class="intro-banner">
+    按这 7 步走,<strong>每次都一样</strong>~
+  </div>
+  <div class="step-item">
+    <div class="step-num">1</div>
+    <div class="step-text">
+      <strong>打开 Claude</strong><br>
+      浏览器打开 claude.ai,或打开 Claude App
+    </div>
+  </div>
+  <div class="step-item">
+    <div class="step-num">2</div>
+    <div class="step-text">
+      <strong>进入项目</strong><br>
+      左侧菜单点 Projects,选 "我家的马尔济斯小红书"
+    </div>
+  </div>
+  <div class="step-item">
+    <div class="step-num">3</div>
+    <div class="step-text">
+      <strong>说今天的事</strong><br>
+      像发微信一样告诉它:"今天团子把拖鞋藏沙发下了"
+    </div>
+  </div>
+  <div class="step-item">
+    <div class="step-num">4</div>
+    <div class="step-text">
+      <strong>回答它的小问题</strong><br>
+      它会问 2-3 个细节,你照实回答
+    </div>
+  </div>
+  <div class="step-item">
+    <div class="step-num">5</div>
+    <div class="step-text">
+      <strong>选标题</strong><br>
+      它会给 3 个标题,选你喜欢的,回 "A" 或 "B"
+    </div>
+  </div>
+  <div class="step-item">
+    <div class="step-num">6</div>
+    <div class="step-text">
+      <strong>收正文</strong><br>
+      它会生成完整笔记(标题+正文+标签+封面建议)
+    </div>
+  </div>
+  <div class="step-item">
+    <div class="step-num">7</div>
+    <div class="step-text">
+      <strong>检查+发布</strong><br>
+      复制到小红书,<strong>自己再看一遍</strong>,配图,发!
+    </div>
+  </div>
+</div>
+
+<!-- 咒语库 -->
+<div class="section" id="spells">
+  <div class="intro-banner">
+    点 <strong>"复制"</strong> 按钮,直接粘贴给 Claude 就行~
+  </div>
+
+  <div class="spell-card">
+    <div class="spell-title">💡 没灵感想不到发啥</div>
+    <div class="spell-text" data-spell="s1">最近想发笔记,你给我推荐 5 个马尔济斯日常选题</div>
+    <button class="copy-btn" data-copy="s1" onclick="doCopy(this)">复制</button>
+    <div style="clear:both"></div>
+  </div>
+
+  <div class="spell-card">
+    <div class="spell-title">✍️ 有素材直接写</div>
+    <div class="spell-text" data-spell="s2">今天发生了 [把事情说清楚],帮我写小红书笔记</div>
+    <button class="copy-btn" data-copy="s2" onclick="doCopy(this)">复制</button>
+    <div style="clear:both"></div>
+  </div>
+
+  <div class="spell-card">
+    <div class="spell-title">📅 做系列栏目</div>
+    <div class="spell-text" data-spell="s3">帮我设计一个以 8 只狗为主角的小红书系列栏目,给我 3 个方案</div>
+    <button class="copy-btn" data-copy="s3" onclick="doCopy(this)">复制</button>
+    <div style="clear:both"></div>
+  </div>
+
+  <div class="spell-card">
+    <div class="spell-title">📊 数据不好想改进</div>
+    <div class="spell-text" data-spell="s4">这是我昨天发的笔记 [粘贴进去],数据一般,帮我分析为什么</div>
+    <button class="copy-btn" data-copy="s4" onclick="doCopy(this)">复制</button>
+    <div style="clear:both"></div>
+  </div>
+
+  <div class="spell-card">
+    <div class="spell-title">🎉 蹭节日热点</div>
+    <div class="spell-text" data-spell="s5">马上[节日]了,给我 3 个马尔济斯[节日]主题的选题</div>
+    <button class="copy-btn" data-copy="s5" onclick="doCopy(this)">复制</button>
+    <div style="clear:both"></div>
+  </div>
+
+  <div class="spell-card">
+    <div class="spell-title">👤 写账号简介</div>
+    <div class="spell-text" data-spell="s6">帮我写一个小红书账号简介,我家有 8 只马尔济斯,要温馨可爱有特色</div>
+    <button class="copy-btn" data-copy="s6" onclick="doCopy(this)">复制</button>
+    <div style="clear:both"></div>
+  </div>
+
+  <div class="spell-card">
+    <div class="spell-title">🔄 让它重写</div>
+    <div class="spell-text" data-spell="s7">刚才那版太啰嗦了,重写一版,更口语化一点,短一点</div>
+    <button class="copy-btn" data-copy="s7" onclick="doCopy(this)">复制</button>
+    <div style="clear:both"></div>
+  </div>
+
+  <div class="spell-card">
+    <div class="spell-title">🆘 小白求救</div>
+    <div class="spell-text" data-spell="s8">我是零基础小白,请用最简单的话告诉我,不要用技术词,就像教不会用手机的长辈一样教我</div>
+    <button class="copy-btn" data-copy="s8" onclick="doCopy(this)">复制</button>
+    <div style="clear:both"></div>
+  </div>
+</div>
+
+<!-- 场景示范 -->
+<div class="section" id="scenes">
+  <div class="intro-banner">
+    下面是 5 个真实场景,<strong>照着学就会</strong>~
+  </div>
+
+  <div class="scene-card">
+    <div class="scene-title">🎬 场景 1:单只狗犯错</div>
+    <div class="scene-dialog you"><strong>你:</strong> 团子又把拖鞋藏沙发底下了</div>
+    <div class="scene-dialog ai"><strong>AI:</strong> 惯犯还是偶发?你当时什么反应?拍到照片没?</div>
+    <div class="scene-dialog you"><strong>你:</strong> 老毛病了,又气又笑,拍到它歪头的照片</div>
+    <div class="scene-dialog ai"><strong>AI:</strong> 给你 3 个标题选... → 完整笔记</div>
+  </div>
+
+  <div class="scene-card">
+    <div class="scene-title">🎬 场景 2:8 只群像</div>
+    <div class="scene-dialog you"><strong>你:</strong> 今天 8 只一起吃饭,排成一排的画面好可爱</div>
+    <div class="scene-dialog ai"><strong>AI:</strong> 是按辈分吃吗?谁先谁后?有没有抢食的?</div>
+    <div class="scene-dialog you"><strong>你:</strong> 豆豆先吃,包子偷吃花花的</div>
+    <div class="scene-dialog ai"><strong>AI:</strong> 生成"8 只马尔济斯的饭点江湖"主题笔记</div>
+  </div>
+
+  <div class="scene-card">
+    <div class="scene-title">🎬 场景 3:温情瞬间</div>
+    <div class="scene-dialog you"><strong>你:</strong> 奶油今天睡觉的时候花花一直陪着他</div>
+    <div class="scene-dialog ai"><strong>AI:</strong> 奶油最近身体怎么样?花花平时会这样陪别的狗吗?</div>
+    <div class="scene-dialog you"><strong>你:</strong> 奶油 7 岁了精神不太好,花花第一次这样</div>
+    <div class="scene-dialog ai"><strong>AI:</strong> 生成温馨治愈风笔记,结尾留互动</div>
+  </div>
+
+  <div class="scene-card">
+    <div class="scene-title">🎬 场景 4:节日热点</div>
+    <div class="scene-dialog you"><strong>你:</strong> 中秋节快到了,想给 8 只拍组照发笔记</div>
+    <div class="scene-dialog ai"><strong>AI:</strong> 打算什么主题?汉服/月饼/赏月?要不要每只配一个角色?</div>
+    <div class="scene-dialog you"><strong>你:</strong> 想让每只扮一个角色,比如豆豆是嫦娥</div>
+    <div class="scene-dialog ai"><strong>AI:</strong> 给 8 只设计角色,生成"马尔济斯中秋神话组"笔记</div>
+  </div>
+
+  <div class="scene-card">
+    <div class="scene-title">🎬 场景 5:产品种草</div>
+    <div class="scene-dialog you"><strong>你:</strong> 新买了一个狗窝,包子很喜欢,想发笔记</div>
+    <div class="scene-dialog ai"><strong>AI:</strong> 这是广告还是真实分享?什么牌子?价格?有啥特点?</div>
+    <div class="scene-dialog you"><strong>你:</strong> 真实分享,XX牌,200 块,防滑</div>
+    <div class="scene-dialog ai"><strong>AI:</strong> 生成"亲测好物"风格,不硬广,自然种草</div>
+  </div>
+</div>
+
+<!-- 常见问题 -->
+<div class="section" id="qa">
+  <div class="qa-item">
+    <div class="qa-question" role="button" onclick="toggleQa(this)">Claude 会全中文吗?</div>
+    <div class="qa-answer">可以,全程中文。你中文问它就中文答,完全不用英文。</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-question" role="button" onclick="toggleQa(this)">它能记住上次说的话吗?</div>
+    <div class="qa-answer">同一个对话里记得。开新对话就不记得了,但项目知识库里的狗狗档案永远在。</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-question" role="button" onclick="toggleQa(this)">它写的能直接发吗?</div>
+    <div class="qa-answer">⚠️ 一定要自己看一遍!AI 可能会写错狗名或编造细节。发之前检查狗名、故事情节、用词是否合适。</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-question" role="button" onclick="toggleQa(this)">会被判 AI 文案吗?</div>
+    <div class="qa-answer">风险不大。建议每篇自己改 2-3 句,加只有你知道的真实细节,就安全了。</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-question" role="button" onclick="toggleQa(this)">一天发几篇合适?</div>
+    <div class="qa-answer">新号 1 天 1 篇,养熟后 1-2 篇。每周至少 3 篇保持活跃度。</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-question" role="button" onclick="toggleQa(this)">每次都要介绍 8 只吗?</div>
+    <div class="qa-answer">不用!只要在项目里,Claude 自动读档案。直接说 "团子今天..." 它就知道。</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-question" role="button" onclick="toggleQa(this)">它答不上来怎么办?</div>
+    <div class="qa-answer">换个说法再问,或把问题拆小。"帮我做账号" 太大,改成 "帮我想账号名字" 更好。</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-question" role="button" onclick="toggleQa(this)">能吐槽它吗?</div>
+    <div class="qa-answer">随便!说 "写得不好重写" 它会重写。说 "很棒" 它会记住你喜欢的风格。像对朋友一样说话。</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-question" role="button" onclick="toggleQa(this)">免费还是要付费?</div>
+    <div class="qa-answer">免费版能用但有限制。想高频使用建议 Pro 版(约 140 元/月),老公会看情况开通。</div>
+  </div>
+  <div class="qa-item">
+    <div class="qa-question" role="button" onclick="toggleQa(this)">手机电脑都能用吗?</div>
+    <div class="qa-answer">都能!手机装 Claude App,电脑用浏览器,账号同步。写长内容电脑方便,随手记素材手机方便。</div>
+  </div>
+</div>
+
+</div>
+
+<div class="toast" id="toast">已复制到剪贴板 ✓</div>
+
+<script>
+// 全局函数:tab、复制、FAQ 都用内联 onclick 调用
+// 不依赖 DOMContentLoaded,避免微信 iOS WebView 里事件不触发的 bug
+
+function switchTab(tab) {
+  if (!tab) return;
+  var target = tab.getAttribute('data-target');
+  if (!target) return;
+  var allTabs = document.querySelectorAll('.tab');
+  for (var i = 0; i < allTabs.length; i++) allTabs[i].classList.remove('active');
+  tab.classList.add('active');
+  var allSections = document.querySelectorAll('.section');
+  for (var j = 0; j < allSections.length; j++) allSections[j].classList.remove('active');
+  var targetSection = document.getElementById(target);
+  if (targetSection) targetSection.classList.add('active');
+  // 把当前 tab 滚到可见处
+  try { tab.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' }); } catch (e) {}
+  // 回顶部
+  try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
+}
+
+function doCopy(btn) {
+  if (!btn) return;
+  var key = btn.getAttribute('data-copy');
+  var textEl = document.querySelector('[data-spell="' + key + '"]');
+  if (!textEl) return;
+  var text = textEl.innerText || textEl.textContent || '';
+  if (navigator.clipboard && navigator.clipboard.writeText) {
+    navigator.clipboard.writeText(text).then(showToast, function() { fallbackCopy(text); });
+  } else {
+    fallbackCopy(text);
+  }
+}
+
+function toggleQa(q) {
+  if (!q) return;
+  var item = q.parentElement;
+  if (item && item.className.indexOf('qa-item') !== -1) {
+    if (item.classList) {
+      item.classList.toggle('open');
+    } else {
+      // 超老 iOS 兜底
+      item.className = item.className.indexOf('open') !== -1
+        ? item.className.replace(' open', '')
+        : item.className + ' open';
+    }
+  }
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.top = '0';
+  ta.style.left = '0';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  ta.setSelectionRange(0, text.length);
+  try {
+    document.execCommand('copy');
+    showToast();
+  } catch (err) {
+    alert('复制失败,请长按文字手动复制');
+  }
+  document.body.removeChild(ta);
+}
+
+function showToast() {
+  var toast = document.getElementById('toast');
+  if (!toast) return;
+  toast.classList.add('show');
+  setTimeout(function() { toast.classList.remove('show'); }, 1500);
+}
+</script>
+
+</body>
+</html>
