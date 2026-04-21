@@ -410,6 +410,28 @@
   .proof-section p { font-size: 13px; color: #1E3A8A; text-align: center; line-height: 1.6; }
   .redeemed-info { font-size: 12px; color: #2563EB; margin-top: 4px; }
 
+  .prize-showcase {
+    margin-top: 28px;
+  }
+  .prize-showcase-title {
+    text-align: center; font-size: 18px; color: #888; margin-bottom: 14px; font-weight: bold;
+  }
+  .prize-grid {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;
+  }
+  .prize-card {
+    border-radius: 20px; border: 2.5px solid; padding: 14px 12px;
+    text-align: center;
+  }
+  .prize-tier { font-size: 13px; font-weight: bold; margin-bottom: 6px; }
+  .prize-icon { font-size: 36px; margin-bottom: 8px; display: block; }
+  .prize-items { display: flex; flex-wrap: wrap; gap: 5px; justify-content: center; margin-bottom: 8px; }
+  .prize-tag {
+    font-size: 12px; color: white; padding: 3px 10px;
+    border-radius: 999px; font-weight: bold;
+  }
+  .prize-cond { font-size: 11px; color: #999; }
+
   @media (max-width: 480px) {
     .title { font-size: 44px; }
     .wheel-wrap { width: 300px; height: 300px; }
@@ -453,6 +475,46 @@
       </p>
       <button class="btn-start" onclick="startSpin()">🎲 开始抽签</button>
       <div class="task-grid" id="taskGrid"></div>
+
+      <div class="prize-showcase">
+        <div class="prize-showcase-title">🎁 奖品目录</div>
+        <div class="prize-grid">
+          <div class="prize-card" style="border-color:#FF6B9D;background:linear-gradient(135deg,#fff5f8,#ffe0ec);">
+            <div class="prize-tier" style="color:#FF6B9D">每日抽奖</div>
+            <div class="prize-icon">🎰</div>
+            <div class="prize-items">
+              <span class="prize-tag" style="background:#FF6B9D">💰 15元</span>
+              <span class="prize-tag" style="background:#FF8EB3">💵 10元</span>
+              <span class="prize-tag" style="background:#FFB6D1">🪙 5元</span>
+            </div>
+            <div class="prize-cond">完成率≥90%触发</div>
+          </div>
+          <div class="prize-card" style="border-color:#F97316;background:linear-gradient(135deg,#fff8f5,#ffdfc7);">
+            <div class="prize-tier" style="color:#F97316">每周抽奖</div>
+            <div class="prize-icon">📅</div>
+            <div class="prize-items">
+              <span class="prize-tag" style="background:#F97316">💰 50元</span>
+            </div>
+            <div class="prize-cond">周完成率≥90%</div>
+          </div>
+          <div class="prize-card" style="border-color:#A78BFA;background:linear-gradient(135deg,#f8f5ff,#e6deff);">
+            <div class="prize-tier" style="color:#A78BFA">月底抽奖</div>
+            <div class="prize-icon">🌙</div>
+            <div class="prize-items">
+              <span class="prize-tag" style="background:#A78BFA">💎 水晶手串</span>
+            </div>
+            <div class="prize-cond">当月≥3周达标</div>
+          </div>
+          <div class="prize-card" style="border-color:#3B82F6;background:linear-gradient(135deg,#f0f7ff,#dbeafe);">
+            <div class="prize-tier" style="color:#3B82F6">学期大奖</div>
+            <div class="prize-icon">📱</div>
+            <div class="prize-items">
+              <span class="prize-tag" style="background:#3B82F6">✨ iPad</span>
+            </div>
+            <div class="prize-cond">累计≥15周达标</div>
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="page" id="page-spin">
