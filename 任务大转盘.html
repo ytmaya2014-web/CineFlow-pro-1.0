@@ -410,6 +410,21 @@
   .proof-section p { font-size: 13px; color: #1E3A8A; text-align: center; line-height: 1.6; }
   .redeemed-info { font-size: 12px; color: #2563EB; margin-top: 4px; }
 
+  .award-summary {
+    background: linear-gradient(135deg, #fff9e6, #fff0f5);
+    border: 2.5px solid #FFD700;
+    border-radius: 20px; padding: 14px 16px; margin-bottom: 16px;
+  }
+  .award-summary-title { font-size: 15px; color: #D97706; font-weight: bold; margin-bottom: 10px; text-align: center; }
+  .award-summary-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+  .award-summary-item {
+    background: white; border-radius: 14px; padding: 8px 10px;
+    border: 2px solid; text-align: center;
+  }
+  .award-summary-item .asi-label { font-size: 11px; color: #888; }
+  .award-summary-item .asi-val { font-size: 18px; font-weight: bold; margin: 2px 0; }
+  .award-summary-item .asi-sub { font-size: 11px; }
+
   .prize-showcase {
     margin-top: 28px;
   }
@@ -466,6 +481,11 @@
       </div>
 
       <div id="todayDoneBlock" style="display:none;"></div>
+      <div id="todayResetBlock" style="text-align:right;margin:-10px 0 8px;">
+        <button onclick="resetToday()" style="padding:4px 14px;border-radius:999px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-family:inherit;font-size:12px;cursor:pointer;">🗑 清除今日</button>
+      </div>
+
+      <div id="awardSummaryBlock" style="display:none;"></div>
 
       <div class="sparkle">✨</div>
       <h1 class="title">任务大转盘</h1>
@@ -614,13 +634,16 @@
       <div id="rewardsList"></div>
 
       <div class="proof-section">
-        <h3>📜 兑换凭证说明</h3>
-        <p>
-          点击奖励上的"✓ 兑换"按钮后,<br>
-          会自动记录兑换日期,妈妈可以作为凭证核对哦~<br>
-          <br>
-          <b>💡 小提示:</b>截图这一页给妈妈看,就是最好的证据啦!
-        </p>
+        <h3>📦 数据备份与恢复</h3>
+        <p style="margin-bottom:14px;">换设备或清缓存前，先备份数据；恢复时导入备份文件即可。</p>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+          <button onclick="exportData()" style="padding:10px 22px;border-radius:999px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:white;font-family:inherit;font-size:15px;font-weight:bold;cursor:pointer;">⬇ 备份数据</button>
+          <label style="padding:10px 22px;border-radius:999px;border:none;background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:white;font-family:inherit;font-size:15px;font-weight:bold;cursor:pointer;">
+            ⬆ 恢复数据<input type="file" accept=".json" onchange="importData(event)" style="display:none;">
+          </label>
+        </div>
+        <p style="margin-top:12px;font-size:12px;color:#999;">备份文件请发给妈妈保存，也可作为兑奖凭证截图。</p>
+
       </div>
     </div>
 
@@ -661,18 +684,24 @@ const WEEKDAYS = ["星期日", "星期一", "星期二", "星期三", "星期四
 const TARGET_COUNT = 5;
 const STORAGE_KEY = "task_wheel_data_v1";
 
+var _memStore = null;
+
 function loadData() {
+  if (_memStore) return JSON.parse(JSON.stringify(_memStore));
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return { dailyRecords: {}, redemptions: {} };
-    return JSON.parse(raw);
-  } catch {
-    return { dailyRecords: {}, redemptions: {} };
-  }
+    var raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      _memStore = JSON.parse(raw);
+      return JSON.parse(JSON.stringify(_memStore));
+    }
+  } catch(e) {}
+  _memStore = { dailyRecords: {}, redemptions: {}, dailyLottery: [], weeklyLottery: [], monthlyLottery: [] };
+  return JSON.parse(JSON.stringify(_memStore));
 }
+
 function saveData(data) {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
-  catch (e) { console.warn("保存失败", e); }
+  _memStore = JSON.parse(JSON.stringify(data));
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); } catch(e) {}
 }
 
 function todayKey() {
@@ -773,6 +802,56 @@ function initBubbles() {
   }
 }
 
+function renderAwardSummary() {
+  var data = loadData();
+  var block = document.getElementById("awardSummaryBlock");
+  var daily = data.dailyLottery || [];
+  var weekly = data.weeklyLottery || [];
+  var monthly = data.monthlyLottery || [];
+  var semWeeks = getSemesterHighWeekCount(data);
+
+  if (daily.length === 0 && weekly.length === 0 && monthly.length === 0 && semWeeks === 0) {
+    block.style.display = "none";
+    return;
+  }
+
+  var dailyTotal = daily.reduce(function(sum, r) {
+    if (r.id === "A") return sum + 15;
+    if (r.id === "B") return sum + 10;
+    if (r.id === "C") return sum + 5;
+    return sum;
+  }, 0);
+  var weeklyTotal = weekly.length * 50;
+  var totalCash = dailyTotal + weeklyTotal;
+  var ipadPct = Math.min(100, Math.round(semWeeks / 15 * 100));
+
+  block.style.display = "block";
+  block.innerHTML =
+    '<div class="award-summary">' +
+      '<div class="award-summary-title">🏅 我的得奖记录</div>' +
+      '<div class="award-summary-grid">' +
+        '<div class="award-summary-item" style="border-color:#FFD700;">' +
+          '<div class="asi-label">累计奖励金</div>' +
+          '<div class="asi-val" style="color:#D97706;">💰 ' + totalCash + '元</div>' +
+          '<div class="asi-sub" style="color:#B45309;">日抽' + dailyTotal + '+周抽' + weeklyTotal + '</div>' +
+        '</div>' +
+        '<div class="award-summary-item" style="border-color:#A78BFA;">' +
+          '<div class="asi-label">月底水晶手串</div>' +
+          '<div class="asi-val" style="color:#7C3AED;">💎 ' + monthly.length + ' 组</div>' +
+          '<div class="asi-sub" style="color:#6D28D9;">累计获得</div>' +
+        '</div>' +
+        '<div class="award-summary-item" style="border-color:#3B82F6;grid-column:span 2;">' +
+          '<div class="asi-label">iPad学期进度</div>' +
+          '<div class="asi-val" style="color:#1D4ED8;">📱 ' + semWeeks + ' / 15 周</div>' +
+          '<div style="background:#DBEAFE;border-radius:999px;height:8px;margin:4px 0;">' +
+            '<div style="height:100%;border-radius:999px;background:linear-gradient(135deg,#3B82F6,#A78BFA);width:' + ipadPct + '%;transition:width 0.5s;"></div>' +
+          '</div>' +
+          '<div class="asi-sub" style="color:#1E40AF;">' + (semWeeks >= 15 ? "🎉 达标！找妈妈兑换！" : "还差" + (15-semWeeks) + "周") + '</div>' +
+        '</div>' +
+      '</div>' +
+    '</div>';
+}
+
 function renderStartPage() {
   const now = new Date();
   document.getElementById("todayDay").textContent = WEEKDAYS[now.getDay()];
@@ -782,6 +861,7 @@ function renderStartPage() {
   const data = loadData();
   const count = countWeekDays(data);
   document.getElementById("weekBadgeText").textContent = `本周 ${count}/7`;
+  renderAwardSummary();
 
   const doneBlock = document.getElementById("todayDoneBlock");
   const todayRec = data.dailyRecords[todayKey()];
@@ -1156,44 +1236,48 @@ function completeTask() {
   stopAlarm();
   if (state.timer) clearInterval(state.timer);
   state.isRunning = false;
-  const task = state.spinningOrder[state.currentIdx];
+  var task = state.spinningOrder[state.currentIdx];
   if (!state.completedIds.includes(task.id)) state.completedIds.push(task.id);
   playSuccess();
 
-  const earnedScore = calcDayScore(state.completedIds);
-  const maxScore = calcDayMaxScore(state.spinningOrder);
+  var earnedScore = calcDayScore(state.completedIds);
+  var maxScore = calcDayMaxScore(state.spinningOrder);
+  var allDone = state.completedIds.length === state.spinningOrder.length;
+  var key = todayKey();
 
-  if (state.completedIds.length === state.spinningOrder.length) {
-    const data = loadData();
-    const key = todayKey();
-    data.dailyRecords[key] = {
-      weekday: new Date().getDay(),
-      tasks: state.spinningOrder.map(t => ({ id: t.id, name: t.name, minutes: t.minutes, score: t.score })),
-      totalMinutes: state.spinningOrder.reduce((s, t) => s + t.minutes, 0),
-      earnedScore: maxScore,
-      maxScore: maxScore,
-      completedAt: new Date().toISOString(),
-    };
-    saveData(data);
-    setTimeout(() => showPage("done"), 600);
+  var data = loadData();
+  if (!data.dailyLottery) data.dailyLottery = [];
+  var alreadyDayLottery = data.dailyLottery.some(function(r){ return r.dayKey === key; });
+
+  data.dailyRecords[key] = {
+    weekday: new Date().getDay(),
+    tasks: state.spinningOrder.map(function(t){ return { id: t.id, name: t.name, minutes: t.minutes, score: t.score }; }),
+    totalMinutes: state.spinningOrder.reduce(function(s,t){ return s + t.minutes; }, 0),
+    earnedScore: allDone ? maxScore : earnedScore,
+    maxScore: maxScore,
+    completedAt: new Date().toISOString(),
+  };
+  saveData(data);
+
+  var pct = maxScore > 0 ? Math.round((allDone ? maxScore : earnedScore) / maxScore * 100) : 0;
+  var shouldLottery = !alreadyDayLottery && (allDone || pct >= 90);
+
+  if (allDone) {
+    setTimeout(function(){
+      showPage("done");
+      if (shouldLottery) {
+        setTimeout(function(){ showLotteryModal("day"); }, 800);
+      }
+    }, 600);
   } else {
-    const data = loadData();
-    const key = todayKey();
-    const existing = data.dailyRecords[key] || {};
-    data.dailyRecords[key] = {
-      ...existing,
-      weekday: new Date().getDay(),
-      tasks: state.spinningOrder.map(t => ({ id: t.id, name: t.name, minutes: t.minutes, score: t.score })),
-      totalMinutes: state.spinningOrder.reduce((s, t) => s + t.minutes, 0),
-      earnedScore: earnedScore,
-      maxScore: maxScore,
-      completedAt: new Date().toISOString(),
-    };
-    saveData(data);
     renderPlan();
     showPage("plan");
+    if (shouldLottery) {
+      setTimeout(function(){ showLotteryModal("day"); }, 800);
+    }
   }
 }
+
 
 function getDayPct(data, dayKey) {
   const rec = data.dailyRecords[dayKey];
@@ -1226,16 +1310,6 @@ function renderDonePage() {
     "本周累计 " + totalEarned + " / " + totalMax + " 分 (" + weekPct + "%)";
 
   renderWeekGrid("weekGrid");
-
-  const today = new Date().getDay();
-  const isWeekday = today >= 1 && today <= 5;
-  const dayKey = todayKey();
-  const alreadyDayLottery = (data.dailyLottery || []).some(function(r){ return r.dayKey === dayKey; });
-  const dayPct = getDayPct(data, dayKey);
-
-  if (isWeekday && dayPct >= 90 && !alreadyDayLottery) {
-    setTimeout(function(){ showLotteryModal("day"); }, 1200);
-  }
 }
 
 function renderWeekGrid(containerId) {
@@ -1426,6 +1500,53 @@ function doLotterySpin(type) {
       lotterySpinning = false;
     }
   }, 100);
+}
+
+function resetToday() {
+  var key = todayKey();
+  if (!confirm("确定清除今日（" + key + "）的所有记录？\n包括：任务完成、得分、日抽奖。\n\n此操作不可恢复，仅供测试用。")) return;
+  var data = loadData();
+  delete data.dailyRecords[key];
+  data.dailyLottery = (data.dailyLottery || []).filter(function(r){ return r.dayKey !== key; });
+  saveData(data);
+  alert("今日记录已清除。");
+  renderStartPage();
+}
+
+function exportData() {
+  var data = loadData();
+  var now = new Date();
+  var defaultName = "任务大转盘备份_" + now.getFullYear() + String(now.getMonth()+1).padStart(2,"0") + String(now.getDate()).padStart(2,"0");
+  var name = prompt("给这份备份起个名字：", defaultName);
+  if (name === null) return;
+  if (!name.trim()) name = defaultName;
+  var filename = name.trim() + ".json";
+  var blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement("a");
+  a.href = url;
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function importData(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      var data = JSON.parse(e.target.result);
+      if (!data.dailyRecords) throw new Error("格式不对");
+      saveData(data);
+      alert("恢复成功！数据已导入。");
+      renderRewards();
+    } catch(err) {
+      alert("恢复失败：文件格式不正确，请选择正确的备份文件。");
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = "";
 }
 
 function confirmReset() {
