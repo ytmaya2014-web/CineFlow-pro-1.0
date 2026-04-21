@@ -7,12 +7,109 @@
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+
+  /* 色彩主题 - 甜心粉（默认） */
+  :root, body.theme-pink {
+    --bg-gradient: linear-gradient(135deg, #FFF5F7 0%, #FFE8E0 25%, #FFF0D9 50%, #E8F4FF 75%, #F0E8FF 100%);
+    --text-primary: #333;
+    --bubble-c1: #FFB6C1;
+    --bubble-c2: #B0E0E6;
+    --bubble-c3: #FFD700;
+    --bubble-c4: #DDA0DD;
+  }
+
+  /* 酷炫蓝（男孩模式）*/
+  body.theme-cool {
+    --bg-gradient: linear-gradient(135deg, #0F172A 0%, #1E293B 25%, #0C4A6E 50%, #1E40AF 75%, #312E81 100%);
+    --text-primary: #E0F2FE;
+    --bubble-c1: #00D9FF;
+    --bubble-c2: #60A5FA;
+    --bubble-c3: #A78BFA;
+    --bubble-c4: #22D3EE;
+  }
+  body.theme-cool .date-bar {
+    background: rgba(15, 23, 42, 0.7) !important;
+    border-color: rgba(96, 165, 250, 0.4) !important;
+  }
+  body.theme-cool .date-info .day { color: #60A5FA !important; }
+  body.theme-cool .date-info .date { color: #94A3B8 !important; }
+  body.theme-cool .subtitle { color: #CBD5E1 !important; }
+  body.theme-cool .subtitle .sm { color: #94A3B8 !important; }
+  body.theme-cool .title {
+    background: linear-gradient(135deg, #00D9FF, #60A5FA, #A78BFA) !important;
+    -webkit-background-clip: text !important; background-clip: text !important;
+    filter: drop-shadow(0 0 20px rgba(96, 165, 250, 0.5));
+  }
+  body.theme-cool .btn-start {
+    background: linear-gradient(135deg, #06B6D4, #3B82F6, #8B5CF6) !important;
+    box-shadow: 0 10px 30px rgba(59, 130, 246, 0.6), 0 0 40px rgba(6, 182, 212, 0.3) !important;
+  }
+  body.theme-cool .task-chip {
+    filter: brightness(0.9) saturate(1.2);
+    box-shadow: 0 4px 12px rgba(96, 165, 250, 0.2);
+  }
+  body.theme-cool .prize-card {
+    background: rgba(30, 41, 59, 0.8) !important;
+    color: #E0F2FE;
+  }
+  body.theme-cool .prize-cond { color: #94A3B8 !important; }
+
+  /* 清新绿 */
+  body.theme-green {
+    --bg-gradient: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 25%, #D1FAE5 50%, #CCFBF1 75%, #E0F2FE 100%);
+    --text-primary: #064E3B;
+    --bubble-c1: #86EFAC;
+    --bubble-c2: #6EE7B7;
+    --bubble-c3: #5EEAD4;
+    --bubble-c4: #A7F3D0;
+  }
+  body.theme-green .title {
+    background: linear-gradient(135deg, #10B981, #06B6D4, #3B82F6) !important;
+    -webkit-background-clip: text !important; background-clip: text !important;
+  }
+  body.theme-green .btn-start {
+    background: linear-gradient(135deg, #10B981, #06B6D4) !important;
+  }
+
+  /* 暗夜紫 */
+  body.theme-purple {
+    --bg-gradient: linear-gradient(135deg, #1E1B4B 0%, #312E81 25%, #4C1D95 50%, #831843 75%, #500724 100%);
+    --text-primary: #F5D0FE;
+    --bubble-c1: #F0ABFC;
+    --bubble-c2: #C084FC;
+    --bubble-c3: #FB7185;
+    --bubble-c4: #A78BFA;
+  }
+  body.theme-purple .date-bar {
+    background: rgba(30, 27, 75, 0.7) !important;
+    border-color: rgba(192, 132, 252, 0.4) !important;
+  }
+  body.theme-purple .date-info .day { color: #F0ABFC !important; }
+  body.theme-purple .date-info .date { color: #DDD6FE !important; }
+  body.theme-purple .subtitle { color: #DDD6FE !important; }
+  body.theme-purple .subtitle .sm { color: #C4B5FD !important; }
+  body.theme-purple .title {
+    background: linear-gradient(135deg, #F0ABFC, #FB7185, #C084FC) !important;
+    -webkit-background-clip: text !important; background-clip: text !important;
+    filter: drop-shadow(0 0 15px rgba(240, 171, 252, 0.4));
+  }
+  body.theme-purple .btn-start {
+    background: linear-gradient(135deg, #C084FC, #F0ABFC, #FB7185) !important;
+    box-shadow: 0 10px 30px rgba(192, 132, 252, 0.5) !important;
+  }
+  body.theme-purple .prize-card {
+    background: rgba(49, 46, 129, 0.7) !important;
+    color: #F5D0FE;
+  }
+  body.theme-purple .prize-cond { color: #C4B5FD !important; }
+
   html, body {
     font-family: 'ZCOOL KuaiLe', 'Comic Sans MS', cursive;
     min-height: 100vh;
-    background: linear-gradient(135deg, #FFF5F7 0%, #FFE8E0 25%, #FFF0D9 50%, #E8F4FF 75%, #F0E8FF 100%);
+    background: var(--bg-gradient);
     overflow-x: hidden;
-    color: #333;
+    color: var(--text-primary);
+    transition: background 0.5s ease;
   }
   .app { min-height: 100vh; padding: 20px; display: flex; align-items: center; justify-content: center; position: relative; }
   .container { width: 100%; max-width: 640px; position: relative; z-index: 10; }
@@ -475,17 +572,23 @@
             <div class="date" id="todayDate">2026年4月21日</div>
           </div>
         </div>
-        <button class="week-badge" onclick="showPage('rewards')">
-          🏆 <span id="weekBadgeText">本周 0/7</span>
-        </button>
+        <div style="display:flex;gap:6px;align-items:center;">
+          <button class="week-badge" onclick="showPage('rewards')">
+            🏆 <span id="weekBadgeText">本周 0/7</span>
+          </button>
+          <button onclick="enterSettings()" style="padding:6px 10px;border-radius:999px;border:none;background:rgba(255,255,255,0.8);font-size:18px;cursor:pointer;box-shadow:0 2px 8px rgba(0,0,0,0.1);" title="系统设置">⚙️</button>
+        </div>
       </div>
 
       <div id="todayDoneBlock" style="display:none;"></div>
       <div id="todayResetBlock" style="text-align:right;margin:-10px 0 8px;">
         <button onclick="resetToday()" style="padding:4px 14px;border-radius:999px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-family:inherit;font-size:12px;cursor:pointer;">🗑 清除今日</button>
+        <button onclick="injectTestPoints()" style="padding:4px 14px;border-radius:999px;border:1.5px solid #F97316;background:white;color:#F97316;font-family:inherit;font-size:12px;cursor:pointer;">🧪 注入测试积分</button>
       </div>
 
       <div id="awardSummaryBlock" style="display:none;"></div>
+
+      <div id="momNotebookBlock" style="margin-bottom:14px;"></div>
 
       <div class="sparkle">✨</div>
       <h1 class="title">任务大转盘</h1>
@@ -495,25 +598,35 @@
       </p>
       <button class="btn-start" onclick="startSpin()">🎲 开始抽签</button>
       <div class="task-grid" id="taskGrid"></div>
+      <div id="wheelToolbar"></div>
 
       <div class="prize-showcase">
         <div class="prize-showcase-title">🎁 奖品目录</div>
         <div class="prize-grid">
           <div class="prize-card" style="border-color:#FF6B9D;background:linear-gradient(135deg,#fff5f8,#ffe0ec);">
-            <div class="prize-tier" style="color:#FF6B9D">每日抽奖</div>
+            <div class="prize-tier" style="color:#FF6B9D">日抽奖（5分/次）</div>
             <div class="prize-icon">🎰</div>
             <div class="prize-items">
-              <span class="prize-tag" style="background:#FF6B9D">💰 15元</span>
-              <span class="prize-tag" style="background:#FF8EB3">💵 10元</span>
-              <span class="prize-tag" style="background:#FFB6D1">🪙 5元</span>
+              <span class="prize-tag" style="background:#FF6B9D">💰 5元</span>
+              <span class="prize-tag" style="background:#FF8EB3">💵 1元</span>
+              <span class="prize-tag" style="background:#FFB6D1">🪙 0.5元</span>
             </div>
-            <div class="prize-cond">完成率≥90%触发</div>
+            <div class="prize-cond">A奖每日限1次</div>
+          </div>
+          <div class="prize-card" style="border-color:#10B981;background:linear-gradient(135deg,#f0fdf4,#d1fae5);">
+            <div class="prize-tier" style="color:#10B981">积分兑好好</div>
+            <div class="prize-icon">🎁</div>
+            <div class="prize-items">
+              <span class="prize-tag" style="background:#10B981">小档 &lt;50分</span>
+              <span class="prize-tag" style="background:#059669">大档 50-100分</span>
+            </div>
+            <div class="prize-cond">积分扣减兑换</div>
           </div>
           <div class="prize-card" style="border-color:#F97316;background:linear-gradient(135deg,#fff8f5,#ffdfc7);">
-            <div class="prize-tier" style="color:#F97316">每周抽奖</div>
+            <div class="prize-tier" style="color:#F97316">周奖（固定）</div>
             <div class="prize-icon">📅</div>
             <div class="prize-items">
-              <span class="prize-tag" style="background:#F97316">💰 50元</span>
+              <span class="prize-tag" style="background:#F97316">💰 20元</span>
             </div>
             <div class="prize-cond">周完成率≥90%</div>
           </div>
@@ -521,17 +634,19 @@
             <div class="prize-tier" style="color:#A78BFA">月底抽奖</div>
             <div class="prize-icon">🌙</div>
             <div class="prize-items">
-              <span class="prize-tag" style="background:#A78BFA">💎 水晶手串</span>
+              <span class="prize-tag" style="background:#A78BFA">30元</span>
+              <span class="prize-tag" style="background:#7C3AED">20元</span>
+              <span class="prize-tag" style="background:#6D28D9">10元</span>
             </div>
             <div class="prize-cond">当月≥3周达标</div>
           </div>
-          <div class="prize-card" style="border-color:#3B82F6;background:linear-gradient(135deg,#f0f7ff,#dbeafe);">
+          <div class="prize-card" style="border-color:#3B82F6;background:linear-gradient(135deg,#f0f7ff,#dbeafe);grid-column:span 2;">
             <div class="prize-tier" style="color:#3B82F6">学期大奖</div>
             <div class="prize-icon">📱</div>
             <div class="prize-items">
-              <span class="prize-tag" style="background:#3B82F6">✨ iPad</span>
+              <span class="prize-tag" style="background:#3B82F6">✨ iPad · 累计≥15周达标</span>
             </div>
-            <div class="prize-cond">累计≥15周达标</div>
+            <div class="prize-cond">长期目标，加油！</div>
           </div>
         </div>
       </div>
@@ -632,21 +747,232 @@
       </div>
 
       <div id="rewardsList"></div>
+    </div>
 
-      <div class="proof-section">
-        <h3>📦 数据备份与恢复</h3>
-        <p style="margin-bottom:14px;">换设备或清缓存前，先备份数据；恢复时导入备份文件即可。</p>
-        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
-          <button onclick="exportData()" style="padding:10px 22px;border-radius:999px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:white;font-family:inherit;font-size:15px;font-weight:bold;cursor:pointer;">⬇ 备份数据</button>
-          <label style="padding:10px 22px;border-radius:999px;border:none;background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:white;font-family:inherit;font-size:15px;font-weight:bold;cursor:pointer;">
+    <!-- 系统设置页 -->
+    <div class="page" id="page-settings">
+      <div class="rewards-header">
+        <h2 style="background:linear-gradient(135deg,#6366F1,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">⚙️ 系统设置</h2>
+        <button class="btn-back" onclick="showPage('start')">← 返回</button>
+      </div>
+
+      <!-- 色彩模式 -->
+      <div class="reward-card" style="border-color:#A78BFA">
+        <div class="top-row">
+          <div class="r-emoji" style="background:#EDE9FE">🎨</div>
+          <div class="info">
+            <div class="r-title" style="color:#7C3AED">色彩模式</div>
+            <div class="desc">选一个喜欢的主题~</div>
+          </div>
+        </div>
+        <div id="themeOptions" style="display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-top:14px;"></div>
+      </div>
+
+      <!-- 妈妈密码 -->
+      <div class="reward-card" style="border-color:#F59E0B">
+        <div class="top-row">
+          <div class="r-emoji" style="background:#FEF3C7">🔐</div>
+          <div class="info">
+            <div class="r-title" style="color:#D97706">妈妈密码</div>
+            <div class="desc" id="passwordStatusDesc">设置密码后，删除记录、清零数据等敏感操作需要密码~</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;">
+          <button id="setPasswordBtn" onclick="showSetPasswordModal()" style="padding:8px 16px;border-radius:999px;border:none;background:linear-gradient(135deg,#F59E0B,#D97706);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">设置密码</button>
+          <button id="removePasswordBtn" onclick="removePassword()" style="display:none;padding:8px 16px;border-radius:999px;border:2px solid #6B7280;background:white;color:#6B7280;font-family:inherit;font-size:13px;cursor:pointer;">取消密码保护</button>
+        </div>
+      </div>
+
+      <!-- 妈妈记事本管理 -->
+      <div class="reward-card" style="border-color:#EC4899">
+        <div class="top-row">
+          <div class="r-emoji" style="background:#FCE0EE">📓</div>
+          <div class="info">
+            <div class="r-title" style="color:#EC4899">记事本管理</div>
+            <div class="desc">手动删除任意犯错/表扬记录（妈妈误记录时使用）</div>
+          </div>
+        </div>
+        <div id="settingsPenaltyList" style="margin-top:12px;"></div>
+      </div>
+
+      <!-- 数据备份与恢复 -->
+      <div class="reward-card" style="border-color:#3B82F6">
+        <div class="top-row">
+          <div class="r-emoji" style="background:#DBEAFE">📦</div>
+          <div class="info">
+            <div class="r-title" style="color:#3B82F6">数据备份与恢复</div>
+            <div class="desc">换设备或清缓存前，先备份；恢复时导入备份文件即可。</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:12px;">
+          <button onclick="exportData()" style="padding:9px 18px;border-radius:999px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">⬇ 备份数据</button>
+          <label style="padding:9px 18px;border-radius:999px;border:none;background:linear-gradient(135deg,#3B82F6,#1D4ED8);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">
             ⬆ 恢复数据<input type="file" accept=".json" onchange="importData(event)" style="display:none;">
           </label>
         </div>
-        <p style="margin-top:12px;font-size:12px;color:#999;">备份文件请发给妈妈保存，也可作为兑奖凭证截图。</p>
+      </div>
 
+      <!-- 危险区域 -->
+      <div class="reward-card" style="border-color:#DC2626">
+        <div class="top-row">
+          <div class="r-emoji" style="background:#FEE2E2">⚠️</div>
+          <div class="info">
+            <div class="r-title" style="color:#DC2626">危险区域</div>
+            <div class="desc">此处操作不可恢复，操作前请先备份！</div>
+          </div>
+        </div>
+        <div style="margin-top:12px;text-align:center;">
+          <button onclick="showResetAllModal()" style="padding:9px 20px;border-radius:999px;border:2px solid #DC2626;background:white;color:#DC2626;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">🗑️ 所有数据清零</button>
+        </div>
       </div>
     </div>
 
+  </div>
+</div>
+
+<div class="lottery-modal" id="penaltyModal" style="display:none;">
+  <div class="lottery-box" style="max-width:400px;">
+    <h2 id="penaltyTitle" style="font-size:24px;">⚠️ 记录事件</h2>
+    <div id="penaltyDesc" style="font-size:14px;color:#666;margin-bottom:16px;"></div>
+    <div id="penaltyOptions" style="display:flex;flex-direction:column;gap:10px;margin-bottom:16px;"></div>
+    <div id="penaltyProofSection" style="display:none;margin-bottom:12px;">
+      <div style="font-size:13px;color:#666;margin-bottom:6px;">需要上传凭证图片：</div>
+      <label style="display:block;padding:10px;border:2px dashed #D1D5DB;border-radius:12px;text-align:center;cursor:pointer;color:#888;font-size:14px;">
+        📷 点击上传图片
+        <input type="file" accept="image/*" id="penaltyProofInput" style="display:none;" onchange="previewProof(event)">
+      </label>
+      <div id="proofPreview" style="margin-top:8px;text-align:center;"></div>
+    </div>
+    <button class="btn-lottery-close" onclick="closePenaltyModal()">取消</button>
+  </div>
+</div>
+
+<!-- 添加自定义任务弹窗 -->
+<div class="lottery-modal" id="customTaskModal" style="display:none;">
+  <div class="lottery-box" style="max-width:420px;text-align:left;">
+    <h2 style="font-size:22px;text-align:center;color:#10B981;">➕ 添加自定义任务</h2>
+    <div style="font-size:13px;color:#666;margin-bottom:14px;text-align:center;">添加后会放入总任务篮子，抽签时随机组合进转盘</div>
+
+    <div style="margin-bottom:10px;">
+      <label style="font-size:13px;color:#374151;font-weight:bold;">任务名称：</label>
+      <input id="customTaskName" type="text" placeholder="例如：练琴" maxlength="10" style="width:100%;padding:8px 12px;border-radius:12px;border:2px solid #A7F3D0;font-size:15px;font-family:inherit;margin-top:4px;">
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <label style="font-size:13px;color:#374151;font-weight:bold;">选个图标：</label>
+      <div id="customTaskEmojiRow" style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;"></div>
+      <input id="customTaskEmoji" type="text" placeholder="或自己输入一个emoji" maxlength="3" style="width:100%;padding:6px 10px;border-radius:10px;border:1.5px solid #E5E7EB;font-size:14px;font-family:inherit;margin-top:6px;">
+    </div>
+
+    <div style="display:flex;gap:10px;margin-bottom:10px;">
+      <div style="flex:1;">
+        <label style="font-size:13px;color:#374151;font-weight:bold;">时长（分钟）：</label>
+        <input id="customTaskMinutes" type="number" min="1" max="120" value="20" style="width:100%;padding:8px 12px;border-radius:12px;border:2px solid #A7F3D0;font-size:15px;font-family:inherit;margin-top:4px;">
+      </div>
+      <div style="flex:1;">
+        <label style="font-size:13px;color:#374151;font-weight:bold;">积分：</label>
+        <input id="customTaskScore" type="number" min="1" max="20" value="4" style="width:100%;padding:8px 12px;border-radius:12px;border:2px solid #A7F3D0;font-size:15px;font-family:inherit;margin-top:4px;">
+      </div>
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="display:flex;align-items:center;gap:6px;font-size:13px;color:#374151;cursor:pointer;">
+        <input id="customTaskIsChore" type="checkbox" style="width:16px;height:16px;cursor:pointer;">
+        这是一个家务任务（完成后可用于「妈妈认可」消除犯错）
+      </label>
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="saveCustomTask()" style="flex:1;padding:10px;border-radius:999px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:white;font-family:inherit;font-size:15px;font-weight:bold;cursor:pointer;">✓ 保存任务</button>
+      <button onclick="closeCustomTaskModal()" style="flex:1;padding:10px;border-radius:999px;border:2px solid #E5E7EB;background:white;color:#666;font-family:inherit;font-size:15px;cursor:pointer;">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- 管理自定义任务弹窗 -->
+<div class="lottery-modal" id="manageCustomTasksModal" style="display:none;">
+  <div class="lottery-box" style="max-width:420px;text-align:left;max-height:80vh;overflow-y:auto;">
+    <h2 style="font-size:22px;text-align:center;color:#6B7280;">⚙️ 管理自定义任务</h2>
+    <div id="manageCustomTasksList" style="margin:14px 0;"></div>
+    <button onclick="closeManageCustomTasksModal()" style="display:block;margin:0 auto;padding:10px 28px;border-radius:999px;border:2px solid #E5E7EB;background:white;color:#666;font-family:inherit;font-size:15px;cursor:pointer;">关闭</button>
+  </div>
+</div>
+
+<!-- 所有数据清零弹窗（三重确认） -->
+<div class="lottery-modal" id="resetAllModal" style="display:none;">
+  <div class="lottery-box" style="max-width:420px;text-align:left;border:3px solid #DC2626;">
+    <h2 style="font-size:22px;text-align:center;color:#DC2626;">⚠️ 危险操作确认</h2>
+    <div style="background:#FEE2E2;border-radius:14px;padding:14px;margin:14px 0;font-size:14px;color:#7F1D1D;line-height:1.7;">
+      此操作将<b>永久清除</b>以下全部数据：
+      <ul style="margin:8px 0 0 20px;padding:0;">
+        <li>所有任务完成记录和积分</li>
+        <li>日/周/月抽奖记录和奖金</li>
+        <li>犯错、表扬的所有记录</li>
+        <li>自定义任务和愿望</li>
+        <li>iPad 学期进度</li>
+      </ul>
+      <div style="margin-top:10px;font-weight:bold;">⚠️ 此操作<u>无法恢复</u>！</div>
+    </div>
+
+    <div style="background:#FEF3C7;border-radius:12px;padding:10px 12px;margin-bottom:14px;font-size:13px;color:#92400E;">
+      💡 <b>强烈建议</b>：清零前先点「⬇ 备份数据」保存一份。
+    </div>
+
+    <div style="margin-bottom:12px;">
+      <label style="font-size:13px;color:#374151;font-weight:bold;">请输入 <span style="color:#DC2626;font-family:monospace;">确认清零</span> 来继续：</label>
+      <input id="resetConfirmInput" type="text" placeholder="在这里输入..." style="width:100%;padding:10px 14px;border-radius:12px;border:2px solid #FCA5A5;font-size:15px;font-family:inherit;margin-top:6px;" oninput="checkResetConfirm()">
+    </div>
+
+    <div style="display:flex;gap:10px;">
+      <button id="resetAllConfirmBtn" onclick="doResetAll()" disabled style="flex:1;padding:11px;border-radius:999px;border:none;background:#E5E7EB;color:#9CA3AF;font-family:inherit;font-size:15px;font-weight:bold;cursor:not-allowed;">🗑️ 确认清零</button>
+      <button onclick="closeResetAllModal()" style="flex:1;padding:11px;border-radius:999px;border:2px solid #10B981;background:white;color:#10B981;font-family:inherit;font-size:15px;font-weight:bold;cursor:pointer;">取消（推荐）</button>
+    </div>
+  </div>
+</div>
+
+<!-- 密码输入弹窗（验证用）-->
+<div class="lottery-modal" id="passwordPromptModal" style="display:none;">
+  <div class="lottery-box" style="max-width:360px;text-align:left;">
+    <h2 style="font-size:20px;text-align:center;color:#D97706;">🔐 请输入妈妈密码</h2>
+    <div id="passwordPromptDesc" style="font-size:13px;color:#666;margin:12px 0;text-align:center;"></div>
+    <input id="passwordPromptInput" type="password" placeholder="输入密码..." maxlength="20" style="width:100%;padding:12px 14px;border-radius:12px;border:2px solid #FDE68A;font-size:16px;font-family:inherit;margin-bottom:10px;" onkeydown="if(event.key==='Enter')verifyPasswordPrompt()">
+    <div id="passwordPromptError" style="font-size:13px;color:#DC2626;text-align:center;margin-bottom:10px;display:none;"></div>
+    <div style="display:flex;gap:10px;">
+      <button onclick="verifyPasswordPrompt()" style="flex:1;padding:10px;border-radius:999px;border:none;background:linear-gradient(135deg,#F59E0B,#D97706);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">✓ 确认</button>
+      <button onclick="closePasswordPrompt()" style="flex:1;padding:10px;border-radius:999px;border:2px solid #E5E7EB;background:white;color:#666;font-family:inherit;font-size:14px;cursor:pointer;">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- 设置密码弹窗 -->
+<div class="lottery-modal" id="setPasswordModal" style="display:none;">
+  <div class="lottery-box" style="max-width:380px;text-align:left;">
+    <h2 id="setPasswordTitle" style="font-size:20px;text-align:center;color:#D97706;">🔐 设置妈妈密码</h2>
+    <div style="font-size:13px;color:#666;margin:10px 0 14px;text-align:center;">请妈妈设定一个密码（4-20 个字符）</div>
+
+    <div id="currentPasswordWrap" style="margin-bottom:10px;display:none;">
+      <label style="font-size:13px;color:#374151;font-weight:bold;">当前密码：</label>
+      <input id="currentPasswordInput" type="password" placeholder="输入当前密码..." maxlength="20" style="width:100%;padding:10px 14px;border-radius:12px;border:2px solid #FDE68A;font-size:15px;font-family:inherit;margin-top:4px;">
+    </div>
+
+    <div style="margin-bottom:10px;">
+      <label style="font-size:13px;color:#374151;font-weight:bold;">新密码：</label>
+      <input id="newPasswordInput" type="password" placeholder="4-20 个字符" maxlength="20" style="width:100%;padding:10px 14px;border-radius:12px;border:2px solid #FDE68A;font-size:15px;font-family:inherit;margin-top:4px;">
+    </div>
+
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;color:#374151;font-weight:bold;">再次输入新密码：</label>
+      <input id="confirmPasswordInput" type="password" placeholder="再输一遍" maxlength="20" style="width:100%;padding:10px 14px;border-radius:12px;border:2px solid #FDE68A;font-size:15px;font-family:inherit;margin-top:4px;">
+    </div>
+
+    <div id="setPasswordError" style="font-size:13px;color:#DC2626;text-align:center;margin-bottom:10px;display:none;"></div>
+
+    <div style="display:flex;gap:10px;">
+      <button onclick="doSetPassword()" style="flex:1;padding:10px;border-radius:999px;border:none;background:linear-gradient(135deg,#F59E0B,#D97706);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">✓ 保存</button>
+      <button onclick="closeSetPasswordModal()" style="flex:1;padding:10px;border-radius:999px;border:2px solid #E5E7EB;background:white;color:#666;font-family:inherit;font-size:14px;cursor:pointer;">取消</button>
+    </div>
+
+    <div style="margin-top:10px;font-size:11px;color:#999;text-align:center;line-height:1.5;">⚠️ 密码仅存于本设备，忘记需备份中找回或重置</div>
   </div>
 </div>
 
@@ -674,15 +1000,140 @@ const ALL_TASKS = [
   { id: 8, name: "跟爸爸学AI", minutes: 20, emoji: "🤖", color: "#3B82F6", bg: "#DBEAFE", score: 4 },
 ];
 
-const REWARDS = [
-  { id: "A", emoji: "💰", title: "A · 50元奖励金", desc: "大奖抽奖奖项A，由妈妈发放50元", color: "#10B981", bg: "#D1FAE5" },
-  { id: "B", emoji: "💎", title: "B · 水晶手串珠珠", desc: "大奖抽奖奖项B，高品质水晶手串一组", color: "#A78BFA", bg: "#E6DEFF" },
-  { id: "C", emoji: "📱", title: "C · iPad大奖", desc: "累计10次满分（100%完成率）后可兑换iPad！", color: "#3B82F6", bg: "#DBEAFE", perfectTarget: 10 },
+// 日抽奖奖品（5分/次）
+var DAY_PRIZES = [
+  { id: "A", emoji: "💰", label: "A奖 · 5元", cash: 5, weight: 1 },
+  { id: "B", emoji: "💵", label: "B奖 · 1元", cash: 1, weight: 3 },
+  { id: "C", emoji: "🪙", label: "C奖 · 0.5元", cash: 0.5, weight: 4 },
+  { id: "D", emoji: "🎀", label: "D奖 · 谢谢参与", cash: 0, weight: 4 },
+];
+// 月底抽奖奖品
+var MONTH_PRIZES = [
+  { id: "MA", emoji: "💰", label: "月奖A · 30元", cash: 30 },
+  { id: "MB", emoji: "💵", label: "月奖B · 20元", cash: 20 },
+  { id: "MC", emoji: "🪙", label: "月奖C · 10元", cash: 10 },
 ];
 
 const WEEKDAYS = ["星期日", "星期一", "星期二", "星期三", "星期四", "星期五", "星期六"];
 const TARGET_COUNT = 5;
+const WHEEL_SIZE = 8; // 转盘显示任务数
+const MAX_SHUFFLE = 3; // 每日最多洗牌次数
 const STORAGE_KEY = "task_wheel_data_v1";
+
+// 自定义任务可选颜色池（和现有颜色风格一致）
+var CUSTOM_COLOR_PRESETS = [
+  { color: "#FF6B9D", bg: "#FFE0EC" },
+  { color: "#4ECDC4", bg: "#D4F5F2" },
+  { color: "#FFB84D", bg: "#FFE8CC" },
+  { color: "#A78BFA", bg: "#E6DEFF" },
+  { color: "#F97316", bg: "#FFDFC7" },
+  { color: "#EC4899", bg: "#FCE0EE" },
+  { color: "#10B981", bg: "#D1FAE5" },
+  { color: "#3B82F6", bg: "#DBEAFE" },
+  { color: "#8B5CF6", bg: "#EDE9FE" },
+  { color: "#F59E0B", bg: "#FEF3C7" },
+  { color: "#14B8A6", bg: "#CCFBF1" },
+  { color: "#6366F1", bg: "#E0E7FF" },
+];
+
+// 获取总任务篮子（固定 + 自定义）
+function getTaskBasket() {
+  var data = loadData();
+  var custom = data.customTasks || [];
+  return ALL_TASKS.concat(custom);
+}
+
+// 通过 id 查找任务（固定或自定义）
+function getTaskById(id) {
+  var basket = getTaskBasket();
+  for (var i = 0; i < basket.length; i++) {
+    if (basket[i].id === id) return basket[i];
+  }
+  return null;
+}
+
+// 从总篮子随机抽 WHEEL_SIZE 个任务进入转盘（读书必选）
+function shuffleWheel() {
+  var basket = getTaskBasket();
+  var required = basket.find(function(t){ return t.required; });
+  var others = basket.filter(function(t){ return !t.required; });
+  // Fisher-Yates 洗牌
+  for (var i = others.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = others[i]; others[i] = others[j]; others[j] = tmp;
+  }
+  var need = WHEEL_SIZE - (required ? 1 : 0);
+  var picked = others.slice(0, need);
+  var result = required ? [required].concat(picked) : picked;
+  return result;
+}
+
+// 获取当前转盘任务（若没有则生成并保存）
+function getWheelTasks() {
+  var data = loadData();
+  if (!data.currentWheel || !data.currentWheel.length) {
+    var fresh = shuffleWheel();
+    data.currentWheel = fresh.map(function(t){ return t.id; });
+    saveData(data);
+    return fresh;
+  }
+  // 根据 id 还原任务对象（过滤掉已删除的自定义任务）
+  var tasks = data.currentWheel.map(function(id){ return getTaskById(id); }).filter(Boolean);
+  // 若数量不足（自定义任务被删了）则补齐
+  if (tasks.length < Math.min(WHEEL_SIZE, getTaskBasket().length)) {
+    var fresh = shuffleWheel();
+    data.currentWheel = fresh.map(function(t){ return t.id; });
+    saveData(data);
+    return fresh;
+  }
+  return tasks;
+}
+
+// 剩余洗牌次数
+function getRemainingShuffles() {
+  var data = loadData();
+  var key = todayKey();
+  var used = (data.shuffleCount && data.shuffleCount[key]) || 0;
+  return Math.max(0, MAX_SHUFFLE - used);
+}
+
+// 执行一次洗牌（消耗一次次数）
+function doShuffle() {
+  if (getRemainingShuffles() <= 0) {
+    alert("今天的3次洗牌机会已经用完啦，明天再来~");
+    return false;
+  }
+  var basket = getTaskBasket();
+  if (basket.length <= WHEEL_SIZE) {
+    alert("当前任务总数（" + basket.length + "个）不超过" + WHEEL_SIZE + "个，全部都会在转盘上，不需要洗牌哦~\n你可以添加更多自定义任务来启用洗牌功能！");
+    return false;
+  }
+  var data = loadData();
+  var fresh = shuffleWheel();
+  data.currentWheel = fresh.map(function(t){ return t.id; });
+  if (!data.shuffleCount) data.shuffleCount = {};
+  var key = todayKey();
+  data.shuffleCount[key] = (data.shuffleCount[key] || 0) + 1;
+  saveData(data);
+  playSuccess();
+  renderStartPage();
+  return true;
+}
+
+// 获取可用家务认可次数（完成「帮妈妈干家务」次数 - 已使用次数）
+function getChoreCredits() {
+  var data = loadData();
+  var earned = 0;
+  Object.values(data.dailyRecords || {}).forEach(function(r){
+    if (!r.tasks) return;
+    r.tasks.forEach(function(t){
+      // id=6 是帮妈妈干家务；自定义任务若标记 isChore=true 也算
+      if (t.id === 6 || t.isChore) earned++;
+    });
+  });
+  var used = data.choreCreditsUsed || 0;
+  return Math.max(0, earned - used);
+}
 
 var _memStore = null;
 
@@ -742,7 +1193,7 @@ function countWeekDays(data) {
 
 function calcDayScore(taskIds) {
   return taskIds.reduce((sum, id) => {
-    const t = ALL_TASKS.find(t => t.id === id);
+    const t = getTaskById(id);
     return sum + (t ? t.score : 0);
   }, 0);
 }
@@ -780,13 +1231,21 @@ let state = {
   currentIdx: 0, secondsLeft: 0, isRunning: false,
   rotation: 0, timer: null, alarmInterval: null,
   alarming: false, isSpinning: false,
+  wheelTasks: [],
 };
 
 let audioCtx = null;
 
 function initBubbles() {
-  const colors = ["#FFB6C1", "#B0E0E6", "#FFD700", "#DDA0DD"];
-  const wrap = document.getElementById("bubbles");
+  var wrap = document.getElementById("bubbles");
+  wrap.innerHTML = "";
+  var cs = getComputedStyle(document.body);
+  var colors = [
+    cs.getPropertyValue("--bubble-c1").trim() || "#FFB6C1",
+    cs.getPropertyValue("--bubble-c2").trim() || "#B0E0E6",
+    cs.getPropertyValue("--bubble-c3").trim() || "#FFD700",
+    cs.getPropertyValue("--bubble-c4").trim() || "#DDA0DD",
+  ];
   for (let i = 0; i < 12; i++) {
     const b = document.createElement("div");
     b.className = "bubble";
@@ -802,6 +1261,55 @@ function initBubbles() {
   }
 }
 
+function renderMomNotebook() {
+  var el = document.getElementById("momNotebookBlock");
+  if (!el) return;
+  var data = loadData();
+  var allPenalties = data.penalties || [];
+  var credits = getChoreCredits();
+
+  // 显示最近 5 条，带清除按钮（只对犯错类记录显示，表扬类不显示）
+  var recent = allPenalties.slice(-5).map(function(r, i){
+    return { rec: r, idx: allPenalties.length - 5 + i >= 0 ? allPenalties.length - 5 + i : i };
+  }).reverse();
+
+  var recentHtml = recent.length > 0
+    ? '<div style="margin-top:10px;padding-top:8px;border-top:1px dashed #E5E7EB;">' +
+        recent.map(function(item){
+          var r = item.rec;
+          var idx = item.idx;
+          var isBad = (r.points < 0 || r.cash < 0);
+          var color = isBad ? "#DC2626" : "#059669";
+          var clearBtn = isBad
+            ? '<button onclick="approveClearPenalty(' + idx + ')" ' +
+              (credits > 0
+                ? 'style="padding:3px 9px;border-radius:999px;border:none;background:linear-gradient(135deg,#FBBF24,#F59E0B);color:white;font-family:inherit;font-size:11px;font-weight:bold;cursor:pointer;flex-shrink:0;"'
+                : 'disabled style="padding:3px 9px;border-radius:999px;border:none;background:#E5E7EB;color:#9CA3AF;font-family:inherit;font-size:11px;cursor:not-allowed;flex-shrink:0;"') +
+              ' title="' + (credits > 0 ? "妈妈认可,消耗1次家务" : "需要先完成家务任务") + '">✨ 妈妈认可</button>'
+            : '';
+          return '<div style="display:flex;align-items:center;gap:6px;padding:3px 0;">' +
+            '<div style="font-size:12px;color:' + color + ';flex:1;min-width:0;">' + r.emoji + ' ' + r.label + '</div>' +
+            clearBtn +
+            '</div>';
+        }).join("") +
+      '</div>'
+    : '';
+
+  var creditsHtml = '<div style="display:inline-block;padding:2px 10px;border-radius:999px;background:' + (credits > 0 ? "linear-gradient(135deg,#FEF3C7,#FDE68A)" : "#F3F4F6") + ';color:' + (credits > 0 ? "#B45309" : "#9CA3AF") + ';font-size:11px;font-weight:bold;margin-left:8px;">✨ 妈妈认可×' + credits + '</div>';
+
+  el.innerHTML =
+    '<div style="background:linear-gradient(135deg,#fff9f0,#fff0f5);border:2px solid #F9A8D4;border-radius:20px;padding:12px 16px;">' +
+      '<div style="font-size:14px;font-weight:bold;color:#BE185D;margin-bottom:10px;">📓 妈妈记事本' + creditsHtml + '</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:7px;">' +
+        '<button onclick="showPenaltyModal(&apos;angry&apos;)" style="padding:6px 13px;border-radius:999px;border:none;background:#FEE2E2;color:#DC2626;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">😤 惹妈妈生气</button>' +
+        '<button onclick="showPenaltyModal(&apos;break&apos;)" style="padding:6px 13px;border-radius:999px;border:none;background:#FEF3C7;color:#D97706;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">💔 打碎物品</button>' +
+        '<button onclick="showPenaltyModal(&apos;lazy&apos;)" style="padding:6px 13px;border-radius:999px;border:none;background:#E0F2FE;color:#0369A1;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">🛌 起床磨蹭</button>' +
+        '<button onclick="showPenaltyModal(&apos;praise&apos;)" style="padding:6px 13px;border-radius:999px;border:none;background:#D1FAE5;color:#065F46;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">🌟 老师表扬</button>' +
+      '</div>' +
+      recentHtml +
+    '</div>';
+}
+
 function renderAwardSummary() {
   var data = loadData();
   var block = document.getElementById("awardSummaryBlock");
@@ -815,14 +1323,8 @@ function renderAwardSummary() {
     return;
   }
 
-  var dailyTotal = daily.reduce(function(sum, r) {
-    if (r.id === "A") return sum + 15;
-    if (r.id === "B") return sum + 10;
-    if (r.id === "C") return sum + 5;
-    return sum;
-  }, 0);
-  var weeklyTotal = weekly.length * 50;
-  var totalCash = dailyTotal + weeklyTotal;
+  var totalCash = getTotalCash(data);
+  var points = getTotalPoints(data);
   var ipadPct = Math.min(100, Math.round(semWeeks / 15 * 100));
 
   block.style.display = "block";
@@ -832,8 +1334,8 @@ function renderAwardSummary() {
       '<div class="award-summary-grid">' +
         '<div class="award-summary-item" style="border-color:#FFD700;">' +
           '<div class="asi-label">累计奖励金</div>' +
-          '<div class="asi-val" style="color:#D97706;">💰 ' + totalCash + '元</div>' +
-          '<div class="asi-sub" style="color:#B45309;">日抽' + dailyTotal + '+周抽' + weeklyTotal + '</div>' +
+          '<div class="asi-val" style="color:#D97706;">💰 ' + totalCash.toFixed(1) + '元</div>' +
+          '<div class="asi-sub" style="color:#B45309;">可用积分：' + points + '分</div>' +
         '</div>' +
         '<div class="award-summary-item" style="border-color:#A78BFA;">' +
           '<div class="asi-label">月底水晶手串</div>' +
@@ -862,6 +1364,7 @@ function renderStartPage() {
   const count = countWeekDays(data);
   document.getElementById("weekBadgeText").textContent = `本周 ${count}/7`;
   renderAwardSummary();
+  renderMomNotebook();
 
   const doneBlock = document.getElementById("todayDoneBlock");
   const todayRec = data.dailyRecords[todayKey()];
@@ -876,14 +1379,41 @@ function renderStartPage() {
     doneBlock.style.display = "none";
   }
 
+  // 渲染当前转盘上的任务（从总篮子随机选出的 8 个）
+  const wheelTasks = getWheelTasks();
+  const basket = getTaskBasket();
+  const remainingShuffles = getRemainingShuffles();
+  const canShuffle = basket.length > WHEEL_SIZE;
+
   const grid = document.getElementById("taskGrid");
-  grid.innerHTML = ALL_TASKS.map(t => `
+  grid.innerHTML = wheelTasks.map(t => `
     <div class="task-chip" style="background:${t.bg};border-color:${t.color}40;color:${t.color}">
       <span class="emoji">${t.emoji}</span>
       <span class="n">${t.name}</span>
       <span class="t">${t.minutes}分钟</span>
+      ${t.custom ? '<span style="font-size:9px;opacity:0.7;display:block;">自定义</span>' : ''}
     </div>
   `).join("");
+
+  // 渲染洗牌 + 添加自定义任务的工具栏
+  const toolbar = document.getElementById("wheelToolbar");
+  if (toolbar) {
+    toolbar.innerHTML =
+      '<div style="display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:14px;">' +
+        (canShuffle
+          ? '<button onclick="doShuffle()" ' +
+            (remainingShuffles > 0
+              ? 'style="padding:8px 16px;border-radius:999px;border:none;background:linear-gradient(135deg,#A78BFA,#7C3AED);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;box-shadow:0 4px 12px rgba(167,139,250,0.3);"'
+              : 'disabled style="padding:8px 16px;border-radius:999px;border:none;background:#E5E7EB;color:#9CA3AF;font-family:inherit;font-size:14px;font-weight:bold;cursor:not-allowed;"') +
+            '>🔄 重新洗牌 (剩余' + remainingShuffles + '次)</button>'
+          : '<div style="font-size:12px;color:#999;padding:8px 0;text-align:center;width:100%;">添加更多自定义任务可解锁洗牌功能（总任务>' + WHEEL_SIZE + '个）</div>'
+        ) +
+        '<button onclick="showCustomTaskModal()" style="padding:8px 16px;border-radius:999px;border:2px dashed #10B981;background:white;color:#10B981;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">➕ 添加自定义任务</button>' +
+        ((data.customTasks && data.customTasks.length > 0)
+          ? '<button onclick="showManageCustomTasksModal()" style="padding:8px 16px;border-radius:999px;border:2px solid #6B7280;background:white;color:#6B7280;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">⚙️ 管理自定义任务 (' + data.customTasks.length + ')</button>'
+          : '') +
+      '</div>';
+  }
 }
 
 function initAudio() {
@@ -930,17 +1460,19 @@ function showPage(id) {
   if (id === "start") renderStartPage();
   if (id === "rewards") renderRewards();
   if (id === "done") renderDonePage();
+  if (id === "settings") renderSettingsPage();
 }
 
 function drawWheel(highlightId = null) {
   const size = 380;
   const c = size / 2;
   const r = c - 10;
-  const n = ALL_TASKS.length;
+  const wheelTasks = state.wheelTasks && state.wheelTasks.length ? state.wheelTasks : getWheelTasks();
+  const n = wheelTasks.length;
   const anglePer = 360 / n;
   const svg = document.getElementById("wheel");
   let html = "";
-  ALL_TASKS.forEach((t, i) => {
+  wheelTasks.forEach((t, i) => {
     const sa = (i * anglePer - 90 - anglePer / 2) * Math.PI / 180;
     const ea = ((i + 1) * anglePer - 90 - anglePer / 2) * Math.PI / 180;
     const x1 = c + r * Math.cos(sa);
@@ -975,8 +1507,9 @@ function drawWheel(highlightId = null) {
 
 function startSpin() {
   initAudio();
-  const required = ALL_TASKS.find(t => t.required);
-  state.pickedTasks = [required];
+  state.wheelTasks = getWheelTasks();
+  const required = state.wheelTasks.find(t => t.required);
+  state.pickedTasks = required ? [required] : [];
   state.completedIds = [];
   state.spinningOrder = [];
   state.isSpinning = false;
@@ -984,7 +1517,11 @@ function startSpin() {
   showPage("spin");
   drawWheel();
   updateSpinPage();
-  document.getElementById("spinHint").textContent = `📚 读书是必选任务,已为你加入~`;
+  if (required) {
+    document.getElementById("spinHint").textContent = `📚 读书是必选任务,已为你加入~`;
+  } else {
+    document.getElementById("spinHint").textContent = `🎡 点击下方按钮开始抽签~`;
+  }
 }
 
 function updateSpinPage() {
@@ -1032,13 +1569,14 @@ function spinNext() {
   if (state.isSpinning) return;
   if (state.pickedTasks.length >= TARGET_COUNT) return;
 
+  const wheelTasks = state.wheelTasks && state.wheelTasks.length ? state.wheelTasks : getWheelTasks();
   const pickedIds = state.pickedTasks.map(t => t.id);
-  const pool = ALL_TASKS.filter(t => !pickedIds.includes(t.id));
+  const pool = wheelTasks.filter(t => !pickedIds.includes(t.id));
   if (pool.length === 0) return;
 
   const newTask = pool[Math.floor(Math.random() * pool.length)];
-  const targetIndex = ALL_TASKS.findIndex(t => t.id === newTask.id);
-  const anglePer = 360 / ALL_TASKS.length;
+  const targetIndex = wheelTasks.findIndex(t => t.id === newTask.id);
+  const anglePer = 360 / wheelTasks.length;
 
   state.isSpinning = true;
   updateSpinPage();
@@ -1327,109 +1865,252 @@ function renderWeekGrid(containerId) {
   }).join("");
 }
 
-function renderRewards() {
-  const data = loadData();
-  const stats = getWeekScoreStats(data);
-  const totalEarned = stats.totalEarned, totalMax = stats.totalMax;
-  const weekPct = totalMax > 0 ? Math.round(totalEarned / totalMax * 100) : 0;
-  const semesterWeeks = getSemesterHighWeekCount(data);
-  const monthWeeks = getMonthHighWeekCount(data);
-  const dailyLottery = data.dailyLottery || [];
-  const weeklyLottery = data.weeklyLottery || [];
-  const monthlyLottery = data.monthlyLottery || [];
+function getTotalPoints(data) {
+  var earned = 0;
+  Object.values(data.dailyRecords || {}).forEach(function(r){ earned += r.earnedScore || 0; });
+  var spent = data.pointsSpent || 0;
+  return earned - spent;
+}
 
-  document.getElementById("weekCountValue").textContent = totalEarned + " / " + totalMax + " 分";
-  const hint = document.getElementById("weekHint");
-  if (weekPct >= 90) hint.textContent = "🌟 本周完成率 " + weekPct + "%，超棒！已解锁日抽奖和周抽奖资格！";
+function getTotalCash(data) {
+  var total = 0;
+  (data.dailyLottery || []).forEach(function(r){ total += r.cash || 0; });
+  (data.weeklyLottery || []).forEach(function(r){ total += r.cash || 0; });
+  (data.monthlyLottery || []).forEach(function(r){ total += r.cash || 0; });
+  (data.penalties || []).forEach(function(r){ total += r.cash || 0; });
+  return total;
+}
+
+function renderRewards() {
+  var data = loadData();
+  var stats = getWeekScoreStats(data);
+  var totalEarned = stats.totalEarned, totalMax = stats.totalMax;
+  var weekPct = totalMax > 0 ? Math.round(totalEarned / totalMax * 100) : 0;
+  var semesterWeeks = getSemesterHighWeekCount(data);
+  var monthWeeks = getMonthHighWeekCount(data);
+  var points = getTotalPoints(data);
+  var totalCash = getTotalCash(data);
+  var weekKey = weekStartKey();
+  var monthKey = getMonthKey();
+  var alreadyWeekLottery = (data.weeklyLottery || []).some(function(r){ return r.weekKey === weekKey; });
+  var todayDow = new Date().getDay();
+  var isWeekend = todayDow === 0 || todayDow === 6;
+  var alreadyMonthLottery = (data.monthlyLottery || []).some(function(r){ return r.monthKey === monthKey; });
+  var penaltyHistory = data.penalties || [];
+  var todayAWon = (data.dailyLottery || []).some(function(r){ return r.dayKey === todayKey() && r.id === "A"; });
+  var spinnable = Math.floor(points / 5);
+
+  document.getElementById("weekCountValue").textContent = points + " 分（可用）";
+  var hint = document.getElementById("weekHint");
+  if (weekPct >= 90) hint.textContent = "🌟 本周完成率 " + weekPct + "%，超棒！";
   else if (weekPct >= 60) hint.textContent = "本周完成率 " + weekPct + "%，继续加油~";
   else if (weekPct > 0) hint.textContent = "本周完成率 " + weekPct + "%，还差一点就有奖励啦！";
-  else hint.textContent = "完成今天的任务就能开始积累分数了！";
+  else hint.textContent = "完成今天的任务就能开始积累积分了！";
 
   renderWeekGrid("weekGridRewards");
 
-  const weekKey = weekStartKey();
-  const alreadyWeekLottery = weeklyLottery.some(function(r){ return r.weekKey === weekKey; });
-  const monthKey = getMonthKey();
-  const alreadyMonthLottery = monthlyLottery.some(function(r){ return r.monthKey === monthKey; });
-  const ipadUnlocked = semesterWeeks >= 15;
-
   function historyBlock(title, items) {
-    if (!items.length) return "";
+    if (!items || !items.length) return "";
     return '<div style="background:#FEF3C7;border:2px solid #F59E0B;border-radius:16px;padding:12px 16px;margin-bottom:12px;">' +
       '<div style="font-size:14px;color:#D97706;font-weight:bold;margin-bottom:6px;">' + title + '</div>' +
       items.map(function(r){ return '<div style="font-size:13px;color:#B45309;padding:2px 0;">' + r.emoji + ' ' + r.label + ' · ' + new Date(r.date).toLocaleDateString("zh-CN") + '</div>'; }).join("") +
       '</div>';
   }
 
-  const list = document.getElementById("rewardsList");
-  list.innerHTML =
-    historyBlock("🎲 日抽奖记录", dailyLottery) +
-    historyBlock("📅 周抽奖记录", weeklyLottery) +
-    historyBlock("🌙 月底抽奖记录", monthlyLottery) +
+  var list = document.getElementById("rewardsList");
+  var ipadPct = Math.min(100, Math.round(semesterWeeks / 15 * 100));
+  var wishSmall = data.wishSmall || "";
+  var wishBig = data.wishBig || "";
 
+  list.innerHTML =
+    // 金钱统计
+    '<div style="background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:3px solid #F59E0B;border-radius:20px;padding:14px 18px;margin-bottom:14px;text-align:center;">' +
+      '<div style="font-size:13px;color:#92400E;">💰 累计金钱奖励</div>' +
+      '<div style="font-size:32px;font-weight:bold;color:#B45309;">' + totalCash.toFixed(1) + ' 元</div>' +
+      '<div style="font-size:12px;color:#92400E;">积攒到时间找妈妈一起兑现~</div>' +
+    '</div>' +
+
+    historyBlock("🎰 日抽奖记录", data.dailyLottery) +
+    historyBlock("📅 周奖记录", data.weeklyLottery) +
+    historyBlock("🌙 月底抽奖记录", data.monthlyLottery) +
+
+    // 日抽奖
     '<div class="reward-card" style="border-color:#FF6B9D">' +
       '<div class="top-row">' +
         '<div class="r-emoji" style="background:#FFE0EC">🎰</div>' +
-        '<div class="info"><div class="r-title" style="color:#FF6B9D">日抽奖 · 每天完成率≥90%</div>' +
-        '<div class="desc">A=15元 / B=10元 / C=5元，奖金周末发放</div></div>' +
+        '<div class="info"><div class="r-title" style="color:#FF6B9D">日抽奖 · 5分/次</div>' +
+        '<div class="desc">A=5元（每日限1次）/ B=1元 / C=0.5元 / D=谢谢参与<br>当前可抽：' + spinnable + ' 次（剩余' + points + '分）</div></div>' +
       '</div>' +
-      '<div class="status"><span class="status-badge ' + (weekPct >= 90 ? "available" : "locked") + '">' +
-        (weekPct >= 90 ? "✨ 今日达标，完成任务后自动弹出" : "🔒 需完成率≥90%，当前" + weekPct + "%") +
-      '</span></div>' +
+      '<div class="status">' +
+        (spinnable > 0
+          ? '<button class="btn-redeem" onclick="showLotteryModal(&apos;day&apos;)">🎲 抽奖（-5分）</button>'
+          : '<span class="status-badge locked">🔒 积分不足5分</span>') +
+      '</div>' +
     '</div>' +
 
+    // 积分兑好好
+    '<div class="reward-card" style="border-color:#10B981">' +
+      '<div class="top-row">' +
+        '<div class="r-emoji" style="background:#D1FAE5">🎁</div>' +
+        '<div class="info"><div class="r-title" style="color:#10B981">积分兑好好</div>' +
+        '<div class="desc">当前积分：<b>' + points + '分</b></div></div>' +
+      '</div>' +
+      '<div style="margin-top:10px;">' +
+        '<div style="font-size:13px;color:#065F46;margin-bottom:6px;">小档愿望（消耗1-50分）：</div>' +
+        '<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">' +
+          '<input id="wishSmallInput" type="text" placeholder="写下我想要的..." value="' + wishSmall + '" style="flex:1;padding:8px 12px;border-radius:999px;border:2px solid #A7F3D0;font-size:14px;font-family:inherit;">' +
+          '<button onclick="saveWish(&apos;small&apos;)" style="padding:7px 14px;border-radius:999px;border:none;background:#10B981;color:white;font-family:inherit;font-size:13px;cursor:pointer;">保存</button>' +
+        '</div>' +
+        (points >= 1 && wishSmall ? '<button onclick="redeemWish(&apos;small&apos;)" style="padding:8px 20px;border-radius:999px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;margin-bottom:10px;">✨ 兑换小档（消耗当前积分）</button><br>' : '') +
+        '<div style="font-size:13px;color:#065F46;margin-bottom:6px;">大档愿望（消耗50-100分）：</div>' +
+        '<div style="display:flex;gap:8px;align-items:center;">' +
+          '<input id="wishBigInput" type="text" placeholder="写下我想要的..." value="' + wishBig + '" style="flex:1;padding:8px 12px;border-radius:999px;border:2px solid #A7F3D0;font-size:14px;font-family:inherit;">' +
+          '<button onclick="saveWish(&apos;big&apos;)" style="padding:7px 14px;border-radius:999px;border:none;background:#10B981;color:white;font-family:inherit;font-size:13px;cursor:pointer;">保存</button>' +
+        '</div>' +
+        (points >= 50 && wishBig ? '<br><button onclick="redeemWish(&apos;big&apos;)" style="padding:8px 20px;border-radius:999px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">✨ 兑换大档（消耗当前积分）</button>' : '') +
+      '</div>' +
+    '</div>' +
+
+    // 周奖
     '<div class="reward-card" style="border-color:#F97316">' +
       '<div class="top-row">' +
         '<div class="r-emoji" style="background:#FFDFC7">📅</div>' +
-        '<div class="info"><div class="r-title" style="color:#F97316">周抽奖 · 本周完成率≥90%</div>' +
-        '<div class="desc">奖品：50元，每周仅一次，周末发放</div></div>' +
+        '<div class="info"><div class="r-title" style="color:#F97316">周奖 · 20元</div>' +
+        '<div class="desc">本周完成率≥90%，固定奖励20元，周末发放</div></div>' +
       '</div>' +
       '<div class="status">' +
         '<span class="status-badge ' + (alreadyWeekLottery ? "redeemed" : weekPct >= 90 ? "available" : "locked") + '">' +
-          (alreadyWeekLottery ? "✅ 本周已抽" : weekPct >= 90 ? "✨ 可抽！" : "🔒 需≥90%，当前" + weekPct + "%") +
+          (alreadyWeekLottery ? "✅ 本周已领" : weekPct >= 90 ? "✨ 达标！" : "🔒 需≥90%，当前" + weekPct + "%") +
         '</span>' +
-        (!alreadyWeekLottery && weekPct >= 90 ? '<button class="btn-redeem" onclick="showLotteryModal(\'week\')">抽奖</button>' : "") +
+        (!alreadyWeekLottery && weekPct >= 90 ? (isWeekend ? '<button class="btn-redeem" onclick="claimWeekReward()">领取20元</button>' : '<span style="font-size:12px;color:#999;">周末才能领取~</span>') : "") +
       '</div>' +
     '</div>' +
 
+    // 月底抽奖
     '<div class="reward-card" style="border-color:#A78BFA">' +
       '<div class="top-row">' +
         '<div class="r-emoji" style="background:#E6DEFF">🌙</div>' +
         '<div class="info"><div class="r-title" style="color:#A78BFA">月底抽奖 · 当月≥3周达标</div>' +
-        '<div class="desc">奖品：高品质水晶手串一组，每月一次</div></div>' +
+        '<div class="desc">A=30元 / B=20元 / C=10元</div></div>' +
       '</div>' +
       '<div class="ipad-progress">' +
         '当月≥90%周数：<b>' + monthWeeks + '</b> / 3 周' +
-        '<div class="ipad-bar-wrap"><div class="ipad-bar" style="width:' + Math.min(100, Math.round(monthWeeks/3*100)) + '%;background:linear-gradient(135deg,#A78BFA,#EC4899)"></div></div>' +
+        '<div class="ipad-bar-wrap"><div class="ipad-bar" style="width:' + Math.min(100,Math.round(monthWeeks/3*100)) + '%;background:linear-gradient(135deg,#A78BFA,#EC4899)"></div></div>' +
       '</div>' +
       '<div class="status">' +
         '<span class="status-badge ' + (alreadyMonthLottery ? "redeemed" : monthWeeks >= 3 ? "available" : "locked") + '">' +
-          (alreadyMonthLottery ? "✅ 本月已抽" : monthWeeks >= 3 ? "✨ 达标！可抽月底大奖" : "🔒 还差 " + (3 - monthWeeks) + " 周") +
+          (alreadyMonthLottery ? "✅ 本月已抽" : monthWeeks >= 3 ? "✨ 达标！" : "🔒 还差" + (3-monthWeeks) + "周") +
         '</span>' +
-        (!alreadyMonthLottery && monthWeeks >= 3 ? '<button class="btn-redeem" onclick="showLotteryModal(\'month\')">抽奖</button>' : "") +
+        (!alreadyMonthLottery && monthWeeks >= 3 ? '<button class="btn-redeem" onclick="showLotteryModal(&apos;month&apos;)">抽奖</button>' : "") +
       '</div>' +
     '</div>' +
 
+    // 惩罚与奖励
+    '<div class="reward-card" style="border-color:#6B7280">' +
+      '<div class="top-row">' +
+        '<div class="r-emoji" style="background:#F3F4F6">⚖️</div>' +
+        '<div class="info"><div class="r-title" style="color:#374151">妈妈记事本 <span style="display:inline-block;padding:2px 10px;border-radius:999px;background:' + (getChoreCredits() > 0 ? "linear-gradient(135deg,#FEF3C7,#FDE68A)" : "#F3F4F6") + ';color:' + (getChoreCredits() > 0 ? "#B45309" : "#9CA3AF") + ';font-size:11px;font-weight:bold;margin-left:6px;vertical-align:middle;">✨ 可认可×' + getChoreCredits() + '</span></div>' +
+        '<div class="desc">记录好事坏事，积分和奖金实时更新。完成「帮妈妈干家务」后可认可清除犯错条~</div></div>' +
+      '</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:12px;">' +
+        '<button onclick="showPenaltyModal(\'angry\')" style="padding:7px 14px;border-radius:999px;border:none;background:#FEE2E2;color:#DC2626;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">😤 惹妈妈生气</button>' +
+        '<button onclick="showPenaltyModal(\'break\')" style="padding:7px 14px;border-radius:999px;border:none;background:#FEF3C7;color:#D97706;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">💔 打碎物品</button>' +
+        '<button onclick="showPenaltyModal(\'lazy\')" style="padding:7px 14px;border-radius:999px;border:none;background:#E0F2FE;color:#0369A1;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">🛌 起床磨蹭</button>' +
+        '<button onclick="showPenaltyModal(\'praise\')" style="padding:7px 14px;border-radius:999px;border:none;background:#D1FAE5;color:#065F46;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">🌟 老师表扬</button>' +
+      '</div>' +
+      (penaltyHistory.length > 0 ? '<div style="margin-top:10px;padding-top:10px;border-top:1px dashed #E5E7EB;">' +
+        penaltyHistory.slice(-5).map(function(r, offset){
+          var realIdx = Math.max(0, penaltyHistory.length - 5) + offset;
+          var isBad = (r.points < 0 || r.cash < 0);
+          var credits = getChoreCredits();
+          var clearBtn = isBad
+            ? '<button onclick="approveClearPenalty(' + realIdx + ')" ' +
+              (credits > 0
+                ? 'style="padding:3px 10px;border-radius:999px;border:none;background:linear-gradient(135deg,#FBBF24,#F59E0B);color:white;font-family:inherit;font-size:11px;font-weight:bold;cursor:pointer;flex-shrink:0;"'
+                : 'disabled style="padding:3px 10px;border-radius:999px;border:none;background:#E5E7EB;color:#9CA3AF;font-family:inherit;font-size:11px;cursor:not-allowed;flex-shrink:0;"') +
+              '>✨ 妈妈认可</button>'
+            : '';
+          return '<div style="display:flex;align-items:center;gap:8px;padding:3px 0;"><div style="font-size:12px;color:#6B7280;flex:1;min-width:0;">' + r.emoji + ' ' + r.label + ' · ' + new Date(r.date).toLocaleDateString('zh-CN') + '</div>' + clearBtn + '</div>';
+        }).reverse().join('') +
+      '</div>' : '') +
+    '</div>' +
+
+    // 自定义任务管理
+    '<div class="reward-card" style="border-color:#10B981">' +
+      '<div class="top-row">' +
+        '<div class="r-emoji" style="background:#D1FAE5">🎨</div>' +
+        '<div class="info"><div class="r-title" style="color:#10B981">自定义任务 (' + ((data.customTasks || []).length) + '个)</div>' +
+        '<div class="desc">添加专属任务到总篮子，每次开盘随机抽' + WHEEL_SIZE + '个进转盘。添加的家务类任务完成后也可用于「妈妈认可」~</div></div>' +
+      '</div>' +
+      '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;">' +
+        '<button onclick="showCustomTaskModal()" style="padding:8px 16px;border-radius:999px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">➕ 添加新任务</button>' +
+        ((data.customTasks && data.customTasks.length > 0)
+          ? '<button onclick="showManageCustomTasksModal()" style="padding:8px 16px;border-radius:999px;border:2px solid #6B7280;background:white;color:#6B7280;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">⚙️ 管理 (' + data.customTasks.length + ')</button>'
+          : '') +
+      '</div>' +
+    '</div>' +
+
+    // 学期大奖
     '<div class="reward-card" style="border-color:#3B82F6">' +
       '<div class="top-row">' +
         '<div class="r-emoji" style="background:#DBEAFE">📱</div>' +
         '<div class="info"><div class="r-title" style="color:#3B82F6">学期大奖 · 累计≥15周达标</div>' +
-        '<div class="desc">奖品：iPad！达标后找妈妈直接兑换</div></div>' +
+        '<div class="desc">达标后找妈妈直接兑换iPad！</div></div>' +
       '</div>' +
       '<div class="ipad-progress">' +
         '累计≥90%周数：<b>' + semesterWeeks + '</b> / 15 周' +
-        '<div class="ipad-bar-wrap"><div class="ipad-bar" style="width:' + Math.min(100, Math.round(semesterWeeks/15*100)) + '%"></div></div>' +
-        (ipadUnlocked ? '🎉 恭喜达标！快去找妈妈兑换iPad！' : '还差 ' + (15 - semesterWeeks) + ' 周~') +
+        '<div class="ipad-bar-wrap"><div class="ipad-bar" style="width:' + ipadPct + '%"></div></div>' +
+        (semesterWeeks >= 15 ? '🎉 恭喜达标！快去找妈妈兑换iPad！' : '还差 ' + (15-semesterWeeks) + ' 周~') +
       '</div>' +
     '</div>';
 }
 
+function saveWish(tier) {
+  var data = loadData();
+  var val = document.getElementById(tier === "small" ? "wishSmallInput" : "wishBigInput").value.trim();
+  if (tier === "small") data.wishSmall = val;
+  else data.wishBig = val;
+  saveData(data);
+  alert("愿望已保存：" + val);
+}
+
+function redeemWish(tier) {
+  var data = loadData();
+  var points = getTotalPoints(data);
+  var wish = tier === "small" ? (data.wishSmall || "") : (data.wishBig || "");
+  if (!wish) { alert("请先填写愿望！"); return; }
+  if (tier === "big" && points < 50) { alert("大档愿望需要50分以上，当前积分不足。"); return; }
+  if (tier === "small" && points < 1) { alert("积分不足。"); return; }
+  var cost = points; // 消耗当前所有积分
+  if (!confirm("确认用 " + cost + " 积分兑换：[" + wish + "]? 兑换后积分清零，记得找妈妈确认哦~")) return;
+  if (!data.pointsSpent) data.pointsSpent = 0;
+  data.pointsSpent += cost;
+  if (!data.wishRedeemed) data.wishRedeemed = [];
+  data.wishRedeemed.push({ tier: tier, wish: wish, cost: cost, date: new Date().toISOString() });
+  saveData(data);
+  playSuccess();
+  alert("兑换成功！去找妈妈实现愿望吧！");
+  renderRewards();
+  renderAwardSummary();
+}
+
+function claimWeekReward() {
+  var weekKey = weekStartKey();
+  var data = loadData();
+  if (!confirm("确认领取本周20元奖励？记得找妈妈兑现哦~")) return;
+  if (!data.weeklyLottery) data.weeklyLottery = [];
+  data.weeklyLottery.push({ id: "W", emoji: "💰", label: "周奖 · 20元", cash: 20, date: new Date().toISOString(), weekKey: weekKey, monthKey: getMonthKey(), pct: 90 });
+  saveData(data);
+  playSuccess();
+  renderRewards();
+  renderAwardSummary();
+}
+
 function showLotteryModal(type) {
-  const titles = { day: "日抽奖！", week: "周抽奖！", month: "月底大奖！" };
-  const descs = {
-    day: "今天完成率达到90%！获得一次日抽奖机会~",
-    week: "本周完成率达到90%！获得一次周抽奖（50元）！",
-    month: "本月达标3周！获得月底大奖抽奖（水晶手串）！"
+  var titles = { day: "日抽奖！", month: "月底大奖！" };
+  var descs = {
+    day: "消耗5积分，抽一次日奖~",
+    month: "本月达标3周！抽月底大奖！"
   };
   document.getElementById("lotteryModal").style.display = "flex";
   document.getElementById("lotteryModalTitle").textContent = titles[type] || "抽奖！";
@@ -1453,64 +2134,590 @@ function doLotterySpin(type) {
   lotterySpinning = true;
   initAudio();
   document.getElementById("lotterySpinBtn").style.display = "none";
-  const slot = document.getElementById("lotterySlot");
-  const items = ["🌟","💰","💎","🎁","✨","🌈","🎀","🏆"];
-  let count = 0;
+  var slot = document.getElementById("lotterySlot");
+  var items = ["🌟","💰","💵","🎁","✨","🌈","🎀","🏆"];
+  var count = 0;
 
-  var dayPrizes = [
-    { id: "A", emoji: "💰", label: "A奖 · 15元" },
-    { id: "B", emoji: "💵", label: "B奖 · 10元" },
-    { id: "C", emoji: "🪙", label: "C奖 · 5元" },
-  ];
-  var weekPrize = { id: "W", emoji: "💰", label: "周奖 · 50元" };
-  var monthPrize = { id: "M", emoji: "💎", label: "月底奖 · 水晶手串一组" };
-
-  const interval = setInterval(function() {
+  var interval = setInterval(function() {
     slot.textContent = items[count % items.length];
     beep(400 + Math.random() * 300, 60);
     count++;
     if (count > 24) {
       clearInterval(interval);
+
+      // Load data ONCE, modify, save ONCE
+      var data = loadData();
       var prize;
-      if (type === "week") prize = weekPrize;
-      else if (type === "month") prize = monthPrize;
-      else prize = dayPrizes[Math.floor(Math.random() * dayPrizes.length)];
+
+      if (type === "month") {
+        prize = MONTH_PRIZES[Math.floor(Math.random() * MONTH_PRIZES.length)];
+        if (!data.monthlyLottery) data.monthlyLottery = [];
+        data.monthlyLottery.push({ id: prize.id, emoji: prize.emoji, label: prize.label, cash: prize.cash, date: new Date().toISOString(), monthKey: getMonthKey() });
+
+      } else {
+        // day: weighted random, A blocked if already won today
+        var todayAWon = (data.dailyLottery || []).some(function(r){ return r.dayKey === todayKey() && r.id === "A"; });
+        var pool = DAY_PRIZES.filter(function(p){ return !(p.id === "A" && todayAWon); });
+        var totalW = pool.reduce(function(s,p){ return s + p.weight; }, 0);
+        var rand = Math.random() * totalW;
+        var cum = 0;
+        prize = pool[pool.length - 1];
+        for (var i = 0; i < pool.length; i++) {
+          cum += pool[i].weight;
+          if (rand < cum) { prize = pool[i]; break; }
+        }
+        // deduct 5 points
+        data.pointsSpent = (data.pointsSpent || 0) + 5;
+        if (!data.dailyLottery) data.dailyLottery = [];
+        data.dailyLottery.push({ id: prize.id, emoji: prize.emoji, label: prize.label, cash: prize.cash || 0, date: new Date().toISOString(), dayKey: todayKey() });
+      }
+
+      // Single save
+      saveData(data);
 
       slot.textContent = prize.emoji;
       slot.style.animation = "sparkle 1s ease-in-out infinite";
       playSuccess();
 
-      const data = loadData();
-      const now = new Date();
-      if (type === "day") {
-        if (!data.dailyLottery) data.dailyLottery = [];
-        data.dailyLottery.push({ id: prize.id, emoji: prize.emoji, label: prize.label, date: now.toISOString(), dayKey: todayKey() });
-      } else if (type === "week") {
-        if (!data.weeklyLottery) data.weeklyLottery = [];
-        data.weeklyLottery.push({ id: prize.id, emoji: prize.emoji, label: prize.label, date: now.toISOString(), weekKey: weekStartKey(), monthKey: getMonthKey(), pct: 90 });
-      } else if (type === "month") {
-        if (!data.monthlyLottery) data.monthlyLottery = [];
-        data.monthlyLottery.push({ id: prize.id, emoji: prize.emoji, label: prize.label, date: now.toISOString(), monthKey: getMonthKey() });
-      }
-      saveData(data);
-
-      const resultEl = document.getElementById("lotteryResult");
-      resultEl.textContent = "恭喜抽到：" + prize.label + "！奖金周末发放~";
+      var rem = getTotalPoints(data);
+      var resultEl = document.getElementById("lotteryResult");
+      resultEl.textContent = (prize.cash > 0)
+        ? "恭喜抽到：" + prize.label + "！剩余积分：" + rem + " 分"
+        : "谢谢参与！剩余积分：" + rem + " 分";
       resultEl.style.display = "block";
+      document.getElementById("ipadProgress").style.display = "none";
+
+      // Can spin again?
+      if (type === "day" && rem >= 5) {
+        document.getElementById("lotterySpinBtn").style.display = "block";
+        document.getElementById("lotterySpinBtn").textContent = "再抽一次（-5分）";
+      }
+
       lotterySpinning = false;
+      // Refresh both displays
+      renderRewards();
+      renderAwardSummary();
     }
   }, 100);
 }
+
+
+function injectTestPoints() {
+  var pts = parseInt(prompt("注入多少积分？（仅测试用）", "20"), 10);
+  if (!pts || pts < 1) return;
+  var data = loadData();
+  var key = todayKey();
+  if (!data.dailyRecords[key]) {
+    data.dailyRecords[key] = { weekday: new Date().getDay(), earnedScore: pts, maxScore: pts, tasks: [], totalMinutes: 0, completedAt: new Date().toISOString() };
+  } else {
+    data.dailyRecords[key].earnedScore = (data.dailyRecords[key].earnedScore || 0) + pts;
+    data.dailyRecords[key].maxScore = (data.dailyRecords[key].maxScore || 0) + pts;
+  }
+  saveData(data);
+  renderStartPage();
+  alert("已注入 " + pts + " 积分，当前可用：" + getTotalPoints(loadData()) + " 分");
+}
+
+// ========== 自定义任务相关函数 ==========
+var CUSTOM_TASK_EMOJIS = ["🎹","🎸","🏊","🚴","🧘","🍳","📝","📖","🌱","🐕","🧩","⚽","🏀","🎮","💃","🎤","🎬","🧪","🔬","🌟"];
+
+function showCustomTaskModal() {
+  document.getElementById("customTaskModal").style.display = "flex";
+  document.getElementById("customTaskName").value = "";
+  document.getElementById("customTaskEmoji").value = "";
+  document.getElementById("customTaskMinutes").value = "20";
+  document.getElementById("customTaskScore").value = "4";
+  document.getElementById("customTaskIsChore").checked = false;
+
+  var row = document.getElementById("customTaskEmojiRow");
+  row.innerHTML = CUSTOM_TASK_EMOJIS.map(function(em){
+    return '<button type="button" onclick="pickCustomEmoji(\'' + em + '\')" style="padding:6px 8px;border-radius:10px;border:1.5px solid #E5E7EB;background:white;font-size:20px;cursor:pointer;">' + em + '</button>';
+  }).join("");
+}
+
+function pickCustomEmoji(em) {
+  document.getElementById("customTaskEmoji").value = em;
+  // 视觉反馈
+  var btns = document.querySelectorAll("#customTaskEmojiRow button");
+  btns.forEach(function(b){
+    if (b.textContent === em) {
+      b.style.background = "#D1FAE5";
+      b.style.borderColor = "#10B981";
+    } else {
+      b.style.background = "white";
+      b.style.borderColor = "#E5E7EB";
+    }
+  });
+}
+
+function closeCustomTaskModal() {
+  document.getElementById("customTaskModal").style.display = "none";
+}
+
+function saveCustomTask() {
+  var name = document.getElementById("customTaskName").value.trim();
+  var emoji = document.getElementById("customTaskEmoji").value.trim();
+  var minutes = parseInt(document.getElementById("customTaskMinutes").value, 10);
+  var score = parseInt(document.getElementById("customTaskScore").value, 10);
+  var isChore = document.getElementById("customTaskIsChore").checked;
+
+  if (!name) { alert("请填写任务名称！"); return; }
+  if (!emoji) { alert("请选择或输入一个图标！"); return; }
+  if (!minutes || minutes < 1 || minutes > 120) { alert("时长请填 1-120 之间的数字"); return; }
+  if (!score || score < 1 || score > 20) { alert("积分请填 1-20 之间的数字"); return; }
+
+  var data = loadData();
+  if (!data.customTasks) data.customTasks = [];
+
+  // 生成新 id（>= 100，避免和固定任务冲突）
+  var maxId = 99;
+  data.customTasks.forEach(function(t){ if (t.id > maxId) maxId = t.id; });
+  var newId = maxId + 1;
+
+  // 随机分配颜色
+  var colorIdx = data.customTasks.length % CUSTOM_COLOR_PRESETS.length;
+  var colorPreset = CUSTOM_COLOR_PRESETS[colorIdx];
+
+  data.customTasks.push({
+    id: newId,
+    name: name,
+    emoji: emoji,
+    minutes: minutes,
+    score: score,
+    color: colorPreset.color,
+    bg: colorPreset.bg,
+    custom: true,
+    isChore: isChore,
+  });
+  saveData(data);
+  closeCustomTaskModal();
+  playSuccess();
+  alert("任务「" + emoji + " " + name + "」已添加到任务篮子！");
+
+  // 如果当前转盘任务少于 WHEEL_SIZE，自动把新任务加入转盘
+  var d2 = loadData();
+  if (d2.currentWheel && d2.currentWheel.length < WHEEL_SIZE) {
+    d2.currentWheel.push(newId);
+    saveData(d2);
+  }
+
+  renderStartPage();
+  if (document.getElementById("page-rewards").classList.contains("active")) {
+    renderRewards();
+  }
+}
+
+function showManageCustomTasksModal() {
+  document.getElementById("manageCustomTasksModal").style.display = "flex";
+  renderManageCustomTasksList();
+}
+
+function renderManageCustomTasksList() {
+  var data = loadData();
+  var list = data.customTasks || [];
+  var el = document.getElementById("manageCustomTasksList");
+  if (list.length === 0) {
+    el.innerHTML = '<div style="text-align:center;color:#999;padding:20px 0;">还没有自定义任务~</div>';
+    return;
+  }
+  el.innerHTML = list.map(function(t){
+    return '<div style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:14px;border:2px solid ' + t.color + '40;background:' + t.bg + ';margin-bottom:8px;">' +
+      '<div style="font-size:26px;">' + t.emoji + '</div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div style="font-weight:bold;color:' + t.color + ';font-size:15px;">' + t.name + (t.isChore ? ' <span style="font-size:10px;background:#EC4899;color:white;padding:1px 6px;border-radius:999px;">家务</span>' : '') + '</div>' +
+        '<div style="font-size:12px;color:#666;">⏰ ' + t.minutes + '分钟 · ⭐ ' + t.score + '分</div>' +
+      '</div>' +
+      '<button onclick="deleteCustomTask(' + t.id + ')" style="padding:6px 10px;border-radius:999px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-family:inherit;font-size:12px;cursor:pointer;flex-shrink:0;">🗑 删除</button>' +
+      '</div>';
+  }).join("");
+}
+
+function deleteCustomTask(id) {
+  var data = loadData();
+  var task = (data.customTasks || []).find(function(t){ return t.id === id; });
+  if (!task) return;
+  if (!confirm("确认删除任务「" + task.emoji + " " + task.name + "」？\n已完成的历史记录不会受影响。")) return;
+  data.customTasks = (data.customTasks || []).filter(function(t){ return t.id !== id; });
+  // 从当前转盘中也移除
+  if (data.currentWheel) {
+    data.currentWheel = data.currentWheel.filter(function(wid){ return wid !== id; });
+  }
+  saveData(data);
+  renderManageCustomTasksList();
+  renderStartPage();
+}
+
+function closeManageCustomTasksModal() {
+  document.getElementById("manageCustomTasksModal").style.display = "none";
+}
+
+// ========== 妈妈认可清除犯错条 ==========
+function approveClearPenalty(idx) {
+  var data = loadData();
+  var penalties = data.penalties || [];
+  if (idx < 0 || idx >= penalties.length) return;
+  var credits = getChoreCredits();
+  if (credits <= 0) {
+    alert("家务认可次数不足！\n需要先完成「帮妈妈干家务」任务（或自定义家务任务），每完成一次可以消除一条犯错记录。");
+    return;
+  }
+  var p = penalties[idx];
+  if (!confirm("妈妈认可消除这条记录？\n「" + p.emoji + " " + p.label + "」\n\n将消耗 1 次家务认可，并退还对应的积分/奖金。")) return;
+
+  // 退还积分和奖金
+  if (p.points !== 0) {
+    // 原先：pointsSpent -= p.points (p.points 是负数时会增加 spent)
+    // 现在退还：反向操作
+    data.pointsSpent = (data.pointsSpent || 0) + p.points;
+  }
+  // 奖金通过移除记录自动回退（因为 getTotalCash 会遍历 penalties）
+
+  // 移除该条记录
+  data.penalties = penalties.filter(function(_, i){ return i !== idx; });
+
+  // 消耗一次家务认可
+  data.choreCreditsUsed = (data.choreCreditsUsed || 0) + 1;
+
+  saveData(data);
+  playSuccess();
+  renderMomNotebook();
+  renderAwardSummary();
+  renderRewards();
+  alert("✨ 已消除该条犯错记录！");
+}
+
 
 function resetToday() {
   var key = todayKey();
   if (!confirm("确定清除今日（" + key + "）的所有记录？\n包括：任务完成、得分、日抽奖。\n\n此操作不可恢复，仅供测试用。")) return;
   var data = loadData();
+  // refund: today's earned score disappears, so reduce pointsSpent by today's earned (net effect: points unchanged for past spending)
+  var todayEarned = (data.dailyRecords[key] || {}).earnedScore || 0;
+  var todaySpins = (data.dailyLottery || []).filter(function(r){ return r.dayKey === key; }).length;
+  // remove today's spin cost (5 per spin) and today's cash earned from dailyLottery
+  var todayLotteryCash = (data.dailyLottery || []).filter(function(r){ return r.dayKey === key; }).reduce(function(s,r){ return s + (r.cash||0); }, 0);
+  // pointsSpent: refund the spins from today
+  data.pointsSpent = Math.max(0, (data.pointsSpent || 0) - (todaySpins * 5));
   delete data.dailyRecords[key];
   data.dailyLottery = (data.dailyLottery || []).filter(function(r){ return r.dayKey !== key; });
   saveData(data);
   alert("今日记录已清除。");
   renderStartPage();
+}
+
+// ========== 所有数据清零 ==========
+function showResetAllModal() {
+  requirePassword("清零所有数据需要妈妈密码", function(){
+    document.getElementById("resetAllModal").style.display = "flex";
+    document.getElementById("resetConfirmInput").value = "";
+    var btn = document.getElementById("resetAllConfirmBtn");
+    btn.disabled = true;
+    btn.style.background = "#E5E7EB";
+    btn.style.color = "#9CA3AF";
+    btn.style.cursor = "not-allowed";
+  });
+}
+
+function closeResetAllModal() {
+  document.getElementById("resetAllModal").style.display = "none";
+}
+
+function checkResetConfirm() {
+  var val = document.getElementById("resetConfirmInput").value.trim();
+  var btn = document.getElementById("resetAllConfirmBtn");
+  if (val === "确认清零") {
+    btn.disabled = false;
+    btn.style.background = "linear-gradient(135deg,#DC2626,#991B1B)";
+    btn.style.color = "white";
+    btn.style.cursor = "pointer";
+  } else {
+    btn.disabled = true;
+    btn.style.background = "#E5E7EB";
+    btn.style.color = "#9CA3AF";
+    btn.style.cursor = "not-allowed";
+  }
+}
+
+function doResetAll() {
+  // 二次原生 confirm 拦一道
+  if (!confirm("最后确认：真的要清除所有数据吗？\n\n此操作不可恢复！")) return;
+
+  // 保留密码和主题设置（这些是系统配置，不应被数据清零影响）
+  var oldData = loadData();
+  var keepPasswordHash = oldData.passwordHash;
+  var keepTheme = oldData.theme;
+
+  // 清空所有数据，重置为初始状态
+  var fresh = {
+    dailyRecords: {},
+    redemptions: {},
+    dailyLottery: [],
+    weeklyLottery: [],
+    monthlyLottery: [],
+    penalties: [],
+    customTasks: [],
+    currentWheel: null,
+    shuffleCount: {},
+    choreCreditsUsed: 0,
+    pointsSpent: 0,
+    wishSmall: "",
+    wishBig: "",
+    wishRedeemed: [],
+  };
+  // 保留设置项
+  if (keepPasswordHash) fresh.passwordHash = keepPasswordHash;
+  if (keepTheme) fresh.theme = keepTheme;
+
+  saveData(fresh);
+
+  // 清空内存状态
+  state = {
+    pickedTasks: [], spinningOrder: [], completedIds: [],
+    currentIdx: 0, secondsLeft: 0, isRunning: false,
+    rotation: 0, timer: null, alarmInterval: null,
+    alarming: false, isSpinning: false,
+    wheelTasks: [],
+  };
+
+  closeResetAllModal();
+  playSuccess();
+  alert("✨ 所有数据已清零，重新开始！");
+  showPage("start");
+}
+
+// ========== 色彩主题 ==========
+var THEMES = [
+  { id: "pink", name: "甜心粉", emoji: "🌸", desc: "粉嫩少女风", preview: "linear-gradient(135deg, #FFF5F7, #FFE8E0, #F0E8FF)" },
+  { id: "cool", name: "酷炫蓝", emoji: "💎", desc: "男孩科技风", preview: "linear-gradient(135deg, #0F172A, #1E40AF, #312E81)" },
+  { id: "green", name: "清新绿", emoji: "🌿", desc: "自然森林风", preview: "linear-gradient(135deg, #F0FDF4, #D1FAE5, #CCFBF1)" },
+  { id: "purple", name: "暗夜紫", emoji: "🌙", desc: "神秘星空风", preview: "linear-gradient(135deg, #1E1B4B, #4C1D95, #831843)" },
+];
+
+function applyTheme(themeId) {
+  // 移除所有已有主题
+  THEMES.forEach(function(t){ document.body.classList.remove("theme-" + t.id); });
+  // 加上新主题
+  document.body.classList.add("theme-" + themeId);
+  // 保存
+  var data = loadData();
+  data.theme = themeId;
+  saveData(data);
+  // 气泡颜色要重绘
+  setTimeout(initBubbles, 50);
+}
+
+function loadThemeOnStart() {
+  var data = loadData();
+  var themeId = data.theme || "pink";
+  THEMES.forEach(function(t){ document.body.classList.remove("theme-" + t.id); });
+  document.body.classList.add("theme-" + themeId);
+}
+
+function renderThemeOptions() {
+  var data = loadData();
+  var currentTheme = data.theme || "pink";
+  var el = document.getElementById("themeOptions");
+  if (!el) return;
+  el.innerHTML = THEMES.map(function(t){
+    var isActive = t.id === currentTheme;
+    return '<button onclick="applyTheme(\'' + t.id + '\');renderThemeOptions();" style="padding:12px;border-radius:16px;border:3px solid ' + (isActive ? "#7C3AED" : "#E5E7EB") + ';background:white;cursor:pointer;text-align:left;font-family:inherit;position:relative;">' +
+      '<div style="height:36px;border-radius:10px;background:' + t.preview + ';margin-bottom:8px;"></div>' +
+      '<div style="font-size:14px;font-weight:bold;color:#374151;">' + t.emoji + ' ' + t.name + (isActive ? ' <span style="color:#7C3AED;font-size:11px;">✓ 当前</span>' : '') + '</div>' +
+      '<div style="font-size:11px;color:#9CA3AF;margin-top:2px;">' + t.desc + '</div>' +
+    '</button>';
+  }).join("");
+}
+
+// ========== 妈妈密码 ==========
+// 简单字符串哈希（不是强加密，只是防止用户看源码直接知道密码）
+function hashPassword(str) {
+  var hash = 5381;
+  for (var i = 0; i < str.length; i++) {
+    hash = ((hash << 5) + hash) + str.charCodeAt(i);
+    hash = hash & hash; // 转 32 位
+  }
+  return String(hash);
+}
+
+function hasPassword() {
+  var data = loadData();
+  return !!(data.passwordHash && data.passwordHash.length > 0);
+}
+
+function verifyPassword(input) {
+  var data = loadData();
+  return data.passwordHash === hashPassword(input);
+}
+
+// 通用密码验证入口，验证通过后执行回调
+var _pendingPasswordAction = null;
+var _pendingPasswordDesc = "";
+
+function requirePassword(desc, callback) {
+  if (!hasPassword()) {
+    // 无密码，直接执行
+    callback();
+    return;
+  }
+  _pendingPasswordAction = callback;
+  _pendingPasswordDesc = desc || "";
+  document.getElementById("passwordPromptDesc").textContent = desc || "此操作需要妈妈密码";
+  document.getElementById("passwordPromptInput").value = "";
+  document.getElementById("passwordPromptError").style.display = "none";
+  document.getElementById("passwordPromptModal").style.display = "flex";
+  setTimeout(function(){ document.getElementById("passwordPromptInput").focus(); }, 100);
+}
+
+function verifyPasswordPrompt() {
+  var input = document.getElementById("passwordPromptInput").value;
+  if (verifyPassword(input)) {
+    document.getElementById("passwordPromptModal").style.display = "none";
+    var cb = _pendingPasswordAction;
+    _pendingPasswordAction = null;
+    if (cb) cb();
+  } else {
+    var err = document.getElementById("passwordPromptError");
+    err.textContent = "❌ 密码不对，再试一次~";
+    err.style.display = "block";
+    document.getElementById("passwordPromptInput").value = "";
+  }
+}
+
+function closePasswordPrompt() {
+  document.getElementById("passwordPromptModal").style.display = "none";
+  _pendingPasswordAction = null;
+}
+
+function showSetPasswordModal() {
+  var has = hasPassword();
+  document.getElementById("setPasswordTitle").textContent = has ? "🔐 修改妈妈密码" : "🔐 设置妈妈密码";
+  document.getElementById("currentPasswordWrap").style.display = has ? "block" : "none";
+  document.getElementById("currentPasswordInput").value = "";
+  document.getElementById("newPasswordInput").value = "";
+  document.getElementById("confirmPasswordInput").value = "";
+  document.getElementById("setPasswordError").style.display = "none";
+  document.getElementById("setPasswordModal").style.display = "flex";
+}
+
+function closeSetPasswordModal() {
+  document.getElementById("setPasswordModal").style.display = "none";
+}
+
+function doSetPassword() {
+  var has = hasPassword();
+  var err = document.getElementById("setPasswordError");
+  err.style.display = "none";
+
+  if (has) {
+    var cur = document.getElementById("currentPasswordInput").value;
+    if (!verifyPassword(cur)) {
+      err.textContent = "❌ 当前密码不对~";
+      err.style.display = "block";
+      return;
+    }
+  }
+
+  var newPwd = document.getElementById("newPasswordInput").value;
+  var confirmPwd = document.getElementById("confirmPasswordInput").value;
+
+  if (newPwd.length < 4 || newPwd.length > 20) {
+    err.textContent = "❌ 密码长度需要 4-20 个字符";
+    err.style.display = "block";
+    return;
+  }
+  if (newPwd !== confirmPwd) {
+    err.textContent = "❌ 两次输入的密码不一致";
+    err.style.display = "block";
+    return;
+  }
+
+  var data = loadData();
+  data.passwordHash = hashPassword(newPwd);
+  saveData(data);
+  closeSetPasswordModal();
+  playSuccess();
+  alert("✓ 密码已" + (has ? "修改" : "设置") + "成功！");
+  renderSettingsPage();
+}
+
+function removePassword() {
+  requirePassword("取消密码保护需要先输入当前密码", function(){
+    if (!confirm("确认取消密码保护？\n之后清零、删除记录等操作将不再需要密码。")) return;
+    var data = loadData();
+    delete data.passwordHash;
+    saveData(data);
+    alert("✓ 密码保护已取消");
+    renderSettingsPage();
+  });
+}
+
+// ========== 进入系统设置 ==========
+function enterSettings() {
+  requirePassword("进入系统设置需要妈妈密码", function(){
+    showPage("settings");
+  });
+}
+
+function renderSettingsPage() {
+  renderThemeOptions();
+
+  // 密码状态
+  var has = hasPassword();
+  document.getElementById("passwordStatusDesc").innerHTML = has
+    ? '<span style="color:#059669;font-weight:bold;">✓ 已启用密码保护</span>。敏感操作需要密码。'
+    : '设置密码后，进入系统设置、删除记录、清零数据等敏感操作需要密码~';
+  document.getElementById("setPasswordBtn").textContent = has ? "修改密码" : "设置密码";
+  document.getElementById("removePasswordBtn").style.display = has ? "inline-block" : "none";
+
+  // 记事本管理
+  renderSettingsPenaltyList();
+}
+
+function renderSettingsPenaltyList() {
+  var data = loadData();
+  var list = data.penalties || [];
+  var el = document.getElementById("settingsPenaltyList");
+  if (!el) return;
+  if (list.length === 0) {
+    el.innerHTML = '<div style="text-align:center;color:#999;font-size:13px;padding:12px 0;">还没有记录~</div>';
+    return;
+  }
+  // 倒序显示
+  el.innerHTML = list.map(function(r, i){
+    var isBad = (r.points < 0 || r.cash < 0);
+    var color = isBad ? "#DC2626" : "#059669";
+    var bg = isBad ? "#FEF2F2" : "#F0FDF4";
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:12px;background:' + bg + ';margin-bottom:6px;">' +
+      '<div style="flex:1;min-width:0;font-size:13px;color:' + color + ';">' + r.emoji + ' ' + r.label + ' · ' + new Date(r.date).toLocaleDateString("zh-CN") + '</div>' +
+      '<button onclick="settingsDeletePenalty(' + i + ')" style="padding:4px 10px;border-radius:999px;border:1.5px solid #DC2626;background:white;color:#DC2626;font-family:inherit;font-size:11px;font-weight:bold;cursor:pointer;flex-shrink:0;">🗑 删除</button>' +
+    '</div>';
+  }).reverse().join("");
+}
+
+function settingsDeletePenalty(idx) {
+  var data = loadData();
+  var list = data.penalties || [];
+  if (idx < 0 || idx >= list.length) return;
+  var r = list[idx];
+
+  requirePassword("删除记录需要妈妈密码", function(){
+    if (!confirm("确认删除「" + r.emoji + " " + r.label + "」？\n相关的积分/奖金会一并退还。")) return;
+    var d = loadData();
+    var p = (d.penalties || [])[idx];
+    if (!p) return;
+    // 退还积分
+    if (p.points !== 0) {
+      d.pointsSpent = (d.pointsSpent || 0) + p.points;
+    }
+    // 移除记录（奖金通过数组变短自动退还）
+    d.penalties = (d.penalties || []).filter(function(_, i){ return i !== idx; });
+    saveData(d);
+    playSuccess();
+    renderSettingsPage();
+    renderMomNotebook();
+    renderAwardSummary();
+    alert("✓ 已删除该条记录");
+  });
 }
 
 function exportData() {
@@ -1539,14 +2746,113 @@ function importData(event) {
       var data = JSON.parse(e.target.result);
       if (!data.dailyRecords) throw new Error("格式不对");
       saveData(data);
+      // 重新应用主题
+      loadThemeOnStart();
+      setTimeout(initBubbles, 50);
       alert("恢复成功！数据已导入。");
       renderRewards();
+      if (document.getElementById("page-settings").classList.contains("active")) {
+        renderSettingsPage();
+      }
     } catch(err) {
       alert("恢复失败：文件格式不正确，请选择正确的备份文件。");
     }
   };
   reader.readAsText(file);
   event.target.value = "";
+}
+
+var _penaltyType = null;
+
+var PENALTY_EVENTS = {
+  angry: { emoji: "😤", title: "惹妈妈生气", opts: [
+    { label: "-10分", points: -10, cash: 0 },
+    { label: "-10元", points: 0, cash: -10 },
+  ], proof: false },
+  break: { emoji: "💔", title: "打碎物品", opts: [
+    { label: "-5分", points: -5, cash: 0 },
+    { label: "-5元", points: 0, cash: -5 },
+  ], proof: false },
+  lazy: { emoji: "🛌", title: "早上起床磨蹭", opts: [
+    { label: "-5分（固定）", points: -5, cash: 0 },
+  ], proof: false },
+  praise: { emoji: "🌟", title: "获得老师表扬", opts: [
+    { label: "+10分", points: 10, cash: 0 },
+    { label: "+10元", points: 0, cash: 10 },
+  ], proof: true },
+};
+
+function showPenaltyModal(type) {
+  _penaltyType = type;
+  var ev = PENALTY_EVENTS[type];
+  document.getElementById("penaltyModal").style.display = "flex";
+  document.getElementById("penaltyTitle").textContent = ev.emoji + " " + ev.title;
+  document.getElementById("penaltyDesc").textContent = "请选择扣减/奖励方式：";
+  document.getElementById("proofPreview").innerHTML = "";
+  document.getElementById("penaltyProofSection").style.display = ev.proof ? "block" : "none";
+
+  var optsEl = document.getElementById("penaltyOptions");
+  optsEl.innerHTML = ev.opts.map(function(opt, i) {
+    var color = opt.points < 0 || opt.cash < 0 ? "#DC2626" : "#059669";
+    var bg = opt.points < 0 || opt.cash < 0 ? "#FEE2E2" : "#D1FAE5";
+    return '<button onclick="applyPenalty(' + i + ')" style="padding:12px 20px;border-radius:14px;border:none;background:' + bg + ';color:' + color + ';font-family:inherit;font-size:16px;font-weight:bold;cursor:pointer;width:100%;">' + opt.label + '</button>';
+  }).join("");
+}
+
+function closePenaltyModal() {
+  document.getElementById("penaltyModal").style.display = "none";
+  _penaltyType = null;
+}
+
+function previewProof(event) {
+  var file = event.target.files[0];
+  if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    document.getElementById("proofPreview").innerHTML =
+      '<img src="' + e.target.result + '" style="max-width:100%;max-height:120px;border-radius:10px;margin-top:6px;">';
+  };
+  reader.readAsDataURL(file);
+}
+
+function applyPenalty(optIdx) {
+  var ev = PENALTY_EVENTS[_penaltyType];
+  var opt = ev.opts[optIdx];
+
+  if (ev.proof) {
+    var preview = document.getElementById("proofPreview").innerHTML;
+    if (!preview) { alert("请先上传凭证图片！"); return; }
+  }
+
+  var confirmMsg = ev.title + "：" + opt.label;
+  if (!confirm("确认记录：" + confirmMsg + "？")) return;
+
+  var data = loadData();
+  if (!data.penalties) data.penalties = [];
+  var record = {
+    type: _penaltyType,
+    emoji: ev.emoji,
+    label: ev.title + " " + opt.label,
+    points: opt.points,
+    cash: opt.cash,
+    date: new Date().toISOString(),
+  };
+  data.penalties.push(record);
+
+  // Apply points: adjust pointsSpent (negative points = add to spent, positive = reduce spent)
+  if (opt.points !== 0) {
+    data.pointsSpent = (data.pointsSpent || 0) - opt.points;
+  }
+  // Apply cash: store as separate penalty cash (negative = deduction)
+  // Already tracked via data.penalties, getTotalCash will include it
+
+  saveData(data);
+  closePenaltyModal();
+  playSuccess();
+  renderMomNotebook();
+  renderAwardSummary();
+  renderRewards();
+  alert("已记录！" + confirmMsg);
 }
 
 function confirmReset() {
@@ -1564,10 +2870,12 @@ function reset() {
     currentIdx: 0, secondsLeft: 0, isRunning: false,
     rotation: 0, timer: null, alarmInterval: null,
     alarming: false, isSpinning: false,
+    wheelTasks: [],
   };
   showPage("start");
 }
 
+loadThemeOnStart();
 initBubbles();
 renderStartPage();
 </script>
