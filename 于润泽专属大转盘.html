@@ -167,7 +167,7 @@ html, body {
 
 /* ===== TASK GRID ===== */
 .task-grid {
-  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;
+  display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;
   margin-top: 22px; max-width: 480px; margin-left: auto; margin-right: auto;
 }
 .task-chip {
@@ -556,6 +556,76 @@ html, body {
   color: var(--text-main) !important;
 }
 
+/* ===== LIGHT THEME (日系暖) ===== */
+body.theme-light { color: var(--text-main); }
+body.theme-light .star { background: #F4A0B0; }
+body.theme-light .modal-box {
+  background: linear-gradient(145deg, #FFF5F0, #FFE8DF) !important;
+  border-color: rgba(212,96,122,0.25) !important;
+  box-shadow: 0 0 40px rgba(212,96,122,0.12) !important;
+}
+body.theme-light .modal-box h2 { color: #D4607A !important; }
+body.theme-light .modal-box::before {
+  background: linear-gradient(90deg, transparent, #D4607A, #B5838D, transparent) !important;
+}
+body.theme-light .modal-input {
+  background: rgba(255,255,255,0.8) !important;
+  border-color: rgba(212,96,122,0.3) !important;
+  color: #3D2B2B !important;
+}
+body.theme-light .reward-card {
+  background: rgba(255,248,244,0.9) !important;
+}
+body.theme-light .task-chip {
+  background: rgba(255,248,244,0.9) !important;
+}
+body.theme-light .timer-card {
+  background: rgba(255,248,244,0.92) !important;
+}
+body.theme-light .date-bar {
+  background: rgba(255,248,244,0.92) !important;
+}
+body.theme-light .prize-card {
+  background: rgba(255,248,244,0.92) !important;
+}
+body.theme-light .btn-start {
+  background: linear-gradient(135deg, #D4607A, #B5838D) !important;
+  color: white !important;
+}
+body.theme-light .btn-ctrl.ghost {
+  background: rgba(0,0,0,0.06) !important;
+  color: var(--text-dim) !important;
+  border-color: rgba(0,0,0,0.1) !important;
+}
+body.theme-light .week-status-card {
+  background: linear-gradient(135deg, rgba(255,215,170,0.3), rgba(255,180,150,0.3)) !important;
+  border-color: rgba(232,115,58,0.3) !important;
+}
+body.theme-light .week-cell {
+  background: rgba(255,240,230,0.8) !important;
+  border-color: rgba(212,96,122,0.2) !important;
+  color: #9B7B7B !important;
+}
+body.theme-light .week-cell.done {
+  background: linear-gradient(135deg, #D4607A, #B5838D) !important;
+  color: white !important;
+}
+body.theme-light .btn-reset {
+  border-color: rgba(0,0,0,0.15) !important;
+  color: #9B7B7B !important;
+}
+body.theme-light .mom-notebook {
+  background: linear-gradient(135deg, rgba(255,192,180,0.2), rgba(212,96,122,0.1)) !important;
+}
+body.theme-light .score-banner {
+  background: linear-gradient(135deg, rgba(212,96,122,0.1), rgba(181,131,141,0.12)) !important;
+  border-color: rgba(212,96,122,0.25) !important;
+}
+body.theme-light .done-page {
+  background: linear-gradient(180deg, #FFF8F4, #FFE8DF) !important;
+}
+body.theme-light .weekly-progress h3 { color: #D4607A !important; }
+
 /* ===== SCROLLBAR ===== */
 ::-webkit-scrollbar { width: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
@@ -572,7 +642,7 @@ html, body {
   .rewards-header h2 { font-size: 22px; }
   .week-cell { font-size: 9px; }
   .week-cell .wd { font-size: 11px; }
-  .task-grid { grid-template-columns: repeat(2, 1fr); }
+  .task-grid { grid-template-columns: repeat(3, 1fr); }
 }
 </style>
 </head>
@@ -595,6 +665,7 @@ html, body {
           <button class="week-badge" onclick="showPage('rewards')">
             🏆 <span id="weekBadgeText">本周 0/7</span>
           </button>
+          <button onclick="showPage('redeem')" style="padding:6px 10px;border-radius:999px;border:1.5px solid rgba(0,255,136,0.35);background:rgba(0,255,136,0.08);font-size:17px;cursor:pointer;" title="积分兑换">🎁</button>
           <button onclick="enterSettings()" style="padding:6px 10px;border-radius:999px;border:1.5px solid rgba(0,217,255,0.3);background:rgba(0,217,255,0.08);font-size:17px;cursor:pointer;" title="系统设置">⚙️</button>
         </div>
       </div>
@@ -611,7 +682,7 @@ html, body {
         <div class="hero-icon">🚀</div>
         <h1 class="title">于润泽专属大转盘</h1>
         <p class="subtitle">
-          每次随机抽取 <span class="hl">4个任务</span><br>
+          每次随机抽取 <span class="hl">5个任务</span><br>
           <span class="sm">（读书是必选哟~）</span>
         </p>
         <div id="heroScoreBlock" style="display:inline-flex;align-items:center;gap:16px;background:rgba(0,217,255,0.08);border:1.5px solid rgba(0,217,255,0.25);border-radius:999px;padding:8px 24px;margin-bottom:4px;">
@@ -633,46 +704,47 @@ html, body {
 
       <!-- Prize showcase -->
       <div class="prize-showcase">
-        <div class="prize-showcase-title">🎖️ 任务奖励系统</div>
+        <div class="prize-showcase-title">🎖️ 任务奖励系统 <span style="font-size:13px;color:var(--text-dim);font-weight:normal;">（点击卡片快速进入）</span></div>
         <div class="prize-grid">
-          <div class="prize-card" style="border-color:rgba(0,217,255,0.4);">
-            <div class="prize-tier" style="color:var(--neon-blue)">日抽奖（5分/次）</div>
+          <div class="prize-card" style="border-color:rgba(0,217,255,0.4);cursor:pointer;" onclick="showPage('rewards')">
+            <div class="prize-tier" style="color:var(--neon-blue)">🎰 日抽奖（5分/次）</div>
             <div class="prize-icon">🎰</div>
             <div class="prize-items">
               <span class="prize-tag" style="background:#0284C7">💰 5元</span>
               <span class="prize-tag" style="background:#0369A1">💵 1元</span>
               <span class="prize-tag" style="background:#075985">🪙 0.5元</span>
             </div>
-            <div class="prize-cond">A奖每日限1次</div>
+            <div class="prize-cond">A奖每日限1次 → 点击去抽</div>
           </div>
-          <div class="prize-card" style="border-color:rgba(0,255,136,0.3);">
-            <div class="prize-tier" style="color:var(--neon-green)">积分兑好好</div>
+          <div class="prize-card" style="border-color:rgba(0,255,136,0.3);cursor:pointer;" onclick="showPage('rewards')">
+            <div class="prize-tier" style="color:var(--neon-green)">🎁 积分兑好好</div>
             <div class="prize-icon">🎁</div>
             <div class="prize-items">
-              <span class="prize-tag" style="background:#059669">小档 &lt;50分</span>
-              <span class="prize-tag" style="background:#065F46">大档 50-100分</span>
+              <span class="prize-tag" style="background:#047857;font-size:10px;">20-50分：雪糕/奶茶</span>
+              <span class="prize-tag" style="background:#065F46;font-size:10px;">50-100分：游戏/礼物≤50元</span>
+              <span class="prize-tag" style="background:#064E3B;font-size:10px;">150分+：礼物≤80元</span>
             </div>
-            <div class="prize-cond">积分扣减兑换</div>
+            <div class="prize-cond">积分扣减兑换 → 点击去兑</div>
           </div>
-          <div class="prize-card" style="border-color:rgba(255,107,0,0.4);">
-            <div class="prize-tier" style="color:var(--neon-orange)">周奖（固定）</div>
+          <div class="prize-card" style="border-color:rgba(255,107,0,0.4);cursor:pointer;" onclick="showPage('rewards')">
+            <div class="prize-tier" style="color:var(--neon-orange)">📅 周奖（固定）</div>
             <div class="prize-icon">📅</div>
             <div class="prize-items">
               <span class="prize-tag" style="background:#EA580C">💰 20元</span>
             </div>
-            <div class="prize-cond">周完成率≥90%</div>
+            <div class="prize-cond">周五18:00准时发放 → 点击领取</div>
           </div>
-          <div class="prize-card" style="border-color:rgba(168,85,247,0.4);">
-            <div class="prize-tier" style="color:var(--neon-purple)">月底抽奖</div>
+          <div class="prize-card" style="border-color:rgba(168,85,247,0.4);cursor:pointer;" onclick="showPage('rewards')">
+            <div class="prize-tier" style="color:var(--neon-purple)">🌌 月底抽奖</div>
             <div class="prize-icon">🌌</div>
             <div class="prize-items">
               <span class="prize-tag" style="background:#7C3AED">30元</span>
               <span class="prize-tag" style="background:#6D28D9">20元</span>
               <span class="prize-tag" style="background:#5B21B6">10元</span>
             </div>
-            <div class="prize-cond">当月≥3周达标</div>
+            <div class="prize-cond">月底18:00开放 → 点击去抽</div>
           </div>
-          <div class="prize-card" style="border-color:rgba(0,217,255,0.4);grid-column:span 2;">
+          <div class="prize-card" style="border-color:rgba(0,217,255,0.4);grid-column:span 2;cursor:pointer;" onclick="showPage('rewards')">
             <div class="prize-tier" style="color:var(--neon-blue)">学期大奖</div>
             <div class="prize-icon">📱</div>
             <div class="prize-items">
@@ -687,7 +759,7 @@ html, body {
     <!-- ===== SPIN PAGE ===== -->
     <div class="page" id="page-spin">
       <h2 class="spin-title" id="spinTitle">🚀 转盘出发！</h2>
-      <p class="spin-progress" id="spinProgress">已抽中 <b>1</b> / 4</p>
+      <p class="spin-progress" id="spinProgress">已抽中 <b>1</b> / 5</p>
       <div class="wheel-wrap">
         <div class="pointer"></div>
         <svg id="wheel" viewBox="0 0 340 340"></svg>
@@ -704,7 +776,7 @@ html, body {
       <div class="plan-header">
         <div class="trophy">🏆</div>
         <h2>今天的任务清单</h2>
-        <p>共 <span class="hl" id="planCount">4</span>个任务 · 总时长 <span class="hl2" id="planTotal">0</span>分钟</p>
+        <p>共 <span class="hl" id="planCount">5</span>个任务 · 总时长 <span class="hl2" id="planTotal">0</span>分钟</p>
       </div>
       <div id="planList"></div>
       <button class="btn-reset" onclick="confirmReset()">↻ 重新抽签</button>
@@ -737,7 +809,7 @@ html, body {
           </div>
         </div>
       </div>
-      <div class="progress-hint" id="progressHint">进度: 0 / 4</div>
+      <div class="progress-hint" id="progressHint">进度: 0 / 5</div>
       <div class="dog-progress-wrap">
         <div class="dog-track">
           <div class="dog-fill" id="dogFill" style="width:0%"></div>
@@ -769,6 +841,15 @@ html, body {
         <h2 style="background:linear-gradient(135deg,#FFD700,var(--neon-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🎖️ 奖励档案</h2>
         <button class="btn-back" onclick="showPage('start')">← 返回</button>
       </div>
+      <!-- 快速入口：积分兑换 -->
+      <button onclick="showPage('redeem')" style="display:flex;align-items:center;gap:10px;width:100%;margin-bottom:14px;padding:12px 16px;border-radius:16px;border:1.5px solid rgba(0,255,136,0.35);background:linear-gradient(135deg,rgba(0,255,136,0.08),rgba(0,217,255,0.06));cursor:pointer;font-family:inherit;text-align:left;">
+        <span style="font-size:26px;">🎁</span>
+        <div style="flex:1;">
+          <div style="font-size:14px;font-weight:bold;color:var(--neon-green);">积分兑好好</div>
+          <div style="font-size:11px;color:var(--text-dim);margin-top:2px;">查看兑换菜单 · 妈妈确认记录</div>
+        </div>
+        <span style="font-size:18px;color:var(--text-dim);">›</span>
+      </button>
       <div class="week-status-card">
         <div class="label">⚡ 本周可用积分</div>
         <div class="value" id="weekCountValue">0 分</div>
@@ -779,6 +860,15 @@ html, body {
         <div class="week-grid" id="weekGridRewards"></div>
       </div>
       <div id="rewardsList"></div>
+    </div>
+
+    <!-- ===== REDEEM PAGE ===== -->
+    <div class="page" id="page-redeem">
+      <div class="rewards-header">
+        <h2 style="background:linear-gradient(135deg,var(--neon-green),var(--neon-blue));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">🎁 积分兑好好</h2>
+        <button class="btn-back" onclick="showPage('rewards')">← 返回</button>
+      </div>
+      <div id="redeemContent"></div>
     </div>
 
     <!-- ===== SETTINGS PAGE ===== -->
@@ -1032,14 +1122,18 @@ html, body {
 <script>
 // ===== CONSTANTS =====
 const ALL_TASKS = [
-  { id: 1, name: "读书",      minutes: 40, emoji: "📚", color: "#00D9FF", bg: "rgba(0,217,255,0.12)",  required: true, score: 8 },
-  { id: 2, name: "收拾房间",  minutes: 20, emoji: "🧹", color: "#00FF88", bg: "rgba(0,255,136,0.1)",   score: 4 },
-  { id: 3, name: "体育锻炼",  minutes: 30, emoji: "⚽", color: "#FF6B00", bg: "rgba(255,107,0,0.12)",  score: 6 },
-  { id: 4, name: "画画",      minutes: 20, emoji: "🎨", color: "#A855F7", bg: "rgba(168,85,247,0.12)", score: 4 },
-  { id: 5, name: "帮妈妈干家务", minutes: 15, emoji: "💕", color: "#EC4899", bg: "rgba(236,72,153,0.1)", score: 3 },
-  { id: 6, name: "收拾书包",  minutes: 5,  emoji: "🎒", color: "#60A5FA", bg: "rgba(96,165,250,0.1)",  score: 1 },
-  { id: 7, name: "跟爸爸学AI", minutes: 20, emoji: "🤖", color: "#3B82F6", bg: "rgba(59,130,246,0.12)", score: 4 },
-  { id: 8, name: "做手工",    minutes: 20, emoji: "✂️", color: "#F59E0B", bg: "rgba(245,158,11,0.1)",  score: 4 },
+  { id: 1,  name: "读书",       minutes: 40, emoji: "📚", color: "#00D9FF", bg: "rgba(0,217,255,0.12)",  required: true, score: 8 },
+  { id: 2,  name: "收拾房间",   minutes: 20, emoji: "🧹", color: "#00FF88", bg: "rgba(0,255,136,0.1)",   score: 4 },
+  { id: 3,  name: "体育锻炼",   minutes: 30, emoji: "⚽", color: "#FF6B00", bg: "rgba(255,107,0,0.12)",  score: 6 },
+  { id: 4,  name: "画画",       minutes: 20, emoji: "🎨", color: "#A855F7", bg: "rgba(168,85,247,0.12)", score: 4 },
+  { id: 5,  name: "帮妈妈干家务", minutes: 15, emoji: "💕", color: "#EC4899", bg: "rgba(236,72,153,0.1)", score: 3 },
+  { id: 6,  name: "收拾书包",   minutes: 5,  emoji: "🎒", color: "#60A5FA", bg: "rgba(96,165,250,0.1)",  score: 1 },
+  { id: 7,  name: "跟爸爸学AI", minutes: 20, emoji: "🤖", color: "#3B82F6", bg: "rgba(59,130,246,0.12)", score: 4 },
+  { id: 8,  name: "做手工",     minutes: 20, emoji: "✂️", color: "#F59E0B", bg: "rgba(245,158,11,0.1)",  score: 4 },
+  { id: 9,  name: "练字",       minutes: 15, emoji: "✏️", color: "#34D399", bg: "rgba(52,211,153,0.1)",  score: 3 },
+  { id: 10, name: "听英语",     minutes: 20, emoji: "🎧", color: "#F472B6", bg: "rgba(244,114,182,0.1)", score: 4 },
+  { id: 11, name: "下棋",       minutes: 25, emoji: "♟️", color: "#FBBF24", bg: "rgba(251,191,36,0.1)",  score: 5 },
+  { id: 12, name: "整理文具",   minutes: 10, emoji: "🖊️", color: "#A78BFA", bg: "rgba(167,139,250,0.1)", score: 2 },
 ];
 
 var DAY_PRIZES = [
@@ -1055,8 +1149,8 @@ var MONTH_PRIZES = [
 ];
 
 const WEEKDAYS = ["星期日","星期一","星期二","星期三","星期四","星期五","星期六"];
-const TARGET_COUNT = 4;   // max 4 tasks
-const WHEEL_SIZE = 4;     // wheel shows 4 tasks
+const TARGET_COUNT = 5;   // pick 5 tasks
+const WHEEL_SIZE = 12;    // wheel shows 12 tasks
 const MAX_SHUFFLE = 3;
 const STORAGE_KEY = "runze_wheel_data_v1";
 
@@ -1202,7 +1296,8 @@ function getWheelTasks() {
     return fresh;
   }
   const tasks = data.currentWheel.map(id => getTaskById(id)).filter(Boolean);
-  if (tasks.length < Math.min(WHEEL_SIZE, getTaskBasket().length)) {
+  const targetSize = Math.min(WHEEL_SIZE, getTaskBasket().length);
+  if (tasks.length !== targetSize) {
     const fresh = shuffleWheel();
     data.currentWheel = fresh.map(t => t.id);
     saveData(data); return fresh;
@@ -1308,6 +1403,7 @@ function showPage(id) {
   document.getElementById("page-" + id).classList.add("active");
   if (id === "start") renderStartPage();
   if (id === "rewards") renderRewards();
+  if (id === "redeem") renderRedeemPage();
   if (id === "done") renderDonePage();
   if (id === "settings") renderSettingsPage();
 }
@@ -1476,9 +1572,9 @@ function drawWheel(highlightId) {
         fill="${hl ? t.color : t.bg.replace('rgba','rgba').replace(/[\d.]+\)$/,'0.18)')}" stroke="rgba(0,217,255,0.2)" stroke-width="2"/>
       <g transform="rotate(${i*anglePer} ${tx} ${ty})">
         <text x="${tx}" y="${ty-4}" text-anchor="middle" dominant-baseline="middle"
-          style="font-size:16px;font-weight:700;fill:${hl ? '#060818' : t.color};font-family:'ZCOOL KuaiLe',sans-serif;">${t.emoji} ${t.name}</text>
-        <text x="${tx}" y="${ty+14}" text-anchor="middle" dominant-baseline="middle"
-          style="font-size:11px;fill:${hl ? '#060818' : t.color};opacity:0.85;font-family:'ZCOOL KuaiLe',sans-serif;">${t.minutes}分</text>
+          style="font-size:11px;font-weight:700;fill:${hl ? '#060818' : t.color};font-family:'ZCOOL KuaiLe',sans-serif;">${t.emoji} ${t.name}</text>
+        <text x="${tx}" y="${ty+10}" text-anchor="middle" dominant-baseline="middle"
+          style="font-size:9px;fill:${hl ? '#060818' : t.color};opacity:0.85;font-family:'ZCOOL KuaiLe',sans-serif;">${t.minutes}分</text>
       </g>`;
   });
   html += `<circle cx="${c}" cy="${c}" r="36" fill="rgba(6,8,24,0.9)" stroke="rgba(0,217,255,0.5)" stroke-width="3"/>
@@ -1727,7 +1823,11 @@ function renderRewards() {
   const monthKey = getMonthKey();
   const alreadyWeekLottery = (data.weeklyLottery || []).some(r => r.weekKey === weekKey);
   const todayDow = new Date().getDay();
-  const isWeekend = todayDow === 0 || todayDow === 6;
+  const todayHour = new Date().getHours();
+  const isFridayAfter18 = todayDow === 5 && todayHour >= 18;
+  const now2 = new Date();
+  const lastDayOfMonth = new Date(now2.getFullYear(), now2.getMonth()+1, 0).getDate();
+  const isMonthEndAfter18 = now2.getDate() === lastDayOfMonth && todayHour >= 18;
   const alreadyMonthLottery = (data.monthlyLottery || []).some(r => r.monthKey === monthKey);
   const penaltyHistory = data.penalties || [];
   const spinnable = Math.floor(points / 5);
@@ -1772,24 +1872,18 @@ function renderRewards() {
       '<div class="status">' + (spinnable > 0 ? '<button class="btn-redeem" onclick="showLotteryModal(\'day\')">🎲 抽奖（-5分）</button>' : '<span class="status-badge locked">🔒 积分不足5分</span>') + '</div>' +
     '</div>' +
 
-    // 积分兑好好
-    '<div class="reward-card" style="border-color:rgba(0,255,136,0.25)">' +
+    // 积分兑好好入口
+    '<div class="reward-card" style="border-color:rgba(0,255,136,0.3);cursor:pointer;" onclick="showPage(\'redeem\')">' +
       '<div class="top-row"><div class="r-emoji" style="background:rgba(0,255,136,0.1)">🎁</div>' +
-      '<div class="info"><div class="r-title" style="color:var(--neon-green)">积分兑好好</div>' +
-      '<div class="desc">当前积分：<b style="color:var(--neon-blue)">' + points + '分</b></div></div></div>' +
-      '<div style="margin-top:10px;">' +
-        '<div style="font-size:12px;color:var(--text-dim);margin-bottom:6px;">小档愿望（消耗1-50分）：</div>' +
-        '<div style="display:flex;gap:8px;align-items:center;margin-bottom:10px;">' +
-          '<input id="wishSmallInput" type="text" placeholder="写下我想要的..." value="' + wishSmall + '" style="flex:1;padding:7px 12px;border-radius:999px;border:1.5px solid rgba(0,255,136,0.3);background:rgba(0,255,136,0.04);color:var(--text-main);font-size:13px;font-family:inherit;">' +
-          '<button onclick="saveWish(\'small\')" style="padding:6px 12px;border-radius:999px;border:none;background:var(--neon-green);color:#060818;font-family:inherit;font-size:12px;cursor:pointer;font-weight:bold;">保存</button>' +
-        '</div>' +
-        (points >= 1 && wishSmall ? '<button onclick="redeemWish(\'small\')" style="padding:7px 18px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--neon-green),#059669);color:#060818;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;margin-bottom:10px;">✨ 兑换小档</button><br>' : '') +
-        '<div style="font-size:12px;color:var(--text-dim);margin-bottom:6px;">大档愿望（消耗50-100分）：</div>' +
-        '<div style="display:flex;gap:8px;align-items:center;">' +
-          '<input id="wishBigInput" type="text" placeholder="写下我想要的..." value="' + wishBig + '" style="flex:1;padding:7px 12px;border-radius:999px;border:1.5px solid rgba(0,255,136,0.3);background:rgba(0,255,136,0.04);color:var(--text-main);font-size:13px;font-family:inherit;">' +
-          '<button onclick="saveWish(\'big\')" style="padding:6px 12px;border-radius:999px;border:none;background:var(--neon-green);color:#060818;font-family:inherit;font-size:12px;cursor:pointer;font-weight:bold;">保存</button>' +
-        '</div>' +
-        (points >= 50 && wishBig ? '<br><button onclick="redeemWish(\'big\')" style="padding:7px 18px;border-radius:999px;border:none;background:linear-gradient(135deg,var(--neon-green),#059669);color:#060818;font-family:inherit;font-size:13px;font-weight:bold;cursor:pointer;">✨ 兑换大档</button>' : '') +
+      '<div class="info">' +
+        '<div class="r-title" style="color:var(--neon-green)">积分兑好好</div>' +
+        '<div class="desc">当前积分：<b style="color:var(--neon-blue)">' + points + ' 分</b> · 点击进入兑换菜单</div>' +
+      '</div>' +
+      '<div style="font-size:22px;color:var(--text-dim);align-self:center;">›</div></div>' +
+      '<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;">' +
+        '<span style="padding:3px 10px;border-radius:999px;font-size:10px;font-weight:bold;background:rgba(16,185,129,0.15);color:#34D399;">🍦 小档 20分</span>' +
+        '<span style="padding:3px 10px;border-radius:999px;font-size:10px;font-weight:bold;background:rgba(0,217,255,0.12);color:var(--neon-blue);">🎮 中档 50分</span>' +
+        '<span style="padding:3px 10px;border-radius:999px;font-size:10px;font-weight:bold;background:rgba(168,85,247,0.12);color:var(--neon-purple);">👑 大档 150分</span>' +
       '</div>' +
     '</div>' +
 
@@ -1797,11 +1891,15 @@ function renderRewards() {
     '<div class="reward-card" style="border-color:rgba(255,107,0,0.3)">' +
       '<div class="top-row"><div class="r-emoji" style="background:rgba(255,107,0,0.1)">📅</div>' +
       '<div class="info"><div class="r-title" style="color:var(--neon-orange)">周奖 · 20元</div>' +
-      '<div class="desc">本周完成率≥90%，固定奖励20元，周末发放</div></div></div>' +
+      '<div class="desc">本周完成率≥90%，周五下午6:00准时发放 🎉</div></div></div>' +
       '<div class="status">' +
         '<span class="status-badge ' + (alreadyWeekLottery ? "redeemed" : weekPct >= 90 ? "available" : "locked") + '">' +
           (alreadyWeekLottery ? "✅ 本周已领" : weekPct >= 90 ? "⚡ 达标！" : "🔒 需≥90%，当前" + weekPct + "%") + '</span>' +
-        (!alreadyWeekLottery && weekPct >= 90 ? (isWeekend ? '<button class="btn-redeem" onclick="claimWeekReward()">领取20元</button>' : '<span style="font-size:11px;color:var(--text-dim);">周末才能领取~</span>') : "") +
+        (!alreadyWeekLottery && weekPct >= 90
+          ? (isFridayAfter18
+              ? '<button class="btn-redeem" onclick="claimWeekReward()">💰 领取20元</button>'
+              : '<span style="font-size:11px;color:var(--text-dim);">⏰ 周五18:00才能领取~</span>')
+          : "") +
       '</div>' +
     '</div>' +
 
@@ -1809,12 +1907,16 @@ function renderRewards() {
     '<div class="reward-card" style="border-color:rgba(168,85,247,0.3)">' +
       '<div class="top-row"><div class="r-emoji" style="background:rgba(168,85,247,0.1)">🌌</div>' +
       '<div class="info"><div class="r-title" style="color:var(--neon-purple)">月底抽奖 · 当月≥3周达标</div>' +
-      '<div class="desc">A=30元 / B=20元 / C=10元</div></div></div>' +
+      '<div class="desc">A=30元 / B=20元 / C=10元 · 月底18:00开放抽奖 🌌</div></div></div>' +
       '<div class="ipad-progress">当月≥90%周数：<b>' + monthWeeks + '</b> / 3 周<div class="ipad-bar-wrap"><div class="ipad-bar" style="width:' + Math.min(100,Math.round(monthWeeks/3*100)) + '%;background:linear-gradient(135deg,var(--neon-purple),#EC4899)"></div></div></div>' +
       '<div class="status">' +
         '<span class="status-badge ' + (alreadyMonthLottery ? "redeemed" : monthWeeks >= 3 ? "available" : "locked") + '">' +
           (alreadyMonthLottery ? "✅ 本月已抽" : monthWeeks >= 3 ? "⚡ 达标！" : "🔒 还差" + (3-monthWeeks) + "周") + '</span>' +
-        (!alreadyMonthLottery && monthWeeks >= 3 ? '<button class="btn-redeem" onclick="showLotteryModal(\'month\')">抽奖</button>' : "") +
+        (!alreadyMonthLottery && monthWeeks >= 3
+          ? (isMonthEndAfter18
+              ? '<button class="btn-redeem" onclick="showLotteryModal(\'month\')">🌌 去抽奖</button>'
+              : '<span style="font-size:11px;color:var(--text-dim);">⏰ 月底18:00才能抽~</span>')
+          : "") +
       '</div>' +
     '</div>' +
 
@@ -1868,6 +1970,100 @@ function renderRewards() {
     '</div>';
 }
 
+// ===== REDEEM PAGE =====
+function renderRedeemPage() {
+  const data = loadData();
+  const points = getTotalPoints(data);
+  const history = (data.wishRedeemed || []).slice().reverse();
+  const el = document.getElementById("redeemContent");
+  if (!el) return;
+
+  // 积分概览
+  let html =
+    '<div style="background:linear-gradient(135deg,rgba(0,255,136,0.1),rgba(0,217,255,0.08));border:1.5px solid rgba(0,255,136,0.3);border-radius:18px;padding:14px 16px;margin-bottom:16px;text-align:center;">' +
+      '<div style="font-size:12px;color:var(--text-dim);">⭐ 当前可用积分</div>' +
+      '<div style="font-size:36px;font-weight:bold;color:var(--neon-green);line-height:1.2;">' + points + '</div>' +
+      '<div style="font-size:11px;color:var(--text-dim);">完成任务赚积分，积分换好好~</div>' +
+    '</div>';
+
+  // 三档兑换
+  html +=
+    // 小档
+    '<div class="reward-card" style="border-color:rgba(16,185,129,0.4);margin-bottom:10px;">' +
+      '<div class="top-row">' +
+        '<div class="r-emoji" style="background:rgba(16,185,129,0.15);font-size:28px;">🍦</div>' +
+        '<div class="info">' +
+          '<div class="r-title" style="color:#34D399;">小档 · 20分</div>' +
+          '<div class="desc">雪糕 / 冰冰酱 / 奶茶一杯（三选一）</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="status">' +
+        (points >= 20
+          ? '<span class="status-badge available">⚡ 可兑换！</span><button class="btn-redeem" onclick="redeemWish(\'small\')">✨ 兑换（消耗20分）</button>'
+          : '<span class="status-badge locked">🔒 还差' + (20-points) + '分</span>') +
+      '</div>' +
+    '</div>' +
+
+    // 中档
+    '<div class="reward-card" style="border-color:rgba(0,217,255,0.4);margin-bottom:10px;">' +
+      '<div class="top-row">' +
+        '<div class="r-emoji" style="background:rgba(0,217,255,0.12);font-size:28px;">🎮</div>' +
+        '<div class="info">' +
+          '<div class="r-title" style="color:var(--neon-blue);">中档 · 50分</div>' +
+          '<div class="desc">① 增加两次游戏（每次30分钟）<br>② 妈妈买任何物品（≤50元）</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="status" style="flex-wrap:wrap;gap:8px;">' +
+        (points >= 50
+          ? '<span class="status-badge available">⚡ 可兑换！</span>' +
+            '<button class="btn-redeem" onclick="redeemWish(\'mid_game\')">🎮 游戏时间</button>' +
+            '<button class="btn-redeem" style="background:linear-gradient(135deg,#60A5FA,#3B82F6);" onclick="redeemWish(\'mid_gift\')">🎁 买礼物</button>'
+          : '<span class="status-badge locked">🔒 还差' + (50-points) + '分</span>') +
+      '</div>' +
+    '</div>' +
+
+    // 大档
+    '<div class="reward-card" style="border-color:rgba(168,85,247,0.4);margin-bottom:16px;">' +
+      '<div class="top-row">' +
+        '<div class="r-emoji" style="background:rgba(168,85,247,0.15);font-size:28px;">👑</div>' +
+        '<div class="info">' +
+          '<div class="r-title" style="color:var(--neon-purple);">大档 · 150分</div>' +
+          '<div class="desc">妈妈买任何物品（≤80元）</div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="status">' +
+        (points >= 150
+          ? '<span class="status-badge available">⚡ 可兑换！</span><button class="btn-redeem" style="background:linear-gradient(135deg,var(--neon-purple),#7C3AED);color:white;" onclick="redeemWish(\'big\')">👑 兑换（消耗150分）</button>'
+          : '<span class="status-badge locked">🔒 还差' + (150-points) + '分</span>') +
+      '</div>' +
+    '</div>';
+
+  // 兑换历史记录
+  html += '<div style="font-size:14px;font-weight:bold;color:var(--text-dim);margin-bottom:10px;padding-left:2px;">📋 妈妈兑换确认记录</div>';
+  if (!history.length) {
+    html += '<div style="text-align:center;color:var(--text-dim);font-size:13px;padding:20px 0;background:rgba(255,255,255,0.03);border-radius:14px;border:1px dashed rgba(255,255,255,0.08);">还没有兑换记录，快去攒积分吧~</div>';
+  } else {
+    const tierLabel = { small:'🍦 小档', mid_game:'🎮 中档·游戏', mid_gift:'🎁 中档·礼物', big:'👑 大档' };
+    const tierColor = { small:'#34D399', mid_game:'var(--neon-blue)', mid_gift:'#60A5FA', big:'var(--neon-purple)' };
+    html += history.map(r => {
+      const label = tierLabel[r.tier] || r.tier;
+      const color = tierColor[r.tier] || 'var(--text-main)';
+      return '<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 12px;border-radius:14px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.07);margin-bottom:8px;">' +
+        '<div style="flex:1;min-width:0;">' +
+          '<div style="font-size:13px;font-weight:bold;color:' + color + ';">' + label + '</div>' +
+          '<div style="font-size:11px;color:var(--text-dim);margin-top:2px;">' + (r.desc || '') + '</div>' +
+          '<div style="font-size:10px;color:#4B7A9A;margin-top:3px;">' + new Date(r.date).toLocaleString('zh-CN') + '</div>' +
+        '</div>' +
+        '<div style="text-align:right;flex-shrink:0;">' +
+          '<div style="font-size:14px;font-weight:bold;color:#EF4444;">-' + r.cost + '分</div>' +
+        '</div>' +
+      '</div>';
+    }).join('');
+  }
+
+  el.innerHTML = html;
+}
+
 // ===== WISH / REDEEM =====
 function saveWish(tier) {
   const data = loadData();
@@ -1878,17 +2074,37 @@ function saveWish(tier) {
 function redeemWish(tier) {
   const data = loadData();
   const points = getTotalPoints(data);
-  const wish = tier === "small" ? (data.wishSmall || "") : (data.wishBig || "");
-  if (!wish) { alert("请先填写愿望！"); return; }
-  if (tier === "big" && points < 50) { alert("大档愿望需要50分以上，积分不足。"); return; }
-  if (tier === "small" && points < 1) { alert("积分不足。"); return; }
-  const cost = points;
-  if (!confirm("确认用 " + cost + " 积分兑换：[" + wish + "]?\n兑换后积分清零，记得找妈妈确认哦~")) return;
-  data.pointsSpent = (data.pointsSpent || 0) + cost;
-  if (!data.wishRedeemed) data.wishRedeemed = [];
-  data.wishRedeemed.push({ tier, wish, cost, date: new Date().toISOString() });
-  saveData(data); playSuccess(); alert("兑换成功！去找妈妈实现愿望吧！");
-  renderRewards();
+  let cost, desc, minPoints;
+  if (tier === 'small') {
+    cost = 20; minPoints = 20;
+    desc = '小档兑换：雪糕 / 冰冰酱 / 奶茶一杯（消耗20分）';
+  } else if (tier === 'mid_game') {
+    cost = 50; minPoints = 50;
+    desc = '中档兑换：增加两次游戏时间（每次30分钟，消耗50分）';
+  } else if (tier === 'mid_gift') {
+    cost = 50; minPoints = 50;
+    desc = '中档兑换：妈妈买任何物品（≤50元，消耗50分）';
+  } else {
+    cost = 150; minPoints = 150;
+    desc = '大档兑换：妈妈买任何物品（≤80元，消耗150分）';
+  }
+  if (points < minPoints) {
+    alert('😅 积分还不够哦！\n需要 ' + minPoints + ' 分，当前只有 ' + points + ' 分，还差 ' + (minPoints - points) + ' 分，继续加油！');
+    return;
+  }
+  requirePassword('兑换奖励需要妈妈确认', () => {
+    if (!confirm('确认兑换：\n' + desc + '\n\n兑换后积分减少' + cost + '分，记得找妈妈实现哦~')) return;
+    const d = loadData();
+    d.pointsSpent = (d.pointsSpent || 0) + cost;
+    if (!d.wishRedeemed) d.wishRedeemed = [];
+    d.wishRedeemed.push({ tier, desc, cost, date: new Date().toISOString() });
+    saveData(d); playSuccess();
+    alert('🎉 兑换成功！去找妈妈实现愿望吧！');
+    renderRedeemPage();
+    renderRewards();
+    renderStartPage();
+    renderAwardSummary();
+  });
 }
 
 // ===== LOTTERY =====
@@ -1919,9 +2135,17 @@ function showLotteryModal(type) {
     spinBtn.textContent = "💰 领取20元";
   } else {
     titleEl.textContent = "🌌 月底抽奖！";
-    descEl.textContent = "恭喜本月达标！抽取月奖~";
+    descEl.textContent = "恭喜本月达标！月底18:00开放，抽取月奖~";
     slotEl.textContent = "🌌";
-    spinBtn.onclick = () => doLottery("month");
+    spinBtn.onclick = () => {
+      const now = new Date();
+      const lastDay = new Date(now.getFullYear(), now.getMonth()+1, 0).getDate();
+      if (!(now.getDate() === lastDay && now.getHours() >= 18)) {
+        alert("月底下午6点以后才能抽月奖哦~\n还没到时间，继续积累！");
+        return;
+      }
+      doLottery("month");
+    };
   }
   spinBtn.textContent = "🚀 抽！";
   modal.style.display = "flex";
@@ -1962,7 +2186,7 @@ function doLottery(type) {
       resultEl.textContent = "🎉 " + prize.label + "！";
       resultEl.style.display = "block";
       playSuccess();
-      renderStartPage(); renderAwardSummary();
+      renderStartPage(); renderAwardSummary(); renderRewards();
     }
   }, 80);
 }
@@ -1973,13 +2197,15 @@ function claimWeekReward() {
   const weekPct = stats.totalMax > 0 ? Math.round(stats.totalEarned / stats.totalMax * 100) : 0;
   if (weekPct < 90) { alert("本周完成率还没达到90%哦~"); return; }
   if ((data.weeklyLottery || []).some(r => r.weekKey === weekKey)) { alert("本周奖励已领取~"); return; }
+  const now = new Date();
+  if (!(now.getDay() === 5 && now.getHours() >= 18)) { alert("周五下午6点以后才能领取周奖哦~\n现在还没到时间，继续加油！"); return; }
   if (!data.weeklyLottery) data.weeklyLottery = [];
   data.weeklyLottery.push({ id: "W", emoji: "💰", label: "周奖 · 20元", cash: 20, date: new Date().toISOString(), weekKey, monthKey: getMonthKey(), pct: weekPct });
   saveData(data);
   closeLottery();
   playSuccess();
   alert("🎉 恭喜！周奖20元已入账！找妈妈领取吧~");
-  renderRewards(); renderAwardSummary();
+  renderRewards(); renderAwardSummary(); renderStartPage();
 }
 
 // ===== PENALTY =====
@@ -2056,6 +2282,8 @@ function resetToday() {
   saveData(data);
   alert("今日记录已清除。");
   renderStartPage();
+  renderRewards();
+  renderAwardSummary();
 }
 
 // ===== RESET ALL =====
@@ -2162,10 +2390,11 @@ function closeManageCustomTasksModal() { document.getElementById("manageCustomTa
 // ===== SETTINGS =====
 function enterSettings() { requirePassword("进入系统设置需要妈妈密码", () => showPage("settings")); }
 var THEMES = [
-  { id: "space",  name: "深空黑", emoji: "🚀", desc: "宇宙科技风", preview: "linear-gradient(135deg, #060818, #0D1B3E, #1E40AF)" },
-  { id: "cyber",  name: "赛博绿", emoji: "💻", desc: "黑客极客风", preview: "linear-gradient(135deg, #001208, #003820, #00FF88)" },
-  { id: "fire",   name: "烈焰橙", emoji: "🔥", desc: "热血战斗风", preview: "linear-gradient(135deg, #1A0500, #7C2D12, #FF6B00)" },
-  { id: "galaxy", name: "星云紫", emoji: "🌌", desc: "神秘星系风", preview: "linear-gradient(135deg, #0D0014, #3B0764, #A855F7)" },
+  { id: "space",   name: "深空黑",  emoji: "🚀", desc: "宇宙科技风",  preview: "linear-gradient(135deg, #060818, #0D1B3E, #1E40AF)" },
+  { id: "cyber",   name: "赛博绿",  emoji: "💻", desc: "黑客极客风",  preview: "linear-gradient(135deg, #001208, #003820, #00FF88)" },
+  { id: "fire",    name: "烈焰橙",  emoji: "🔥", desc: "热血战斗风",  preview: "linear-gradient(135deg, #1A0500, #7C2D12, #FF6B00)" },
+  { id: "galaxy",  name: "星云紫",  emoji: "🌌", desc: "神秘星系风",  preview: "linear-gradient(135deg, #0D0014, #3B0764, #A855F7)" },
+  { id: "jpwarm",  name: "日系暖",  emoji: "🌸", desc: "温柔浅色风",  preview: "linear-gradient(135deg, #FFF5F0, #FFE4D6, #F9C5A0)" },
 ];
 function applyTheme(themeId) {
   THEMES.forEach(t => document.body.classList.remove("theme-" + t.id));
@@ -2184,16 +2413,24 @@ function applyThemeVars(themeId) {
               sf: "radial-gradient(ellipse at 30% 50%, rgba(200,50,0,0.2) 0%, transparent 60%), radial-gradient(ellipse at 70% 20%, rgba(255,100,0,0.15) 0%, transparent 55%), #1A0500" },
     galaxy: { nb: "#A855F7", np: "#EC4899", ng: "#00D9FF", bg: "#0D0014", bm: "#3B0764",
               sf: "radial-gradient(ellipse at 20% 50%, rgba(120,0,200,0.2) 0%, transparent 60%), radial-gradient(ellipse at 80% 30%, rgba(200,0,100,0.15) 0%, transparent 55%), radial-gradient(ellipse at 50% 80%, rgba(0,100,200,0.1) 0%, transparent 50%), #0D0014" },
+    jpwarm: { nb: "#D4607A", np: "#B5838D", ng: "#7D9B6B", bg: "#FFF8F4", bm: "#FFF0E8",
+              sf: "radial-gradient(ellipse at 20% 30%, rgba(255,192,180,0.5) 0%, transparent 55%), radial-gradient(ellipse at 75% 15%, rgba(255,218,185,0.6) 0%, transparent 50%), radial-gradient(ellipse at 55% 80%, rgba(255,160,140,0.3) 0%, transparent 50%), #FFF8F4" },
   };
   const t = themes[themeId] || themes.space;
-  root.style.setProperty("--neon-blue", t.nb);
+  const isLight = themeId === "jpwarm";
+  root.style.setProperty("--neon-blue",   t.nb);
   root.style.setProperty("--neon-purple", t.np);
-  root.style.setProperty("--neon-green", t.ng);
-  root.style.setProperty("--neon-orange", themeId === "fire" ? "#FFD700" : "#FF6B00");
-  root.style.setProperty("--bg-deep", t.bg);
-  root.style.setProperty("--bg-mid", t.bm);
-  root.style.setProperty("--panel", "rgba(" + hexToRgb(t.bm) + ", 0.75)");
+  root.style.setProperty("--neon-green",  t.ng);
+  root.style.setProperty("--neon-orange", themeId === "fire" ? "#FFD700" : isLight ? "#E8733A" : "#FF6B00");
+  root.style.setProperty("--bg-deep",  t.bg);
+  root.style.setProperty("--bg-mid",   t.bm);
+  root.style.setProperty("--panel",    isLight ? "rgba(255,240,230,0.85)" : "rgba(" + hexToRgb(t.bm) + ", 0.75)");
+  root.style.setProperty("--border-glow", isLight ? "rgba(212,96,122,0.3)" : "rgba(0,217,255,0.35)");
+  root.style.setProperty("--text-main", isLight ? "#3D2B2B" : "#E0F2FE");
+  root.style.setProperty("--text-dim",  isLight ? "#9B7B7B" : "#7BA3C8");
   document.body.style.background = t.bg;
+  // star dots: white on dark, soft sakura on light
+  document.body.classList.toggle("theme-light", isLight);
   const sf = document.getElementById("starfield");
   if (sf) sf.style.background = t.sf;
 }
