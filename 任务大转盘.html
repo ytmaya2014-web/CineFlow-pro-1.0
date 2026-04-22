@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-<title>任务大转盘 🎯</title>
+<title>于小渔专属大转盘 🎯</title>
 <link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&display=swap" rel="stylesheet">
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
@@ -583,7 +583,7 @@
       <div id="todayDoneBlock" style="display:none;"></div>
       <div id="todayResetBlock" style="text-align:right;margin:-10px 0 8px;">
         <button onclick="resetToday()" style="padding:4px 14px;border-radius:999px;border:1.5px solid #EF4444;background:white;color:#EF4444;font-family:inherit;font-size:12px;cursor:pointer;">🗑 清除今日</button>
-        <button onclick="injectTestPoints()" style="padding:4px 14px;border-radius:999px;border:1.5px solid #F97316;background:white;color:#F97316;font-family:inherit;font-size:12px;cursor:pointer;">🧪 注入测试积分</button>
+
       </div>
 
       <div id="awardSummaryBlock" style="display:none;"></div>
@@ -591,7 +591,7 @@
       <div id="momNotebookBlock" style="margin-bottom:14px;"></div>
 
       <div class="sparkle">✨</div>
-      <h1 class="title">任务大转盘</h1>
+      <h1 class="title">于小渔专属大转盘</h1>
       <p class="subtitle">
         每次随机抽取 <span class="hl">5个任务</span><br>
         <span class="sm">(读书是必选哟~)</span>
@@ -780,6 +780,22 @@
         <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;">
           <button id="setPasswordBtn" onclick="showSetPasswordModal()" style="padding:8px 16px;border-radius:999px;border:none;background:linear-gradient(135deg,#F59E0B,#D97706);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">设置密码</button>
           <button id="removePasswordBtn" onclick="removePassword()" style="display:none;padding:8px 16px;border-radius:999px;border:2px solid #6B7280;background:white;color:#6B7280;font-family:inherit;font-size:13px;cursor:pointer;">取消密码保护</button>
+        </div>
+      </div>
+
+      <!-- 妈妈积分管理 -->
+      <div class="reward-card" style="border-color:#10B981" id="momPointsCard">
+        <div class="top-row">
+          <div class="r-emoji" style="background:#D1FAE5">⭐</div>
+          <div class="info">
+            <div class="r-title" style="color:#059669">妈妈积分管理</div>
+            <div class="desc">根据孩子表现，手动注入或扣减积分</div>
+          </div>
+        </div>
+        <div id="momPointsCurrentDisplay" style="margin-top:10px;text-align:center;font-size:15px;color:#059669;font-weight:bold;"></div>
+        <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+          <button onclick="showMomPointsModal('add')" style="padding:9px 18px;border-radius:999px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">➕ 注入积分</button>
+          <button onclick="showMomPointsModal('deduct')" style="padding:9px 18px;border-radius:999px;border:none;background:linear-gradient(135deg,#EF4444,#DC2626);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">➖ 扣减积分</button>
         </div>
       </div>
 
@@ -985,6 +1001,27 @@
     <div class="ipad-progress" id="ipadProgress" style="display:none;"></div>
     <button class="btn-lottery-spin" id="lotterySpinBtn">抽!</button>
     <button class="btn-lottery-close" onclick="closeLottery()">稍后领取</button>
+  </div>
+</div>
+
+<!-- 妈妈积分管理弹窗 -->
+<div class="lottery-modal" id="momPointsModal" style="display:none;">
+  <div class="lottery-box" style="max-width:380px;text-align:left;">
+    <h2 id="momPointsModalTitle" style="font-size:22px;text-align:center;color:#059669;">⭐ 注入积分</h2>
+    <div style="font-size:13px;color:#666;margin:10px 0 14px;text-align:center;" id="momPointsModalDesc">请输入要注入的积分数量</div>
+    <div style="margin-bottom:12px;">
+      <label style="font-size:13px;color:#374151;font-weight:bold;">积分数量：</label>
+      <input id="momPointsInput" type="number" min="1" max="999" placeholder="输入积分数（如 10）" style="width:100%;padding:10px 14px;border-radius:12px;border:2px solid #A7F3D0;font-size:16px;font-family:inherit;margin-top:4px;">
+    </div>
+    <div style="margin-bottom:14px;">
+      <label style="font-size:13px;color:#374151;font-weight:bold;">原因备注（可选）：</label>
+      <input id="momPointsReason" type="text" maxlength="30" placeholder="如：表现特别棒、完成了额外任务..." style="width:100%;padding:10px 14px;border-radius:12px;border:2px solid #A7F3D0;font-size:14px;font-family:inherit;margin-top:4px;">
+    </div>
+    <div id="momPointsError" style="font-size:13px;color:#DC2626;text-align:center;margin-bottom:10px;display:none;"></div>
+    <div style="display:flex;gap:10px;">
+      <button id="momPointsConfirmBtn" onclick="doMomPoints()" style="flex:1;padding:10px;border-radius:999px;border:none;background:linear-gradient(135deg,#10B981,#059669);color:white;font-family:inherit;font-size:14px;font-weight:bold;cursor:pointer;">✓ 确认</button>
+      <button onclick="closeMomPointsModal()" style="flex:1;padding:10px;border-radius:999px;border:2px solid #E5E7EB;background:white;color:#666;font-family:inherit;font-size:14px;cursor:pointer;">取消</button>
+    </div>
   </div>
 </div>
 
@@ -2671,6 +2708,8 @@ function renderSettingsPage() {
 
   // 记事本管理
   renderSettingsPenaltyList();
+  // 积分管理
+  renderMomPointsCard();
 }
 
 function renderSettingsPenaltyList() {
@@ -2873,6 +2912,72 @@ function reset() {
     wheelTasks: [],
   };
   showPage("start");
+}
+
+
+// ========== 妈妈积分管理 ==========
+var _momPointsMode = 'add';
+
+function showMomPointsModal(mode) {
+  requirePassword("妈妈积分管理需要妈妈密码", function() {
+    _momPointsMode = mode;
+    var isAdd = (mode === 'add');
+    document.getElementById("momPointsModal").style.display = "flex";
+    document.getElementById("momPointsModalTitle").textContent = isAdd ? "⭐ 注入积分" : "📉 扣减积分";
+    document.getElementById("momPointsModalTitle").style.color = isAdd ? "#059669" : "#DC2626";
+    document.getElementById("momPointsModalDesc").textContent = isAdd ? "根据孩子表现手动增加积分" : "根据孩子表现手动扣减积分";
+    document.getElementById("momPointsInput").value = "";
+    document.getElementById("momPointsReason").value = "";
+    document.getElementById("momPointsError").style.display = "none";
+    var btn = document.getElementById("momPointsConfirmBtn");
+    btn.style.background = isAdd ? "linear-gradient(135deg,#10B981,#059669)" : "linear-gradient(135deg,#EF4444,#DC2626)";
+    setTimeout(function(){ document.getElementById("momPointsInput").focus(); }, 100);
+  });
+}
+
+function closeMomPointsModal() {
+  document.getElementById("momPointsModal").style.display = "none";
+}
+
+function doMomPoints() {
+  var val = parseInt(document.getElementById("momPointsInput").value, 10);
+  var errEl = document.getElementById("momPointsError");
+  if (!val || val <= 0 || isNaN(val)) {
+    errEl.textContent = "请输入有效的积分数量（大于0的整数）";
+    errEl.style.display = "block";
+    return;
+  }
+  var reason = (document.getElementById("momPointsReason").value || "").trim();
+  var isAdd = (_momPointsMode === 'add');
+  var points = isAdd ? val : -val;
+  var emoji = isAdd ? "⭐" : "📉";
+  var label = (isAdd ? "妈妈注入积分 +" : "妈妈扣减积分 -") + val + "分" + (reason ? "（" + reason + "）" : "");
+
+  var data = loadData();
+  if (!data.penalties) data.penalties = [];
+  data.penalties.push({
+    type: isAdd ? "mom_add" : "mom_deduct",
+    emoji: emoji,
+    label: label,
+    points: points,
+    cash: 0,
+    date: new Date().toISOString(),
+  });
+  data.pointsSpent = (data.pointsSpent || 0) - points;
+  saveData(data);
+  closeMomPointsModal();
+  playSuccess();
+  renderMomNotebook();
+  renderAwardSummary();
+  renderSettingsPage();
+  alert((isAdd ? "✅ 已注入 " : "✅ 已扣减 ") + val + " 积分！");
+}
+
+function renderMomPointsCard() {
+  var el = document.getElementById("momPointsCurrentDisplay");
+  if (!el) return;
+  var points = getTotalPoints(loadData());
+  el.textContent = "当前可用积分：" + points + " 分";
 }
 
 loadThemeOnStart();
