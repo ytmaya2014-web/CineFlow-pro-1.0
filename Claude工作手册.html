@@ -467,6 +467,62 @@ mark { background: var(--accent); color: #fff; padding: 0 2px; border-radius: 2p
 }
 .toast.show { opacity: 1; transform: translateX(-50%) translateY(-8px); }
 
+/* ── 三工具联动案例专用样式 ── */
+.case-timeline { margin: 0; padding: 0; list-style: none; }
+.case-step {
+  display: flex; gap: 12px;
+  margin-bottom: 4px;
+  position: relative;
+}
+.case-step::before {
+  content: '';
+  position: absolute;
+  left: 19px; top: 38px;
+  width: 2px; bottom: -4px;
+  background: var(--border);
+}
+.case-step:last-child::before { display: none; }
+.case-dot {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 13px; font-weight: 700; flex-shrink: 0;
+  border: 2px solid transparent;
+  position: relative; z-index: 1;
+}
+.case-dot.chat  { background: rgba(106,158,181,0.15); border-color: var(--chat-color);  color: var(--chat-color); }
+.case-dot.cowork{ background: rgba(201,149,74,0.15);  border-color: var(--cowork-color); color: var(--cowork-color); }
+.case-dot.code  { background: rgba(123,160,91,0.15);  border-color: var(--success);     color: var(--success); }
+.case-body { flex: 1; padding-bottom: 20px; }
+.case-tool-label {
+  display: inline-flex; align-items: center; gap: 4px;
+  font-size: 10px; font-weight: 700; letter-spacing: 0.06em;
+  padding: 2px 8px; border-radius: 10px; margin-bottom: 5px;
+  text-transform: uppercase;
+}
+.case-tool-label.chat   { background: rgba(106,158,181,0.15); color: var(--chat-color); }
+.case-tool-label.cowork { background: rgba(201,149,74,0.15);  color: var(--cowork-color); }
+.case-tool-label.code   { background: rgba(123,160,91,0.15);  color: var(--success); }
+.case-title { font-size: 14px; font-weight: 600; margin-bottom: 5px; color: var(--text); }
+.case-desc  { font-size: 12.5px; color: var(--text-dim); line-height: 1.65; }
+.case-hand  { font-size: 12px; color: var(--text-faint); margin-top: 6px; font-style: italic; }
+.case-arrow-row {
+  display: flex; align-items: center; gap: 6px;
+  margin: 4px 0 16px 52px;
+  font-size: 12px; color: var(--accent); font-weight: 600;
+}
+.cc-step-row {
+  display: grid; grid-template-columns: 28px 1fr; gap: 10px;
+  align-items: start; margin-bottom: 10px;
+}
+.cc-step-num {
+  width: 28px; height: 28px; border-radius: 50%;
+  background: rgba(123,160,91,0.15); border: 1.5px solid var(--success);
+  color: var(--success); font-size: 11px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+}
+.cc-step-body { font-size: 13px; color: var(--text-dim); line-height: 1.6; padding-top: 4px; }
+.cc-step-body strong { color: var(--text); }
+
 .hero {
   background: linear-gradient(135deg, var(--bg-card), var(--bg-elevated));
   border: 1px solid var(--border);
@@ -541,6 +597,7 @@ mark { background: var(--accent); color: #fff; padding: 0 2px; border-radius: 2p
     <div class="tab" data-tab="advanced">🚀 进阶</div>
     <div class="tab" data-tab="resources">📚 资源</div>
     <div class="tab" data-tab="pitfalls">⚠️ 避坑</div>
+    <div class="tab" data-tab="claudecode">💻 Claude Code</div>
   </div>
 </div>
 
@@ -551,20 +608,20 @@ mark { background: var(--accent); color: #fff; padding: 0 2px; border-radius: 2p
   <!-- ============ HOME 上手 ============ -->
   <div class="section active" data-section="home">
     <div class="hero">
-      <div class="hero-title">两套环境,各司其职</div>
-      <div class="hero-text">思想的事在云端做(Chat),执行的事在本地做(Cowork)。Chat 是和聪明伙伴对谈,Cowork 是给同事派活。</div>
+      <div class="hero-title">三套工具，各司其职</div>
+      <div class="hero-text">思考用 Chat，执行用 Cowork，本地文件用 Claude Code。三者不是替代关系，是分工关系。</div>
       <div class="hero-flow">
-        <div class="flow-node">💬 Chat</div>
+        <div class="flow-node">💬 Chat 思考</div>
         <div class="flow-arrow">→</div>
-        <div class="flow-node">📄 Artifact</div>
+        <div class="flow-node">⚙️ Cowork 执行</div>
         <div class="flow-arrow">→</div>
-        <div class="flow-node">⚙️ Cowork</div>
+        <div class="flow-node">💻 Code 落地</div>
         <div class="flow-arrow">↻</div>
         <div class="flow-node">📚 Knowledge</div>
       </div>
     </div>
 
-    <div class="section-title">14 步完整上手</div>
+    <div class="section-title">17 步完整上手</div>
     <div class="section-desc">按顺序走。卡片中的橙色链接可点击跳转到相关章节。</div>
 
     <div class="group-title">基础准备(共用)</div>
@@ -602,9 +659,10 @@ mark { background: var(--accent); color: #fff; padding: 0 2px; border-radius: 2p
       </div>
     </div>
 
-    <div class="group-title">两套环境分别搭建(对照查阅)</div>
+    <div class="group-title">三套环境分别搭建(对照查阅)</div>
 
-    <div class="flow-columns">
+    <div class="flow-columns" style="grid-template-columns:1fr;">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" class="two-col-wrap">
       <!-- ===== CHAT 列 ===== -->
       <div class="flow-column chat">
         <div class="flow-column-header">
@@ -805,6 +863,103 @@ mark { background: var(--accent); color: #fff; padding: 0 2px; border-radius: 2p
       </div>
     </div>
 
+    <!-- ===== CLAUDE CODE 列（独立一行，全宽）===== -->
+    <div class="flow-column" style="border-top: 3px solid var(--success); margin-top: 16px;">
+      <div class="flow-column-header" style="border-radius: 12px 12px 0 0; border: 1px solid var(--border); border-bottom: none; border-top: 3px solid var(--success);">
+        <div class="flow-column-icon">💻</div>
+        <div class="flow-column-title">Claude Code 流程</div>
+        <div class="flow-column-subtitle" style="color: var(--success);">本地文件·落地执行</div>
+      </div>
+      <div class="flow-column-body" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:12px;">
+
+        <div class="card" data-search="Claude Code 下载 桌面 安装 登录">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon" style="background:rgba(123,160,91,0.15);color:var(--success);">13</div>
+            <div class="card-title">下载 & 登录</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              1. <strong>claude.ai/download</strong> 下载桌面端<br>
+              2. 打开后用付费账号登录（Pro 起步）<br>
+              3. 首次登录自动创建 Claude Code 工作区
+            </div>
+            <div class="tip warn">遇到 403 错误 → 检查订阅类型，免费账号无法使用。</div>
+          </div>
+        </div>
+
+        <div class="card" data-search="Claude Code 项目文件夹 打开 选择">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon" style="background:rgba(123,160,91,0.15);color:var(--success);">14</div>
+            <div class="card-title">打开项目文件夹</div>
+            <div class="card-badge danger">第一步</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              1. 先在 Mac Finder 建好项目文件夹<br>
+              2. Claude Code 界面 → 项目选择器 → 选中该文件夹<br>
+              3. 它的工作范围 = 这个文件夹，出不去
+            </div>
+            <div class="tip"><strong>一个项目 = 一个文件夹 = 一个 CLAUDE.md</strong></div>
+            <div class="cross-link" onclick="jumpTo('claudecode')">查看 Claude Code 完整教程</div>
+          </div>
+        </div>
+
+        <div class="card" data-search="CLAUDE.md 创建 规矩 记忆">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon" style="background:rgba(123,160,91,0.15);color:var(--success);">15</div>
+            <div class="card-title">写 CLAUDE.md</div>
+            <div class="card-badge accent">核心</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              项目文件夹里的「记忆文件」，每次打开自动读取。写什么：<br><br>
+              • 项目背景（这个项目是做什么的）<br>
+              • 文件夹结构（各个子目录放什么）<br>
+              • 工作规矩（命名格式、语言、操作习惯）
+            </div>
+            <div class="tip">规矩写在 CLAUDE.md 里，/clear 清对话不会丢。</div>
+          </div>
+        </div>
+
+        <div class="card" data-search="Claude Code 下任务 派活 指令 文件操作">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon" style="background:rgba(123,160,91,0.15);color:var(--success);">16</div>
+            <div class="card-title">下任务·点 Allow·看结果</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              <strong>下任务：</strong>中文说清楚「做什么、放哪里、叫什么名字」<br><br>
+              <strong>点 Allow：</strong>它每次写文件前都要你授权，不会自作主张<br><br>
+              <strong>看结果：</strong>去 Finder 打开对应文件夹，人工复核内容
+            </div>
+            <div class="tip warn">新任务前先 <strong>/clear</strong>，规矩靠 CLAUDE.md 保留，对话历史不要堆积。</div>
+          </div>
+        </div>
+
+        <div class="card" style="grid-column: 1/-1;" data-search="Claude Code 多项目 切换 交接">
+          <div class="card-header" onclick="toggleCard(this)">
+            <div class="card-icon" style="background:rgba(123,160,91,0.15);color:var(--success);">17</div>
+            <div class="card-title">多项目切换 & 交接</div>
+            <div class="card-arrow">›</div>
+          </div>
+          <div class="card-body">
+            <div class="step-detail">
+              <strong>切换项目：</strong>项目选择器换文件夹 → 第一件事 /clear → 它自动读新项目的 CLAUDE.md<br><br>
+              <strong>交接助理：</strong>先把全局规矩合并进项目 CLAUDE.md → 压缩文件夹发出 → 对方打开后读 CLAUDE.md 确认理解再开工
+            </div>
+            <div class="tip danger">Claude Code 没有全局记忆——它只知道当前打开文件夹里的事。切换项目等于换了一个全新助理。</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    </div><!-- end flow-columns wrapper -->
+
     <div class="group-title">高阶 + 维护(共用)</div>
 
     <div class="card" data-search="协作流程 流转 双端">
@@ -843,9 +998,382 @@ mark { background: var(--accent); color: #fff; padding: 0 2px; border-radius: 2p
     <div class="tip" style="margin-top: 20px;">
       <strong>新手强烈建议:</strong>先把 Chat 流程跑顺(步骤 3-6)再启动 Cowork(步骤 7-12)。不要两个一起开新坑。
     </div>
-  </div>
 
-  <!-- ============ CONCEPT ============ -->
+    <!-- ===== 三者联动案例 ===== -->
+    <div class="group-title" style="margin-top:32px;">三工具联动实战案例：做一个贪吃蛇游戏</div>
+
+    <div class="hero" style="margin-bottom:16px;">
+      <div class="hero-title">为什么用「做游戏」演示？</div>
+      <div class="hero-text">
+        游戏开发涵盖了所有典型场景：需要用 Chat 想清楚设计、用 Cowork 管理文件和文档、用 Claude Code 实际写和调代码。零基础也能跟着走完全程，做出一个真实可以玩的成品。
+      </div>
+      <div class="hero-flow">
+        <div class="flow-node" style="color:var(--chat-color)">💬 Chat 设计</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="color:var(--cowork-color)">⚙️ Cowork 整理</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node" style="color:var(--success)">💻 Code 实现</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">🎮 可玩成品</div>
+      </div>
+    </div>
+
+    <!-- 案例卡：阶段一 -->
+    <div class="card expanded" data-search="案例 贪吃蛇 游戏 Chat 设计 需求">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon" style="background:rgba(106,158,181,0.15);color:var(--chat-color);">①</div>
+        <div class="card-title">阶段一：用 Chat 想清楚游戏设计</div>
+        <div class="card-badge chat">Chat</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail" style="margin-bottom:14px;">
+          <strong>你在做什么：</strong>和 Chat 对谈，把脑子里模糊的想法变成清晰的设计文档。这一步不写任何代码，只是把「想法」变成「规格」。
+        </div>
+
+        <ul class="case-timeline">
+
+          <li class="case-step">
+            <div class="case-dot chat">1</div>
+            <div class="case-body">
+              <div class="case-tool-label chat">💬 Chat</div>
+              <div class="case-title">打开 Chat，说清楚你想做什么</div>
+              <div class="case-desc">在 claude.ai 新建对话，描述你的想法。不需要懂代码，只要说清楚"我想要什么感觉"。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>你输入的内容</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">我想做一个贪吃蛇游戏，在浏览器里玩。
+我是完全零基础，不懂代码。
+
+帮我设计这个游戏的规格：
+- 游戏界面长什么样（大小、颜色风格）
+- 操作方式（键盘还是触屏）
+- 难度设置（有几个等级）
+- 计分规则
+- 游戏结束条件
+
+用非技术语言描述，让我能看懂。</div>
+              </div>
+              <div class="case-hand">你会得到：一份用人话写的游戏设计说明。</div>
+            </div>
+          </li>
+
+          <li class="case-step">
+            <div class="case-dot chat">2</div>
+            <div class="case-body">
+              <div class="case-tool-label chat">💬 Chat</div>
+              <div class="case-title">和 Chat 来回打磨设计细节</div>
+              <div class="case-desc">针对它的回答，继续追问你想改的地方。Chat 最适合这种"来回思考"的过程。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>继续追问示例</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">我想要暗黑风格，背景黑色，蛇是霓虹绿。
+难度只要两档：普通和困难。
+手机上也要能玩，要支持触屏滑动控制。
+计分要有最高分记录。
+
+基于这些调整，重新给我一份设计说明。</div>
+              </div>
+              <div class="case-hand">你会得到：符合你口味的最终设计说明。</div>
+            </div>
+          </li>
+
+          <li class="case-step">
+            <div class="case-dot chat">3</div>
+            <div class="case-body">
+              <div class="case-tool-label chat">💬 Chat</div>
+              <div class="case-title">让 Chat 生成「技术需求文档」</div>
+              <div class="case-desc">把设计说明转化为后面 Claude Code 能直接看懂的技术文档。这份文档是三者联动的"接力棒"。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>生成技术文档</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">把上面的设计说明转成一份技术需求文档。
+
+要求：
+- 用 Markdown 格式
+- 包含：技术选型（用什么语言/框架）、
+  文件结构、核心功能列表、UI 规格（颜色值/尺寸）
+- 语言要让零基础的人也能理解
+- 最后加一行：「实现优先级」，
+  告诉我先做什么后做什么</div>
+              </div>
+              <div class="case-hand">你会得到：一份 Markdown 格式的技术需求文档。把它复制保存备用。</div>
+            </div>
+          </li>
+
+        </ul>
+
+        <div class="tip" style="margin-top:4px;">
+          <strong>这一阶段结束时你有：</strong>一份写清楚了游戏长什么样、怎么玩、先做什么的文档。Chat 的工作到此结束。
+        </div>
+      </div>
+    </div>
+
+    <!-- 案例卡：阶段二 -->
+    <div class="card" data-search="案例 贪吃蛇 Cowork 文件整理 文档管理">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon" style="background:rgba(201,149,74,0.15);color:var(--cowork-color);">②</div>
+        <div class="card-title">阶段二：用 Cowork 建项目结构 & 整理文档</div>
+        <div class="card-badge cowork">Cowork</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail" style="margin-bottom:14px;">
+          <strong>你在做什么：</strong>把 Chat 产出的文档交给 Cowork，让它建好项目文件夹、把文档存进去、生成开发日志模板。Cowork 负责「整理」，不负责「写代码」。
+        </div>
+
+        <ul class="case-timeline">
+
+          <li class="case-step">
+            <div class="case-dot cowork">1</div>
+            <div class="case-body">
+              <div class="case-tool-label cowork">⚙️ Cowork</div>
+              <div class="case-title">打开 Cowork，建项目文件夹结构</div>
+              <div class="case-desc">切换到桌面端 Cowork 标签，新建会话，授权一个空文件夹，让它把项目骨架搭起来。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>你输入的内容</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">帮我在当前文件夹里创建贪吃蛇项目的目录结构：
+
+01_设计文档/
+02_代码/
+    src/         ← 源代码放这里
+    assets/      ← 图片音效放这里
+03_测试记录/
+04_版本归档/
+README.md        ← 项目说明文件
+
+执行前先列出你要做什么，等我说「可以」再动手。</div>
+              </div>
+              <div class="case-hand">它列出计划 → 你说「可以」→ 它逐步创建，每步 Allow。</div>
+            </div>
+          </li>
+
+          <li class="case-step">
+            <div class="case-dot cowork">2</div>
+            <div class="case-body">
+              <div class="case-tool-label cowork">⚙️ Cowork</div>
+              <div class="case-title">把 Chat 产出的文档存进项目</div>
+              <div class="case-desc">把你从 Chat 复制出来的技术需求文档，让 Cowork 帮你存成规范命名的文件。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>你输入的内容</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">帮我创建一个文件：
+路径：01_设计文档/技术需求文档_20260430_v1.md
+内容如下（粘贴你从 Chat 复制的文档内容）：
+
+[在这里粘贴内容]
+
+创建完告诉我文件在哪。</div>
+              </div>
+              <div class="case-hand">文档被规范存档，Chat 阶段的产出正式进入项目。</div>
+            </div>
+          </li>
+
+          <li class="case-step">
+            <div class="case-dot cowork">3</div>
+            <div class="case-body">
+              <div class="case-tool-label cowork">⚙️ Cowork</div>
+              <div class="case-title">生成开发日志模板</div>
+              <div class="case-desc">让 Cowork 帮你创建一个开发日志，每次改了什么都记在这里，方便以后追踪问题。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>你输入的内容</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">在 03_测试记录/ 里创建一个开发日志模板：
+文件名：开发日志_20260430.md
+
+内容包含：
+- 今日目标
+- 完成了什么
+- 遇到的问题
+- 下次继续做什么
+
+格式用表格，今天的日期已填好，
+其他行留空让我自己填。</div>
+              </div>
+              <div class="case-hand">Cowork 创建模板，你每次开工前填一行，有问题能回溯。</div>
+            </div>
+          </li>
+
+        </ul>
+
+        <div class="tip" style="margin-top:4px;">
+          <strong>这一阶段结束时你有：</strong>一个整洁的项目文件夹，文档已归位，骨架已搭好。Cowork 的工作到此结束，接力棒交给 Claude Code。
+        </div>
+      </div>
+    </div>
+
+    <!-- 案例卡：阶段三 -->
+    <div class="card" data-search="案例 贪吃蛇 Claude Code 写代码 实现 调试">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon" style="background:rgba(123,160,91,0.15);color:var(--success);">③</div>
+        <div class="card-title">阶段三：用 Claude Code 写游戏、调试、迭代</div>
+        <div class="card-badge" style="background:rgba(123,160,91,0.15);color:var(--success);">Claude Code</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail" style="margin-bottom:14px;">
+          <strong>你在做什么：</strong>打开 Claude Code 桌面端，选中刚才 Cowork 建好的项目文件夹，让它读技术需求文档、写游戏代码、帮你调试。你不需要看懂代码，只需要在浏览器里试玩并告诉它哪里不对。
+        </div>
+
+        <ul class="case-timeline">
+
+          <li class="case-step">
+            <div class="case-dot code">1</div>
+            <div class="case-body">
+              <div class="case-tool-label code">💻 Claude Code</div>
+              <div class="case-title">先写 CLAUDE.md，建立项目记忆</div>
+              <div class="case-desc">打开 Claude Code，选中项目文件夹，第一件事创建 CLAUDE.md。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>你输入的内容</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">帮我在项目根目录创建 CLAUDE.md，内容：
+
+# 项目：贪吃蛇游戏
+这是一个用 HTML/CSS/JavaScript 做的浏览器贪吃蛇游戏。
+
+# 技术需求
+详见：01_设计文档/技术需求文档_20260430_v1.md
+
+# 文件规矩
+- 所有代码放在 02_代码/src/ 里
+- 代码文件用英文命名
+- 修改代码前先备份原文件
+
+# 我的背景
+完全零基础。解释问题时用非技术语言。</div>
+              </div>
+              <div class="case-hand">CLAUDE.md 创建后，之后每次 /clear 重开，它还记得项目背景。</div>
+            </div>
+          </li>
+
+          <li class="case-step">
+            <div class="case-dot code">2</div>
+            <div class="case-body">
+              <div class="case-tool-label code">💻 Claude Code</div>
+              <div class="case-title">让它读需求文档，然后写代码</div>
+              <div class="case-desc">让它先读文档再动手，不要跳过这步。读文档 = 它知道你的具体要求，不会乱发挥。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>你输入的内容</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">先读 01_设计文档/技术需求文档_20260430_v1.md，
+读完告诉我你理解了哪些关键需求，再开始写代码。
+
+然后帮我在 02_代码/src/ 里创建游戏文件：
+- index.html（游戏主页面）
+- style.css（样式：暗黑风格，霓虹绿蛇）
+- game.js（游戏逻辑）
+
+实现第一个版本：蛇能移动、能吃食物、能计分、
+撞墙或撞自己算死亡。触屏控制先不做，键盘先做好。
+
+做完告诉我怎么在浏览器里打开试玩。</div>
+              </div>
+              <div class="case-hand">它写完后，去 Finder 找到 index.html，双击用浏览器打开，就能玩了。</div>
+            </div>
+          </li>
+
+          <li class="case-step">
+            <div class="case-dot code">3</div>
+            <div class="case-body">
+              <div class="case-tool-label code">💻 Claude Code</div>
+              <div class="case-title">试玩，发现问题，用人话描述</div>
+              <div class="case-desc">打开游戏试玩。发现任何不对的地方，回到 Claude Code 用人话说，不需要懂代码在哪里出问题。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>反馈 Bug 的正确方式</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">我试玩了，发现三个问题：
+
+1. 蛇移动太快，刚开始就控制不了
+2. 吃到食物后分数没有显示出来，页面上看不到
+3. 死了之后没有重新开始的提示，只是停住了
+
+帮我修复这三个问题。修改前先告诉我你打算改哪里。</div>
+              </div>
+              <div class="case-hand">它修复后，回 Finder 重新双击打开 index.html 试玩（或刷新浏览器）。</div>
+            </div>
+          </li>
+
+          <li class="case-step">
+            <div class="case-dot code">4</div>
+            <div class="case-body">
+              <div class="case-tool-label code">💻 Claude Code</div>
+              <div class="case-title">加功能：触屏支持 + 难度选择</div>
+              <div class="case-desc">基础版跑通后，把剩下的需求一项一项加进去。每次加一个功能，加完测试再加下一个。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>加功能示例</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">/clear
+
+现在基础版已经跑通了。
+帮我加触屏滑动控制，让手机也能玩。
+
+要求：上下左右滑动控制蛇的方向。
+不要影响现有的键盘控制。
+改之前先备份现在的 game.js。</div>
+              </div>
+              <div class="case-hand">注意：每加新功能前 /clear，避免上下文混乱。</div>
+            </div>
+          </li>
+
+          <li class="case-step">
+            <div class="case-dot code">5</div>
+            <div class="case-body">
+              <div class="case-tool-label code">💻 Claude Code</div>
+              <div class="case-title">让它把版本存档</div>
+              <div class="case-desc">游戏做到满意的阶段，让 Cowork 或 Claude Code 帮你归档这个版本。</div>
+              <div class="code-block" style="margin-top:8px;">
+                <div class="code-header"><span>版本归档</span><button class="copy-btn" onclick="copyCode(this)">复制</button></div>
+                <div class="code-content">帮我把 02_代码/src/ 里的三个文件
+复制一份到 04_版本归档/v1.0_20260430/
+
+这是第一个完整可玩版本，
+不要修改原文件，只是复制备份。</div>
+              </div>
+              <div class="case-hand">归档完成，以后改出问题还有完整版本可以恢复。</div>
+            </div>
+          </li>
+
+        </ul>
+
+        <div class="tip" style="margin-top:4px;">
+          <strong>这一阶段结束时你有：</strong>一个真实可以在浏览器里玩的贪吃蛇游戏，代码整齐存放，版本有备份。
+        </div>
+      </div>
+    </div>
+
+    <!-- 三工具分工总结 -->
+    <div class="card" data-search="三工具 分工 总结 边界 什么时候用">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📌</div>
+        <div class="card-title">从这个案例学到的：三工具分工边界</div>
+        <div class="card-badge accent">总结</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="compare-grid">
+          <div class="compare-item" style="border-left-color:var(--chat-color);">
+            <div class="compare-label" style="color:var(--chat-color);">💬 Chat 负责</div>
+            <div class="compare-text">
+              想清楚做什么、打磨需求、生成设计文档。<br>
+              <strong>产出：</strong>文字、分析、文档草稿。<br>
+              <strong>特点：</strong>来回对话，适合"还没想清楚"的阶段。
+            </div>
+          </div>
+          <div class="compare-item" style="border-left-color:var(--cowork-color);">
+            <div class="compare-label" style="color:var(--cowork-color);">⚙️ Cowork 负责</div>
+            <div class="compare-text">
+              建文件夹结构、存档整理、生成模板文件。<br>
+              <strong>产出：</strong>目录、规范文档、整理好的文件系统。<br>
+              <strong>特点：</strong>派活式执行，适合批量整理操作。
+            </div>
+          </div>
+          <div class="compare-item" style="border-left-color:var(--success);">
+            <div class="compare-label" style="color:var(--success);">💻 Claude Code 负责</div>
+            <div class="compare-text">
+              实际写代码、调 Bug、加功能、版本管理。<br>
+              <strong>产出：</strong>可以直接运行的代码文件。<br>
+              <strong>特点：</strong>直接读写本地文件，改完马上能测试。
+            </div>
+          </div>
+        </div>
+        <div class="tip" style="margin-top:12px;">
+          <strong>判断口诀：</strong>还在想 → Chat；整理文件 → Cowork；写/改代码 → Claude Code。三者接力，不互相替代。
+        </div>
+      </div>
+    </div>
+
+  </div><!-- end home section -->
   <div class="section" data-section="concept">
     <div class="section-title">核心概念</div>
     <div class="section-desc">理解这些差别,你才知道什么时候用什么。</div>
@@ -2851,6 +3379,531 @@ description: 一句话说明这个 Skill 是干什么的。当用户做 X 类任
     <div class="tip danger" style="margin-top: 20px;">
       <strong>头号大坑:</strong>把 Chat 当 Cowork 用——指望发一句话就拿到完整产出。Chat 的真正价值是<strong>多轮对谈中思维的递进</strong>。
     </div>
+  </div>
+
+  <!-- ============ CLAUDE CODE ============ -->
+  <div class="section" data-section="claudecode">
+    <div class="section-title">Claude Code 入门</div>
+    <div class="section-desc">桌面端本地文件操作。完全零基础，按顺序走。</div>
+
+    <div class="hero">
+      <div class="hero-title">Claude Code 是什么</div>
+      <div class="hero-text">一个跑在桌面端的 AI 助理，能直接读写你电脑上的文件。你在对话框里用中文下指令，它在你指定的文件夹里创建、修改、整理文件。每次文件操作都需要你点 Allow 授权，不会自作主张。</div>
+      <div class="hero-flow">
+        <div class="flow-node">打开项目文件夹</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">中文下指令</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">点 Allow 授权</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-node">Finder 查看结果</div>
+      </div>
+    </div>
+
+    <!-- 第一组：核心概念 -->
+    <div class="group-title">先搞清楚这三件事</div>
+
+    <div class="card expanded" data-search="Claude Code 项目 文件夹 边界">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📁</div>
+        <div class="card-title">"项目"就是一个文件夹</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          Claude Code 没有"建项目"这个动作。你在桌面端选择哪个文件夹，它就在那个文件夹范围内工作，出不去这个边界。<br><br>
+          <strong>正确做法：</strong>先在 Mac Finder 里建好文件夹，再用 Claude Code 打开它。
+        </div>
+        <div class="tip"><strong>推荐命名：</strong>用项目名，不要用"新建文件夹"或"测试"。</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="Claude Code Cowork Chat 区别 对比">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">⚖️</div>
+        <div class="card-title">Claude Code vs Chat vs Cowork</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="compare-grid">
+          <div class="compare-item">
+            <div class="compare-label">CHAT · 网页端</div>
+            <div class="compare-text">对谈思考。看不到你的文件，产出在对话框里，需要你复制粘贴。</div>
+          </div>
+          <div class="compare-item alt">
+            <div class="compare-label">CLAUDE CODE · 桌面端</div>
+            <div class="compare-text">直接读写本地文件。你说话它动手，产出直接出现在 Finder 里。</div>
+          </div>
+        </div>
+        <div class="tip warn"><strong>判断：</strong>想让它帮你"想" → Chat；想让它帮你"做文件" → Claude Code。</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="Allow 授权 权限 文件操作">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🔐</div>
+        <div class="card-title">每次文件操作都要你点 Allow</div>
+        <div class="card-badge danger">必须知道</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          它在创建、修改、移动任何文件之前，都会先弹出确认框，等你授权才动手。<br><br>
+          <strong>Allow once：</strong>只允许这一步，下一个操作还会再问。新手用这个，能看清每一步在做什么。<br><br>
+          <strong>Allow for this session：</strong>本次会话内不再询问。熟悉之后提速用。
+        </div>
+        <div class="tip danger"><strong>移动文件 = 两次 Allow</strong>：先写入新位置，再删除原位置，两次都要点。</div>
+      </div>
+    </div>
+
+    <!-- 第二组：基础操作 -->
+    <div class="group-title">基础操作（按顺序做一遍）</div>
+
+    <div class="card" data-search="建立项目 文件夹结构 第一步">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">1</div>
+        <div class="card-title">建立项目文件夹结构</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          <strong>第一步：</strong>在 Mac Finder 里新建项目文件夹，比如「老手艺人纪录片」。<br><br>
+          <strong>第二步：</strong>打开 Claude Code 桌面端，在项目选择器里选中这个文件夹。<br><br>
+          <strong>第三步：</strong>在对话框输入，让它帮你搭结构：
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>建立文件夹结构</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">帮我在当前项目文件夹里创建以下文件夹结构：
+
+01_人物/
+    木匠_陈师傅/
+    竹编_王奶奶/
+02_拍摄计划/
+    通告单/
+03_脚本/
+    初稿/
+    定稿/
+04_参考资料/
+
+不要创建任何文件，只建文件夹。</div>
+        </div>
+        <div class="tip">数字开头（01、02）是为了让 Finder 按你的顺序排列，而不是按字母乱排。</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="创建文件 采访提纲 第一个任务">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">2</div>
+        <div class="card-title">创建第一个文件</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          在对话框里把任务说清楚：是什么、放哪里、叫什么名字。以纪录片采访提纲为例：
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>创建采访提纲示例</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">帮我写一份纪录片采访提纲。
+
+采访对象：一位做了40年的老木匠，生活在上海郊区
+片子方向：记录传统手艺在现代城市里的处境
+需要：15个问题，分四部分：
+  - 入行经历
+  - 手艺细节
+  - 现实处境
+  - 对未来的态度
+每个问题后加一行"追问方向"
+
+格式：Markdown 文件
+文件名：采访提纲_陈师傅_20260430.md
+保存到：01_人物/木匠_陈师傅/</div>
+        </div>
+        <div class="tip"><strong>它会先展示内容，弹出 Allow 确认框，你点允许它才真正写入文件。</strong>完成后去 Finder 查看。</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="修改文件 diff 改稿 精确修改">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">3</div>
+        <div class="card-title">修改已有文件</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          不需要把文件内容重新粘贴给它。它已经知道文件在哪，直接读取，然后展示改动（绿色=新增，红色=删除），问你是否允许。<br><br>
+          <strong>说清楚改哪里、不要动哪里：</strong>
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>精确修改示例</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">第二部分"手艺细节"的问题改得更深入。
+加入这三个角度：
+1. 这门手艺最难的地方在哪里
+2. 他有没有带过徒弟，为什么失败了
+3. 有没有一种木料他只用过一次，为什么不再用
+
+其他三个部分不要动。</div>
+        </div>
+        <div class="tip warn">如果它动了你说不要动的地方，直接说「你动了第一部分，我说不要动，撤回这个修改。」</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="移动文件 整理文件 归类">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">4</div>
+        <div class="card-title">移动和整理文件</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          散放在根目录的文件，让它移进对应文件夹：
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>移动文件示例</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">把根目录里的"采访提纲_陈师傅_20260430.md"
+移动到"01_人物/木匠_陈师傅/"文件夹里。
+
+移动之前先告诉我它现在在哪、要移到哪，
+等我说可以再动。</div>
+        </div>
+        <div class="tip danger"><strong>注意：</strong>移动 = 两次 Allow。先写入新位置，再删原位置。两个都要点。</div>
+      </div>
+    </div>
+
+    <!-- 第三组：CLAUDE.md -->
+    <div class="group-title">CLAUDE.md · 项目记忆系统</div>
+
+    <div class="card expanded" data-search="CLAUDE.md 记忆 规矩 背景">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📋</div>
+        <div class="card-title">CLAUDE.md 是什么</div>
+        <div class="card-badge accent">核心</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          放在项目文件夹里的一个文本文件。<strong>每次打开这个项目，Claude Code 都会自动读它</strong>，把里面的内容当作本次工作的背景和规矩。<br><br>
+          没有它：每次开新对话，你都要重新解释"我是做纪录片的""文件名要带日期"。<br>
+          有了它：什么都不用说，它自己知道。
+        </div>
+        <div class="compare-grid" style="margin-top: 12px;">
+          <div class="compare-item">
+            <div class="compare-label">对话历史（/clear 后消失）</div>
+            <div class="compare-text">你们聊的内容，清空就没了。</div>
+          </div>
+          <div class="compare-item alt">
+            <div class="compare-label">CLAUDE.md（永久保留）</div>
+            <div class="compare-text">项目背景和规矩，每次自动加载，不会丢。</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-search="CLAUDE.md 创建 项目级 写法">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">✍️</div>
+        <div class="card-title">创建项目级 CLAUDE.md</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="code-block">
+          <div class="code-header">
+            <span>项目级 CLAUDE.md 模板</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">帮我在这个项目文件夹里创建 CLAUDE.md，内容如下：
+
+# 项目名称
+老手艺人纪录片
+
+# 项目背景
+记录上海郊区濒临消失的传统手艺人。
+当前人物：
+- 木匠陈师傅，68岁，松江区
+- 竹编王奶奶，72岁，浙江余杭
+
+# 文件夹结构
+- 01_人物/ → 每个人物一个子文件夹
+- 02_拍摄计划/ → 通告单和总日程
+- 03_脚本/ → 初稿和定稿分开放
+- 04_参考资料/
+
+# 工作规矩
+- 所有输出用中文
+- 文件名格式：用途_人物_日期.md，例：采访提纲_陈师傅_20260430.md
+- 新建文件自动放入对应文件夹，不放根目录
+- 创建或修改文件前先告诉我要做什么，等我确认再动手
+- 修改前先创建备份：原文件名_backup_日期.md</div>
+        </div>
+        <div class="tip"><strong>验证是否生效：</strong>/clear 后输入「读一下这个项目的 CLAUDE.md，告诉我规矩是什么」，它复述出来说明生效了。</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="全局 CLAUDE.md global 所有项目">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🌐</div>
+        <div class="card-title">全局 CLAUDE.md · 所有项目共用</div>
+        <div class="card-badge">进阶</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          放在 <code style="background:var(--code-bg);padding:2px 6px;border-radius:4px;font-size:11px;">~/.claude/CLAUDE.md</code>，对你所有项目生效。不用每个项目重复写相同的规矩。<br><br>
+          <strong>两级叠加规则：</strong>打开任何项目时，先读全局，再读项目级，两个合并生效。有冲突时项目级优先。
+        </div>
+        <div class="compare-grid" style="margin-top: 12px;">
+          <div class="compare-item">
+            <div class="compare-label">放全局的内容</div>
+            <div class="compare-text">语言（中文）、文件操作习惯（先确认）、格式要求（不用 emoji）、通用命名规则。</div>
+          </div>
+          <div class="compare-item alt">
+            <div class="compare-label">放项目级的内容</div>
+            <div class="compare-text">这个项目的背景、人物信息、文件夹结构、特有命名补充。</div>
+          </div>
+        </div>
+        <div class="code-block" style="margin-top: 12px;">
+          <div class="code-header">
+            <span>创建全局 CLAUDE.md</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">帮我创建全局 CLAUDE.md，路径是 ~/.claude/CLAUDE.md
+
+内容：
+
+# 全局规矩（所有项目适用）
+
+## 输出规矩
+- 所有输出用中文
+- 不要加"免责声明"或"仅供参考"
+- 不要用 emoji
+- 不要滥用加粗
+
+## 文件命名
+- 格式：用途_日期.md
+- 日期格式：YYYYMMDD
+- 不允许用 untitled、output、新建文件 等命名
+
+## 文件操作
+- 创建或修改文件前，先告诉我要做什么，等我说可以再动
+- 不要修改我没明确让你动的文件
+- 完成后告诉我文件保存在哪里</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第四组：工作节奏 -->
+    <div class="group-title">日常工作节奏</div>
+
+    <div class="card" data-search="clear 清空 上下文 新任务">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🔄</div>
+        <div class="card-title">/clear · 开始新任务前必做</div>
+        <div class="card-badge danger">必须知道</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          Claude Code 每次对话都有记忆容量上限。对话越长，它能记住的早期内容越少，最终会开始"忘事"或回答变奇怪。<br><br>
+          <strong>每开始一个新任务，在对话框输入 /clear，回车。</strong><br><br>
+          /clear 会清空对话历史，但不会删除你的文件，也不会删除 CLAUDE.md。
+        </div>
+        <div class="compare-grid" style="margin-top: 12px;">
+          <div class="compare-item">
+            <div class="compare-label">/clear 后消失的</div>
+            <div class="compare-text">你们的聊天记录</div>
+          </div>
+          <div class="compare-item alt">
+            <div class="compare-label">/clear 后还在的</div>
+            <div class="compare-text">所有文件、文件夹结构、CLAUDE.md 里的规矩</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" data-search="派活 一次性 任务完整 批量">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📤</div>
+        <div class="card-title">正确的派活方式：一次说清楚</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          不要"聊天式"一问一答。要"派活式"一次把任务说完整——人物背景、要几份文件、每份放哪里、叫什么名字。
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>一次派多份文件示例</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">我要开始拍摄木匠陈师傅，帮我准备三份文件。
+
+人物信息：
+- 陈师傅，68岁，上海松江，做红木家具40年
+- 只剩他一人在做，徒弟全跑了
+
+第一份：采访提纲
+- 放在 01_人物/木匠_陈师傅/
+- 15个问题，分：入行经历、手艺细节、现实处境、对未来的态度
+- 每题后加一行"追问方向"
+
+第二份：勘景清单
+- 放在 01_人物/木匠_陈师傅/
+- 表格格式：场地名称、拍摄内容、光线条件、噪音风险、备注
+- 场地：木工坊内、木工坊门口、老宅正厅、老宅后院
+
+第三份：拍摄通告单
+- 放在 02_拍摄计划/通告单/
+- 拍摄日期：2026年5月8日
+- 含：集合时间地点、拍摄顺序、每场地预计用时
+
+三份文件按项目命名规矩来。做完一份告诉我一声。</div>
+        </div>
+        <div class="tip">它逐个创建，你逐个点 Allow。位置和文件名对了就点，内容等全部完成后再统一审阅。</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="审阅 复核 检查 自检">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🔍</div>
+        <div class="card-title">完成后：让它自检</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          任务全部完成后，用这句话让它做一次自我检查，能帮你抓住粗心漏掉的地方：
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>自检指令</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">检查一下你刚才创建的文件：
+1. 文件名是否符合项目命名规矩
+2. 文件是否放在正确的文件夹里
+3. 有没有遗漏任何要求
+
+列出检查结果，有问题直接告诉我。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 第五组：多项目管理 -->
+    <div class="group-title">多项目管理</div>
+
+    <div class="card" data-search="多项目 切换 隔离">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">🗂️</div>
+        <div class="card-title">多项目切换原则</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          Claude Code 没有全局记忆。<strong>它的记忆边界就是当前打开的项目文件夹。</strong><br><br>
+          切换到另一个项目，它对上一个项目一无所知。这是设计——防止 A 项目的内容混进 B 项目。
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>推荐文件夹组织方式</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">我的纪录片工作/
+├── 老手艺人项目/
+│   ├── CLAUDE.md        ← 这个项目的规矩
+│   ├── 01_人物/
+│   ├── 02_拍摄计划/
+│   └── 03_脚本/
+│
+└── 城市建筑项目/
+    ├── CLAUDE.md        ← 那个项目的规矩
+    ├── 01_人物/
+    ├── 02_拍摄计划/
+    └── 03_脚本/</div>
+        </div>
+        <div class="tip danger"><strong>切换项目后第一件事：/clear</strong>。否则上一个项目的对话历史会混进来。</div>
+      </div>
+    </div>
+
+    <div class="card" data-search="交接 助理 协作 打包">
+      <div class="card-header" onclick="toggleCard(this)">
+        <div class="card-icon">📦</div>
+        <div class="card-title">把项目交给助理</div>
+        <div class="card-arrow">›</div>
+      </div>
+      <div class="card-body">
+        <div class="step-detail">
+          项目文件夹是自包含的，压缩发给对方，对方打开就能用。<br><br>
+          <strong>交接前必做：</strong>把全局 CLAUDE.md 里的规矩合并进项目级 CLAUDE.md。因为对方电脑上没有你的全局文件。
+        </div>
+        <div class="code-block">
+          <div class="code-header">
+            <span>交接前更新 CLAUDE.md</span>
+            <button class="copy-btn" onclick="copyCode(this)">复制</button>
+          </div>
+          <div class="code-content">我要把这个项目交给助理，他电脑上没有我的全局 CLAUDE.md。
+把以下全局规矩合并进项目 CLAUDE.md：
+- 所有输出用中文
+- 文件名格式：用途_日期.md
+- 创建或修改文件前先确认，等我说可以再动
+- 完成后告诉我文件在哪里
+
+并在文件顶部加交接说明：
+# 交接说明
+当前进度：田野调查完成，进入拍摄准备阶段。
+接手人先读完此文件再开始工作。
+联系导演：[你的联系方式]</div>
+        </div>
+        <div class="tip">助理收到压缩包，解压后在 Claude Code 桌面端选中文件夹，第一句话输入「读一下 CLAUDE.md，告诉我规矩是什么」，确认理解后开始工作。</div>
+      </div>
+    </div>
+
+    <!-- 第六组：避坑 -->
+    <div class="group-title">Claude Code 专项避坑</div>
+
+    <div class="pitfall-row" data-search="Claude Code 指令 模糊 一句话">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>说一句模糊指令就等结果</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>把人物背景、文件数量、放哪里、叫什么名字一次说完</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="Claude Code 新任务 clear 忘记">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>开新任务不 /clear，让旧对话历史越堆越长</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>每次新任务前先 /clear，规矩靠 CLAUDE.md 保留</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="Claude Code CLAUDE.md 规矩 聊天记录">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>把规矩说在聊天里，以为它会记住</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>规矩写进 CLAUDE.md，对话清空了规矩还在</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="Claude Code 切换项目 clear 忘记">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>切换项目文件夹后忘记 /clear</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>切换项目 → 第一件事 /clear → 再开始工作</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="Claude Code 交接 全局 CLAUDE.md 助理">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>直接把文件夹发给助理，对方打开发现规矩都不见了</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>交接前把全局规矩合并进项目 CLAUDE.md 再打包</span></div>
+    </div>
+
+    <div class="pitfall-row" data-search="Claude Code 审阅 直接用 复核">
+      <div class="pitfall-wrong"><span class="pitfall-icon">✗</span><span>文件创建完直接用，不去 Finder 打开看</span></div>
+      <div class="pitfall-right"><span class="pitfall-icon">✓</span><span>每次完成后去 Finder 打开，人工复核内容</span></div>
+    </div>
+
+    <div class="tip" style="margin-top: 20px;">
+      <strong>Claude Code 的核心心态：</strong>你是项目经理，它是执行助理。你负责审阅和决策，它负责生成和整理。每次文件操作都要你点头，产出一定要人工复核。
+    </div>
+
   </div>
 
 </div>
