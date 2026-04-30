@@ -1,0 +1,1233 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>书画链</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@300;400;600&family=Noto+Sans+SC:wght@300;400;500&family=DM+Mono:ital,wght@0,300;0,400&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0d0b;
+  --bg2: #181410;
+  --bg3: #211d18;
+  --bg4: #2a2420;
+  --bg5: #332e28;
+  --gold: #c9a84c;
+  --gold2: #e8c87a;
+  --gold3: #f5e4b0;
+  --goldfaint: rgba(201,168,76,0.12);
+  --goldborder: rgba(201,168,76,0.22);
+  --red: #c0392b;
+  --green: #4caf50;
+  --text: #f0ebe2;
+  --text2: #b5a98f;
+  --text3: #7a6e5e;
+  --white: #fdf9f2;
+  --serif: 'Noto Serif SC', serif;
+  --sans: 'Noto Sans SC', sans-serif;
+  --mono: 'DM Mono', monospace;
+  --radius: 16px;
+  --tab-h: 72px;
+  --head-h: 60px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+html, body {
+  height: 100%;
+  overflow: hidden;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── APP SHELL ── */
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100dvh;
+  max-width: 430px;
+  margin: 0 auto;
+  position: relative;
+  overflow: hidden;
+  background: var(--bg);
+  /* Desktop: show as phone */
+  box-shadow: 0 0 80px rgba(0,0,0,0.6);
+}
+
+/* Desktop centering */
+@media (min-width: 500px) {
+  body { display: flex; align-items: center; justify-content: center; min-height: 100vh; background: #080604; }
+  #app { height: 844px; border-radius: 44px; overflow: hidden; border: 1px solid rgba(201,168,76,0.15); }
+}
+
+/* ── HEADER ── */
+.app-header {
+  flex-shrink: 0;
+  height: var(--head-h);
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  background: var(--bg);
+  border-bottom: 1px solid var(--goldborder);
+  position: relative;
+  z-index: 50;
+}
+.header-logo { display: flex; align-items: baseline; gap: 8px; }
+.logo-cn { font-family: var(--serif); font-size: 20px; font-weight: 600; color: var(--gold2); letter-spacing: 3px; }
+.logo-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--gold); margin-bottom: 3px; }
+.logo-en { font-family: var(--mono); font-size: 9px; color: var(--gold); letter-spacing: 2px; opacity: 0.7; }
+.header-right { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.wallet-pill {
+  display: flex; align-items: center; gap: 6px;
+  padding: 6px 12px;
+  background: var(--bg3);
+  border: 1px solid var(--goldborder);
+  border-radius: 20px;
+  font-family: var(--mono);
+  font-size: 11px;
+  color: var(--gold2);
+  cursor: pointer;
+}
+.wallet-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--green); }
+
+/* ── SCROLL AREA ── */
+.scroll-area {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+  padding-bottom: 12px;
+}
+.scroll-area::-webkit-scrollbar { display: none; }
+
+/* ── TAB BAR ── */
+.tab-bar {
+  flex-shrink: 0;
+  height: var(--tab-h);
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  background: var(--bg2);
+  border-top: 1px solid var(--goldborder);
+  padding: 0 4px;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+.tab-item {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 4px; cursor: pointer; padding: 10px 4px;
+  color: var(--text3); transition: color 0.2s; border: none; background: none;
+}
+.tab-item.active { color: var(--gold); }
+.tab-icon { font-size: 20px; line-height: 1; }
+.tab-label { font-size: 10px; letter-spacing: 0.5px; font-weight: 500; }
+.tab-item.active .tab-label { color: var(--gold); }
+
+/* ── PANELS ── */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* ── PHASE BANNER ── */
+.phase-banner {
+  background: linear-gradient(135deg, var(--bg3) 0%, var(--bg2) 100%);
+  border-bottom: 1px solid var(--goldborder);
+  padding: 20px 20px 18px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.phase-num {
+  font-family: var(--serif);
+  font-size: 40px;
+  font-weight: 600;
+  color: var(--goldfaint);
+  line-height: 1;
+  min-width: 52px;
+  color: rgba(201,168,76,0.25);
+}
+.phase-text {}
+.phase-title { font-family: var(--serif); font-size: 17px; color: var(--gold2); letter-spacing: 2px; margin-bottom: 3px; }
+.phase-sub { font-size: 11px; color: var(--text3); letter-spacing: 0.5px; line-height: 1.5; }
+.phase-count { margin-left: auto; text-align: right; flex-shrink: 0; }
+.phase-count-n { font-family: var(--mono); font-size: 22px; color: var(--gold2); }
+.phase-count-l { font-size: 10px; color: var(--text3); margin-top: 2px; }
+
+/* ── SECTION ── */
+.section { padding: 18px 16px 0; }
+.sec-title {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1.5px;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.sec-title::before { content:''; width:2px; height:12px; background:var(--gold); border-radius:1px; flex-shrink:0; }
+
+/* ── CARDS ── */
+.art-card {
+  background: var(--bg3);
+  border: 1px solid var(--goldborder);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 12px;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: flex;
+  gap: 0;
+}
+.art-card:active { transform: scale(0.98); opacity: 0.9; }
+.art-thumb {
+  width: 90px;
+  flex-shrink: 0;
+  background: var(--bg4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+}
+.art-info { padding: 14px 14px; flex: 1; min-width: 0; }
+.art-name { font-family: var(--serif); font-size: 15px; font-weight: 600; color: var(--text); margin-bottom: 4px; }
+.art-author { font-size: 12px; color: var(--text2); margin-bottom: 8px; }
+.art-tags { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.art-ipfs { font-family: var(--mono); font-size: 10px; color: var(--gold); opacity: 0.7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* ── TAGS ── */
+.tag {
+  font-size: 10px;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-family: var(--mono);
+  letter-spacing: 0.3px;
+  white-space: nowrap;
+}
+.tag-gold { background: rgba(201,168,76,0.15); color: var(--gold2); border: 1px solid rgba(201,168,76,0.3); }
+.tag-green { background: rgba(76,175,80,0.12); color: #81c784; border: 1px solid rgba(76,175,80,0.25); }
+.tag-muted { background: var(--bg4); color: var(--text3); border: 1px solid var(--bg5); }
+.tag-ink { background: var(--bg5); color: var(--gold2); }
+.tag-red { background: rgba(192,57,43,0.1); color: #e57373; border: 1px solid rgba(192,57,43,0.2); }
+
+/* ── FORM ── */
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 11px; color: var(--text3); margin-bottom: 6px; letter-spacing: 0.5px; font-weight: 500; }
+.form-label .req { color: var(--red); margin-left: 2px; }
+.form-input, .form-select, .form-textarea {
+  width: 100%;
+  padding: 12px 14px;
+  background: var(--bg3);
+  border: 1px solid var(--bg5);
+  border-radius: 10px;
+  font-family: var(--sans);
+  font-size: 14px;
+  color: var(--text);
+  outline: none;
+  transition: all 0.2s;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: var(--gold);
+  background: var(--bg4);
+  box-shadow: 0 0 0 3px rgba(201,168,76,0.1);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text3); }
+.form-textarea { resize: none; min-height: 80px; line-height: 1.6; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.form-card {
+  background: var(--bg3);
+  border: 1px solid var(--goldborder);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+/* ── UPLOAD ── */
+.upload-box {
+  border: 1.5px dashed rgba(201,168,76,0.35);
+  border-radius: var(--radius);
+  padding: 28px 16px;
+  text-align: center;
+  cursor: pointer;
+  background: var(--bg3);
+  margin-bottom: 14px;
+  transition: all 0.2s;
+}
+.upload-box:active { border-color: var(--gold); background: var(--bg4); }
+.upload-icon-big { font-size: 28px; margin-bottom: 8px; }
+.upload-desc { font-size: 12px; color: var(--text3); line-height: 1.6; }
+.upload-desc strong { color: var(--gold); }
+
+/* ── BUTTONS ── */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+  padding: 13px 20px;
+  border: none; border-radius: 12px;
+  font-family: var(--sans); font-size: 14px; font-weight: 500;
+  cursor: pointer; transition: all 0.15s; letter-spacing: 0.3px;
+  width: 100%;
+}
+.btn:active { transform: scale(0.97); }
+.btn-gold { background: var(--gold); color: #1a1200; }
+.btn-gold:active { background: var(--gold2); }
+.btn-dark { background: var(--bg5); color: var(--text); }
+.btn-dark:active { background: var(--bg4); }
+.btn-outline { background: transparent; color: var(--gold); border: 1px solid var(--goldborder); }
+.btn-sm { padding: 8px 14px; font-size: 12px; width: auto; border-radius: 8px; }
+.btn-row { display: flex; gap: 10px; margin-top: 14px; }
+.btn-row .btn { flex: 1; }
+
+/* ── BLOCKCHAIN ── */
+.block {
+  background: var(--bg3);
+  border: 1px solid var(--goldborder);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 10px;
+  position: relative;
+  animation: fadeUp 0.35s ease;
+}
+.block.genesis { border-color: rgba(201,168,76,0.5); background: rgba(201,168,76,0.05); }
+.block.fresh { border-color: rgba(76,175,80,0.5); background: rgba(76,175,80,0.04); }
+.block-connector {
+  display: flex; align-items: center; justify-content: center;
+  height: 20px; color: var(--gold); font-size: 11px; opacity: 0.6;
+}
+.block-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 10px; }
+.block-num { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 3px; }
+.block-title { font-family: var(--serif); font-size: 14px; color: var(--text); }
+.block-hash {
+  font-family: var(--mono); font-size: 9px; color: var(--gold);
+  background: var(--bg4); padding: 6px 10px; border-radius: 6px;
+  word-break: break-all; line-height: 1.5; margin: 8px 0;
+  border: 1px solid var(--goldborder);
+}
+.block-meta { font-size: 11px; color: var(--text3); line-height: 1.7; }
+.block-meta strong { color: var(--text2); font-weight: 500; }
+
+/* ── MARKET ── */
+.market-card {
+  background: var(--bg3);
+  border: 1px solid var(--goldborder);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 12px;
+}
+.market-top { display: flex; gap: 14px; padding: 16px; }
+.market-thumb {
+  width: 72px; height: 72px; flex-shrink: 0;
+  background: var(--bg4); border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 34px;
+}
+.market-info { flex: 1; min-width: 0; }
+.market-name { font-family: var(--serif); font-size: 15px; font-weight: 600; margin-bottom: 3px; }
+.market-author { font-size: 11px; color: var(--text3); margin-bottom: 10px; }
+.price-big { font-family: var(--mono); font-size: 20px; color: var(--gold); }
+.price-unit { font-size: 11px; color: var(--text3); margin-left: 4px; }
+.price-cny { font-size: 11px; color: var(--text3); font-family: var(--mono); margin-top: 2px; }
+.market-footer {
+  padding: 12px 16px;
+  border-top: 1px solid var(--goldborder);
+  display: flex; gap: 10px;
+}
+
+/* ── STATS ── */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; }
+.stat-card {
+  background: var(--bg3);
+  border: 1px solid var(--goldborder);
+  border-radius: 12px;
+  padding: 14px 14px;
+}
+.stat-val { font-family: var(--mono); font-size: 18px; color: var(--text); margin-bottom: 3px; }
+.stat-val.gold { color: var(--gold); }
+.stat-key { font-size: 10px; color: var(--text3); letter-spacing: 0.3px; }
+
+/* ── WALLET ── */
+.wallet-card {
+  background: linear-gradient(135deg, var(--bg4) 0%, #201a12 100%);
+  border: 1px solid rgba(201,168,76,0.35);
+  border-radius: var(--radius);
+  padding: 20px;
+  margin-bottom: 14px;
+  position: relative;
+  overflow: hidden;
+}
+.wallet-card::before {
+  content: '书';
+  position: absolute;
+  right: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--serif);
+  font-size: 72px;
+  color: rgba(201,168,76,0.06);
+  line-height: 1;
+}
+.wallet-addr { font-family: var(--mono); font-size: 10px; color: var(--text3); margin-bottom: 12px; }
+.wallet-bal { font-family: var(--serif); font-size: 30px; color: var(--gold2); margin-bottom: 2px; }
+.wallet-unit { font-size: 13px; color: var(--text3); }
+.wallet-cny { font-family: var(--mono); font-size: 11px; color: var(--text3); margin-top: 4px; opacity: 0.65; }
+
+/* ── CHART ── */
+.chart-wrap {
+  background: var(--bg3);
+  border: 1px solid var(--goldborder);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 14px;
+}
+.chart-head { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+.chart-title { font-size: 13px; font-weight: 500; }
+.chart-change { font-family: var(--mono); font-size: 12px; color: var(--green); }
+.mini-chart { display: flex; align-items: flex-end; gap: 5px; height: 52px; }
+.bar {
+  flex: 1; border-radius: 4px 4px 0 0;
+  background: rgba(201,168,76,0.25);
+  transition: background 0.2s; cursor: pointer;
+}
+.bar:hover, .bar.hi { background: var(--gold); }
+.chart-dates { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; color: var(--text3); margin-top: 6px; }
+
+/* ── TX TABLE ── */
+.tx-list { display: flex; flex-direction: column; gap: 1px; }
+.tx-item {
+  display: flex; align-items: center;
+  padding: 12px 16px;
+  background: var(--bg3);
+  gap: 12px;
+}
+.tx-item:first-child { border-radius: 12px 12px 0 0; }
+.tx-item:last-child { border-radius: 0 0 12px 12px; }
+.tx-icon {
+  width: 36px; height: 36px; border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px; flex-shrink: 0;
+}
+.tx-icon.buy { background: rgba(76,175,80,0.15); }
+.tx-icon.sell { background: rgba(192,57,43,0.12); }
+.tx-icon.send { background: rgba(201,168,76,0.12); }
+.tx-main { flex: 1; min-width: 0; }
+.tx-name { font-size: 13px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tx-sub { font-size: 11px; color: var(--text3); margin-top: 2px; }
+.tx-amount { font-family: var(--mono); font-size: 13px; font-weight: 400; text-align: right; flex-shrink: 0; }
+.tx-amount.pos { color: var(--green); }
+.tx-amount.neg { color: #ef9a9a; }
+
+/* ── DIVIDER ── */
+.divider { height: 1px; background: var(--goldborder); margin: 14px 0; }
+.info-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid rgba(255,255,255,0.04); font-size: 12px; }
+.info-row:last-child { border: none; }
+.info-k { color: var(--text3); }
+.info-v { font-family: var(--mono); font-size: 11px; color: var(--text2); text-align: right; max-width: 55%; word-break: break-all; }
+
+/* ── TIMELINE ── */
+.timeline { padding-left: 20px; position: relative; }
+.timeline::before { content:''; position:absolute; left:6px; top:8px; bottom:0; width:1px; background:var(--goldborder); }
+.tl-item { position: relative; margin-bottom: 18px; }
+.tl-dot { position:absolute; left:-17px; top:4px; width:9px; height:9px; border-radius:50%; background:var(--gold); border:2px solid var(--bg); }
+.tl-dot.done { background:var(--green); }
+.tl-dot.future { background:var(--bg5); }
+.tl-title { font-size:13px; font-weight:500; color:var(--text); }
+.tl-desc { font-size:11px; color:var(--text3); margin-top:3px; line-height:1.6; }
+.tl-tag { font-family:var(--mono); font-size:9px; color:var(--gold); opacity:0.65; margin-top:3px; }
+
+/* ── MODAL ── */
+.modal-overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,0.8); z-index: 200;
+  align-items: flex-end; justify-content: center;
+}
+.modal-overlay.open { display: flex; }
+.modal-sheet {
+  background: var(--bg2);
+  border: 1px solid var(--goldborder);
+  border-radius: 24px 24px 0 0;
+  width: 100%; max-width: 430px;
+  padding: 0 20px 30px;
+  animation: sheetUp 0.3s cubic-bezier(0.32,0.72,0,1);
+  max-height: 90dvh;
+  overflow-y: auto;
+}
+.sheet-handle { width: 40px; height: 4px; background: var(--bg5); border-radius: 2px; margin: 14px auto 20px; }
+.sheet-title { font-family: var(--serif); font-size: 18px; color: var(--gold2); margin-bottom: 18px; }
+
+/* ── TOAST ── */
+.toast {
+  position: fixed; bottom: calc(var(--tab-h) + 14px); left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg5);
+  border: 1px solid var(--goldborder);
+  color: var(--text);
+  padding: 12px 18px;
+  border-radius: 100px;
+  font-size: 12px;
+  white-space: nowrap;
+  z-index: 300;
+  opacity: 0;
+  transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1);
+  display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+  pointer-events: none;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+/* ── MISC ── */
+.notice {
+  background: rgba(201,168,76,0.07);
+  border: 1px solid rgba(201,168,76,0.2);
+  border-radius: 10px;
+  padding: 12px 14px;
+  font-size: 12px;
+  color: var(--text2);
+  line-height: 1.7;
+  margin-bottom: 14px;
+}
+.notice strong { color: var(--gold2); }
+.empty { text-align:center; padding:36px 20px; color:var(--text3); }
+.empty .ei { font-size:36px; margin-bottom:10px; opacity:0.4; }
+.empty .et { font-size:12px; line-height:1.7; }
+.chain-badge {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 10px; border-radius: 10px;
+  font-family: var(--mono); font-size: 10px;
+}
+.badge-syncing { background:rgba(76,175,80,0.12); color:#81c784; }
+.seal {
+  font-family: var(--serif); font-size: 10px; letter-spacing: 2px;
+  color: var(--red); border: 1.5px solid var(--red); padding: 3px 6px;
+  display: inline-block; transform: rotate(-5deg); opacity: 0.8; flex-shrink: 0;
+}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp { from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)} }
+@keyframes sheetUp { from{transform:translateY(100%)}to{transform:translateY(0)} }
+@keyframes spin { to{transform:rotate(360deg)} }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.spin { animation:spin 1s linear infinite; display:inline-block; }
+.pulse { animation:pulse 1.8s ease-in-out infinite; }
+</style>
+</head>
+<body>
+<div id="app">
+
+  <!-- Header -->
+  <div class="app-header">
+    <div class="header-logo">
+      <span class="logo-cn">书画链</span>
+      <span class="logo-dot"></span>
+      <span class="logo-en">ShuHua Chain</span>
+    </div>
+    <div class="header-right">
+      <div class="wallet-pill" onclick="toast('钱包 0x8F3A…d92C · 余额 8,420 SHC', '💼')">
+        <div class="wallet-dot pulse"></div>
+        <span id="bal-head">8,420 SHC</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scroll content -->
+  <div class="scroll-area" id="scroll">
+
+    <!-- ══════════ P1: 数据存储 ══════════ -->
+    <div class="panel active" id="p1">
+      <div class="phase-banner">
+        <div class="phase-num">01</div>
+        <div class="phase-text">
+          <div class="phase-title">数据存储</div>
+          <div class="phase-sub">录入藏品，构建数字档案库</div>
+        </div>
+        <div class="phase-count">
+          <div class="phase-count-n" id="art-count">3</div>
+          <div class="phase-count-l">已录入</div>
+        </div>
+      </div>
+
+      <!-- Upload & Form -->
+      <div class="section">
+        <div class="sec-title">录入新藏品</div>
+        <div class="upload-box" id="upload-box" onclick="doUpload()">
+          <div class="upload-icon-big" id="up-icon">🖼️</div>
+          <div class="upload-desc" id="up-desc">点击上传 <strong>高清图像</strong> 或 <strong>3D扫描文件</strong><br>JPG · PNG · OBJ · PLY</div>
+        </div>
+
+        <div class="form-card">
+          <div class="form-group">
+            <label class="form-label">作品名称 <span class="req">*</span></label>
+            <input class="form-input" id="f-name" placeholder="例：行书千字文">
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">创作者 <span class="req">*</span></label>
+              <input class="form-input" id="f-author" placeholder="作者姓名">
+            </div>
+            <div class="form-group">
+              <label class="form-label">年代</label>
+              <input class="form-input" id="f-era" placeholder="北宋·1082">
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">类别</label>
+              <select class="form-select" id="f-type">
+                <option>书法</option><option>国画</option><option>油画</option>
+                <option>青铜器</option><option>陶瓷</option><option>出土文物</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label class="form-label">尺寸(cm)</label>
+              <input class="form-input" id="f-size" placeholder="180 × 60">
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">持有机构</label>
+            <input class="form-input" id="f-owner" placeholder="博物馆或藏家">
+          </div>
+          <div class="form-group">
+            <label class="form-label">IPFS 哈希（自动）</label>
+            <input class="form-input" id="f-ipfs" placeholder="上传后自动填充" readonly
+              style="font-family:var(--mono);font-size:11px;color:var(--gold);background:var(--bg4)">
+          </div>
+        </div>
+
+        <button class="btn btn-gold" onclick="saveArt()">✦ 保存到数字档案库</button>
+      </div>
+
+      <!-- Gallery -->
+      <div class="section" style="margin-top:20px">
+        <div class="sec-title">数字档案库</div>
+        <div id="gallery"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ P2: 数据上链 ══════════ -->
+    <div class="panel" id="p2">
+      <div class="phase-banner">
+        <div class="phase-num">02</div>
+        <div class="phase-text">
+          <div class="phase-title">数据上链</div>
+          <div class="phase-sub">铸造 NFT，藏品永久确权</div>
+        </div>
+        <div class="phase-count">
+          <div class="phase-count-n" id="chain-count">2</div>
+          <div class="phase-count-l">已上链</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="sec-title">铸造 NFT</div>
+        <div class="notice">
+          <strong>什么是上链？</strong><br>
+          将藏品的图像哈希和元数据写入区块链，生成唯一凭证（NFT）。任何人都可以验证真实性，记录无法篡改。
+        </div>
+        <div class="form-card">
+          <div class="form-group">
+            <label class="form-label">选择藏品 <span class="req">*</span></label>
+            <select class="form-select" id="mint-sel"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">发行版次</label>
+            <select class="form-select">
+              <option>唯一版（1/1）</option>
+              <option>限量版（10份）</option>
+              <option>收藏版（100份）</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">链上备注</label>
+            <input class="form-input" id="mint-note" placeholder="鉴定机构、认证信息等">
+          </div>
+          <div class="divider"></div>
+          <div class="info-row"><span class="info-k">智能合约标准</span><span class="info-v">ERC-721</span></div>
+          <div class="info-row"><span class="info-k">所属链</span><span class="info-v">ShuHua Chain</span></div>
+          <div class="info-row"><span class="info-k">Gas 费用</span><span class="info-v">≈ 0.002 SHC</span></div>
+        </div>
+        <button class="btn btn-gold" id="mint-btn" onclick="doMint()">⛓ 铸造上链</button>
+        <p style="font-size:11px;color:var(--text3);text-align:center;margin-top:10px">铸造后永久写入区块链，无法撤销</p>
+      </div>
+
+      <!-- Blockchain -->
+      <div class="section" style="margin-top:20px;padding-bottom:16px">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <div class="sec-title" style="margin-bottom:0">区块链记录</div>
+          <span class="chain-badge badge-syncing">
+            <span style="width:5px;height:5px;border-radius:50%;background:var(--green);display:inline-block" class="pulse"></span>
+            同步中
+          </span>
+        </div>
+        <div id="blockchain"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ P3: 书画币 ══════════ -->
+    <div class="panel" id="p3">
+      <div class="phase-banner">
+        <div class="phase-num">03</div>
+        <div class="phase-text">
+          <div class="phase-title">书画币 · 交易</div>
+          <div class="phase-sub">P2P 艺术品交易市场</div>
+        </div>
+        <div class="phase-count">
+          <div class="phase-count-n" style="font-size:16px;color:var(--gold2)">1 SHC</div>
+          <div class="phase-count-l">≈ ¥128.50</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <!-- Wallet -->
+        <div class="wallet-card">
+          <div class="wallet-addr">0x8F3A4e71Bb2c9d8fEA3056Cc7f1a4d92C</div>
+          <div class="wallet-bal" id="wallet-bal">8,420.00</div>
+          <div class="wallet-unit">SHC 书画币</div>
+          <div class="wallet-cny">≈ ¥ 1,081,930.00 CNY</div>
+          <div class="btn-row" style="margin-top:14px">
+            <button class="btn btn-gold btn-sm" onclick="openSend()">⇧ 转账</button>
+            <button class="btn btn-outline btn-sm" onclick="toast('充值功能即将上线','💳')">充值</button>
+            <button class="btn btn-dark btn-sm" onclick="showTab('p4',3)">总览</button>
+          </div>
+        </div>
+
+        <!-- Price chart -->
+        <div class="chart-wrap">
+          <div class="chart-head">
+            <span class="chart-title">SHC 近7日价格</span>
+            <span class="chart-change">+12.4% ↑</span>
+          </div>
+          <div class="mini-chart" id="price-chart"></div>
+          <div class="chart-dates"><span>4/24</span><span>4/25</span><span>4/26</span><span>4/27</span><span>4/28</span><span>4/29</span><span>今日</span></div>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-val gold">¥128.50</div><div class="stat-key">当前价格</div></div>
+          <div class="stat-card"><div class="stat-val gold">¥417M</div><div class="stat-key">总市值</div></div>
+          <div class="stat-card"><div class="stat-val">21,000,000</div><div class="stat-key">总发行量</div></div>
+          <div class="stat-card"><div class="stat-val">3,248,000</div><div class="stat-key">流通量</div></div>
+        </div>
+
+        <!-- Market -->
+        <div class="sec-title" style="margin-top:8px">交易市场</div>
+        <div id="market"></div>
+
+        <!-- TX History -->
+        <div class="sec-title" style="margin-top:20px">最近交易</div>
+        <div class="tx-list" id="tx-list"></div>
+        <div style="height:8px"></div>
+      </div>
+    </div>
+
+    <!-- ══════════ P4: 总览 ══════════ -->
+    <div class="panel" id="p4">
+      <div class="phase-banner">
+        <div class="phase-num">∑</div>
+        <div class="phase-text">
+          <div class="phase-title">系统总览</div>
+          <div class="phase-sub">三阶段架构与核心指标</div>
+        </div>
+      </div>
+
+      <div class="section">
+        <div class="stats-grid">
+          <div class="stat-card"><div class="stat-val" id="d-arts">3</div><div class="stat-key">📦 总藏品数</div></div>
+          <div class="stat-card"><div class="stat-val gold" id="d-nfts">2</div><div class="stat-key">⛓ 已上链</div></div>
+          <div class="stat-card"><div class="stat-val" id="d-txs">5</div><div class="stat-key">💱 交易笔数</div></div>
+          <div class="stat-card"><div class="stat-val gold">¥417M</div><div class="stat-key">💰 总市值</div></div>
+        </div>
+
+        <div class="sec-title">系统架构</div>
+        <div style="background:var(--bg3);border:1px solid var(--goldborder);border-radius:var(--radius);padding:18px;margin-bottom:14px">
+          <div class="timeline">
+            <div class="tl-item">
+              <div class="tl-dot done"></div>
+              <div class="tl-title">第一层 · 分布式数据存储</div>
+              <div class="tl-desc">PostgreSQL 存元数据 + IPFS 存图像/3D文件，哈希值双向关联</div>
+              <div class="tl-tag">Node.js · PostgreSQL · IPFS · Python</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot done"></div>
+              <div class="tl-title">第二层 · 区块链确权</div>
+              <div class="tl-desc">ERC-721 合约铸造 NFT，链上锚定 IPFS 哈希，永久不可篡改</div>
+              <div class="tl-tag">Solidity · Hardhat · Web3.js · EVM链</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot"></div>
+              <div class="tl-title">第三层 · P2P 交易市场</div>
+              <div class="tl-desc">去中心化撮合，书画币(SHC)作为唯一流通媒介，多签钱包托管</div>
+              <div class="tl-tag">Solidity(DEX) · React · ethers.js · MetaMask</div>
+            </div>
+            <div class="tl-item">
+              <div class="tl-dot future"></div>
+              <div class="tl-title">第四层 · 全球共识治理 (规划中)</div>
+              <div class="tl-desc">DAO 投票，博物馆/鉴定机构多方参与，质押 SHC 获治理权</div>
+              <div class="tl-tag">规划阶段</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="sec-title">数据流向</div>
+        <div style="background:var(--bg3);border:1px solid var(--goldborder);border-radius:var(--radius);padding:16px;margin-bottom:14px">
+          <div style="display:flex;flex-direction:column;gap:10px;font-size:12px">
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <span class="tag tag-ink" style="flex-shrink:0">上传</span>
+              <span style="color:var(--text2);line-height:1.6">扫描/拍摄文件 → IPFS 节点存储 → 生成唯一哈希</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <span class="tag tag-gold" style="flex-shrink:0">录入</span>
+              <span style="color:var(--text2);line-height:1.6">元数据结构化写入 PostgreSQL 数据库</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <span class="tag tag-green" style="flex-shrink:0">上链</span>
+              <span style="color:var(--text2);line-height:1.6">调用智能合约，IPFS 哈希写入区块链，铸造 NFT</span>
+            </div>
+            <div style="display:flex;align-items:flex-start;gap:10px">
+              <span class="tag tag-red" style="flex-shrink:0">交易</span>
+              <span style="color:var(--text2);line-height:1.6">NFT 在 DEX 挂单，买方用 SHC 支付，合约自动结算</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="notice" style="border-left:2px solid var(--gold);border-radius:0 10px 10px 0">
+          <strong>给开发团队</strong><br>
+          · 此为前端原型演示，数据均为模拟<br>
+          · 区块链交互需接入 MetaMask 钱包<br>
+          · IPFS 建议使用 Pinata 或自建节点<br>
+          · 数据库推荐 PostgreSQL 15+<br>
+          · 书画币参考 ERC-20，总量 2100 万枚<br>
+          · 建议优先完成第一阶段再接入链上
+        </div>
+        <div style="height:8px"></div>
+      </div>
+    </div>
+
+  </div><!-- /scroll -->
+
+  <!-- Tab Bar -->
+  <div class="tab-bar">
+    <button class="tab-item active" id="tab0" onclick="showTab('p1',0)">
+      <div class="tab-icon">📦</div>
+      <div class="tab-label">存档</div>
+    </button>
+    <button class="tab-item" id="tab1" onclick="showTab('p2',1)">
+      <div class="tab-icon">⛓</div>
+      <div class="tab-label">上链</div>
+    </button>
+    <button class="tab-item" id="tab2" onclick="showTab('p3',2)">
+      <div class="tab-icon">💰</div>
+      <div class="tab-label">交易</div>
+    </button>
+    <button class="tab-item" id="tab3" onclick="showTab('p4',3)">
+      <div class="tab-icon">◎</div>
+      <div class="tab-label">总览</div>
+    </button>
+  </div>
+
+</div><!-- /app -->
+
+<!-- ══ MODALS ══ -->
+
+<!-- Art detail sheet -->
+<div class="modal-overlay" id="m-detail">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title" id="ms-title">藏品详情</div>
+    <div id="ms-body"></div>
+  </div>
+</div>
+
+<!-- Buy sheet -->
+<div class="modal-overlay" id="m-buy">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">购买藏品 NFT</div>
+    <div id="mb-info" style="margin-bottom:16px"></div>
+    <div class="form-group">
+      <label class="form-label">出价 (SHC)</label>
+      <input class="form-input" id="buy-price" type="number" placeholder="输入出价" oninput="calcFee()">
+    </div>
+    <div class="info-row"><span class="info-k">平台服务费 2.5%</span><span class="info-v" id="fee-v">—</span></div>
+    <div class="info-row"><span class="info-k">实付总额</span><span class="info-v" id="total-v">—</span></div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="confirmBuy()">确认购买</button>
+      <button class="btn btn-dark" onclick="closeM('m-buy')" style="flex:0.4">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- Send sheet -->
+<div class="modal-overlay" id="m-send">
+  <div class="modal-sheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-title">转账书画币</div>
+    <div class="form-group">
+      <label class="form-label">收款地址 <span class="req">*</span></label>
+      <input class="form-input" placeholder="0x…">
+    </div>
+    <div class="form-group">
+      <label class="form-label">金额 (SHC) <span class="req">*</span></label>
+      <input class="form-input" id="send-amt" type="number" placeholder="请输入金额">
+    </div>
+    <div class="form-group">
+      <label class="form-label">备注（可选）</label>
+      <input class="form-input" placeholder="">
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-gold" onclick="confirmSend()">确认转账</button>
+      <button class="btn btn-dark" onclick="closeM('m-send')" style="flex:0.4">取消</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast-el"><span id="ti"></span><span id="tm"></span></div>
+
+<script>
+// ─────────────── DATA ───────────────
+const arts = [
+  { id:'ART-001', name:'行书千字文', author:'苏轼', era:'北宋·1082年', type:'书法',
+    size:'180×60cm', owner:'故宫博物院', ipfs:'ipfs://QmX9f3a7K2mN8pL5vR1cB4dW6eY0qA3bJ',
+    onChain:true, tokenId:'#0001', emoji:'📜',
+    desc:'苏轼晚年代表书法，笔力雄健，结体宽博，艺术与历史价值极高。',
+    price:12800 },
+  { id:'ART-002', name:'青绿山水图', author:'王希孟', era:'北宋·1113年', type:'国画',
+    size:'51.5×1191.5cm', owner:'故宫博物院', ipfs:'ipfs://QmR4h8K9mP2nQ7tY5wC0bD3fE1jS6aV',
+    onChain:true, tokenId:'#0002', emoji:'🏔️',
+    desc:'青绿重彩，气势磅礴，中国山水画史不朽之作，现存绢本仅此一件。',
+    price:88000 },
+  { id:'ART-003', name:'鸳鸯荷花图', author:'齐白石', era:'民国·1938年', type:'国画',
+    size:'95×55cm', owner:'北京画院', ipfs:'ipfs://QmT5j2L8nW4oR6vU9xB1dF7gZ0kH3mI',
+    onChain:false, tokenId:null, emoji:'🪷',
+    desc:'齐白石晚年花鸟精品，写意传神，红荷绿叶间鸳鸯相依。',
+    price:6500 },
+];
+
+let blocks = [
+  { num:'#000', type:'genesis', title:'创世区块',
+    hash:'0000000000000000000000000000000000000000',
+    prev:'—', time:'2024-01-01 00:00:00', data:'书画链主网创世区块' },
+  { num:'#001', type:'nft', title:'行书千字文 · 铸造',
+    hash:'0x4e7f2a9b1c3d8e5f0a6b7c2d4e8f1a3b5c9d2e4f',
+    prev:'0x0000…0000', time:'2026-04-25 09:12:33',
+    data:'Token #0001 · Owner: 0x8F3A…d92C · IPFS: QmX9f3a7K2' },
+  { num:'#002', type:'nft', title:'青绿山水图 · 铸造',
+    hash:'0x8a1c5e9f2b4d7a0e3c6f8b1d4a7e2c5f9b0d3a6e',
+    prev:'0x4e7f…2e4f', time:'2026-04-26 14:38:57',
+    data:'Token #0002 · Owner: 0x8F3A…d92C · IPFS: QmR4h8K9mP' },
+];
+
+const txs = [
+  { name:'行书千字文', sub:'NFT 购入', icon:'buy', iconEmoji:'🛒', amt:'-12,800', pos:false },
+  { name:'青绿山水图', sub:'NFT 购入', icon:'buy', iconEmoji:'🛒', amt:'-88,000', pos:false },
+  { name:'SHC 充值', sub:'充值入账', icon:'send', iconEmoji:'💰', amt:'+100,000', pos:true },
+  { name:'鸳鸯荷花图', sub:'出价竞拍', icon:'send', iconEmoji:'🎯', amt:'-6,500', pos:false },
+  { name:'转账', sub:'转出给藏家', icon:'sell', iconEmoji:'⇧', amt:'-5,280', pos:false },
+];
+
+let balance = 8420;
+let buyingArt = null;
+
+// ─────────────── INIT ───────────────
+window.onload = () => {
+  renderGallery(); renderBlockchain(); renderMarket();
+  renderTxList(); renderPriceChart(); renderMintSel();
+};
+
+// ─────────────── NAV ───────────────
+function showTab(panelId, idx) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab-item').forEach(t => t.classList.remove('active'));
+  document.getElementById(panelId).classList.add('active');
+  document.getElementById('tab'+idx).classList.add('active');
+  document.getElementById('scroll').scrollTop = 0;
+  updateDash();
+}
+
+// ─────────────── PHASE 1 ───────────────
+function renderGallery() {
+  document.getElementById('gallery').innerHTML = arts.map(a => `
+    <div class="art-card" onclick="showDetail('${a.id}')">
+      <div class="art-thumb">${a.emoji}</div>
+      <div class="art-info">
+        <div class="art-name">${a.name}</div>
+        <div class="art-author">${a.author} · ${a.era}</div>
+        <div class="art-tags">
+          <span class="tag tag-ink">${a.type}</span>
+          ${a.onChain ? '<span class="tag tag-green">已上链</span>' : '<span class="tag tag-muted">待上链</span>'}
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div class="art-ipfs">${a.ipfs.slice(0,30)}…</div>
+          ${a.onChain ? '<span class="seal">已确权</span>' : ''}
+        </div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('art-count').textContent = arts.length;
+}
+
+function doUpload() {
+  const icon = document.getElementById('up-icon');
+  const desc = document.getElementById('up-desc');
+  icon.textContent = '⏳';
+  icon.classList.add('spin');
+  desc.innerHTML = '正在上传至 IPFS 节点…';
+  setTimeout(() => {
+    icon.classList.remove('spin');
+    icon.textContent = '✅';
+    const h = 'ipfs://Qm' + Math.random().toString(36).slice(2,16).toUpperCase();
+    document.getElementById('f-ipfs').value = h;
+    desc.innerHTML = '<strong style="color:var(--green)">上传成功</strong> · 已存入 IPFS';
+    toast('图像已上传至 IPFS 节点', '🖼️');
+  }, 1600);
+}
+
+function saveArt() {
+  const name = document.getElementById('f-name').value.trim();
+  const author = document.getElementById('f-author').value.trim();
+  if (!name || !author) { toast('请填写名称和作者', '⚠️'); return; }
+  const ipfs = document.getElementById('f-ipfs').value || 'ipfs://Qm' + Math.random().toString(36).slice(2,16).toUpperCase();
+  const emojis = ['📜','🏺','🗿','🎨','🪬','🖼️'];
+  arts.push({
+    id: 'ART-' + String(arts.length+1).padStart(3,'0'),
+    name, author,
+    era: document.getElementById('f-era').value || '当代',
+    type: document.getElementById('f-type').value,
+    size: document.getElementById('f-size').value || '—',
+    owner: document.getElementById('f-owner').value || '私人藏家',
+    desc: '新录入藏品，待补充描述。',
+    ipfs, onChain:false, tokenId:null,
+    emoji: emojis[Math.floor(Math.random()*emojis.length)],
+    price: Math.floor(Math.random()*40000)+2000,
+  });
+  renderGallery(); renderMintSel(); updateDash();
+  ['f-name','f-author','f-era','f-size','f-owner','f-ipfs'].forEach(id => document.getElementById(id).value='');
+  document.getElementById('up-icon').textContent='🖼️';
+  document.getElementById('up-desc').innerHTML='点击上传 <strong>高清图像</strong> 或 <strong>3D扫描文件</strong><br>JPG · PNG · OBJ · PLY';
+  toast(`《${name}》已保存至档案库`, '✦');
+}
+
+// ─────────────── PHASE 2 ───────────────
+function renderMintSel() {
+  const sel = document.getElementById('mint-sel');
+  sel.innerHTML = '<option value="">— 选择待上链藏品 —</option>' +
+    arts.map(a => `<option value="${a.id}" ${a.onChain?'disabled':''}>${a.name} · ${a.author}${a.onChain?' (已上链)':''}</option>`).join('');
+}
+
+function renderBlockchain() {
+  document.getElementById('blockchain').innerHTML = blocks.map((b, i) => `
+    ${i > 0 ? '<div class="block-connector">▼ 链接</div>' : ''}
+    <div class="block ${b.type==='genesis'?'genesis':''} ${i===blocks.length-1&&i>0?'fresh':''}">
+      <div class="block-top">
+        <div>
+          <div class="block-num">区块 ${b.num}</div>
+          <div class="block-title">${b.title}</div>
+        </div>
+        <span class="tag ${b.type==='genesis'?'tag-gold':b.type==='tx'?'tag-red':'tag-green'}" style="flex-shrink:0">
+          ${b.type==='genesis'?'GENESIS':b.type==='tx'?'TX':'NFT'}
+        </span>
+      </div>
+      <div class="block-hash">${b.hash}</div>
+      <div class="block-meta">
+        <div><strong>时间：</strong>${b.time}</div>
+        <div style="margin-top:3px"><strong>数据：</strong>${b.data}</div>
+        <div style="margin-top:3px"><strong>前块哈希：</strong>${b.prev}</div>
+      </div>
+    </div>
+  `).join('');
+  document.getElementById('chain-count').textContent = blocks.filter(b=>b.type==='nft').length;
+}
+
+function doMint() {
+  const sel = document.getElementById('mint-sel');
+  const artId = sel.value;
+  if (!artId) { toast('请先选择一件藏品', '⚠️'); return; }
+  const art = arts.find(a => a.id === artId);
+  const btn = document.getElementById('mint-btn');
+  btn.innerHTML = '<span class="spin">⏳</span> 正在写入区块链…';
+  btn.disabled = true;
+  setTimeout(() => {
+    art.onChain = true;
+    art.tokenId = '#' + String(blocks.length).padStart(4,'0');
+    const hash = '0x' + Array.from({length:40},()=>'0123456789abcdef'[Math.floor(Math.random()*16)]).join('');
+    blocks.push({
+      num: '#' + String(blocks.length).padStart(3,'0'),
+      type: 'nft', title: `${art.name} · 铸造`,
+      hash, prev: blocks[blocks.length-1].hash.slice(0,14)+'…',
+      time: new Date().toLocaleString('zh-CN'),
+      data: `Token ${art.tokenId} · Owner: 0x8F3A…d92C · ${art.ipfs.slice(7,28)}`
+    });
+    renderBlockchain(); renderGallery(); renderMintSel(); renderMarket(); updateDash();
+    btn.innerHTML = '⛓ 铸造上链'; btn.disabled = false;
+    document.getElementById('mint-note').value = '';
+    toast(`《${art.name}》已上链 · Token ${art.tokenId}`, '⛓');
+    // Scroll blockchain into view
+    setTimeout(() => {
+      const bc = document.getElementById('blockchain');
+      bc.lastElementChild && bc.lastElementChild.scrollIntoView({behavior:'smooth'});
+    }, 300);
+  }, 2200);
+}
+
+// ─────────────── PHASE 3 ───────────────
+function renderMarket() {
+  const m = document.getElementById('market');
+  const listed = arts.filter(a => a.onChain);
+  if (!listed.length) {
+    m.innerHTML = '<div class="empty"><div class="ei">🏪</div><div class="et">暂无上链藏品<br>请先在「上链」完成 NFT 铸造</div></div>';
+    return;
+  }
+  m.innerHTML = listed.map(a => `
+    <div class="market-card">
+      <div class="market-top">
+        <div class="market-thumb">${a.emoji}</div>
+        <div class="market-info">
+          <div class="market-name">${a.name}</div>
+          <div class="market-author">${a.author} · ${a.tokenId}</div>
+          <div class="price-big">${a.price.toLocaleString()}<span class="price-unit">SHC</span></div>
+          <div class="price-cny">≈ ¥${(a.price*128.5).toLocaleString()}</div>
+        </div>
+      </div>
+      <div class="market-footer">
+        <button class="btn btn-gold btn-sm" onclick="openBuy('${a.id}')">立即购买</button>
+        <button class="btn btn-dark btn-sm" onclick="showDetail('${a.id}')">查看详情</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function renderTxList() {
+  document.getElementById('tx-list').innerHTML = txs.map(t => `
+    <div class="tx-item">
+      <div class="tx-icon ${t.icon}">${t.iconEmoji}</div>
+      <div class="tx-main">
+        <div class="tx-name">${t.name}</div>
+        <div class="tx-sub">${t.sub}</div>
+      </div>
+      <div class="tx-amount ${t.pos?'pos':'neg'}">${t.amt}</div>
+    </div>
+  `).join('');
+}
+
+function renderPriceChart() {
+  const prices = [98,105,112,108,119,122,128.5];
+  const max = Math.max(...prices);
+  document.getElementById('price-chart').innerHTML = prices.map((p,i) =>
+    `<div class="bar ${i===prices.length-1?'hi':''}" style="height:${(p/max*100).toFixed(0)}%" title="¥${p}"></div>`
+  ).join('');
+}
+
+// ─────────────── BUY ───────────────
+function openBuy(artId) {
+  buyingArt = arts.find(a => a.id === artId);
+  document.getElementById('mb-info').innerHTML = `
+    <div style="display:flex;gap:12px;align-items:center;padding:12px;background:var(--bg4);border-radius:10px">
+      <span style="font-size:28px">${buyingArt.emoji}</span>
+      <div>
+        <div style="font-family:var(--serif);font-size:15px;color:var(--text)">${buyingArt.name}</div>
+        <div style="font-size:11px;color:var(--text3);margin-top:2px">${buyingArt.author} · ${buyingArt.era}</div>
+        <div style="font-family:var(--mono);font-size:12px;color:var(--gold);margin-top:5px">标价 ${buyingArt.price.toLocaleString()} SHC</div>
+      </div>
+    </div>`;
+  document.getElementById('buy-price').value = buyingArt.price;
+  calcFee();
+  openM('m-buy');
+}
+
+function calcFee() {
+  const p = parseFloat(document.getElementById('buy-price').value)||0;
+  document.getElementById('fee-v').textContent = (p*0.025).toFixed(2)+' SHC';
+  document.getElementById('total-v').textContent = (p*1.025).toFixed(2)+' SHC';
+}
+
+function confirmBuy() {
+  if (!buyingArt) return;
+  const p = parseFloat(document.getElementById('buy-price').value)||0;
+  balance -= p*1.025;
+  document.getElementById('wallet-bal').textContent = balance.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('bal-head').textContent = Math.round(balance).toLocaleString()+' SHC';
+  txs.unshift({ name:buyingArt.name, sub:'NFT 购入', icon:'buy', iconEmoji:'🛒', amt:'-'+p.toLocaleString(), pos:false });
+  renderTxList();
+  const hash = '0x'+Array.from({length:40},()=>'0123456789abcdef'[Math.floor(Math.random()*16)]).join('');
+  blocks.push({ num:'#'+String(blocks.length).padStart(3,'0'), type:'tx',
+    title:buyingArt.name+' · P2P交易', hash, prev:blocks[blocks.length-1].hash.slice(0,14)+'…',
+    time:new Date().toLocaleString('zh-CN'),
+    data:`买: 0x8F3A…d92C · 卖: 0xF2c9…8Ab1 · ${p} SHC · ${buyingArt.tokenId}` });
+  renderBlockchain(); updateDash();
+  closeM('m-buy');
+  toast(`购买成功！《${buyingArt.name}》已入账`, '🎉');
+}
+
+// ─────────────── SEND ───────────────
+function openSend() { openM('m-send'); }
+function confirmSend() {
+  const amt = parseFloat(document.getElementById('send-amt').value)||0;
+  if (amt<=0) { toast('请输入有效金额','⚠️'); return; }
+  balance -= amt;
+  document.getElementById('wallet-bal').textContent = balance.toLocaleString('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById('bal-head').textContent = Math.round(balance).toLocaleString()+' SHC';
+  txs.unshift({ name:'书画币转账', sub:'转出', icon:'sell', iconEmoji:'⇧', amt:'-'+amt.toLocaleString(), pos:false });
+  renderTxList();
+  document.getElementById('send-amt').value='';
+  closeM('m-send');
+  toast(`已转出 ${amt.toLocaleString()} SHC`,'💸');
+}
+
+// ─────────────── DETAIL ───────────────
+function showDetail(artId) {
+  const a = arts.find(x=>x.id===artId);
+  document.getElementById('ms-title').textContent = a.name;
+  document.getElementById('ms-body').innerHTML = `
+    <div style="text-align:center;font-size:56px;padding:16px 0;background:var(--bg3);border-radius:12px;margin-bottom:16px">${a.emoji}</div>
+    <div class="art-tags" style="margin-bottom:12px">
+      <span class="tag tag-ink">${a.type}</span>
+      <span class="tag tag-gold">${a.era}</span>
+      ${a.onChain?'<span class="tag tag-green">已上链 NFT</span>':'<span class="tag tag-muted">待上链</span>'}
+    </div>
+    <p style="font-size:13px;color:var(--text2);line-height:1.8;margin-bottom:16px">${a.desc}</p>
+    <div class="divider"></div>
+    <div class="info-row"><span class="info-k">档案编号</span><span class="info-v">${a.id}</span></div>
+    <div class="info-row"><span class="info-k">创作者</span><span class="info-v">${a.author}</span></div>
+    <div class="info-row"><span class="info-k">尺寸</span><span class="info-v">${a.size}</span></div>
+    <div class="info-row"><span class="info-k">持有机构</span><span class="info-v">${a.owner}</span></div>
+    <div class="info-row"><span class="info-k">IPFS</span><span class="info-v" style="font-size:9px">${a.ipfs}</span></div>
+    ${a.onChain?`<div class="info-row"><span class="info-k">Token ID</span><span class="info-v">${a.tokenId}</span></div>`:''}
+    <div class="btn-row" style="margin-top:16px">
+      ${a.onChain
+        ? `<button class="btn btn-gold" onclick="closeM('m-detail');openBuy('${a.id}')">立即购买</button>`
+        : `<button class="btn btn-gold" onclick="closeM('m-detail');showTab('p2',1)">前往上链</button>`}
+      <button class="btn btn-dark" onclick="closeM('m-detail')" style="flex:0.4">关闭</button>
+    </div>`;
+  openM('m-detail');
+}
+
+// ─────────────── UTILS ───────────────
+function openM(id) { document.getElementById(id).classList.add('open'); }
+function closeM(id) { document.getElementById(id).classList.remove('open'); }
+document.querySelectorAll('.modal-overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); });
+});
+
+function toast(msg, icon) {
+  const el = document.getElementById('toast-el');
+  document.getElementById('ti').textContent = icon||'✦';
+  document.getElementById('tm').textContent = msg;
+  el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'), 3000);
+}
+
+function updateDash() {
+  const da = document.getElementById('d-arts');
+  const dn = document.getElementById('d-nfts');
+  const dt = document.getElementById('d-txs');
+  if(da) da.textContent = arts.length;
+  if(dn) dn.textContent = arts.filter(a=>a.onChain).length;
+  if(dt) dt.textContent = txs.length;
+}
+</script>
+</body>
+</html>
