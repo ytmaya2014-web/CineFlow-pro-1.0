@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>八字命盘</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -106,8 +106,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .loading-dots span:nth-child(2){animation-delay:.2s}
 .loading-dots span:nth-child(3){animation-delay:.4s}
 @keyframes ld{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
-.quick-btns{display:flex;gap:6px;padding:10px 12px;overflow-x:auto;border-top:1px solid #f0e0cc;-webkit-overflow-scrolling:touch}
-.quick-btns::-webkit-scrollbar{display:none}
+.quick-btns{display:flex;flex-wrap:wrap;gap:6px;padding:10px 12px;border-top:1px solid #f0e0cc}
 .qbtn{padding:7px 14px;background:#f5f0e8;border:1px solid #d4a96a;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;color:#3d1a00;flex-shrink:0}
 .qbtn:active{background:#d4a96a}
 .chat-input{display:flex;gap:8px;padding:10px 12px;border-top:1px solid #f0e0cc;align-items:flex-end}
@@ -295,7 +294,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
   </div>
   <div class="form-group">
     <label>出生地经度（不填默认北京120°）</label>
-    <input type="text" id="f-lon" inputmode="decimal" placeholder="东经，如上海121.5">
+    <input type="text" id="f-lon" placeholder="如：北京、上海、成都，或直接输经度 121.5">
     <div class="form-hint">用于校正真太阳时。东北哈尔滨约127，广州约113，成都约104</div>
   </div>
   <button class="btn-paipan" onclick="doPaipan()">排 盘</button>
@@ -4388,6 +4387,19 @@ let currentChart = null;
 let chatHistory = [];
 let isStreaming = false;
 
+// 城市经度查表（用于真太阳时校正）
+const CITY_LON = {
+  "北京":116.4,"上海":121.5,"广州":113.3,"深圳":114.1,"成都":104.1,"杭州":120.2,
+  "南京":118.8,"西安":108.9,"重庆":106.5,"武汉":114.3,"天津":117.2,"哈尔滨":126.6,
+  "沈阳":123.4,"大连":121.6,"青岛":120.4,"济南":117.0,"长沙":112.9,"福州":119.3,
+  "厦门":118.1,"南昌":115.9,"合肥":117.3,"郑州":113.6,"太原":112.6,"石家庄":114.5,
+  "兰州":103.8,"银川":106.3,"西宁":101.8,"乌鲁木齐":87.6,"拉萨":91.1,"昆明":102.7,
+  "贵阳":106.7,"南宁":108.4,"海口":110.3,"香港":114.2,"澳门":113.5,"台北":121.5,
+  "苏州":120.6,"无锡":120.3,"宁波":121.6,"温州":120.7,"东莞":113.7,"佛山":113.1,
+  "中山":113.4,"珠海":113.6,"汕头":116.7,"洛阳":112.4,"开封":114.3,"长春":125.3,
+  "吉林":126.5,"齐齐哈尔":123.9,"包头":110.0,"呼和浩特":111.7,"鄂尔多斯":109.8
+};
+
 // ═══════════════════════════════════════════════════
 // 三、UI 渲染
 // ═══════════════════════════════════════════════════
@@ -4500,8 +4512,13 @@ function doPaipan() {
   const day    = parseInt(document.getElementById("f-day").value);
   const hour   = parseInt(document.getElementById("f-hour").value);
   const minute = parseInt(document.getElementById("f-minute").value) || 0;
-  const lonRaw = document.getElementById("f-lon").value;
+  const lonRaw = document.getElementById("f-lon").value.trim();
   let lon = parseFloat(lonRaw);
+  if (isNaN(lon)) {
+    for (const [city, ln] of Object.entries(CITY_LON)) {
+      if (lonRaw.includes(city)) { lon = ln; break; }
+    }
+  }
   if (isNaN(lon) || lon < 70 || lon > 140) lon = 120.0;
 
   if (!year || !month || !day || isNaN(hour)) {
@@ -4511,6 +4528,7 @@ function doPaipan() {
   try {
     currentChart = paipan(name, selectedGender, year, month, day, hour, minute, lon);
     chatHistory = [];
+    document.getElementById("chatMsgs").innerHTML = "";
     renderChart(currentChart);
     enterChartView(name, selectedGender, year, month, day, hour, minute);
   } catch(e) {
@@ -4966,8 +4984,13 @@ function saveCurrentProfile() {
   const day    = document.getElementById("f-day").value;
   const hour   = document.getElementById("f-hour").value;
   const minute = document.getElementById("f-minute").value || 0;
-  const lonRaw = document.getElementById("f-lon").value;
+  const lonRaw = document.getElementById("f-lon").value.trim();
   let lon = parseFloat(lonRaw);
+  if (isNaN(lon)) {
+    for (const [city, ln] of Object.entries(CITY_LON)) {
+      if (lonRaw.includes(city)) { lon = ln; break; }
+    }
+  }
   if (isNaN(lon) || lon < 70 || lon > 140) lon = 120.0;
 
   if (!name) { alert("请先在表单里填姓名"); return; }
