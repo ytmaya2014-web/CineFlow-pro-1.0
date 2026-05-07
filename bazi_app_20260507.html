@@ -140,6 +140,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .profile-item .pi-name{font-size:14px;font-weight:600;color:#3d1a00}
 .profile-item .pi-meta{font-size:11px;color:#888;margin-top:2px}
 .profile-item .pi-load{padding:6px 10px;background:#8b4513;color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer;margin-left:6px}
+.profile-item .pi-match{padding:6px 10px;background:#c0392b;color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer;margin-left:4px}
 .profile-item .pi-del{padding:6px 8px;background:none;color:#c00;border:1px solid #f0c0c0;border-radius:6px;font-size:12px;cursor:pointer;margin-left:4px}
 .profile-empty{text-align:center;padding:20px;color:#aaa;font-size:13px}
 
@@ -251,6 +252,7 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 <!-- Tab 切换栏（手机端排盘后显示） -->
 <div class="tab-bar" id="tabBar">
   <button class="tab-btn on" data-tab="chart" onclick="switchTab('chart')">命 盘</button>
+  <button class="tab-btn" data-tab="today" onclick="switchTab('today')">今 日</button>
   <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')">问命理师</button>
 </div>
 
@@ -337,11 +339,29 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
     <div class="liuyear-grid" id="liuyear-grid"></div>
   </div>
 
-  <!-- 复制盘面 -->
+  <!-- 复制盘面 + 分享卡 -->
   <button class="btn-copy" id="copyBtn" onclick="copyChart()">复制盘面文字 · 粘贴到 Claude 提问</button>
+  <button class="btn-copy" onclick="generateShareCard()" style="margin-top:8px;background:#3d1a00;color:#f5e6d3;border-color:#3d1a00">生成命盘分享卡 · 保存图片</button>
 
 </div>
 </div><!-- /paneChart -->
+
+<!-- 分享卡弹层 -->
+<div class="overlay" id="shareOverlay">
+  <div class="key-panel" style="max-width:380px">
+    <h2>命盘分享卡</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px">长按图片可保存到相册</p>
+    <label style="display:flex;align-items:center;font-size:13px;color:#666;margin-bottom:10px;cursor:pointer">
+      <input type="checkbox" id="hideName" onchange="generateShareCard()" style="margin-right:8px">
+      隐藏姓名（保护隐私）
+    </label>
+    <canvas id="shareCanvas" width="640" height="1080" style="width:100%;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15)"></canvas>
+    <div class="row" style="margin-top:14px">
+      <button class="btn-cancel" onclick="document.getElementById('shareOverlay').classList.remove('show')">关闭</button>
+      <button class="btn-save" onclick="downloadShareCard()">下载图片</button>
+    </div>
+  </div>
+</div>
 
 <!-- 复制弹层 -->
 <div class="overlay" id="copyOverlay">
@@ -355,6 +375,25 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
     </div>
   </div>
 </div>
+
+<!-- 今日 Tab -->
+<div class="tab-pane" id="paneToday">
+<div class="chart-wrap" style="display:block">
+  <div class="chart-card">
+    <h3>今日干支</h3>
+    <div id="todayGanzhi" style="text-align:center;padding:20px 0">
+      <div id="todayDate" style="font-size:14px;color:#888;margin-bottom:8px"></div>
+      <div id="todayGz" style="font-size:48px;font-weight:bold;color:#3d1a00;letter-spacing:6px"></div>
+      <div id="todayWx" style="font-size:13px;color:#a0622b;margin-top:8px;letter-spacing:2px"></div>
+    </div>
+  </div>
+  <div class="chart-card">
+    <h3>今日运势速查</h3>
+    <p style="font-size:13px;color:#666;line-height:1.7;margin-bottom:14px">点下方按钮，AI 根据今日干支 + 你的命盘，给出当天运势：宜做什么、忌做什么、戴哪种水晶最配、要小心什么人和事。</p>
+    <button class="btn-paipan" onclick="askToday()" style="margin-top:0">查看今日运势</button>
+  </div>
+</div>
+</div><!-- /paneToday -->
 
 <!-- 对话 Tab -->
 <div class="tab-pane" id="paneChat">
@@ -4562,13 +4601,71 @@ function editForm() {
 function switchTab(name) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
   document.getElementById("paneChart").classList.toggle("active", name === "chart");
+  document.getElementById("paneToday").classList.toggle("active", name === "today");
   document.getElementById("paneChat").classList.toggle("active", name === "chat");
+  if (name === "today") renderToday();
   if (name === "chat") {
     setTimeout(() => {
       const ta = document.getElementById("chatInput");
       if (ta) ta.focus({ preventScroll: true });
     }, 100);
   }
+}
+
+// 今日干支显示
+function renderToday() {
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth()+1, d = now.getDate();
+  const [yTg, yDz] = getYearPillar(y, m, d);
+  const [mTg, mDz] = getMonthPillar(y, m, d, yTg);
+  const [dTg, dDz] = getDayPillar(y, m, d);
+  const todayGz = dTg + dDz;
+  const dateStr = `${y}年${m}月${d}日`;
+  const wxStr = `${TG_WX[dTg]}（${TG_YY[dTg]}）${DZ_WX[dDz]}`;
+  document.getElementById("todayDate").textContent = dateStr + " · 流年" + yTg + yDz + " · 流月" + mTg + mDz;
+  document.getElementById("todayGz").innerHTML = `<span class="${'wx-'+TG_WX[dTg]}">${dTg}</span><span class="${'wx-'+DZ_WX[dDz]}">${dDz}</span>`;
+  document.getElementById("todayWx").textContent = "日柱五行：" + wxStr;
+}
+
+// 今日运势提问
+function askToday() {
+  if (isStreaming) return;
+  if (!currentChart) { alert("请先排盘"); return; }
+  const now = new Date();
+  const y = now.getFullYear(), m = now.getMonth()+1, d = now.getDate();
+  const [yTg, yDz] = getYearPillar(y, m, d);
+  const [mTg, mDz] = getMonthPillar(y, m, d, yTg);
+  const [dTg, dDz] = getDayPillar(y, m, d);
+  const dateStr = `${y}年${m}月${d}日`;
+
+  switchTab("chat");
+  const prompt = `今天是 ${dateStr}，今日干支 ${dTg}${dDz}（流年${yTg}${yDz} · 流月${mTg}${mDz}）。请根据我的命盘 + 今日干支，给我今日运势速报，结构如下：
+
+一、今日整体 [高/中/低]
+  一句话总结今天对你而言是什么样的日子。
+  [依据：今日 ${dTg}${dDz} 与你日主 ${currentChart.dTg} 的关系；流月 ${mTg}${mDz} 与本命 xx 关系]
+
+二、今日宜（3 项）
+  · 宜 ____（如：求职/谈判/告白/出行/签约/学习）[依据：xx]
+  · 宜 ____ [依据：xx]
+  · 宜 ____ [依据：xx]
+
+三、今日忌（3 项）
+  · 忌 ____（如：动怒/借贷/远行/重大决策/动土）[依据：xx]
+  · 忌 ____ [依据：xx]
+  · 忌 ____ [依据：xx]
+
+四、今日水晶（1 种主推）
+  推荐戴 ____（左/右手），原因 ____ [依据：水晶库·xx 五行]
+
+五、今日提防
+  小心的人或事 ____（"什么样的人"，不要说"小人"这种空话）[依据：xx]
+
+六、今日金句
+  根据今日干支组合，给一句具体可执行的实用箴言（如："今天少说多听""把决定推到明天""见到老朋友主动联系"）
+
+简短直接，全文 400 字内。所有结论沿用之前的铁规：标依据、标置信度、禁奉承、禁蒙猜。`;
+  callClaude(prompt);
 }
 
 // ═══════════════════════════════════════════════════
@@ -4963,16 +5060,20 @@ function renderProfileList() {
     el.innerHTML = '<div class="profile-empty">还没有保存的档案<br>填好生辰后点「保存当前」</div>';
     return;
   }
-  el.innerHTML = list.map((p, i) => `
+  const hasCurrent = !!currentChart;
+  el.innerHTML = list.map((p, i) => {
+    const isCurrent = hasCurrent && currentChart.meta.name === p.name;
+    return `
     <div class="profile-item">
       <div class="pi-info">
         <div class="pi-name">${escapeHtml(p.name)} · ${p.gender}</div>
         <div class="pi-meta">${p.year}-${p.month}-${p.day} ${p.hour}:${String(p.minute||0).padStart(2,'0')} · 经度${p.lon}</div>
       </div>
       <button class="pi-load" onclick="loadProfile(${i})">载入</button>
+      ${hasCurrent && !isCurrent ? `<button class="pi-match" onclick="matchProfile(${i})">合婚</button>` : ''}
       <button class="pi-del" onclick="deleteProfile(${i})">×</button>
-    </div>
-  `).join("");
+    </div>`;
+  }).join("");
 }
 function escapeHtml(s) {
   return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
@@ -5027,6 +5128,279 @@ function deleteProfile(i) {
   list.splice(i, 1);
   saveProfiles(list);
   renderProfileList();
+}
+
+// ─── 命盘分享卡（Canvas 绘制） ───
+const WX_CRYSTAL_REC = {
+  木: "绿幽灵 / 绿松石",
+  火: "石榴石 / 红发晶",
+  土: "黄水晶 / 虎眼石",
+  金: "白水晶 / 月光石",
+  水: "黑曜石 / 茶水晶"
+};
+
+function computeWuxingStats(c) {
+  const cnt = {木:0, 火:0, 土:0, 金:0, 水:0};
+  const cols = ["year","month","day","hour"];
+  for (const col of cols) {
+    cnt[c.sz[col].tgWx] += 1;
+    cnt[c.sz[col].dzWx] += 1;
+    for (const cg of c.sz[col].cgs) cnt[TG_WX[cg.t]] += 0.3;
+  }
+  return cnt;
+}
+
+function generateShareCard() {
+  if (!currentChart) { alert("请先排盘"); return; }
+  document.getElementById("shareOverlay").classList.add("show");
+
+  const c = currentChart;
+  const m = c.meta;
+  const cv = document.getElementById("shareCanvas");
+  const ctx = cv.getContext("2d");
+  const W = cv.width, H = cv.height;
+  const hideName = document.getElementById("hideName").checked;
+
+  // 五行色
+  const wxColor = {木:"#2d7a2d",火:"#c0392b",土:"#a0622b",金:"#b8860b",水:"#2471a3"};
+
+  // 背景
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0, "#2c1810");
+  grad.addColorStop(1, "#3d1a00");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0,0,W,H);
+
+  // 米色卡纸
+  ctx.fillStyle = "#f5e6d3";
+  ctx.fillRect(40, 40, W-80, H-80);
+
+  // 装饰边框
+  ctx.strokeStyle = "#8b4513";
+  ctx.lineWidth = 2;
+  ctx.strokeRect(60, 60, W-120, H-120);
+  ctx.strokeRect(50, 50, W-100, H-100);
+
+  // 标题
+  ctx.fillStyle = "#3d1a00";
+  ctx.font = "bold 56px 'Songti SC', 'STSong', serif";
+  ctx.textAlign = "center";
+  ctx.fillText("命 盘", W/2, 150);
+  ctx.font = "20px 'Songti SC', serif";
+  ctx.fillStyle = "#8b4513";
+  ctx.fillText("BaZi Chart · 八字命理", W/2, 185);
+
+  // 分隔线
+  ctx.strokeStyle = "#d4a96a";
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(120, 220); ctx.lineTo(W-120, 220);
+  ctx.stroke();
+
+  // 命主信息
+  ctx.fillStyle = "#3d1a00";
+  ctx.font = "26px 'Songti SC', serif";
+  const nameStr = hideName ? "（命主信息已隐藏）" : `${m.name||"命主"} · ${m.gender}`;
+  ctx.fillText(nameStr, W/2, 270);
+  ctx.font = "18px 'Songti SC', serif";
+  ctx.fillStyle = "#8b4513";
+  if (!hideName) {
+    ctx.fillText(`${m.year}年${m.month}月${m.day}日 ${m.hour}时${String(m.minute).padStart(2,'0')}分`, W/2, 300);
+  } else {
+    ctx.fillText("生辰已隐藏", W/2, 300);
+  }
+
+  // 四柱表头
+  const sizhuY = 360;
+  ctx.font = "14px 'Songti SC', serif";
+  ctx.fillStyle = "#8b4513";
+  const cols = ["年柱","月柱","日柱","时柱"];
+  const colW = (W - 160) / 4;
+  cols.forEach((label, i) => {
+    ctx.fillText(label, 80 + colW*i + colW/2, sizhuY);
+  });
+
+  // 四柱内容
+  const colKeys = ["year","month","day","hour"];
+  colKeys.forEach((k, i) => {
+    const p = c.sz[k];
+    const cx = 80 + colW*i + colW/2;
+
+    // 卡片背景
+    if (k === "day") {
+      ctx.fillStyle = "#fff8f0";
+      ctx.fillRect(80 + colW*i + 6, sizhuY+15, colW-12, 180);
+    }
+
+    // 天干（大字）
+    ctx.font = "bold 64px 'Songti SC', serif";
+    ctx.fillStyle = wxColor[p.tgWx];
+    ctx.fillText(p.tg, cx, sizhuY + 90);
+    // 十神
+    ctx.font = "12px 'Songti SC', serif";
+    ctx.fillStyle = "#8b4513";
+    ctx.fillText(p.ss, cx, sizhuY + 110);
+
+    // 地支
+    ctx.font = "bold 56px 'Songti SC', serif";
+    ctx.fillStyle = wxColor[p.dzWx];
+    ctx.fillText(p.dz, cx, sizhuY + 175);
+    // 地支五行
+    ctx.font = "11px 'Songti SC', serif";
+    ctx.fillStyle = "#888";
+    ctx.fillText(p.dzWx, cx, sizhuY + 195);
+  });
+
+  // 分隔
+  ctx.strokeStyle = "#d4a96a";
+  ctx.beginPath(); ctx.moveTo(120, 580); ctx.lineTo(W-120, 580); ctx.stroke();
+
+  // 五行分布
+  const stats = computeWuxingStats(c);
+  const max = Math.max(...Object.values(stats));
+  const wxOrder = ["木","火","土","金","水"];
+  ctx.font = "16px 'Songti SC', serif";
+  ctx.fillStyle = "#3d1a00";
+  ctx.textAlign = "left";
+  ctx.fillText("五行分布", 80, 620);
+  let xOffset = 80;
+  const barW = (W - 160) / 5;
+  wxOrder.forEach((wx, i) => {
+    const v = stats[wx];
+    const cx = xOffset + barW*i + barW/2;
+    // 标签
+    ctx.font = "bold 22px 'Songti SC', serif";
+    ctx.fillStyle = wxColor[wx];
+    ctx.textAlign = "center";
+    ctx.fillText(wx, cx, 660);
+    // 柱状
+    const h = (v / max) * 80;
+    ctx.fillStyle = wxColor[wx];
+    ctx.fillRect(cx - 24, 750 - h, 48, h);
+    // 数值
+    ctx.font = "13px 'Songti SC', serif";
+    ctx.fillStyle = "#666";
+    ctx.fillText(v.toFixed(1), cx, 770);
+  });
+
+  // 分隔
+  ctx.strokeStyle = "#d4a96a";
+  ctx.beginPath(); ctx.moveTo(120, 800); ctx.lineTo(W-120, 800); ctx.stroke();
+
+  // 推荐水晶（按最弱五行）
+  const minWx = wxOrder.reduce((a,b) => stats[a] < stats[b] ? a : b);
+  ctx.font = "16px 'Songti SC', serif";
+  ctx.fillStyle = "#3d1a00";
+  ctx.textAlign = "left";
+  ctx.fillText("推荐水晶（补五行所缺）", 80, 840);
+  ctx.font = "bold 28px 'Songti SC', serif";
+  ctx.fillStyle = wxColor[minWx];
+  ctx.textAlign = "center";
+  ctx.fillText(WX_CRYSTAL_REC[minWx], W/2, 880);
+  ctx.font = "13px 'Songti SC', serif";
+  ctx.fillStyle = "#888";
+  ctx.fillText(`补 ${minWx} 之气`, W/2, 905);
+
+  // 空亡 + 命宫
+  ctx.font = "14px 'Songti SC', serif";
+  ctx.fillStyle = "#8b4513";
+  ctx.textAlign = "center";
+  ctx.fillText(`命宫 ${c.minggong.gz}　·　空亡 ${c.kongwang.dz.join("")}`, W/2, 950);
+
+  // 当前大运
+  if (c.dayun.current) {
+    const cd = c.dayun.current;
+    ctx.font = "13px 'Songti SC', serif";
+    ctx.fillStyle = "#666";
+    ctx.fillText(`当前大运：${cd.gz}（${cd.startAge}-${cd.endAge}岁 / ${cd.startYear}-${cd.endYear}）`, W/2, 975);
+  }
+
+  // 底部箴言
+  ctx.font = "italic 14px 'Songti SC', serif";
+  ctx.fillStyle = "#a0622b";
+  ctx.textAlign = "center";
+  ctx.fillText("非稽其已往，无以测其将来 — 陈素庵", W/2, 1020);
+
+  ctx.font = "11px 'Songti SC', serif";
+  ctx.fillStyle = "#bbb";
+  ctx.fillText("八字命盘 · 仅供参考", W/2, 1045);
+}
+
+function downloadShareCard() {
+  const cv = document.getElementById("shareCanvas");
+  const link = document.createElement("a");
+  link.download = `命盘_${currentChart.meta.name||"命主"}_${Date.now()}.png`;
+  link.href = cv.toDataURL("image/png");
+  link.click();
+}
+
+// 关闭分享卡 overlay
+window.addEventListener("DOMContentLoaded", () => {
+  const so = document.getElementById("shareOverlay");
+  if (so) so.addEventListener("click", function(e) {
+    if (e.target === this) this.classList.remove("show");
+  });
+});
+
+// ─── 合婚合盘 ───
+function matchProfile(i) {
+  if (!currentChart) { alert("请先载入或排盘命主A"); return; }
+  const other = getProfiles()[i];
+  if (!other) return;
+  hideProfilePanel();
+  switchTab("chat");
+
+  const A = currentChart.meta;
+  const otherChart = paipan(other.name, other.gender, other.year, other.month, other.day, other.hour, other.minute, other.lon);
+  const Bsz = otherChart.sz;
+  const Bdz = otherChart.dayun;
+  const Bsz_text = `${Bsz.year.gz} ${Bsz.month.gz} ${Bsz.day.gz} ${Bsz.hour.gz}`;
+  const Asz = currentChart.sz;
+  const Asz_text = `${Asz.year.gz} ${Asz.month.gz} ${Asz.day.gz} ${Asz.hour.gz}`;
+
+  const prompt = `请做合婚合盘分析。
+
+【命主A】${A.name} · ${A.gender}
+出生：${A.year}-${A.month}-${A.day} ${A.hour}:${String(A.minute).padStart(2,'0')}
+四柱（仅供参考，你需自己手推验证）：${Asz_text}
+
+【命主B】${other.name} · ${other.gender}
+出生：${other.year}-${other.month}-${other.day} ${other.hour}:${String(other.minute||0).padStart(2,'0')}
+经度：${other.lon}°
+四柱（仅供参考，你需自己手推验证）：${Bsz_text}
+
+请按以下结构输出（每段都要带 [依据] 和 [高/中/低]，沿用之前的铁规）：
+
+一、第一印象配对度
+  整体匹配度 [高/中/低] + 一句话定性。
+
+二、性格契合
+  A 是 ___ 性格 [依据：xx]
+  B 是 ___ 性格 [依据：xx]
+  → 配不配，为什么 [置信度]
+
+三、五行互补 / 相克
+  A 喜 ___ 忌 ___ ，B 喜 ___ 忌 ___
+  互补：B 能给 A 什么？A 能给 B 什么？[置信度]
+  冲突：哪些五行/天干地支相互冲克？影响什么？[置信度]
+
+四、最适合的关系类型
+  恋人 / 夫妻 / 朋友 / 合作伙伴 / 不建议深交 → 选一个 [依据：xx] [置信度]
+
+五、感情走向
+  哪几年最甜（具体年份+干支）[置信度]
+  哪几年要小心（具体年份+干支+原因）[置信度]
+
+六、最佳结婚年份（如选择适合做夫妻）
+  年份 + 月份范围 + 依据 [置信度]
+  如果不适合结婚，说明原因。
+
+七、相处建议（3 条具体可操作）
+  每条带依据和置信度。
+
+禁止套话："郎才女貌""天作之合""琴瑟和鸣"等没有具体八字依据的话全部禁。要有结构化分析。`;
+
+  callClaude(prompt);
 }
 
 function autoResize(ta) {
