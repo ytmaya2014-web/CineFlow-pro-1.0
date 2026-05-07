@@ -1,0 +1,5055 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>八字命盘</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;background:#f5f0e8;color:#2c1810;min-height:100vh;padding-bottom:40px}
+
+/* ── 顶栏 ── */
+.header{background:#3d1a00;color:#f5e6d3;padding:14px 16px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100}
+.header h1{font-size:18px;letter-spacing:4px}
+.header .key-btn{font-size:12px;color:#c9a882;background:none;border:1px solid #c9a882;border-radius:12px;padding:4px 10px;cursor:pointer}
+
+/* ── API Key 弹层 ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:center;justify-content:center}
+.overlay.show{display:flex}
+.key-panel{background:white;border-radius:16px;padding:24px;margin:20px;width:100%;max-width:400px}
+.key-panel h2{font-size:16px;color:#3d1a00;margin-bottom:8px}
+.key-panel p{font-size:13px;color:#666;margin-bottom:16px;line-height:1.5}
+.key-panel input{width:100%;padding:12px;border:1px solid #ddd;border-radius:8px;font-size:13px;font-family:monospace;margin-bottom:12px}
+.key-panel .row{display:flex;gap:8px}
+.btn-cancel{flex:1;padding:12px;background:#f5f0e8;border:none;border-radius:8px;font-size:14px;cursor:pointer;color:#666}
+.btn-save{flex:2;padding:12px;background:#8b4513;color:white;border:none;border-radius:8px;font-size:14px;cursor:pointer}
+
+/* ── 表单 ── */
+.form-card{background:white;margin:16px;border-radius:14px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.07)}
+.form-card h2{font-size:15px;color:#3d1a00;margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid #f0e0cc}
+.form-group{margin-bottom:14px}
+.form-group label{display:block;font-size:12px;color:#888;margin-bottom:6px}
+.form-group input,.form-group select{width:100%;padding:11px 12px;border:1.5px solid #e8e0d0;border-radius:10px;font-size:15px;color:#2c1810;background:white;outline:none;-webkit-appearance:none}
+.form-group input:focus,.form-group select:focus{border-color:#8b4513}
+.form-row{display:flex;gap:8px}
+.form-row .form-group{flex:1}
+.gender-row{display:flex;gap:8px}
+.gender-btn{flex:1;padding:11px;border:1.5px solid #e8e0d0;border-radius:10px;background:white;font-size:15px;cursor:pointer;text-align:center;color:#2c1810;transition:.15s}
+.gender-btn.on{background:#8b4513;color:white;border-color:#8b4513}
+.form-hint{font-size:11px;color:#aaa;margin-top:4px}
+.btn-paipan{width:100%;padding:15px;background:#8b4513;color:white;border:none;border-radius:12px;font-size:17px;letter-spacing:3px;cursor:pointer;margin-top:6px;font-weight:600}
+.btn-paipan:active{background:#6b3310}
+
+/* ── 盘面 ── */
+.chart-wrap{margin:0 16px 16px;display:none}
+.chart-card{background:white;border-radius:14px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.07);margin-bottom:12px}
+.chart-card h3{font-size:13px;color:#8b4513;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid #f0e0cc;letter-spacing:1px}
+
+/* 四柱表 */
+.sizhu{width:100%;border-collapse:collapse;table-layout:fixed}
+.sizhu th{background:#3d1a00;color:#f5e6d3;padding:8px 4px;font-size:12px;text-align:center;font-weight:normal}
+.sizhu td{padding:8px 4px;text-align:center;border:1px solid #f0e0cc;vertical-align:middle}
+.sizhu .tg-char{font-size:28px;font-weight:bold;display:block;line-height:1.2}
+.sizhu .tg-ss{font-size:10px;color:#8b4513;display:block}
+.sizhu .dz-char{font-size:26px;display:block;line-height:1.3}
+.sizhu .dz-wx{font-size:10px;color:#888;display:block}
+.sizhu .rizhu{background:#fffaf4}
+.sizhu .label-col{background:#fafafa;font-size:12px;color:#888;font-weight:600;padding:6px 4px}
+
+/* 藏干 */
+.canggan-row{display:flex;gap:0;border:1px solid #f0e0cc;border-radius:8px;overflow:hidden}
+.canggan-col{flex:1;padding:10px 4px;text-align:center;border-right:1px solid #f0e0cc}
+.canggan-col:last-child{border-right:none}
+.canggan-col .col-label{font-size:10px;color:#aaa;margin-bottom:6px}
+.canggan-col .cg-item{margin:2px 0;font-size:13px}
+.canggan-col .cg-ss{font-size:10px;color:#8b4513}
+
+/* 信息行 */
+.info-chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{flex:1;min-width:120px;background:#fff8f0;border:1px solid #f0e0cc;border-radius:10px;padding:10px 12px}
+.chip .ck{font-size:11px;color:#aaa;margin-bottom:4px}
+.chip .cv{font-size:16px;font-weight:bold;color:#3d1a00}
+.chip .cs{font-size:11px;color:#888;margin-top:2px}
+
+/* 大运 */
+.dayun-list{display:flex;flex-direction:column;gap:0}
+.dy-item{display:flex;align-items:center;padding:9px 0;border-bottom:1px solid #f8f4f0}
+.dy-item:last-child{border-bottom:none}
+.dy-item.current{background:#fff8f0;margin:0 -16px;padding:9px 16px;border-radius:8px}
+.dy-age{font-size:12px;color:#aaa;width:80px}
+.dy-gz{font-size:20px;font-weight:bold;color:#3d1a00;width:36px}
+.dy-years{font-size:12px;color:#888;flex:1}
+.dy-tag{font-size:10px;background:#8b4513;color:white;padding:2px 8px;border-radius:10px}
+
+/* 流年 */
+.liuyear-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.ly-item{background:#f5f0e8;border-radius:8px;padding:8px 6px;text-align:center}
+.ly-year{font-size:10px;color:#aaa}
+.ly-gz{font-size:17px;font-weight:bold;color:#3d1a00}
+.ly-cur{background:#fff8f0;border:1.5px solid #d4a96a}
+
+/* ── 对话区 ── */
+.chat-wrap{margin:0 16px;display:none;flex-direction:column}
+.chat-card{background:white;border-radius:14px;box-shadow:0 2px 10px rgba(0,0,0,.07);overflow:hidden}
+.chat-head{background:#3d1a00;color:#f5e6d3;padding:12px 16px;font-size:14px;letter-spacing:1px}
+.chat-msgs{padding:12px;flex:1;overflow-y:auto;scroll-behavior:smooth;min-height:300px}
+.msg{margin-bottom:14px}
+.msg.user{text-align:right}
+.bubble{display:inline-block;padding:10px 14px;border-radius:16px;font-size:14px;max-width:88%;text-align:left;line-height:1.7;word-break:break-all}
+.msg.user .bubble{background:#8b4513;color:white;border-radius:16px 16px 4px 16px}
+.msg.ai .bubble{background:#f5f0e8;color:#2c1810;border-radius:16px 16px 16px 4px;white-space:pre-wrap}
+.msg.ai .bubble table{border-collapse:collapse;width:100%;margin:6px 0;font-size:12px}
+.msg.ai .bubble th{background:#3d1a00;color:#f5e6d3;padding:5px 6px;text-align:center}
+.msg.ai .bubble td{border:1px solid #d4a96a;padding:5px 6px}
+.msg.ai .bubble strong{font-weight:700}
+.loading-dots span{display:inline-block;width:6px;height:6px;background:#8b4513;border-radius:50%;margin:0 2px;animation:ld 1.2s infinite}
+.loading-dots span:nth-child(2){animation-delay:.2s}
+.loading-dots span:nth-child(3){animation-delay:.4s}
+@keyframes ld{0%,80%,100%{opacity:.2;transform:scale(.8)}40%{opacity:1;transform:scale(1)}}
+.quick-btns{display:flex;gap:6px;padding:10px 12px;overflow-x:auto;border-top:1px solid #f0e0cc;-webkit-overflow-scrolling:touch}
+.quick-btns::-webkit-scrollbar{display:none}
+.qbtn{padding:7px 14px;background:#f5f0e8;border:1px solid #d4a96a;border-radius:16px;font-size:12px;white-space:nowrap;cursor:pointer;color:#3d1a00;flex-shrink:0}
+.qbtn:active{background:#d4a96a}
+.chat-input{display:flex;gap:8px;padding:10px 12px;border-top:1px solid #f0e0cc;align-items:flex-end}
+.chat-input textarea{flex:1;padding:10px 12px;border:1.5px solid #e8e0d0;border-radius:12px;font-size:14px;resize:none;font-family:inherit;line-height:1.5;max-height:100px;outline:none;color:#2c1810}
+.chat-input textarea:focus{border-color:#8b4513}
+.send-btn{padding:10px 16px;background:#8b4513;color:white;border:none;border-radius:12px;font-size:14px;cursor:pointer;align-self:flex-end;flex-shrink:0}
+.send-btn:disabled{background:#ccc;cursor:not-allowed}
+
+/* 五行色 */
+.wx-木{color:#2d7a2d}.wx-火{color:#c0392b}.wx-土{color:#a0622b}.wx-金{color:#b8860b}.wx-水{color:#2471a3}
+
+.btn-copy{display:block;width:100%;padding:14px;background:white;color:#8b4513;border:2px solid #8b4513;border-radius:12px;font-size:15px;cursor:pointer;margin-bottom:4px;letter-spacing:1px}
+.btn-copy:active{background:#fff8f0}
+.btn-copy.copied{background:#8b4513;color:white}
+
+/* 头部双按钮 */
+.header-btns{display:flex;gap:6px}
+.header-btns .key-btn{font-size:12px}
+
+/* 模型选择 */
+.model-row{display:flex;gap:6px;margin-bottom:12px}
+.model-opt{flex:1;padding:10px 6px;border:1.5px solid #e8e0d0;border-radius:10px;background:white;font-size:13px;cursor:pointer;text-align:center;color:#2c1810}
+.model-opt.on{background:#8b4513;color:white;border-color:#8b4513}
+.model-opt small{display:block;font-size:10px;opacity:.7;margin-top:2px}
+.section-label{font-size:12px;color:#888;margin:14px 0 6px}
+
+/* 档案列表 */
+.profile-list{max-height:50vh;overflow-y:auto;margin:8px 0 12px}
+.profile-item{display:flex;align-items:center;padding:10px 12px;border:1px solid #f0e0cc;border-radius:10px;margin-bottom:6px;background:#fff8f0}
+.profile-item .pi-info{flex:1;min-width:0}
+.profile-item .pi-name{font-size:14px;font-weight:600;color:#3d1a00}
+.profile-item .pi-meta{font-size:11px;color:#888;margin-top:2px}
+.profile-item .pi-load{padding:6px 10px;background:#8b4513;color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer;margin-left:6px}
+.profile-item .pi-del{padding:6px 8px;background:none;color:#c00;border:1px solid #f0c0c0;border-radius:6px;font-size:12px;cursor:pointer;margin-left:4px}
+.profile-empty{text-align:center;padding:20px;color:#aaa;font-size:13px}
+
+/* ── 排盘后的布局容器 ── */
+.status-bar{display:none;background:#fff8f0;border-bottom:1px solid #f0e0cc;padding:10px 16px;align-items:center;justify-content:space-between;position:sticky;top:50px;z-index:90}
+.status-bar.show{display:flex}
+.sb-info{font-size:13px;color:#3d1a00;font-weight:500;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.sb-info .sb-label{color:#a0622b;font-size:11px;margin-right:6px}
+.sb-edit{padding:5px 12px;background:white;color:#8b4513;border:1px solid #d4a96a;border-radius:14px;font-size:12px;cursor:pointer;flex-shrink:0;margin-left:8px}
+
+/* Tab 切换栏（仅手机显示） */
+.tab-bar{display:none;background:white;border-bottom:1px solid #f0e0cc;position:sticky;top:97px;z-index:89;padding:0;box-shadow:0 1px 4px rgba(0,0,0,.04)}
+.tab-bar.show{display:flex}
+.tab-btn{flex:1;padding:14px 0;background:none;border:none;font-size:15px;color:#888;letter-spacing:2px;cursor:pointer;position:relative;font-family:inherit;font-weight:500}
+.tab-btn.on{color:#8b4513}
+.tab-btn.on::after{content:'';position:absolute;bottom:-1px;left:25%;right:25%;height:3px;background:#8b4513;border-radius:2px 2px 0 0}
+
+/* 主内容区 */
+.main-area{display:block}
+
+/* 排盘后：盘面和对话各自占满，手机靠 Tab 切换 */
+.tab-pane{display:none}
+.tab-pane.active{display:block}
+
+/* 对话区拉满高度 */
+.chat-card{display:flex;flex-direction:column;min-height:calc(100vh - 200px);max-height:calc(100vh - 130px)}
+
+/* ── 桌面/平板分栏（>= 900px 自动两栏） ── */
+@media (min-width: 900px) {
+  body{padding-bottom:0}
+  .form-card,.api-section,.btn-paipan{max-width:520px;margin-left:auto;margin-right:auto}
+  .tab-bar{display:none !important}
+  .status-bar{top:50px}
+  .main-area.split{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start;max-width:1400px;margin:0 auto}
+  .main-area.split .tab-pane{display:block !important;padding:0 8px}
+  .chart-wrap{margin:8px;max-height:calc(100vh - 80px);overflow-y:auto;display:block}
+  .chat-wrap{margin:8px;display:flex;position:sticky;top:60px;height:calc(100vh - 80px)}
+  .chat-card{min-height:auto;max-height:none;height:100%}
+}
+
+.hidden{display:none}
+</style>
+</head>
+<body>
+
+<!-- 顶栏 -->
+<div class="header">
+  <h1>八字命盘</h1>
+  <div class="header-btns">
+    <button class="key-btn" onclick="showProfilePanel()">档案</button>
+    <button class="key-btn" onclick="showKeyPanel()">设置</button>
+  </div>
+</div>
+
+<!-- 设置弹层（API Key + 模型选择） -->
+<div class="overlay" id="keyOverlay">
+  <div class="key-panel">
+    <h2>设置</h2>
+
+    <div class="section-label">AI 模型（按问一次的费用排）</div>
+    <div class="model-row">
+      <div class="model-opt on" data-model="claude-haiku-4-5-20251001" onclick="selectModel(this)">
+        Haiku 4.5<small>娱乐·≈¥0.4 起</small>
+      </div>
+      <div class="model-opt" data-model="claude-sonnet-4-6" onclick="selectModel(this)">
+        Sonnet 4.6<small>均衡·≈¥1.5 起</small>
+      </div>
+      <div class="model-opt" data-model="claude-opus-4-7" onclick="selectModel(this)">
+        Opus 4.7<small>专业·≈¥5 起</small>
+      </div>
+    </div>
+    <p style="font-size:11px;color:#aaa;margin:-4px 0 8px;line-height:1.5">说明：首次问全价，5分钟内追问命中缓存只花 1/10。日常玩 Haiku 足够；要严谨论命再切 Opus。</p>
+
+    <div class="section-label">Anthropic API Key</div>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;line-height:1.5">仅保存在浏览器本地。在 console.anthropic.com 获取。</p>
+    <input type="password" id="keyInput" placeholder="sk-ant-..." autocomplete="off">
+
+    <div class="row" style="margin-top:14px">
+      <button class="btn-cancel" onclick="hideKeyPanel()">取消</button>
+      <button class="btn-save" onclick="saveKey()">保存</button>
+    </div>
+  </div>
+</div>
+
+<!-- 档案弹层 -->
+<div class="overlay" id="profileOverlay">
+  <div class="key-panel">
+    <h2>人物档案</h2>
+    <p style="font-size:12px;color:#888;margin-bottom:8px;line-height:1.5">保存常查的生辰，下次一键调用</p>
+
+    <div class="profile-list" id="profileList"></div>
+
+    <div class="row">
+      <button class="btn-cancel" onclick="hideProfilePanel()">关闭</button>
+      <button class="btn-save" onclick="saveCurrentProfile()">保存当前</button>
+    </div>
+  </div>
+</div>
+
+<!-- 状态条（排盘后显示） -->
+<div class="status-bar" id="statusBar">
+  <div class="sb-info" id="sbInfo"></div>
+  <button class="sb-edit" onclick="editForm()">重新填写</button>
+</div>
+
+<!-- Tab 切换栏（手机端排盘后显示） -->
+<div class="tab-bar" id="tabBar">
+  <button class="tab-btn on" data-tab="chart" onclick="switchTab('chart')">命 盘</button>
+  <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')">问命理师</button>
+</div>
+
+<!-- 输入表单 -->
+<div class="form-card" id="formCard">
+  <h2>输入出生信息</h2>
+  <div class="form-group">
+    <label>姓名（可不填）</label>
+    <input type="text" id="f-name" placeholder="例：张三">
+  </div>
+  <div class="form-group">
+    <label>性别</label>
+    <div class="gender-row">
+      <button class="gender-btn on" id="btn-male" onclick="setGender('男')">男</button>
+      <button class="gender-btn" id="btn-female" onclick="setGender('女')">女</button>
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>年（阳历）</label>
+      <input type="number" id="f-year" placeholder="如 1990" min="1800" max="2100">
+    </div>
+    <div class="form-group">
+      <label>月</label>
+      <input type="number" id="f-month" placeholder="1-12" min="1" max="12">
+    </div>
+    <div class="form-group">
+      <label>日</label>
+      <input type="number" id="f-day" placeholder="1-31" min="1" max="31">
+    </div>
+  </div>
+  <div class="form-row">
+    <div class="form-group">
+      <label>时（24小时制）</label>
+      <input type="number" id="f-hour" placeholder="0-23" min="0" max="23">
+    </div>
+    <div class="form-group">
+      <label>分</label>
+      <input type="number" id="f-minute" placeholder="0-59" value="0" min="0" max="59">
+    </div>
+  </div>
+  <div class="form-group">
+    <label>出生地经度（不填默认北京120°）</label>
+    <input type="text" id="f-lon" inputmode="decimal" placeholder="东经，如上海121.5">
+    <div class="form-hint">用于校正真太阳时。东北哈尔滨约127，广州约113，成都约104</div>
+  </div>
+  <button class="btn-paipan" onclick="doPaipan()">排 盘</button>
+</div>
+
+<!-- 主内容区 -->
+<div class="main-area" id="mainArea">
+
+<!-- 盘面 Tab -->
+<div class="tab-pane active" id="paneChart">
+<div class="chart-wrap" id="chartWrap">
+
+  <!-- 四柱 -->
+  <div class="chart-card">
+    <h3>四 柱</h3>
+    <table class="sizhu" id="sizhu-table"></table>
+  </div>
+
+  <!-- 藏干十神 -->
+  <div class="chart-card">
+    <h3>藏干 · 十神</h3>
+    <div class="canggan-row" id="canggan-row"></div>
+  </div>
+
+  <!-- 信息块 -->
+  <div class="chart-card">
+    <h3>空亡 · 命宫 · 起运</h3>
+    <div class="info-chips" id="info-chips"></div>
+  </div>
+
+  <!-- 大运 -->
+  <div class="chart-card">
+    <h3>大 运</h3>
+    <div class="dayun-list" id="dayun-list"></div>
+  </div>
+
+  <!-- 流年 -->
+  <div class="chart-card">
+    <h3>流年（未来15年）</h3>
+    <div class="liuyear-grid" id="liuyear-grid"></div>
+  </div>
+
+  <!-- 复制盘面 -->
+  <button class="btn-copy" id="copyBtn" onclick="copyChart()">复制盘面文字 · 粘贴到 Claude 提问</button>
+
+</div>
+</div><!-- /paneChart -->
+
+<!-- 复制弹层 -->
+<div class="overlay" id="copyOverlay">
+  <div class="key-panel">
+    <h2>盘面文字</h2>
+    <p>长按下方文字 → 全选 → 复制，然后粘贴到 Claude 提问</p>
+    <textarea id="copyText" style="width:100%;height:200px;padding:10px;border:1px solid #ddd;border-radius:8px;font-size:12px;line-height:1.6;resize:none;font-family:monospace" readonly onclick="this.select()"></textarea>
+    <div class="row" style="margin-top:12px">
+      <button class="btn-cancel" onclick="document.getElementById('copyOverlay').classList.remove('show')">关闭</button>
+      <button class="btn-save" onclick="tryCopy()">一键复制</button>
+    </div>
+  </div>
+</div>
+
+<!-- 对话 Tab -->
+<div class="tab-pane" id="paneChat">
+<div class="chat-wrap" id="chatWrap">
+  <div class="chat-card">
+    <div class="chat-head">问命理师</div>
+    <div class="chat-msgs" id="chatMsgs"></div>
+    <div class="quick-btns">
+      <button class="qbtn" onclick="quickAsk('我适合戴什么水晶？说清楚戴哪只手、解决什么问题')">推荐水晶</button>
+      <button class="qbtn" onclick="quickAsk('给我推荐 3 套水晶搭配方案，每套 2-3 种水晶。每套写清楚：分别戴哪只手、什么场合戴（上班/约会/睡觉）、能解决什么问题、这几种水晶为什么能配在一起（五行不能相克）')">水晶搭配</button>
+      <button class="qbtn" onclick="quickAsk('我今年' + new Date().getFullYear() + '年整体怎么样？财、事业、感情、健康各说一句')">今年怎么样</button>
+      <button class="qbtn" onclick="quickAsk('我的感情和婚姻怎么样？什么时候可能遇到对的人？')">感情婚姻</button>
+      <button class="qbtn" onclick="quickAsk('我适合做什么工作？怎么赚钱比较顺？')">事业财运</button>
+      <button class="qbtn" onclick="quickAsk('我身体哪里要注意？容易出什么问题？')">健康提醒</button>
+      <button class="qbtn" onclick="quickAsk('我人生哪几年最好，哪几年最差？现在在哪一段？')">人生起伏</button>
+      <button class="qbtn" onclick="quickAsk('我命里要避开的事情是什么？')">忌讳提醒</button>
+    </div>
+    <div class="chat-input">
+      <textarea id="chatInput" rows="1" placeholder="输入问题…" oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
+      <button class="send-btn" id="sendBtn" onclick="sendMsg()">发送</button>
+    </div>
+  </div>
+</div>
+</div><!-- /paneChat -->
+
+</div><!-- /mainArea -->
+
+<script id="kb-script">
+const KNOWLEDGE_BASE = `
+
+========== 文件来源：core/methodology.md ==========
+
+# 八字命理方法论
+
+> 十五步断命流程，前后相续，缺一不可
+> 认识论是"怎么看"的问题，见认识论.md
+> 方法论是"怎么做"的问题
+
+---
+
+## 第一步：编码（排八字）
+
+1. 确认出生年月日时（阳历），换算真太阳时（经度校正）
+2. 排出四柱八字干支
+3. 标出地支藏遁（人元），注明本气、中气、余气
+4. 排出大运：阳男阴女顺行，阴男阳女逆行；从出生日数到下一个"节"（不是"气"），三日折一年
+5. 确认起运年龄
+6. 排出流年干支
+
+---
+
+## 第二步：识日主
+
+1. 确认日干是十天干中的哪一个
+2. 根据《滴天髓》十干论和《十干体象》诗，把握该天干的：
+   - 喻象（甲=乔木，乙=花草，丙=太阳...）
+   - 性质（刚/柔，动/静）
+   - 喜忌要点（甲喜水润忌火焚，庚喜火炼忌土埋...）
+3. 区分阳干阴干（阳从气不从势，阴从势无情义）
+
+---
+
+## 第三步：观月令
+
+1. 确认月支对应什么月份、什么节气、什么季节
+2. 查月令五行分日用事，确认当令之气是什么
+3. 月令是整个分析的提纲——"取用凭于生月，当推究于深浅"
+4. 月令地支的本气是什么？是否透干？
+5. **注意季月（三月辰、六月未、九月戌、十二月丑）**：每季最后十八天土当令，须查具体生日在哪个分日用事区间
+6. 陈素庵的纠正：取格以月支本气为主，不按"分日用事"的当值天干取格——"论命者必以本支为主，而后及其所藏也"
+
+---
+
+## 第四步：日主强弱分析
+
+1. 标出八字中所有天元、地元、人元的五行
+2. 分为日主同方（比肩劫财 + 正偏印）和日主异方（官杀 + 财星 + 食伤）
+3. 结合月令时令，查五行四时旺相休囚死表，给各要素加权
+4. 判断日主偏强、偏弱、还是中和
+5. 注意：这只是一个视角的初步判断，不是最终结论
+
+---
+
+## 第五步：调候分析
+
+1. 根据日干 + 出生月份，查《穷通宝鉴》十干配十二月调候用神
+2. 看命局中是否有调候所需之神（透干？藏支？有根无根？）
+3. 核心规则：
+   - 冬寒需丙火暖局
+   - 夏燥需癸水润局
+   - "调候为急"——调候需求有时压过格局和强弱
+4. 判断命局寒暖燥湿是否适宜
+
+---
+
+## 第六步：格局分析
+
+### 6.1 取格
+1. 从月令地支中取出格神——沈孝瞻："八字用神，专求月令"（注意：这里的"用神"是格神，不是扶抑用神）
+2. 优先取月支本气，若本气不透或遭克，取月支中其他藏干
+3. 若月支之神皆不可取，取"别干支之势盛力旺者为格"
+4. 确认格神与日干的十神关系，定格局名称
+5. 比肩劫财不取格（建禄格、羊刃格另论）
+6. 西山易鉴先生首创六格法："曰官、曰印、曰财、曰杀、曰食神、曰伤官"——八格即六格分偏正
+
+### 6.2 判断格局性质
+- 善者（财、官、印、食）→ 顺用（生格 + 护格）
+- 不善者（杀、伤、劫、刃）→ 逆用（制格）
+
+### 6.3 找相神
+- 善者格局：找能生格神的字（生格功能）+ 找能护格神的字（护格功能）
+- 不善者格局：找能制约格神的字（制格功能）
+- 不善者也可顺用（杀印相生、伤官生财等）
+
+### 6.4 判断格局成败
+- 成格条件：格神有力 + 相神配合得宜 + 无忌神破格
+- 破格条件：忌神出现克破格神/相神
+- 救应：有字能制住忌神（克制或合去），败中而成
+
+### 6.5 评估格局高低
+- 有情无情：配合是否得宜，结构要素是否和谐
+- 有力无力：格神、相神是否通根有力
+
+### 6.6 格局配气候
+- "论命惟以月令用神为主，然亦须配合气候而互参之"
+- 格局再好，调候不宜也打折扣
+
+---
+
+## 第七步：形象分析
+
+从《滴天髓》角度，观察八字整体形象：
+
+### 7.1 判断命局类型
+- 独象（专旺格）：一行独旺
+- 偶象（两神成象）：两行平分
+- 从象（从格）：日主无根，满局克泄
+- 化象（化气格）：天干五合化气
+- 全象（正格）：三行以上
+
+### 7.2 清浊
+- 清：配置合宜，纯粹有精神
+- 浊：官杀混杂、伤官见官、配置混乱
+
+### 7.3 真假
+- 真神：得时秉令，天透地藏，合于日主需要
+- 假神：失时退气，勉强取用
+
+### 7.4 源流
+- 源头在哪里（最旺之气从哪里起）
+- 流到哪里住（顺生到哪里停）
+- 中间有无阻隔
+
+### 7.5 通关
+- 有阻隔的，看有无通关之神
+- 通关之神是"一点精神所在"
+
+---
+
+## 第八步：确定全局用神和喜忌
+
+综合以上所有视角，确定：
+1. **用神**：最能帮助命局趋向中和/顺势的那个字
+   - 日主强 → 以格局为主选用神（扶格或制格）
+   - 日主弱 → 以扶身为主选用神（但不能破坏格局）
+   - 调候为急时 → 调候用神优先
+   - 有病 → 取药为用神
+   - 有阻隔 → 取通关之神为用神
+2. **喜神**：生助用神的
+3. **忌神**：克破用神的
+4. **仇神**：生助忌神的
+5. **闲神**：与用神无直接关系的
+
+注意：不同视角的用神可能冲突，须权衡取舍，不可机械套用。
+
+---
+
+## 第九步：论性情
+
+1. 日干五行禀性（旺相 / 太过 / 不及）
+2. 配什么五行多（金多 / 木多 / 水多 / 火多 / 土多）
+3. 十神中哪个最突出：
+   - 官重 → 循规蹈矩、有管理才能
+   - 杀重 → 刚烈叛逆、有权威
+   - 印重 → 智慧慈祥、重精神
+   - 食重 → 温和宽厚、有口福
+   - 伤重 → 才华横溢、傲物气高
+   - 财重 → 务实勤劳、重物质
+   - 比劫重 → 自我意识强、争竞
+4. 综合描写命主个性特征
+
+---
+
+## 第十步：论疾病
+
+1. 看五行受克受伤的情况
+2. "取伤重者而断之"
+3. 天干对应脏腑：甲胆乙肝丙小肠丁心戊胃己脾庚大肠辛肺壬膀胱癸肾
+4. 天干对应部位：甲头乙项丙肩丁心戊胁己腹庚脐辛股壬胫癸足
+5. 地支对应部位（查表）
+6. 五行太旺太弱俱病
+
+---
+
+## 第十一步：论六亲
+
+### 11.1 十神定六亲
+- 男命：正印=母，偏财=父，正财=妻，七杀=子，正官=女
+- 女命：正印=母，偏财=父，正官=夫，食神=子，伤官=女
+- 注意：以用神为子、喜神为妻的原则具有更大概括性（《穷通宝鉴》《滴天髓》）
+
+### 11.2 宫位定六亲
+- 年柱 = 祖上
+- 月柱 = 父母、兄弟
+- 日支 = 配偶
+- 时柱 = 子女
+
+### 11.3 两者参合
+- 看六亲星的旺衰、有无受伤、在哪个宫位
+- 六亲星入其宫位最验
+- 沈孝瞻："妻以配身，子为后嗣，亦是切身之事。至于祖宗兄弟，不甚验矣。"
+
+---
+
+## 第十二步：论财官（富贵贫贱）
+
+1. 官星状态 → 社会地位、事业、权力
+2. 财星状态 → 财富
+3. 财官印食的配合情况
+4. "专论财官"是今法时期论命核心
+5. 现代延伸：官不限于做官，财不限于钱财
+
+---
+
+## 第十三步：大运流年动态分析
+
+### 13.1 大运分析
+1. 确定该步大运干支的五行属性
+2. 通观干支，判断十年大方向
+3. 看大运与原局的作用关系：
+   - 与用神：生助？克泄？合绊？
+   - 与忌神：制约？助长？
+   - 与格局：助格？破格？救应？
+   - 与日主：扶身？泄身？
+   - 与调候：暖局？润局？
+4. 看大运与原局的刑冲会合：
+   - 冲提纲最重
+   - 合走用神凶，合走忌神吉
+   - 三合三会改变力量对比
+5. 注意转角接木（方位转换）
+
+### 13.2 流年分析
+1. 流年天干代表表象，地支代表实质
+2. 流年生助用神 = 吉；克破用神 = 凶
+3. "日犯岁君，灾殃必重；五行有救，其年反必招财"
+4. 岁运相生者吉；运克岁者凶
+5. 岁运并临须看是否为忌神
+
+### 13.3 断事象
+- 看该年最受影响的十神 → 对应什么六亲、什么事类
+- 官杀受冲 = 事业变动、官非
+- 财星受冲 = 破财、父亲有事
+- 印星受冲 = 母亲有事、学业变动
+- 日支受冲 = 婚姻变动、迁移
+- 驿马逢冲 = 远行迁徙
+- 食伤旺年 = 才华发挥、表现机会
+
+---
+
+## 第十四步：神煞辅助验证
+
+- 天乙贵人、天月二德、文昌、驿马、华盖、桃花、羊刃、空亡等
+- 陈素庵："真者精择而存之，妄者悉举而削之"
+- 神煞只是辅助信号，不能作为主要断法
+- 在正五行分析结论基础上，神煞可以补充细节
+
+---
+
+## 第十五步：综合判断
+
+1. 多视角分析结果的综合——不同视角的结论是否一致？矛盾处如何权衡？
+2. **必须验证已知事实**："非稽其已往，无以测其将来"
+3. 参以山川风土、门第世德、时代背景
+4. 总评："浅而易见者小，清而难测者大，清而有神者贵，浊而无气者贱。纯粹中和者贵而安，奇怪偏驳者贵而危。"
+
+---
+
+## 禁忌
+
+1. **禁止蒙猜**：不知道就说不知道，不要编造。"你他妈搁着蒙呢啊"——这是最严重的错误
+2. **禁止反推**：不能拿已知事实反过来凑八字解释。"你不能拿事实推，因为前面这些这么大的事都看不到，后面的肯定都是瞎掰啊"
+3. **禁止截看**：大运干支不可割裂为前后两段独立分析。任铁樵、陈素庵都明确反对
+4. **禁止唯神煞论**：不能以一个神煞定吉凶。张神峰："此只把一字以定生死，此实谬说也"
+5. **禁止唯格局论**：格局再好，调候不宜也打折。沈孝瞻："木逢冬水，虽透官星，亦难准贵"
+6. **禁止唯用神论**：体不成则用无所附。陈素庵："苟日主六神或散漫无伦或战争不定，是则体先不成，用于何有"
+7. **禁止机械套公式**：每个命都是独特的。"万物初生未成，而成久则灭。其超凡入圣之机，脱死回生之妙，不象而成，不形而化"
+8. **禁止混淆格局用神和扶抑用神**：沈孝瞻的"用神"是格神，徐乐吾注释造成了至今的混淆
+9. **禁止忽视十干性情差异**：同为木，甲乙完全不同。不能简化为"木就是木"
+
+---
+
+## 补充步骤（通读袁树珊韦千里后新增）
+
+### 补充A：命宫推算（袁树珊体系）
+
+**排法**：
+1. 命宫地支 = 14 - 月支序数 - 时支序数（子=1，丑=2...亥=12；结果>12则减12，结果=0则取12=丑）
+2. 命宫天干：用五虎遁法，从生年天干起寅，顺数至命宫地支
+
+**用法**：
+- 命宫补四柱之缺：四柱缺正财，命宫有正财 → 暗补
+- 命宫藏忌神：命宫干支为忌神 → 暗伤
+- 命宫参与刑冲合会：命宫地支与四柱互动
+- 命宫可查神煞：命宫地支可作为贵人、文昌等的补充位置
+
+**注意**：韦千里体系不用命宫。命宫是袁树珊的核心工具，属于古法子平（与紫微同源）。
+
+### 补充B：小限推算（袁树珊体系）
+
+**排法**：
+1. 1岁小限 = 命宫干支
+2. 逐年逆行（天干地支同时逆推）
+3. 每12年地支循环一轮，天干持续逆行
+
+**用法**：
+- 十六字法：四柱8字 + 命宫2字 + 小限2字 + 大运2字 + 流年2字 = 16字
+- 大运是十年背景，流年是当年主题，小限是个人这一年的际遇和感受
+- 大运好+流年好+小限好 = 大吉；三者皆差 = 大凶；其他为混合
+
+### 补充C：空亡分析
+
+**排法**：
+1. 从日柱往回数到甲X（旬头）
+2. 该旬缺的两个地支即为空亡
+3. 检查四柱地支中哪些落在空亡上
+
+**判断**：
+- 四柱中有地支落空亡 → 该地支上承载的十神、神煞受影响
+- 空亡位上无四柱之字 → 不受影响
+- 喜神空 → 吉力减半，忽有忽无
+- 忌神空 → 凶力减半
+- 双空（两个地支落空亡）→ 大起大落，波动极大
+- "金空则鸣" → 金落空亡不是无金，是才华爆发型但不稳定
+- 逢冲逢填之年 → 空亡被激活，可能爆发
+
+**实战数据**（28人排查）：
+- 有东西落空亡：大起大落型（蒋介石、张学良、邵逸夫、孙传芳、毛泽东等）
+- 无东西落空亡：轨迹连贯型（张作霖、关羽、曾国藩、杜月笙、叶剑英等）
+
+### 补充D：大运标注格式
+
+每步大运应标注：步数、干支、年龄范围、年份范围、**干支十神**、**格局喜忌**、**调候喜忌**。
+
+示例：
+| 步 | 大运 | 年龄 | 年份 | 十神 | 格局 | 调候 |
+|----|------|------|------|------|------|------|
+| 2 | 庚戌 | 20-29 | 2022-2031 | 食神·比肩库 | 庚喜·戌忌 | 戌藏丁暖 |
+
+### 补充E：调候与地理
+
+八字是天的部分（时间），出生地/居住地是地的部分（空间）。五行方位：北方水、南方火、东方木、西方金、中央土。
+
+- 八字缺火需调候 → 居南方天然补火
+- 八字火旺需制 → 居北方天然补水
+- 袁树珊案例：同一八字，生在南方得火气 vs 生在西方得金气，命运悬殊
+
+**袁韦都有案例但没有系统化方法论。** 作为辅助参考，不作主要断法。
+
+### 补充F：身强弱的正确看法（袁韦修正）
+
+**食神泄秀的正确评估**：看身强弱时，看的是食神泄秀**之前**的状态。食神是药（强土得金方制其害），不是病。不应把食神算作"克泄耗"来削弱日主。
+
+袁树珊千里命稿六神篇："旺土赖庚金食神以吐秀...土重为病，丙火为病中之病也。"——食神是解决"土重"这个病的药。
+
+### 补充G：病药说实战（袁树珊体系）
+
+袁树珊在命谱中对每一造都做病药分析。病分四类：
+1. 刑冲破害（如寅申冲）
+2. 调候不宜（如丙不透、水太寒）
+3. 五行偏枯（如土太重、金太多）
+4. 格局有瑕（如忌神透干）
+
+药即解决病的那个字或那步运。"有病方为贵，无伤不是奇。"——先天有病有药才能成就非凡。
+
+
+========== 文件来源：core/epistemology.md ==========
+
+# 八字命理认识论
+
+> 来源：通读《渊海子平》《中国命理学史论》《滴天髓阐微》《子平真诠》《穷通宝鉴》全本后提炼
+> 认识论是"怎么看"的问题，必须内化，不能断章取义
+> 方法论是"怎么做"的问题，见方法论.md
+
+---
+
+## 一、命理学的本质：以小见大的模糊描写
+
+命理学揭示的是**概率上的相关性**，不是决定性的因果关系。
+
+- 出生时间只是众多先天后天因素中的一个
+- 对人生的描写是**类的描写**，是**模糊集**——以两小时为间距，全国同时辰出生的人何其多
+- 梁湘润："命理大约只有百分之六、七十的或然律"
+- 王充："国命胜人命"——大环境力量压过个人命运
+- 《三命通会》万民英专门记录大量同年月日时生人命运不同的案例，并说"年月日时多不足凭"
+- 吴怀云总结影响命运的后天因素有九类：地理环境、种族差异、风俗习尚、政治制度、先人积德、教育程度、品德修为、体格相貌、突发异变
+
+陆致极用"放幻灯"的比喻揭示了命理学的智慧形态：八字是一架小放映机(Z)，用一个很小的信息（出生时辰）投射出整个屏幕（人生轨迹），虽然画面模糊，但覆盖了全屏。现代科学的各学科是多架大放映机(A,B,C,D,E)，各自投射清晰但只覆盖局部，且仍有未覆盖的区域(F)。
+
+这就是**以小见大**——传统中国智慧独有的形态。但"大"不等于"全"，模糊不等于精确。
+
+**铁律：凡说"百分百准"的，都是骗子。凡把模糊说成精确的，都是误导。**
+
+---
+
+## 二、干支符号不是编码，是自然生态的映射
+
+八字结构是出生时段天地自然状态的缩影。这不是玄学，有实实在在的物理基础。
+
+### 干支符号模型的形成历史
+- 天干最初记日，地支最初记月
+- 干支纪日可追溯到殷商，干支纪月始于西汉太初元年(前104年)，干支纪年作为官方历法始于东汉章帝元和二年(85年)
+- 在两汉，干支被阴阳五行思潮浸润，从单纯的历法符号变成了蕴含阴阳五行信息的符号系统
+- 传统命理学选择了干支符号模型（而非卦爻符号模型），因为干支能同时表达"天有阴阳"和"地有五行"，而卦爻模型强于表述阴阳，弱于描写五行
+
+### 自然生态模式的具体内容
+干支符号背后映射的是**中华本土**的自然生态：
+- **地形**：西高东低，故木配东（多雨水林木），金配西（干燥高原矿石）
+- **气候**：南热北寒，故火配南，水配北
+- **中土**：黄河中下游中原地带，历代国都所在
+- **四季**：春木夏火秋金冬水，四季分明
+- **五气**：风(东/春)、暑热(南/夏)、湿(中/长夏)、燥(西/秋)、寒(北/冬)
+
+### 火土同行的历史演变（通读才知道的）
+- 汉代京房易学采用"水土同行"（土长生在申，墓在辰）
+- 隋代《五行大义》开始转向"火土同行"，但墓位仍保留水土同墓
+- 《玉照定真经》和《珞碌子三命消息赋》徐子平注本仍有"水土到辰为聚墓之地"
+- 到南宋《渊海子平》，火土同行完全确立（戊跟丙、己跟丁生旺死绝历程一致）
+- **原因**：中国经济重心南迁。秦汉中原在北纬35度，宋代经济重心移到长江流域（北纬30度）。命理学的"中土"地理位置随之南移，土从依附北方水转向依附南方火
+
+### 阳顺阴逆的争论（通读才知道的）
+- 阳干生旺死绝顺行十二支，阴干逆行——这叫"阳顺阴逆"或"阳生阴死"
+- 最早明确出现在《李虚中命书》："阴生阳死，逆顺相因"
+- 陈素庵**反对**此说："若五阴生于泄方，死于生方，于理未通"，主张阴阳同生死
+- 任铁樵也有微词
+- 《滴天髓》折中："阴阳顺逆之说...其理信有之也，其法不可执一"
+- 沈孝瞻《子平真诠》从"气"和"质"的角度解释：阳干是"气"（主聚、主进、顺行），阴干是"质"（主散、主退、逆行）——这是最深刻的解释
+- **实践意义**：阳干处死位可谓真死（如甲死于午，午中丁火己土尽泄耗），但阳干处绝位不一定真绝（如甲绝于申，申中有壬水可灌溉）。阴干反之。不可执一。
+
+**铁律：每看一个字，都要还原到它代表的自然状态。甲不是一个符号，是参天乔木。冬月不是一个标签，是冰天雪地。干支不是随意的编码，背后是中华大地上实实在在的风土气候。**
+
+---
+
+## 三、命理学的发展脉络（通读才知道的全景）
+
+不理解历史，就不知道手里的工具从哪来、为什么是这样、局限在哪里。
+
+### 三个时期
+1. **孕育时期**（汉末-唐初）：收集对应规则（神煞、刑冲会合）+ 认识自然生态模式（四时五行用事、十干生旺死绝）
+2. **古法时期**（唐中叶-五代末）：李虚中古典模型——以年柱为主，纳音五行为推理工具
+3. **今法时期**（宋初-明中叶）：徐子平标准模型——以日干为主，正五行为推理工具，十神系统建立
+
+### 两个分析层次
+1. **喻象分析层次**（基础）：十干体象、调候、形象——《滴天髓》《穷通宝鉴》
+2. **关系分析层次**（提升）：十神、格局——《子平真诠》
+
+这两个层次的发展关系：阴阳五行说(抽象) → 自然生态模式(喻象) → 喻象分析层次 → 关系分析层次(更抽象)。但关系分析**始终没有完全脱离**喻象基础。
+
+### 深化时期的四路挺进
+| 方向 | 代表 | 贡献 |
+|------|------|------|
+| 辟谬+病药 | 张神峰《神峰通考》 | 去谬归正，提出病药说 |
+| 格局精微 | 沈孝瞻《子平真诠》 | 格局成败救应的精细理论 |
+| 形象+变格 | 《滴天髓》(任铁樵注) | 清浊真假源流通关，变格体系 |
+| 调候体系 | 《穷通宝鉴》 | 十干配十二月的调候用神 |
+
+### 关键纠错：沈孝瞻的"用神"不是徐乐吾的"用神"（通读才知道的）
+
+这是命理学史上影响最大的一次误读：
+
+- 沈孝瞻说"八字用神，专求月令"——他的"用神"是**格神**，即代表格局枢纽的那个字
+- 徐乐吾在评注中把它解释成了常用的"用神"概念——"用神者，八字所用之神也"
+- 两字之差，全盘皆非。沈孝瞻对格局的苦心探讨被徐乐吾的注释化为乌有
+- 后果：至今许多人"重用神轻格局"，把格局当标签，不作独立分析
+- 正确理解：**格局分析是对八字内部环境的独立研究**，先分析环境（格局），再参合日主，最后才定全局用神
+
+### 陈素庵《命理约言》的特殊地位（通读才知道的）
+
+此书长期藏之名山，直到1933年才由韦千里根据家藏抄本选辑出版。它是对标准模型的**第一次真正的标准化**：
+
+- "看命大法，不过生克扶抑而已"——九个字概括论命总法
+- "看命者，看用神而已矣"——九个字提升用神的地位
+- 明确十神只是关系名称，不是善凶的代名词："得时得局，杀伤可以富贵；失时失局，官印可以贫贱"
+- 区分日主之用神和六神之用神（后世未重视）
+- 对天干阴阳特性的精要总结："阳不甚受克，阴不甚畏克，阴易于他从，阳难于他从"
+
+---
+
+## 四、《渊海子平》确立的论命根基
+
+《渊海子平》是标准模型定型的里程碑。它确立的原则是一切后续发展的基础，通读原文才能完整把握。
+
+### 4.1 四柱的定位："年为根，月为苗，日为花，时为果"
+
+这不是比喻，是**时间序列上的因果链**：
+- 年是根本——祖上基业、世代宗派盛衰
+- 月是提纲——父母亲荫、名利有无、**月令为论命最核心的枢纽**
+- 日是己身——日干为命主，日支为妻妾
+- 时是归宿——子息嗣续、晚年结局
+
+同时四柱各管年限："年管十五年，生之太早；时管五十后，失之太迟。故只此月令为正。"——这是取格以月令为重的理由之一。
+
+### 4.2 五行生克的活法则（非死记硬背）
+
+《渊海子平》"论五行生克制化"一篇，是五行关系的根本纲要：
+
+**旺得制而成器：**
+- 金旺得火，方成器皿
+- 火旺得水，方成相济
+- 水旺得土，方成池沼
+- 土旺得木，方能疏通
+- 木旺得金，方成栋梁
+
+**母旺子衰的辩证：**
+- 金赖土生，土多金埋
+- 土赖火生，火多土焦
+- 火赖木生，木多火炽
+- 木赖水生，水多木漂
+- 水赖金生，金多水浊
+
+**子旺母衰的辩证：**
+- 金能生水，水多金沉
+- 水能生木，木盛水缩
+- 木能生火，火多木焚
+- 火能生土，土多火埋
+- 土能生金，金多土变
+
+**衰遇克则亡：**
+- 金衰遇火，必见销熔
+- 火弱逢水，必为熄灭
+- 水弱逢土，必为淤塞
+- 土衰遇木，必遭倾陷
+- 木弱逢金，必为砍折
+
+**强得泄而挫锋：**
+- 强金得水，方挫其锋
+- 强水得木，方泄其势
+- 强木得火，方化其顽
+- 强火得土，方止其焰
+- 强土得金，方制其害
+
+这组关系**不能死背**，要理解其内在逻辑：旺者需制方成大器；母太旺反害子；子太旺反耗母；衰者怕克；强者宜泄。**每一条都是中和原则的具体体现。**
+
+### 4.3 论太岁的核心原则
+
+"太岁乃年中天子，故不可犯。""日犯岁君，灾殃必重；五行有救，其年反必为财。"
+
+太岁（流年）与命局的关系：
+- 日干克太岁干 = 下犯上，最凶
+- 太岁干克日干 = 上压下，有祸但较轻
+- 相生者吉
+- 有贵人、禄马解之则减凶
+- 大运也不可克太岁："运克岁者凶"
+
+### 4.4 伤官的完整认识（渊海子平原文，非简化版）
+
+"伤官务要伤尽；伤之不尽，官来乘旺，其祸不可胜言。"
+
+但后面有极重要的分论——**五行伤官各不同**：
+- **火土伤官宜伤尽**——火日土伤官，土克水（官），水得土无益，故忌见官
+- **金水伤官要见官**——金日水伤官，水虽克火（官），但金寒水冷不得火温，调候为急，故喜见官
+- **木火见官官有旺**——木日火伤官，火克金（官），但木繁火熄不得金削脱难通明，故不忌官
+- **土金官去返成官**——特殊的转化
+- **惟有水木伤官格，财官两见始为欢**
+
+这说明"伤官见官为祸百端"**不是铁律**，要看日主五行。金水伤官见官反而是秀气。这背后的逻辑是**调候**——金寒水冷需要火暖，此时调候为急压过了伤官忌官的常规。
+
+### 4.5 十神的善凶不是绝对的
+
+《渊海子平》"继善篇"明确说："小人命内，亦有正印官星；君子格中，也犯七杀阳刃。"
+
+善神（官印财食）不等于好命，凶神（杀伤枭刃）不等于坏命。关键在配合：
+- "官印财食，无破清高"——善神不遭破坏才好
+- "杀伤枭刃，用之为吉"——凶神有制化反成权贵
+- "善恶相交，喜去杀而从善"
+- "吉凶混杂，忌害吉以化凶"
+
+陈素庵后来把这一点讲到极致："得时得局，杀伤可以富贵；失时失局，官印可以贫贱。"——十神只是关系名称，不是命运的标签。
+
+### 4.6 "有病方为贵"的源头
+
+《渊海子平》"喜忌篇"原文："若逢伤官月建，如凶处未必为凶。"这是病药说的萌芽——表面的凶反而有特殊的价值。
+
+"碧渊赋"更明确："无伤不贵，有病者奇。"——先天没有任何问题的八字反而平庸，有病有药才能成就非凡。但张神峰后来走偏了，把这条推到了极端。
+
+### 4.7 论命的次序（渊海子平原文）
+
+"看命入式"一篇给出了标准流程的雏形：
+
+> "五行提纲，凡看命排下八字，以日干为主。取年为根，为上祖财产，知世运之盛衰。取月为苗，为父母，则知亲荫之有无。日干为己身，日支为妻妾。时为花实，为子息。**法分月气深浅，得令不得令。**"
+
+> "年时露出财官，须要身旺；如身衰财旺，但多反破财伤妻。身旺财多财亦旺，财多称意。若无财官，次看印绶得何局式。学者不可拘执，而不知通变也。"
+
+最后一句是最重要的心法——**"不可拘执，而不知通变"**。
+
+### 4.8 动静说的源头
+
+《渊海子平》"论大运"："干旺宜行衰运，干弱宜旺运。正乃干弱则求气旺之籍，有余则不足之营，须要通变。"
+
+这是扶抑原则的原始表述。但紧接着就说"**须要通变**"——不能死守扶抑，要灵活。后来张神峰的"动静说"（天干为动、地支为静，以动攻动为亲切）也是从这里发展出来的。
+
+---
+
+## 五、十天干各有性情（《滴天髓》核心）
+
+### 五阳五阴的根本差别
+
+"五阳皆阳丙为最，五阴皆阴癸为至。"——丙是纯阳之精，癸是纯阴之精。
+
+"**五阳从气不从势，五阴从势无情义。**"——阳干有阳刚之性，不畏财杀之势，不易被满局克泄压倒；阴干顺阴之义，木盛则从木，火盛则从火，见势衰则忌之。这是判断正格/变格的根本依据——阳干难从，阴干易从。
+
+### 十干性情要点
+
+| 天干 | 喻象 | 核心性质 | 关键喜忌 |
+|------|------|----------|----------|
+| 甲 | 参天乔木 | 脱胎要火，春不容金，秋不容土 | 火炽乘龙（坐辰），水宕骑虎（坐寅），地润天和植立千古 |
+| 乙 | 花草藤萝 | 怀丁抱丙，跨凤乘猴 | 虚湿之地骑马亦忧，藤萝系甲可春可秋 |
+| 丙 | 太阳 | 猛烈，欺霜侮雪 | 能锻庚金逢辛反怯，土众成慈水猖显节 |
+| 丁 | 灯烛薪火 | 柔中，内性昭融 | 抱乙而孝合壬而忠，如有嫡母可秋可冬 |
+| 戊 | 高山大地 | 固重，既中且正 | 静翕动辟万物司命，若在艮坤怕冲宜静 |
+| 己 | 田园湿土 | 卑湿，中正蓄藏 | 不愁木盛不畏水狂，火少火晦金多金光 |
+| 庚 | 斧钺矿石 | 带煞，刚健为最 | 得水而清得火而锐，能赢甲兄输于乙妹 |
+| 辛 | 珠玉首饰 | 软弱，温润而清 | 畏土之叠乐水之盈，热则喜母寒则喜丁 |
+| 壬 | 大河长江 | 通河，刚中之德 | 周流不滞，通根透癸冲天奔地 |
+| 癸 | 雨露泉水 | 至弱，达于天津 | 得龙而运功化斯神，不愁火土不论庚辛 |
+
+### 阳干喜阳克，阴干忌阳克
+
+阳干必得阳干相克，方能相得益彰：**甲喜庚金劈甲，丙喜壬水辅映，戊喜甲木疏通，壬喜戊土堤防**。独有庚金喜丁火——利用丁火旺而不炎之性煅炼成器。
+
+阳见阳则清，如丙见壬，太阳照湖海，晶莹生辉；丙见癸，则不晴不雨，云雾蒙蔽。**同一五行，阴阳不同，用法完全不同。**
+
+### 刚柔论
+
+"柔者济之以刚，刚者济之以柔。"——但要引其性情，不能激其暴戾。如庚金生七月太旺，遇丁火激其威，遇乙木助其暴，皆非善策，惟壬水有正性能引通庚之情。太柔之乙木生三月，得丁火有正情引动乙木之情。**制化之道，在引导性情，不在强硬压制。**
+
+---
+
+## 六、象是命理思维的根本载体
+
+### 象的哲学地位
+传统命理的推理不是形式逻辑，是**取象比类**。象处于形而上和形而下之间——既有感性形式，又有理性内涵。它不是代数中的X、Y、Z（纯抽象符号），也不是具体的某棵树某条河（纯具体实体）。
+
+陆致极的发现：象的运用使命理分析既可以在喻象层面展开（调候、形象），又可以在关系层面展开（十神、格局），两者缺一不可。**脱离喻象的十神推理是空转**。
+
+### 为什么命理"易学难精"
+因为象的理解依赖**体悟**——通过体会来领悟。象的内涵随经验积累不断丰富，对它的领悟有深度和广度的差异。这不是背口诀能解决的。
+
+任绥卿《命理索隐》举的例子最生动：辛卯/丁酉/丁卯/庚戌。他说看这个八字要"演成图象"——秋深黄昏，旷野无人，星月高照，寒霜渐下，但闻林间寺钟之声。然后从这幅画面推断：作事精明如星月之皎洁，多愁思在深秋静时，六亲少力因野无人烟...
+
+**铁律：始终要在脑中"看见"那幅画面。画面出来了，命就活了。画面出不来，就是在做填空题。**
+
+---
+
+## 七、中和与变格的分辨
+
+### 正格 vs 变格的判断（通读才知道的细节）
+- 日主有根 → 正格路线，求中和
+- 日主无根且满局皆克泄 → 变格路线，顺气势
+- 真从格极少，"真从之象有几人"
+- 假从格常见，"假从亦可发其身"——运助时由假入真也能成功
+- 化格条件极严格：天干五合 + 化神当令 + 不见破化之神 + 逢辰而化最佳
+- 张神峰的实践经验："从革格、润下格多驳杂，未见有富贵者。止有曲直、稼穑两格多富贵"
+
+### 病药说的正确理解（通读才知道的）
+张楠病药说的四种病：雕、枯、旺、弱。四种药：损、益、生、长。
+
+但张楠有偏颇：
+- "无病无药不贵"——被陈素庵批评："纯粹中和的命，安享富贵，怎么会不好？"
+- 过分强调"去"（克制），对"化"（转化）重视不够。比如身弱杀旺，应用印化杀生身，而不是硬用食神去制杀
+- 吴俊民折中："先天中和者，比较平稳的富贵；重病得药后天中和者，比较风险的富贵"
+
+---
+
+## 八、格局的深层逻辑（《子平真诠》核心）
+
+### "用神"是格神，不是扶抑用神
+
+沈孝瞻的核心论述："八字用神，专求月令，以日干配月令地支，而生克不同，格局分焉。"——这里的"用神"是格局的枢纽（格神），不是后人说的"最能帮助命局中和的那个字"。
+
+### 格局的本质是环境分析
+
+格局是对八字内部环境的独立研究。先看月令提供了什么环境（财？官？印？食？杀？伤？），再看四柱干支如何与这个环境配合。日主只是其中一个参与者，不是唯一的视角。
+
+### 善者顺用，不善者逆用
+
+- **善者**（财、官、印、食）→ 顺其性：财喜食生、官喜财生、印喜官生、食喜身旺
+- **不善者**（杀、伤、劫、刃）→ 制其性：杀喜食制、伤喜印制、刃喜官杀制
+
+但这只是"大路"——**四吉神也能破格，四凶神也能成格**。沈孝瞻原话："参苓芪术，本属良材，用之失宜，亦能害人。"
+
+### 相神的关键地位
+
+"伤用神甚于伤身，伤相甚于伤用。"——全局赖此一字而成格者，谓之相神。相神被伤，格局立败。
+
+如甲用酉官，透丁逢壬，壬合丁以存官，壬就是相神。若壬被戊合去，则丁火不受制，官星被伤，全局崩溃。
+
+### 格局高低的两个维度
+
+1. **有情无情**：配合是否得宜。如壬合丁而存官，"有情"；若癸克丁，力度不如壬合，"有情而非情之至"
+2. **有力无力**：格神、相神是否通根有力。如身强杀露食旺，三者皆备，"极等之贵，以其有力也"
+
+### 因成得败，因败得成
+
+格局不是静态标签，而是动态平衡。"成中有败，必是带忌；败中有成，全凭救应。"——一个字可以千钧之力成格，半个字可以败全局之美。这就是为什么不能机械套公式。
+
+### 生克先后分吉凶
+
+"同此生克，而先后之间，遂分吉凶。"——年月日时的位置决定吉凶。如甲用酉官，丁先戊后（先伤后财），戊能解丁之伤；若戊先丁后（先财后伤），则官遇财生后终被伤破。**位置是命理的空间维度，不可忽视。**
+
+### 行运与格局的关系
+
+"论运与看命无二法也。"——运中每行一字，必以此字配命中干支统观之。运能成格（本命格局未全，运来就之），运能变格（运来改变原有格局性质）。**成格变格，关系甚大。**
+
+干支有别：干主天，动而有为；支主地，静以待用。如甲用酉官，逢庚辛则杂煞，而申酉不作此例。
+
+---
+
+## 九、调候为什么管用（《穷通宝鉴》核心）
+
+### 调候的本质：五行即气候
+
+五行不是抽象符号，是春夏秋冬的代名词。北方寒生水，南方热生火，东方风生木，西方燥生金，中央温生土。**论命即论气候——出生时的天地状态决定了命局的基本环境。**
+
+### 调候为什么能压过格局
+
+"论命惟以月令用神为主，然亦须配气候而互参之。"——格局再好，调候不宜也打折扣：
+
+- **冬木逢水，虽透官星，亦难准贵**——金寒水冻，冻水不能生木
+- **金水伤官要见官**——非官之不畏伤，而调候为急，权而用之
+- **伤官佩印用之夏木，其秀百倍**——火济水，水济火
+- **春木逢火，木火通明；秋金遇水，金水相涵**——气有旺衰，取用不同
+
+### 壬癸之别——同一五行，调候用法完全不同
+
+穷通宝鉴的核心发现：壬水如江湖波浪，癸水如天上甘霖。
+
+- **丙火用壬不用癸**：壬为阳水，丙为阳火，水辅阳光，晶莹照澈；癸见丙则不晴不雨，气象不清
+- **乙木用癸不用壬**：癸如雨露，自然滋润花草；壬如洪水，反使花草漂浮
+- **庚金喜丁不喜丙**：丁为炉冶之火，能煅炼成器；丙为太阳之火，性炎而不专
+- **戊土先甲后癸**：甲能疏土，癸能润土，但无甲而有癸，则土虽润而不灵
+
+### 每干每月有定法，但不可拘执
+
+穷通宝鉴按十干配十二月，给出每月的先用什么、次用什么。这是**经验性的规律总结**，不是死规矩。原书跋文说得好："以上十干，俱陈大略，或八字有不合者，须寻别路。"
+
+关键原则：
+1. 冬寒需丙火暖局——寒木向阳，寒土向阳，寒金向阳，无火则万物不生
+2. 夏燥需壬癸润局——木性枯焦，土性燥烈，金被火熔，无水则生机尽灭
+3. 水无金生则无源——壬癸至夏月绝地，无庚辛发源，滴水立涸
+4. 土无甲疏则不灵——厚重之土，必得甲木犁耕，方能显其生机
+5. 阳壮木渴——春深三月到夏，阳气渐盛，木需水润，否则根枯叶焦
+
+### 调候与格局的统一
+
+调候不是独立于格局之外的东西。最好的命，是格局成就的同时调候也恰到好处。如壬水生于正月，庚丙戊齐透——庚金发源（印生身），丙火除寒（调候），戊土止流（杀制身），三者各得其用，格局与调候浑然一体。
+
+**铁律：格局是骨架，调候是血肉。骨架再好，血肉不丰则虚；血肉再满，骨架不正则废。二者不可偏废。**
+
+---
+
+## 十、体用精神源流通关（《滴天髓》形象分析）
+
+### 体用论
+
+"道有体用，不可以一端论也，要在扶之抑之得其宜。"——体用有多层嵌套：
+
+1. **日主为体，提纲为用**——日主旺，则提纲之食财官皆为我用；日主弱，则帮身之神为我用
+2. **提纲为体，喜神为用**——日主不能用提纲时，提纲自身的需求就是体，满足需求的字就是用
+3. **四柱为体，岁运为用**——原局定格，岁运配合
+
+体用之用，与用神之用有分别。体用是结构关系，用神是功能取向。
+
+### 源流论
+
+"何处起根源？流到何方住？"——不论当令不当令，只看最多最旺之气从哪里起（源头），流到哪里停（归宿）。
+
+- 流到喜神之处即住了 → 好归路
+- 中间遇阻隔 → 看阻住之神何神，断休咎
+- 流住之地何地 → 知地位
+
+### 通关论
+
+"关内有织女，关外有牛郎，此关若通也，相邀入洞房。"——两方相战，中间有物阻隔，必得通关之神引导疏通：木土要火，火金要土，土水要金，金木要水。通关之神是"一点精神所在"。
+
+### 清浊真假
+
+- **清**：一清到底有精神，配合纯粹，循序得所，不混不杂
+- **浊**：官杀混杂、用神相碍、满盘无清气可寻
+- **真神**：得时秉令，天透地藏，用之有力
+- **假神**：失时退气，勉强取用，力量不足
+
+"澄浊求清清得去，时来寒谷也回春。"——浊中求清，有运助之，也能富贵。
+
+### 何知章——判断富贵贫贱寿夭的总纲
+
+| 判断 | 条件 | 核心逻辑 |
+|------|------|----------|
+| 富 | 财气通门户 | 财旺身强，官卫财，忌印财能坏印 |
+| 贵 | 官星有理会 | 官旺身旺，印卫官，财官有气 |
+| 贫 | 财神反不真 | 伤轻财重泄气，财轻官重泄气 |
+| 贱 | 官星还不见 | 身轻官重，官轻印重，财重无官 |
+| 吉 | 喜神为辅弼 | 喜神左右始终得力，大势平顺 |
+| 凶 | 忌神辗转攻 | 忌神太多，刑冲攻击，局内无备御 |
+| 寿 | 性定元神厚 | 无冲无合，官不绝财不灭，甲乙寅卯安顿得所最验 |
+| 夭 | 气浊神枯了 | 印太旺日主无落，忌喜杂虞，湿滞燥郁 |
+
+---
+
+## 十一、多视角探究与综合
+
+### 为什么不同视角会冲突
+因为每个视角都带着同一副"墨镜"——阴阳五行学说。这副墨镜使人以为前人都在走同一条路，忽略了**功能探究本身的特殊性**：为了推进认识，探索者常常偏离大道，寻找不同的视角。
+
+类比中国山水画的**散点透视**：画家边走边看，不固定视点，搜尽奇峰打草稿。八字分析也是散点透视——用不同视角看同一个八字，然后综合。
+
+### 格局休废（通读才知道的梁湘润发现）
+梁湘润提出"格局休废"论：有些八字格局优秀无破绽，但因日主出生月令的问题，格局实际上"休废"了。
+
+比如甲乙日主生于午月，食伤生财格，梁论为"体弱多病"——财伤俱得令，即使有禄刃扶身也不能平衡。
+
+"凡休废的格局，不论财官印怎样佳良、调候用神如何得宜，也只作中品之平和命造。"
+
+### 综合判断靠经验论
+综合不是算公式，是经验。赵展如（清）："欲求事功圆满，万无一差，必须参以人情物理，询其山川风土，门第世德，以及生时之风雨晦明，而尤须鉴别其心术之善恶。"
+
+这意味着：八字之外的信息（时代、地域、家庭、个人修养）也参与判断，命理学不是封闭系统。
+
+---
+
+## 十二、断命验证的铁律
+
+陈素庵：**"非稽其已往，无以测其将来。"**
+
+> "凡看人命，先问六亲姓氏，及前此履历，一一详悉，方可推算。盖已往之事，虽验无益，不足为奇。惟将来休咎，果能洞见，其人信之。然非稽其已往，无以测其将来。如或隐而不言，朦胧相试，慎勿轻谈妄断。"
+
+**铁律：断命必须先断前事验证。验证不了的，不要硬断。对不上的要反思分析框架，不能拿事实去凑八字。**
+
+---
+
+## 十三、大运流年的认识
+
+### 命和运的关系
+命是车，运是路。命是内因，运是条件。命理学描写的人生轨迹 = 命(先天八字) 与 运(后天环境) 相互作用的结果。
+
+### 大运干支不可截看（通读才知道的争论全貌）
+- 《渊海子平》："大运看支，岁君看干"——大运重地支，流年重天干
+- 《三命通会》："行运在干，兼用地支之神；在支则弃天干之物"——干运也要看支
+- 陈素庵**反对分割**："旧书谓一运上下干支，分管年数，率为上下各五年。又有因运重地支之说，或谓上四下六，或谓上三下七，其实皆不然也。...乃因之行运，反分裂干支，有是理乎？"
+- 任铁樵**反对截看**："一运看十年，切勿上下截看，不可使盖头截脚；如上下截看，不论盖头截脚，则吉凶不验矣"
+- **正确做法**：首先上下通观确定十年运势的整体性质，然后天干"着重"前五年、地支"着重"后五年。注意是"着重"不是"只看"。
+
+### 论运核心
+《三命通会》十六字真言：**"损用神者，欲运制之；益用神者，欲运生之。"**
+
+### 岁运的体系（《滴天髓》《子平真诠》综合）
+
+**运如路，岁如人：** "日主譬如吾身，局中之神譬之舟马，大运譬所到之地，太岁譬所遇之人。"——运重地支（环境），岁重天干（际遇）。
+
+**战冲和好的判断法：**
+- 战：如丙运庚年（运伐岁），日主喜庚则要丙降，得戊己和之；庚运丙年（岁伐运），日主喜庚则得戊己和丙
+- 冲：如子运午年（运冲岁），看日主所喜何方，党多者胜
+- 和：如乙运庚年（干合），喜金则吉，喜木则凶
+- 好：如庚运辛年（同类），喜阳则庚好，喜阴则辛好
+
+**行运能成格也能变格：**
+- 成格：原命格局未全，运来补足——如丁生辰月透壬为官，运逢申子会局助官
+- 变格：运来改变原有格局性质——如丁生辰月透壬为官，运逢戌透出伤官
+
+**冲运的轻重：** 冲年月则急，冲日时则缓；运本美而逢冲则轻，运既忌而又冲则重
+
+---
+
+## 十四、六亲网络的历史局限
+
+### 六亲定位的争议
+《渊海子平》的六亲取用（正财=妻，偏财=父，官杀=子）被后世多人批评：
+
+陈素庵列举了**十条悖戾**，核心问题是：偏财既是父又是妾，翁妇同宗；官杀克我之神却要做我的子，子制父不合伦理。
+
+任铁樵也反对："财为父者，乃后人之谬也。若据此以为确论，则翁妇同宗，岂不失伦常乎？"
+
+但《穷通宝鉴》提出了更好的办法：**以用神为子，生用神者为妻**——从喜用神角度看六亲。《滴天髓》也说"喜神有意傍天财"。这具有更大的概括性。
+
+### 女命论断的时代局限
+从《渊海子平》到近代，女命一律"先看夫星次看子星"。这完全是封建社会"幼从父兄、嫁从夫、夫死从子"的翻版，现代须自觉剥离。
+
+---
+
+## 十五、价值观的自觉
+
+### 封建烙印
+- **官本位**：官星置于克我位置（最重要位置），代表最高社会地位。原因：封建社会集权官僚制，官是衡量人生价值的唯一标准
+- **财生官**：财在我克位置，生官。原因：重农抑商，商依附于官，"用贿求官""贪财卸职"是现实写照
+- **伤官为凶**：伤官克正官。原因：封建纲常不容挑战权威。"伤官见官为祸百端"本质是封建价值观
+- **阳尊阴卑**：始于董仲舒"贵阳而贱阴"，贯穿六亲网络
+
+### 现代修正
+- 徐乐吾："以清为贵以浊为富，乃重士轻商之积习"
+- 伤官在现代社会恰恰是创新精神的体现
+- 女命不应再"先看夫星"
+- 官不限于做官，财不限于钱财
+- 世俗的"势"和"利"虽被大传统（儒家）鄙视，但恰恰是命理学立身的根基——命理学描写的是现实关系，不是道德训条
+
+**铁律：用古法的框架，但要用现代的眼睛。**
+
+---
+
+## 十六、命理学的周期律（梁湘润观察）
+
+梁湘润提出命理学发展有三个周期叠合：
+
+| 周期 | 平均时长 | 含义 |
+|------|----------|------|
+| 大周期 | 300年 | 人、事、理之大转移。能通过的人不超过五位（张神峰、万育吾、任铁樵、沈孝瞻） |
+| 中周期 | 60年 | 理存人亡。一位宗师难超过60年影响力。民国以来只有徐乐吾通过中周期 |
+| 小周期 | 20年 | 当代禄命。一时之选 |
+
+这意味着：命理学不是一成不变的，它随时代、随社会结构的变化而变化。当社会结构发生根本性转变（如从农业社会到工业社会），命理学的映射网络也必须随之调整，否则就会丧失预测能力。
+
+这是命理学当前面临的**生死挑战**。
+
+---
+
+## 十七、袁树珊的古法子平体系（通读五书后提炼）
+
+> 来源：通读《命理探原》《袁氏命谱》全本后提炼
+
+### 17.1 命宫与小限
+
+袁树珊是近代唯一在子平体系中系统使用命宫和小限的大家。
+
+**命宫**：与四柱同时成立，终身不变。推算法：命宫地支 = 14 - 月支序数 - 时支序数（结果>12则减12），天干用五虎遁从生年起。
+
+**小限**：从命宫起，逐年逆行。一年一换。"命宫之吉凶，关系一生；小限之吉凶，则仅关系一年。"
+
+**来源**：命宫小限非袁独创，源自古法子平（八字与紫微不分家时期）。《紫微斗数全书》卷一即有"三看命宫空贵"。袁是把这套工具从紫微那边捡回子平体系的人。
+
+**十六字批法**：四柱8字 + 命宫2字 + 小限2字 + 大运2字 + 流年2字 = 16字。袁在命谱64造中反复使用此法，每逢关键年份（登科、丧亲、死难），三层叠看（大运+流年+小限）。
+
+**命宫的核心功能——补四柱之缺**：
+- 邵雍：四柱冬生木寒，命宫逢巳藏丙火 → 补调候
+- 关羽：命宫己丑，为庚甲戊庚之天乙 → 补贵人
+- 诸葛亮：命宫癸丑，干属水支藏水 → 补用神
+- 张之洞：命宫寅木，疏通土脉 → 补疏土之木
+- 严嵩：命宫丁酉，化木盗泄水气 → 命宫藏病
+
+**韦千里完全不用命宫**。纯子平路线。两位大家对命宫态度完全相反——不是所有工具都必须用，但知道有这个维度在，可以多一个验证角度。
+
+### 17.2 纳音五行的重视
+
+袁树珊论命，正五行之外大量使用纳音五行。命谱例言："不独详论正五行，而尤注意化气五行，纳音五行、三合五行、六合五行，亦有重大关系。"
+
+韦千里和徐乐吾则基本不用纳音。这是袁与韦的另一个重大分歧。
+
+### 17.3 神煞的地位
+
+袁树珊在《命理探原》中选录20种神煞，但明确说："凡人命吉凶，皆由格局运气，安可以偶合神煞而信之。"神煞是补充信号，不是独立判断依据。
+
+韦千里更精简，只用5种（天乙贵人、文昌、驿马、羊刃、将星），千里命稿补充篇专论旬空。
+
+**两家共识：神煞从属于五行生克，不独立定吉凶。**
+
+### 17.4 空亡的实战规律
+
+袁树珊："吉神为旬空，其吉虚而不实。凶神为旬空，其凶虚而不实。""金空则鸣...随五行之性，与所遇之格以为断，未可概作凶论。"
+
+韦千里在实战中几乎不用空亡概念。
+
+通过排查28个四柱完整的名人命造（韦千里书中），发现的实战规律：
+1. **空亡 = 波动放大器**，不是吉凶定性器。有东西落空亡的人，轨迹波动大；没有东西落空亡的人，轨迹连贯
+2. **双空极罕见**：28人中只有蒋介石（年月空）和张学良（年日空）两人双空，均为大起大落型
+3. **空亡不挡财**：同旬同空（甲戌旬申酉空）的邵逸夫107岁巨富，蒋驴子南京首富
+4. **空亡上没东西 = 不受影响**：张作霖、关羽、曾国藩等，空亡位上无四柱之字，轨迹连贯
+
+### 17.5 出生地与命运
+
+袁树珊命谱中多次论及：
+- 王肯堂：同年月日时，一人在上元（南方火气），一人在金坛（西方金气），命运悬殊
+- 韦千里呱呱集：关羽"生在北方拜相封王，生在南方与我同行"
+
+五行方位：北方水、南方火、东方木、西方金、中央土。八字缺火需调候者，生在南方或迁居南方可补；反之亦然。
+
+**袁韦都有案例但没有系统化方法论。** 这是传统命理学的空白地带，更多属于风水择地的范畴。
+
+---
+
+## 十八、韦千里的实战体系（通读三书后提炼）
+
+> 来源：通读《千里命稿》《八字提要》《呱呱集》全本后提炼
+
+### 18.1 韦千里评断八步法
+
+千里命稿"评断篇"给出标准流程：强弱 → 格局 → 用神 → 喜忌 → 岁运 → 六亲 → 性情 → 事业。
+
+与方法论十五步的对应：韦的八步更精炼，适合实战快速判断。十五步更系统，适合深度分析。
+
+### 18.2 韦千里论食神泄秀
+
+千里命稿六神篇："旺土赖庚金食神以吐秀...土重为病，丙火为病中之病也。"
+
+核心认识：**身强时，食神泄秀是药不是病。** 评估身强弱时，应看食神泄秀之前的状态。食神是格局核心力量，不应被归入"克泄耗"来削弱日主判断。
+
+### 18.3 韦千里论大运干支
+
+千里命稿运限篇：大运干支7:3分看（前半重干，后半重支），但不可截然割裂。与任铁樵"一运看十年，切勿上下截看"的原则一致。
+
+### 18.4 韦千里论流年
+
+千里命稿流年篇：给出12条流年断法规则，核心是"太岁乃一年之天子，不可犯"。日犯岁君灾重，岁运交战看日主所喜何方。
+
+### 18.5 《八字提要》的工具价值
+
+八字提要是韦千里编的速查工具书：10天干 × 12月 × 12时 = 1440种组合的用神提要。每种组合给出调候用神和简要评语。实战中先查此书定调候方向，再深入分析。
+
+### 18.6 韦千里的简洁风格
+
+与袁树珊的博引群籍不同，韦千里极其简洁。呱呱集每个命造批语不过百余字，点到为止。这种风格的优点是不拖泥带水、不过度解释，缺点是初学者难以理解其推理过程。
+
+**铁律：韦千里的简洁不是粗糙，是功力深厚后的精炼。初学者不可模仿其简洁，须先走袁树珊的详细路线。**
+
+---
+
+## 十九、袁韦体系的分歧与互补
+
+| 维度 | 袁树珊 | 韦千里 |
+|------|--------|--------|
+| 命宫 | 核心工具，每造必用 | 完全不用 |
+| 小限 | 核心工具，断流年必用 | 完全不用 |
+| 纳音五行 | 大量使用 | 基本不用 |
+| 神煞 | 20种，较重视 | 5种，极精简 |
+| 空亡 | 有论述但实战中用得不多 | 有论述但实战几乎不用 |
+| 化气格 | 非常重视，命谱多造用化气论 | 也用但不如袁频繁 |
+| 风格 | 博引群籍，详细铺陈 | 简洁精炼，点到为止 |
+| 批命长度 | 每造数千字 | 每造百余字 |
+
+**互补的价值**：袁的详细可以帮助理解韦的简洁，韦的简洁可以帮助提炼袁的冗长。两者结合使用，比单用任何一家都更全面。
+
+**最终的判断标准**：不论用谁的工具，**验证已知事实**是唯一的校准方法。"非稽其已往，无以测其将来。"
+
+
+========== 文件来源：core/工具书索引.md ==========
+
+# 八字命理工具书索引
+
+> 需要时查阅即可，不必背诵
+
+---
+
+## 排盘类
+
+| 内容 | 查阅来源 |
+|------|----------|
+| 六十甲子表 | 万年历 / 在线排盘 |
+| 排八字方法 | 《渊海子平》论起大运法 |
+| 起大运计算 | 阳男阴女顺数至未来节，阴男阳女逆数至已过节，三日折一年 |
+| 真太阳时校正 | 经度差换算（每度4分钟） |
+
+---
+
+## 基础表格类
+
+| 表格 | 内容 | 来源 |
+|------|------|------|
+| 地支藏遁表 | 各地支内含天干 | 《渊海子平》地支藏遁歌 |
+| 五行四时旺相休囚死表 | 五行在四季中的旺衰 | 《五行大义》 |
+| 月令五行分日用事表 | 每月中各五行主事天数 | 《渊海子平》 |
+| 十天干生旺死绝十二宫表 | 十干在十二支中的状态 | 《渊海子平》/ 《五行大义》 |
+| 天干十神表 | 日干与各天干的十神关系 | 《渊海子平》 |
+
+---
+
+## 干支关系类
+
+| 关系 | 内容 | 构成 |
+|------|------|------|
+| 天干五合 | 甲己合土，乙庚合金，丙辛合水，丁壬合木，戊癸合火 | 异性相合 |
+| 地支六合 | 子丑合土，寅亥合木，卯戌合火，辰酉合金，巳申合水，午未合 | 阴阳配合 |
+| 地支三合局 | 亥卯未木局，寅午戌火局，巳酉丑金局，申子辰水局 | 长生+帝旺+墓 |
+| 地支三会方 | 寅卯辰东方木，巳午未南方火，申酉戌西方金，亥子丑北方水 | 三月一季 |
+| 地支六冲 | 子午冲，丑未冲，寅申冲，卯酉冲，辰戌冲，巳亥冲 | 隔六位对冲 |
+| 地支三刑 | 寅巳申（恃势），丑戌未（无恩），子卯（无礼），辰午酉亥（自刑） | 方局交错 |
+| 地支六害 | 子未，丑午，寅巳，卯辰，申亥，酉戌 | 冲合交错 |
+
+---
+
+## 神煞查法类
+
+| 神煞 | 查法基准 | 查法 |
+|------|----------|------|
+| 天乙贵人 | 日干 | 甲戊庚牛羊，乙己鼠猴乡，丙丁猪鸡位，壬癸兔蛇藏，六辛逢马虎 |
+| 文昌 | 日干 | 甲乙巳午，丙戊申，丁己酉，庚亥，辛子，壬寅，癸卯 |
+| 干禄 | 日干 | 十干临官位：甲寅，乙卯，丙戊巳，丁己午，庚申，辛酉，壬亥，癸子 |
+| 羊刃 | 日干(阳) | 禄前一位：甲卯，丙戊午，庚酉，壬子 |
+| 驿马 | 日支 | 申子辰马在寅，寅午戌马在申，巳酉丑马在亥，亥卯未马在巳 |
+| 桃花 | 日支 | 申子辰桃在酉，寅午戌桃在卯，巳酉丑桃在午，亥卯未桃在子 |
+| 华盖 | 日支 | 寅午戌见戌，亥卯未见未，申子辰见辰，巳酉丑见丑 |
+| 将星 | 日支 | 寅午戌见午，申子辰见子，巳酉丑见酉，亥卯未见卯 |
+| 天德 | 月支 | 正丁二坤三壬四辛五乾六甲七癸八艮九丙十乙子巽丑庚 |
+| 月德 | 月支 | 寅午戌月丙，申子辰月壬，亥卯未月甲，巳酉丑月庚 |
+| 空亡 | 日柱甲旬 | 甲子旬戌亥空，甲戌旬申酉空，甲申旬午未空，甲午旬辰巳空，甲辰旬寅卯空，甲寅旬子丑空 |
+| 孤辰 | 年支 | 亥子丑见寅，寅卯辰见巳，巳午未见申，申酉戌见亥 |
+| 寡宿 | 年支 | 亥子丑见戌，寅卯辰见丑，巳午未见辰，申酉戌见未 |
+
+---
+
+## 六亲取用类
+
+### 男命
+| 十神 | 六亲 |
+|------|------|
+| 正印 | 母 |
+| 偏印 | 偏母、祖父 |
+| 正财 | 妻 |
+| 偏财 | 父、妾 |
+| 正官 | 女儿 |
+| 七杀 | 儿子 |
+| 食神 | 孙子 |
+| 伤官 | 孙女、祖母 |
+| 比肩劫财 | 兄弟姊妹 |
+
+### 女命
+| 十神 | 六亲 |
+|------|------|
+| 正印 | 母 |
+| 偏财 | 父 |
+| 正官 | 丈夫 |
+| 七杀 | 偏夫 |
+| 食神 | 儿子 |
+| 伤官 | 女儿 |
+| 正财 | 婆婆 |
+| 比肩 | 公公 |
+
+### 宫位
+| 柱位 | 代表 |
+|------|------|
+| 年柱 | 祖上 |
+| 月柱 | 父母、兄弟 |
+| 日干 | 己身 |
+| 日支 | 配偶 |
+| 时柱 | 子女 |
+
+---
+
+## 疾病对应类
+
+### 天干与脏腑
+甲胆、乙肝、丙小肠、丁心、戊胃、己脾、庚大肠、辛肺、壬膀胱、癸肾
+
+### 天干与部位
+甲头、乙项、丙肩、丁心、戊胁、己腹、庚脐、辛股、壬胫、癸足
+
+### 五行受克病症（取伤重者断）
+| 日干 | 遇强克 | 主病 |
+|------|--------|------|
+| 木命见强金 | 肝胆病 | 筋骨疼痛、眼目、头风 |
+| 火命见强水 | 心小肠病 | 眼暗、口心疼、潮热 |
+| 土命见强木 | 脾胃病 | 膈食翻胃、黄肿 |
+| 金命见强火 | 肺大肠病 | 咳嗽喘吐、痔漏 |
+| 水命见强土 | 肾膀胱病 | 遗精白浊、耳聋、腰疼 |
+
+---
+
+## 调候用神速查类
+
+> 详细内容查《穷通宝鉴》（徐乐吾评注《造化元钥》）
+
+格式：日干 + 月份 → 调候用神
+
+示例（戊土）：
+- 正月戊土：丙甲癸（先丙暖，次甲疏，癸润）
+- 四月戊土：癸丙甲（调候癸水为主）
+- 十月戊土：甲丙（甲木疏土，丙火暖局）
+
+---
+
+## 格局成败速查类
+
+### 八正格成败条件
+
+| 格局 | 成格条件 | 破格条件 | 喜 | 忌 |
+|------|----------|----------|-----|-----|
+| 正官格 | 官纯一位+身旺+财印两扶 | 伤官克官/杀来混杂/贪合忘官/劫财分福 | 财生官/印护官 | 伤官运/杀混运/墓运 |
+| 七杀格 | 有食制或有印化+身旺 | 枭夺食/官来混杂/制伏太过 | 食神制杀/印化杀 | 财引鬼盗气/身弱杀重 |
+| 正财格 | 财得时乘旺+身旺任财 | 比劫分夺/财旺身衰生杀 | 官星护财/食伤生财 | 比劫夺财/身弱行官运 |
+| 偏财格 | 身旺+有官星护财 | 比劫分夺/刑冲破害 | 官星制劫护财 | 兄弟分夺 |
+| 正印格 | 官印相生+身略弱 | 财来坏印 | 官星生印 | 财破印/印多身旺反忌 |
+| 偏印格 | 身弱得印扶 | 食神逢枭（枭印夺食） | 身强可弃印就财 | 枭食并见 |
+| 伤官格 | 伤尽无官+有财流通 | 伤官见官 | 财（伤官生财）/印（伤官佩印） | 见官星/比劫夺财 |
+| 食神格 | 身食俱旺+一位 | 枭印夺食 | 身旺+财星透干 | 偏印/食多变伤官 |
+
+### 变格条件
+
+| 格局 | 条件 | 用神 | 忌 |
+|------|------|------|-----|
+| 曲直格 | 甲乙日+寅卯辰方/亥卯未局+不杂金 | 比劫为用，食伤泄秀 | 金克破局 |
+| 炎上格 | 丙丁日+巳午未方/寅午戌局+不杂水 | 同上 | 水克破局 |
+| 稼穑格 | 戊己日+四库全+不杂木 | 同上 | 木克破局 |
+| 从革格 | 庚辛日+申酉戌方/巳酉丑局+不杂火 | 同上 | 火克破局 |
+| 润下格 | 壬癸日+亥子丑方/申子辰局+不杂土 | 同上 | 土克破局 |
+| 从杀格 | 日主无根+满局官杀+无食伤制 | 从杀星 | 比劫印绶帮身 |
+| 从财格 | 日主无根+满局财星或食伤生财 | 从财星 | 比劫印绶帮身 |
+| 从儿格 | 日主无根+满局食伤 | 从食伤，喜见财 | 印绶克食伤 |
+
+---
+
+## 核心典籍定位
+
+| 典籍 | 核心贡献 | 定位 |
+|------|----------|------|
+| 《渊海子平》 | 标准模型基本定型，专论财官 | 入门基础 |
+| 《三命通会》 | 八格系统形成，命理大百科 | 总汇参考 |
+| 《神峰通考》 | 病药说，辟谬 | 方法论 |
+| 《命理约言》 | 标准化小结，看命总法 | 纲要教材 |
+| 《子平真诠》 | 格局理论高峰，格局成败救应 | 格局专精（规矩） |
+| 《滴天髓》 | 形象论，变格，清浊真假源流 | 灵活应用（示人以巧） |
+| 《穷通宝鉴》 | 调候用神系统 | 调候专精 |
+
+徐乐吾定位：
+> "《真诠》者，命理之规矩也；《滴天髓》者，示人以巧也。"
+> "读《真诠》之后，再读《滴天髓》，循序渐进，自无扞格之虞。"
+
+---
+
+## 徐乐吾四书查阅指南
+
+> 详见 [徐乐吾四书通读笔记](徐乐吾四书通读笔记.md)
+
+| 书 | 查什么 | 文件 | 怎么查 |
+|----|--------|------|--------|
+| 造化元钥评注 | 十干总论+五个技术系统 | books/八字/造化元钥评注-徐乐吾.md | 直接查日元的"三春/三夏/三秋/三冬总论" |
+| 穷通宝鉴评注 | 特定日元+特定月份的调候用神+命例 | books/八字/穷通宝鉴评注-徐乐吾.txt | 按卷查（甲=卷一，乙=卷二，丙=卷三，丁=卷四，戊=卷五，己=卷六，庚=卷七，辛=卷八，壬=卷九，癸=卷十） |
+| 子平真诠评注 | 格局成败救应+各格取运+行运理论 | books/八字/子平真诠评注-徐乐吾.md | 按48章查（一~七=基础，八~十五=用神核心，十六~二十二=杂论，二十三~二十四=六亲，二十五~二十八=行运，二十九~三十=辟谬，三十一~四十八=各格详论） |
+| 滴天髓补注 | 十干性情+形象格局+体用精神+征验六亲 | books/八字/滴天髓补注-徐乐吾.txt | 按卷查（卷一=干支总论，卷二=形象格局官煞伤官从化，卷三=体用精神源流通关清浊真假，卷四=征验六亲性情） |
+
+**实战查阅顺序**：排盘 → 查穷通宝鉴定调候方向 → 查子平真诠定格局框架 → 查滴天髓定形象精神 → 查造化元钥核对技术系统
+
+---
+
+## 梁湘润查阅指南
+
+> 详见 [梁湘润子平基础概要通读笔记](梁湘润子平基础概要通读笔记.md)
+
+| 书 | 查什么 | 文件 | 怎么查 |
+|----|--------|------|--------|
+| 子平基础概要（梁湘润正文） | 取格优先级+顺逆用喜忌+十神定位法+特别格条件+本运年限 | books/八字/子平基础概要-梁湘润.txt | P1-99（行1-3905），按目录章节查 |
+| 玄宗八字歲运真訣（楊鶴朋） | 102条歲运公式+大运/流年用神分离+十干大运喜忌表+流年喜用表+六十干支条文 | books/八字/子平基础概要-梁湘润.txt | P100-210（行3906-13646），第三章=102条公式，第七章=用神新论+十干喜忌表，第八章=六十干支条文 |
+| 神煞探原（梁湘润） | 命理实用神煞(火灾/伤残/官符/寿夭/天罗地网)+干支统计凶兆+孤寡/劫煞/驿马细分+天乙贵人阴阳分论+协纪辨方书提要+江湖术语+根苗花果实务论命 | books/八字/神煞探原-梁湘润.txt | P1-50=命理神煞(天火/戳肢/官符/挂剑/天罗地网等)，P50-80=关煞论(小儿关煞)，P80-155=协纪辨方书提要(择日神煞全表)，P155-165=江湖术语+根苗花果实务 |
+
+> 详见 [梁湘润神煞探原通读笔记](梁湘润神煞探原通读笔记.md)
+
+### 子平教材讲义查阅指南
+
+> 详见 [梁湘润子平教材讲义通读笔记](梁湘润子平教材讲义通读笔记.md)
+
+| 书 | 查什么 | 文件 | 怎么查 |
+|----|--------|------|--------|
+| 子平教材讲义一（第一级次） | 十神实务八法(性格/六亲/坐引/年限)+全方位坐引论+女命十项+三论并行+八格总论+日干对时支120组速断 | books/八字/子平教材讲义一-梁湘润.txt | 按节查：1-4节=比劫+规则，5-6节=偏印偏财，7节=女命官殺，8节=坐引拱论，9节=正印正财，10节=八格总论，11节=财官/格局/十神三论+日时表，12节=十干体象 |
+| 子平教材讲义二（第二级次） | 生旺库凶年+格与局区别+四见成格+拱夹精论+金不换大运合表+流月规则+天元巫咸经十干注释+实务批命七层示范 | books/八字/子平教材讲义二-梁湘润.txt | P1-45=实务提要(生旺库/格局/拱夹/四见)，P45-70=批命示范+金不换大运表，P70-95=流月+史观，P95-121=天元巫咸经十干注释 |
+
+### 子平母法大流年判例查阅指南
+
+> 详见 [梁湘润子平教材讲义通读笔记](梁湘润子平教材讲义通读笔记.md) 第十二节
+
+| 书 | 查什么 | 文件 | 怎么查 |
+|----|--------|------|--------|
+| 子平母法大流年判例（梁湘润） | 三大命学体系+流年实务法则+双轨十二宫性格+冲合精密法则+完整批命实例+格局临界度+疾病论式+十干逐月提要+花园十二宫子息+鸳鸯谱六冲 | books/八字/子平母法大流年判例-梁湘润.txt | 行1-170=目录+序+基础表格，行534-676=用神导论(五种用神源流)，行686-930=月时/年日对查吉凶表，行930-1000=相心赋+明通赋+天元坐别论，行1020-1093=医家五行总诀，行1094-1336=指标命学(八格喜忌表)，行1336-1500=双轨命学(十二生旺庫性格)，行1500-2000=冲合命学+流年批导法则，行2000-3000=任铁樵五种论式对比+经典精简提要，行3000-5500=十多个完整批命实例(含流月)，行5757-6010=花园十二宫论子息，行6162-6350=鸳鸯谱六冲，行6353-6500=疾病速简论式，行7117-7750=五行总论(论木/论土/论金/论水/论火)+十干逐月提要 |
+
+**与徐乐吾的配合使用**：
+- 十神定位法（梁·概要）→ 速判50%吉凶
+- 坐引拱论（梁·讲义一）→ 定六亲年限吉凶
+- 穷通宝鉴（徐）→ 定调候方向
+- 子平真诠（徐）→ 定格局框架
+- 滴天髓（徐）→ 定形象精神
+- 生旺库凶年（梁·讲义二）→ 第一优先排除凶年
+- 格与局区别（梁·讲义二）→ 天透地藏顺用、三合三会逆用
+- 金不换大运（梁·讲义二）→ 大运取地支，调候取天干
+- 天元巫咸经（梁·讲义二）→ 日主喜用补充（尤其壬日用丙不用戊）
+- **流年实务批导（梁·母法判例）→ 以流月为重点，大运为桥梁，刑冲合拱为核心**
+- **双轨性格论（梁·母法判例）→ 日支十二宫定处世性格**
+- **财官派速断（梁·母法判例）→ 地支财官禄位定中产层次**
+- 大运/流年用神表（楊）→ 交叉验证行运判断
+- 遇理论与实际矛盾 → 以统计验证结果为准（楊）
+
+
+========== 文件来源：core/徐乐吾四书通读笔记.md ==========
+
+# 徐乐吾四书通读笔记
+
+> 来源：逐行通读《造化元钥评注》《滴天髓补注》《子平真诠评注》《穷通宝鉴评注》全文后提炼
+> 目的：把通读才能获得的体系性认识固化下来，后续只需当工具书查
+> 与认识论.md和方法论.md互补，不重复已有内容
+
+---
+
+## 一、徐乐吾的体系定位——他到底在干什么
+
+徐乐吾自述"生平所敬服膺者为子平真诠、穷通宝鉴暨滴天髓三书"。他做的事是：**用穷通宝鉴的调候经验去注解子平真诠的格局理论，再用滴天髓的形象哲学去融通二者。** 造化元钥是穷通宝鉴的精简版，提供五个技术系统的架构。
+
+他的核心信念：格局法和调候法不是两种方法，是一件事的两面。格局是骨架（what），调候是血肉（when），滴天髓是灵魂（why）。
+
+但徐有一个致命弱点：**理论强于实战**。子平真诠评注中多处被林注（后人批注）直接指出取用错误，尤其在从格判断和身强身弱的分辨上频繁失误。读者必须带着批判眼光读他的评注，他的价值在体系构建和理论阐发，不在具体批命。
+
+---
+
+## 二、五个技术系统（造化元钥独有）
+
+造化元钥把穷通宝鉴的调候用神归纳为五个相互循环的技术系统，这是其他三本书没有的架构：
+
+### 系统一：甲庚丁三干循环
+- **甲木**日主用丁火（伤官）+ 庚金（偏官）
+- **丁火**日主用甲木（正印）+ 庚金（正财）
+- **庚金**日主用丁火（正官）+ 甲木（偏财）
+- 三者互为用神，缺一不可，构成闭环
+- 立论表象：甲用丁庚→木火通明，聪慧文采；庚用丁甲→利器成材，成就事业；丁用庚甲→引灯添薪，忠孝双全
+
+### 系统二：丙辛用壬
+- **丙火**为太阳，必用壬水（江湖之水）映衬→"壬水辅丙"
+- **辛金**为珠玉，必用壬水淘洗→"壬水洗淘法"
+- 丙辛都不用癸。丙见癸是不晴不雨，辛见癸是雨露不足以淘洗
+
+### 系统三：乙用癸丙
+- **乙木**为花草，必须癸水（雨露）滋养根基 + 丙火（阳光）照暖
+- 寒冬腊月重丙火，夏令炎热重癸水
+- 乙木不用壬水——壬如洪水漂浮花草
+
+### 系统四：戊己共用甲丙癸
+- **戊土**为高亢堤岸，首重甲木疏辟（犁锄开垦），次丙火暖土，次癸水润土
+- **己土**为田园湿土，首重癸水润泽（灌溉发生），次丙火暖土，次甲木疏土
+- 戊己虽同用甲丙癸，侧重不同：戊先甲，己先癸
+- 季节权变：冬令戊己皆先丙（解冻为急），夏令皆先癸（润燥为急）
+
+### 系统五：壬癸用戊辛丙（复杂系统）
+- 壬癸水的用法随季节变化最大：
+  - 春水衰弱→要庚辛发源 + 戊土堤防
+  - 夏水干涸→要庚辛发源（存亡关头）
+  - 秋水旺涝→要戊土堤防（止其泛滥）
+  - 冬水严寒→要丙火照暖（解冻方现自由）
+
+### 实战意义
+这五个系统回答了"什么日元在什么月份用什么"的第一层筛选。排盘后先定日元属于哪个系统，然后查该系统的调候链是否完整。**用神链完整且透干→上命，有一二藏支→中命，全缺→下命。**
+
+### 五个系统之间的交叉关系
+
+五个系统不是孤立的，彼此有交叉：
+- 甲庚丁循环中的**庚金**，同时也是壬癸系统中"发源"的关键（庚生壬水）
+- 甲庚丁循环中的**甲木**，同时也是戊己系统中"疏土"的关键
+- 丙辛用壬中的**壬水**，同时也是壬癸系统的主角
+- 乙用癸丙中的**丙火**，同时也是冬令所有天干调候的共用神
+
+**实战时的判断顺序**：先确定日元属于哪个系统 → 查该系统的主要用神链 → 检查交叉系统是否有冲突 → 若有冲突则看月令季节决定优先级。
+
+如庚金日元生于冬月：属于甲庚丁循环（需丁火煅炼），但冬令需丙火解冻（存亡级调候）。丙丁同为火，但作用不同——丙是太阳暖局，丁是炉冶成器。穷通宝鉴的回答是：**三冬庚金，丁为主丙为佐**，先丁后丙。即成器为主，暖局为辅。但若丁火全无，则丙火独挑两担——既暖局又代行煅金之功，只是效果不如丁。
+
+---
+
+## 三、"十干实物说"的推理方法（穷通宝鉴核心思维）
+
+穷通宝鉴论命的底层逻辑不是抽象的五行生克，是**物理常识比拟**：
+
+| 天干 | 实物 | 推理逻辑 |
+|------|------|----------|
+| 甲 | 栋梁之木 | 必须庚金斧斤劈削方"成材" |
+| 乙 | 花草之木 | 必须癸水雨露+丙火阳光方"向荣" |
+| 丙 | 太阳之火 | 必须壬水江湖映衬方"辉煌" |
+| 丁 | 炉冶之火 | 必须甲木薪柴劈开方"光明永驻" |
+| 戊 | 堤岸之土 | 必须甲木犁耕+丙火暖实+癸水润泽方"载物" |
+| 己 | 田园之土 | 必须丙火暖+癸水润方"生机盎然" |
+| 庚 | 顽矿之金 | 必须丁火炉冶煅炼方"成器" |
+| 辛 | 珠玉之金 | 必须壬水淘洗方"现宝气" |
+| 壬 | 江湖之水 | 必须戊土堤防方"奔行千里不泛滥" |
+| 癸 | 雨露之水 | 必须辛金润泽发源+丙火升腾方"泽于苍生" |
+
+**关键：这套推理是比喻式的，不是逻辑式的。** 你不能用"庚克甲"来推出庚金需要甲木——推理方向是从"实物功能"出发，不是从"五行生克关系"出发。这是穷通宝鉴独特的认识论基础，也是它容易被误读的原因。
+
+### 实物说与格局法的矛盾
+
+十干实物说会和子平真诠的格局法产生矛盾。举例：
+
+庚金日元生七月（申月），格局法说"月令建禄，别取用神"——可以用财、用官、用食伤。但穷通宝鉴说"七月庚金司令，刚锐已极，**专用丁火煅炼**，次取甲引丁光"——不管什么格局，丁火是第一需要。
+
+这两套说法如何统一？徐乐吾的答案是：**调候定方向，格局定层次**。穷通宝鉴告诉你七月庚金"必须见丁火"，这是方向；子平真诠告诉你丁火在你八字里充当什么角色（是官星？是用神？还是相神？），这是层次。方向对了层次低，也有衣禄；方向错了层次高，也是枉然。
+
+### 实物说的三条立论特色（造化元钥总结）
+
+穷通宝鉴有三个独特的立论角度，与其他命书不同：
+
+1. **气候优先于月令正五行**：正月建寅，正五行当论甲丙戊，但穷通宝鉴说"正月甲木，初春尚有余寒"——以实际气温（余寒）为第一考量，不以寅中甲木当令为第一考量
+2. **重阳干轻阴干，重偏神轻正神**：甲木不离庚金（偏官），丙火不离壬水（偏官），都是阳干喜偏官偏财。"阳干力量大特别喜偏官偏财，尤利做大事业；阴干力量弱，喜相生利守成"
+3. **十干实物说**：把十干当成实物来推理（如上表），而不是当成抽象符号
+
+---
+
+## 四、徐乐吾对滴天髓原文的关键修正
+
+### 4.1 "阳支阴支"改为"阳干阴支"
+
+滴天髓原文"阳支动且强，阴支静且专"，徐乐吾认为原文有误字，应为"**阳干动且强，阴支静且专**"。理由：天干动而有为（吉凶顺而易见），地支静以待用（吉凶隐而经年）。这个改动影响对干支作用力大小的判断。
+
+### 4.2 合与化的严格区分
+
+任铁樵注滴天髓时常以"合"即"化"论。徐反复强调：**合与化不同。合而不化当论其合，合而能化当论其化。今人见合皆作化论，殊误。** 化必须得时得地成方成局，否则只论合不论化。
+
+### 4.3 体用二字的精确定义
+
+前人论体用混用不清。徐在滴天髓补注中做了最清楚的区分：
+- **体**：月令提纲是体（八字的"环境"）。偏旺格以全局气势为体。
+- **用**：提纲所喜之神为用。相神即用之辅佐。
+- **精神**：配合有情有力，即有精神。精神不是另一个概念，是体用配合得宜的外在表现。
+
+他的原话："体用分清，即不致发生错误。"——先辨体（月令是什么），再定用（月令需要什么），最后看精神（配合是否到位）。
+
+### 4.4 对"得时不旺失时不弱"的深化
+
+子平真诠原文已有此论，但徐在评注中做了重要补充：
+
+**旺衰与强弱是两回事**：
+- **旺衰**看月令——得时为旺，失时为衰
+- **强弱**看党众——比印多为强，克泄多为弱
+- 故有"旺而弱"（得时但克泄重）和"衰而强"（失时但比印多）
+
+如甲木生春（旺），但干庚辛支酉丑，金之党众远超木之势力→旺而弱。甲木生秋（衰），但干甲乙支寅卯，比印重叠→衰而强。**日主如此，喜用忌神皆同此论**。
+
+**通根比干头重要**：
+- 天干得一比肩，不如支中得一墓库（如甲逢未、丙逢戌）
+- 得二比肩，不如得一余气（如乙逢辰、丁逢未）
+- 得三比肩，不如得一长生禄旺（如甲逢亥子寅卯）
+- "比劫如朋友之相扶，通根如室家之可住；干多不如根重"
+
+这直接影响实战中判断身强弱的权重分配——**先数支根，后数干助**。
+
+### 4.5 滴天髓中"天覆地载、上下情协"的八字审美观
+
+徐在补注中反复以"天覆地载"评价八字好坏。其含义：
+- **天覆**：天干所透之神，地支有根承载
+- **地载**：地支所藏之神，天干有字透出
+- 干透支藏，天覆地载，方为有根有力
+- 如四辛卯、四丙申——干支不相通，天不覆地不载，虽一气亦弱
+
+具体标准：
+- 天干透出之字在支中有禄旺→最强
+- 天干透出之字在支中有长生→次强
+- 天干透出之字在支中有余气墓库→又次
+- 天干透出之字在支中毫无根气→浮露无用
+
+徐评康熙帝命（甲午·戊戌·戊申·丁巳）："此造无形之中自有一种浑厚之气...八个字中一字不可改易，地位次序一字不能互换...此为真正上格局。"——强调的不是某个用神多好，而是**整体结构的不可替换性**。
+
+### 4.6 滴天髓补注中"顺逆"的完整说法
+
+原文只有"顺逆不齐也，不可过于顺...不可过于逆"。徐的补注给出了完整的操作指南：
+
+**我生之局（食伤）→引其性情**：
+- 食伤太旺不可克制（如戊土太旺不可用甲木），应顺而泄之（用庚金泄土之气）
+- "强水得木方泄其势，强木得火方化其顽，强火得土方止其焰"——元理赋的精髓
+
+**生我之局（印绶）→顺乎气势**：
+- 印旺成局不可逆，须顺其方向
+- 如印旺身旺的格局，不可用财破印，而应用食伤泄秀——顺着印→身→食伤→财的方向流通
+
+**此即为什么有些格局"用官不可见伤、用印不可见财"的深层原因——不是死规矩，是气势不可逆。**
+
+---
+
+## 五、子平真诠评注中的实战规则（只有逐行读才能提取）
+
+### 5.1 位置决定吉凶——生克先后法
+
+同是正官逢财逢伤，位置不同结果截然相反：
+
+| 格式 | 列式 | 结论 |
+|------|------|------|
+| 伤先财后 | 丁年·己酉·甲日·戊辰 | 财旺生官，伤官之气泄于财，官不受损 |
+| 财先伤后 | 戊年·辛酉·甲辰·丁卯 | 财生官后遭伤破，官最终受损 |
+| 有间隔的保护 | 癸年·甲寅·丙日·戊时 | 官能生印，戊不能越甲合癸，大贵 |
+| 无间隔的合破 | 癸年·戊午·丙日·甲午 | 戊癸相合，格大破 |
+
+**规则提炼**：
+1. 喜神在年月、忌神在日时 → 先得后失
+2. 喜神在日时、忌神在年月 → 先失后得
+3. 有间隔之字能解二者冲突 → 间隔为救应
+4. 日元本身之合不作合去论 → "我之官，是我合之"
+
+### 5.2 闲神的隐藏作用
+
+徐反复强调：八字中喜忌用神之外，还有闲神。闲神平时无作用，但行运时若闲神被冲合引动，可以转顺为逆或转逆为顺。**同一格局因闲神不同，运的吉凶完全不同。**
+
+如薛相公命（甲申·壬申·乙巳·戊寅），甲运帮身吉。但如果年柱甲申改为己酉，行甲运则合劫破印，即不美。"所谓因闲神之配合而喜忌不同也。"
+
+### 5.3 干支行运的分别
+
+核心十二字：**"运以方为重"，但"行干而不行支"亦有之。**
+
+- 庚申辛酉：干支同气，金运无疑
+- 丙子丙申：火不通根，金水之气为重
+- 甲午乙未：木火同气，但午火旺木受泄
+- 丙生子月亥年：行丙丁帮身吉，行巳午冲旺水反增水势→行干不行支
+- 甲生酉月辛透：行申酉官植根，行庚辛混煞重官→行支不行干
+
+**实战口诀**：干支同气全吉全凶；干支不同气，干到位不到方（力微），支到方不到位（力重）。
+
+### 5.4 行运成格变格
+
+这是子平真诠中最难的部分。徐举了一个极好的实例：
+
+姚文敷造（辛未·甲午·丙申·戊戌）：月令阳刃，但丙临申位旺而不旺。平时食神泄秀为用，气势不足。至寅运，寅午戌三合齐，身旺泄秀，阳刃用食格局突然完成。寅运中一跃为两淮盐运使。
+
+**规则**：原局格局"成而未全"，逢运补足那一个字，格局突然完整，富贵陡至。但仅此运五年（或十年），过后依然如故。
+
+### 5.5 子平真诠格局成败的完整程式
+
+通读全书48章后，可以把格局成败的逻辑总结为一张完整的决策树：
+
+\`\`\`
+月令取格 → 格神确定
+  ↓
+格局成否？
+  成：格神有力 + 相神配合 + 无忌破格
+    → 成中有败？（带忌神）
+      → 有救应？（合去/制住忌神）
+        → 败中有成 → 贵格
+        → 无救应 → 破格
+    → 无忌 → 纯格 → 视有情无情、有力无力分高低
+  败：格神受伤/无相神
+    → 有因败得成？（因会合变化而忌转为喜）
+      → 有 → 变格取贵
+      → 无 → 贫贱
+\`\`\`
+
+**八格的完整成败条件**：
+
+| 格局 | 成 | 败 | 救应 |
+|------|----|----|------|
+| 正官 | 官逢财印+无刑冲 | 官逢伤克/合去/杂煞 | 印制伤护官/合去煞 |
+| 财格 | 财旺生官/食生财+身强 | 财轻比重/财透煞 | 食化劫/官制劫/合煞 |
+| 印格 | 印轻逢煞/官印双全/身印两旺用食伤 | 印轻逢财/身强印重透煞 | 劫去财/合财存印 |
+| 食神 | 食神生财/食带煞无财弃食就煞 | 食逢枭夺/食生财露煞 | 财制枭/弃食就煞 |
+| 七煞 | 身强煞逢制 | 煞逢财无制 | 食制煞生财/合煞 |
+| 伤官 | 伤生财/伤佩印+伤旺印有根/伤带煞无财 | 非金水见官/生财带煞/佩印而伤轻身旺 | 财化伤生官/印制伤 |
+| 阳刃 | 透官煞+财印相随 | 无官煞 | 煞刃相持+印缓气 |
+| 建禄月劫 | 透官逢财印/透财逢食伤/透煞逢制伏 | 无财官+透煞印 | 合去忌神/化劫为生 |
+
+### 5.6 各格取运的统一原则
+
+通读正官至杂格取运各章后，总结出取运的统一原则：
+
+1. **用神宜助不宜伤**——最基本
+2. **相神更不可伤**——"伤相甚于伤用"
+3. **身轻则取助身，官轻则取助官**——偏弱方需补
+4. **身旺印重，财运反吉；身弱财旺，印运反吉**——此消彼长
+5. **闲神被冲合引动，可转顺为逆/转逆为顺**——运中最难预见
+6. **官煞不可混**——运中见混亦忌
+7. **成格之运与变格之运，福祸尤重于平常喜忌**——运能成格是大起，运能变格是大落
+8. **干支同类不两行**——如丁壬一合一帮，效果不同；同为寅运，午戌在局则会火，子辰在局则会水
+
+### 5.7 伤官五种格局的取运差异（最复杂的格）
+
+伤官格变化最多，子平真诠专门分了多种子类，取运各异：
+
+| 子格局 | 用法 | 运喜 | 运忌 |
+|--------|------|------|------|
+| 伤官生财 | 身强泄秀生财 | 财食 | 官煞（除金水调候外） |
+| 伤官佩印 | 身弱制伤扶身 | 官煞（生印）、印 | 财（破印） |
+| 伤官兼用财印 | 财多带印/印多带财 | 助弱的那一方 | 助强的那一方 |
+| 伤官用煞印 | 身弱煞生印化伤 | 印旺 | 财（破印党煞） |
+| 伤官用官（金水） | 调候为急见火 | 财印 | 食伤再泄 |
+| 伤官带煞 | 以伤驾煞 | 印（去食卫煞）；煞重运喜食伤 | 财（化食生煞） |
+
+**关键心法**：伤官格先看身强身弱 → 身强看有财无财 → 身弱看有印无印 → 最后看月令季节（金水？木火？火土？土金？水木？）→ 季节决定调候需求 → 调候需求可能翻转常规喜忌。
+
+---
+
+## 六、穷通宝鉴的隐含规则（只有逐行读才能发现的模式）
+
+### 6.1 调候优先级的三层结构
+
+通读十干×十二月全文后，发现调候取用有固定的优先级：
+
+**第一层：存亡级**（缺此无用）
+- 冬令一切天干→丙火解冻（"非丙不暖"反复出现）
+- 夏令壬癸水→庚辛发源（"无庚不能蓄源"）
+- 春木→不可无水亦不可无火（水火既济）
+
+**第二层：品级级**（有此升格）
+- 甲木→庚金劈甲+丁火通明
+- 庚金→丁火煅炼
+- 辛金→壬水淘洗
+- 戊土→甲木疏土
+
+**第三层：配合级**（此为辅佐）
+- 用丁制庚→不可无甲引丁（甲庚丁循环）
+- 用壬辅丙→不可无庚生壬（源远流长）
+- 用癸润己→不可无辛生癸（雨露有源）
+
+### 6.2 十干取用的同异规律
+
+通读后发现，十干在不同月份的取用有一个隐含的对称结构：
+
+| 月份 | 甲木 | 乙木 | 关系 |
+|------|------|------|------|
+| 正月 | 丙癸并用 | 丙癸并用 | 同 |
+| 二月 | 庚金为主 | 丙癸并用 | 异——甲用庚劈，乙不受金克 |
+| 夏月 | 先丁次庚（通明） | 先癸后丙（润泽） | 完全不同 |
+| 秋月 | 先丁次庚（成材） | 先丙后癸（护花） | 完全不同 |
+| 冬月 | 庚为要丙次之 | 专用丙火 | 同中有异 |
+
+**规律**：阳干甲丙戊庚壬多喜偏官偏财（阳克阳，利做大事业）；阴干乙丁己辛癸多喜正印正官（阴生阴，利守成）。穷通宝鉴的第二个立论特点正是**"重阳干轻阴干，重四凶神轻四吉神"**。
+
+### 6.3 "真神得用"的判断标准
+
+穷通宝鉴反复说"丙癸齐透，科甲有准"、"甲庚两透，科甲有准"。通读后提炼判断标准：
+
+1. **透干**：用神必须天干透出（藏支减半）
+2. **通根**：透干之字必须地支有根（无根浮露不真）
+3. **当令**：用神得月令之气最旺（月令休囚减力）
+4. **无伤**：用神不被合去、克伤、冲破
+5. **有配**：主要用神外还有辅佐配合
+
+五条全满→大贵；满四条→贵；满三条→有衣禄；满一二条→平常；全不满→下命。
+
+### 6.4 穷通宝鉴的断语体系
+
+穷通宝鉴的断语有一套固定用语，理解这套用语才能快速读懂每段：
+
+| 断语 | 含义 |
+|------|------|
+| 科甲有准 | 正途出仕（进士/举人），大贵 |
+| 选拔/贡监 | 非正途的较低功名 |
+| 异途显达 | 不由科举而获官位（如军功、捐纳） |
+| 衣衿/秀才 | 最低级功名 |
+| 有富贵 | 有钱有地位但不确定多少 |
+| 衣禄充足 | 温饱无忧但无大发 |
+| 常人 | 普通百姓 |
+| 僧道孤贫 | 最差，无妻无子无财 |
+| 奸诈刻薄 | 性格有缺陷 |
+| 富而不贵 | 有钱无官职 |
+| 贵而不富 | 有官职清贫 |
+| 先贫后富 | 用神在时柱（晚年得力） |
+| 先富后贫 | 用神在年月（早年享用）而时上忌神 |
+| 妻贤子肖 | 财星和官煞有情得力 |
+
+### 6.5 穷通宝鉴中"一例看/分别看"的规则
+
+通读后发现穷通宝鉴频繁使用"一例"和"不同"来标记哪些月份可以合并看、哪些必须分开看：
+
+**可以合并看（"一例"）**：
+- 甲木正二月一例（但阳刃格二月独有）
+- 甲木五六月一例
+- 丙火四五月一例（专用壬水）
+- 丁火三秋一例
+- 戊土正二月一例
+- 辛金正二月一例
+
+**必须分开看**：
+- 所有天干的**三月**（辰月土旺）都要单独看，不能和一二月合并
+- 所有天干的**六月**（未月）都要按大暑前后分两段
+- 所有天干的**九月**（戌月土旺）都要单独看
+- 所有天干的**十二月**（丑月）都要按上下半月分看
+
+**底层逻辑**：辰戌丑未四季月是转折点，气候交脱之际，用神最易变化，所以必须独立分析。寅卯/巳午/申酉/亥子两个月之间气候连续，可以合看。
+
+### 6.6 穷通宝鉴的"妻子"断法
+
+穷通宝鉴每段末尾常有"用神妻子同前"之语，其规则是：
+
+- **用官煞者**：财为妻，食伤为子（因财生官，食制煞）
+- **用丙火者**：木妻火子
+- **用癸水者**：金妻水子
+- **用甲木者**：水妻木子
+- **用庚金者**：土妻金子
+
+规则很简单：**生用神者为妻，用神所生者为子**。与滴天髓"喜神有意傍天财"一脉相承。
+
+---
+
+## 七、滴天髓补注中的独特判断法
+
+### 7.1 "殿印相生、元机暗藏"
+
+徐在滴天髓补注中反复使用一个判断法：**看支中是否暗藏殿印相生的链条。**
+
+如戊寅日坐长生，寅中甲丙戊三字——丙戊殿印相生（丙火印生戊土），甲木偏官也在其中。这是"绝处逢生"——日元虽临绝地，坐下暗藏生机。
+
+类似的：
+- 甲申日：申中庚壬戊→庚金偏官有壬水化为印
+- 癸丑日：丑中己辛癸→辛金正印暗生日元
+- 庚午日：午中丁己→丁火正官有己土印化
+
+**这四柱（戊寅甲申癸丑庚午）被徐称为"六十花甲中特别之日"**，生者每多大贵格局。
+
+### 7.2 寒暖燥湿四诊法
+
+滴天髓第三篇"征验"中，徐提出八字也有寒暖燥湿之病：
+- **过寒**：金水冬月无火→"金寒水冷"→性格阴沉消极
+- **过暖**：木火夏月无水→"火炎木焚"→脾气暴躁短寿
+- **过燥**：火土旺月无水→"土焦金脆"→皮肤病、脾胃病
+- **过湿**：水木冬月无火→"水冷木浮"→关节病、肾病
+
+**诊法**：先看月令在哪个季节，再看四柱干支的寒暖燥湿倾向，最后看有无调和之神。
+
+### 7.3 滴天髓的格局分类法（与子平真诠不同）
+
+子平真诠以月令八格为纲，滴天髓以"形象"为纲，分类方式完全不同：
+
+**独象**：一行独旺（曲直、炎上、稼穑、从革、润下五格）→ 宜行化地（泄秀），忌逆旺势
+
+**偶象（两神成象）**：
+- 相生之象（如木火、金水）→ 顺其相生方向取用
+- 相克之象（如金木、水火）→ 须通关之神
+- 身煞两停（煞刃格）→ 用印缓气
+
+**从象**：日主无根从强势（从财、从煞、从儿/食伤）→ 顺从势为用，忌比劫帮身
+
+**化象**：天干合化成功（五种化气格）→ 化神喜旺地，忌还原
+
+**全象**（正格）：三行以上，体用精神俱全 → 即子平真诠的八格法
+
+**从象的真假判断**（徐在补注中的核心贡献）：
+- **真从**：日主完全无根，满局一片克泄 → 地位自高，行从化旺乡即贵
+- **假从**：日主微有根苗或印有点根 → 行从化旺乡亦可取富贵，但遇根苗运则还原，一时之顺逆
+- **不能从**：日主有根而财官旺 → 仍按正格论
+
+徐引《滴天髓》原文："真从之象有几人？假从亦可发其身。"——真从极罕见，假从常见，但假从在得运时同样可以富贵。
+
+### 7.4 "情和气协"——判断八字整体品质的终极标准
+
+徐在滴天髓补注的干支总论中，把"上下贵乎情和，左右贵乎气协"提到最高位置。
+
+**情和**（上下）：日干与日支、年干与年支、各柱干与支之间的配合关系
+- 天地合（如甲子见己丑，干支上下都合）→ 精气团结
+- 天合地刑（干合支冲）→ 有情有碍
+- 干支相生（如丙寅、壬申）→ 天覆地载
+
+**气协**（左右）：年月、月日、日时之间的流通关系
+- 四柱顺生（如年木→月火→日土→时金）→ 始终不悖，福寿最厚
+- 四柱逆克（年克月、月克日）→ 气势不顺，多坎坷
+- 联珠（地支相连如寅卯辰）→ 气聚一方
+
+**徐论康熙帝命造时说的"八个字中一字不可改易、地位次序一字不能互换"，就是情和气协的极致。** 一般命造做不到这种完美，但可以拿这个标准去衡量：情和的程度 × 气协的程度 = 格局高低的底线。
+
+### 7.5 滴天髓论行运的独特视角
+
+滴天髓论运与子平真诠有一个重要的区别视角：
+
+**子平真诠论运**：从格局出发——运助格则吉，运破格则凶
+**滴天髓论运**：从气势出发——运顺气势则吉，运逆气势则凶
+
+二者大部分情况下结论一致，但在偏旺格局中可能不同。如一方专旺格，子平真诠可能说"无官煞制刃，格败"，但滴天髓说"气势偏旺，顺而不逆，行泄秀之运即吉"。
+
+**徐的折中**：正格用子平真诠的方法论运，偏旺格和从格用滴天髓的方法论运。这是最稳妥的做法。
+
+---
+
+## 八、徐乐吾的错误与局限（读者必须知道）
+
+### 8.1 从格判断频繁失误
+
+子平真诠评注中，林注多次指出徐把从格当正格、把正格当从格：
+- 朱家骅造（癸巳·丁巳·丁卯·丙午）：徐取癸水抑制日元，林注指出火成气势必然从火
+- 赵知府造（丙午·庚寅·丙午·癸巳）：徐说化印为劫、弃印就财官，林注指出财官无根应从旺
+- 某造身弱财食并旺，徐说"身强财食并旺"——完全相反
+
+### 8.2 用神取用时常牵强
+
+穷通宝鉴评注中，徐常把调候规则硬套到不适用的八字上。韦序中直言："乐吾先生虽然学问渊博，但其评注间有牵强附会之处，不免乎硬凑而离题也。"
+
+### 8.3 纳音格局偶尔干扰正论
+
+造化元钥中"甲子乙丑为死木，甲戌乙亥为活木"的分类，徐自己也承认"参考纳音言也，理有未合"。
+
+### 8.4 子平真诠评注中的具体错误汇总
+
+逐行读时标记的林注（后人校正），列出最典型的几处：
+
+| 原造 | 徐的判断 | 林注纠正 | 核心错误 |
+|------|----------|----------|----------|
+| 朱家骅（癸巳·丁巳·丁卯·丙午） | 日元太旺，取癸水抑制 | 火成气势必然从火，癸水是忌神 | 把从格当正格 |
+| 赵知府（丙午·庚寅·丙午·癸巳） | 化印为劫弃印就财官 | 财官无根应从旺格 | 把从格当正格 |
+| 谢阁老（己未·壬申·戊子·庚申） | 身强财食并旺 | 无火土无原神当身弱论 | 身强弱判断反了 |
+| 曾毓隽（乙亥·癸未·己亥·辛未） | 己土通根用神太弱扶之 | 无火土无原神应弃命从杀 | 把从格当正格 |
+| 某辛丑造（辛亥·庚子·甲辰·乙亥） | 以印为用 | 冬水旺极水泛木浮当从水论 | 印旺不等于用印 |
+
+**共同模式**：徐倾向于按正格扶抑法看命，对从格的识别能力不足。阴干从势的案例尤其容易误判。
+
+### 怎么用徐乐吾
+- **用他的体系框架**：五个技术系统、格局成败救应的完整程式、调候三层优先级
+- **不用他的具体判断**：具体八字的身强弱、用神取舍，须自行分析验证
+- **带着林注读**：子平真诠评注中凡有"林注"处，先看林注，再看徐注
+- **穷通宝鉴评注中的命例分析部分谨慎参考**：韦千里序言直言"牵强附会"，命例判断不可全信
+- **造化元钥和滴天髓补注的理论部分可信度最高**：这两本是徐的理论主场，阐发精到
+
+---
+
+## 九、四本书的功能定位（后续查阅指南）
+
+| 书 | 查什么 | 怎么查 |
+|----|--------|--------|
+| 造化元钥评注 | 十干总论+五个技术系统 | 直接查日元的"三春/三夏/三秋/三冬总论" |
+| 穷通宝鉴评注 | 特定日元+特定月份的调候用神 | 按卷查（甲=卷一，乙=卷二...），找对应月份段落 |
+| 子平真诠评注 | 格局成败救应理论+各格取运法 | 按章节查（论用神、论成败救应、论格局高低、论行运、论正官/财/印/食/偏官/伤官/阳刃/建禄月劫/杂格） |
+| 滴天髓补注 | 十干性情+形象判断+清浊真假+通关源流 | 按篇查（卷一论干支、卷二形象格局官煞伤官从化、卷三体用精神源流通关清浊真假、卷四征验六亲性情） |
+
+**实战查阅顺序**：排盘 → 查穷通宝鉴定调候方向 → 查子平真诠定格局框架 → 查滴天髓定形象精神 → 查造化元钥核对技术系统
+
+---
+
+## 十、通读后最深刻的一句话
+
+徐乐吾在子平真诠评注末尾自述："予用是术以历试，但有贫贱，并无富贵。"——他承认自己的理论在实战中未必全验。然后他说："然要之极贱者多，不得不观其人物以衡之。"
+
+这句话的意思是：**命理学能排除大量的"不可能"，但不能精确定位"必然"。** 这和认识论中梁湘润说的"六七成或然律"完全一致。
+
+徐乐吾最大的贡献，不是他断命有多准，而是他把三本互不相干的经典串成了一个体系，让后人有了一个"先查什么、再查什么、最后查什么"的清晰路径。这个路径本身，比任何单一的断命方法都有价值。
+
+---
+
+## 附录A：穷通宝鉴十干×四季调候总表（速查用）
+
+> 从穷通宝鉴和造化元钥全文中提取的极简调候方向。具体月份须查原书。
+
+| 日元 | 春（寅卯辰） | 夏（巳午未） | 秋（申酉戌） | 冬（亥子丑） |
+|------|-------------|-------------|-------------|-------------|
+| **甲** | 丙癸→庚（初春暖，仲春劈） | 先丁次庚（通明） | 先丁次庚（成材） | 庚要丙次（寒木向阳） |
+| **乙** | 丙癸并用（花草向阳润泽） | 先癸后丙（润泽防焦） | 先丙后癸（秋护花） | 专用丙火（寒木向阳） |
+| **丙** | 专用壬水（壬水辅丙） | 专用壬水（忌土晦光） | 壬水辅映余光 | 甲木为主（绝处逢生），十一月先壬戊 |
+| **丁** | 先庚次壬（劈甲引丁） | 甲木为根+壬水调候 | 专用甲庚（甲引丁庚劈甲） | 专用甲庚（冬丁微寒不离甲） |
+| **戊** | 先丙后甲，癸次之 | 先癸后甲（润燥疏土） | 先丙后癸（阳暖润泽） | 先甲次丙（十一二月先丙暖） |
+| **己** | 先丙暖→甲疏→癸润 | 先癸后丙（润燥为急） | 丙火为主+癸水 | 专用丙火（非丙不暖不生） |
+| **庚** | 先丙暖→甲疏厚土 | 先壬次戊丙（群金生夏妙用元武） | 专用丁火+甲引丁 | 先丁次丙甲（丁主丙佐） |
+| **辛** | 先己土→壬水淘洗 | 己壬兼用（湿泥滋金） | 专用壬水（金白水清） | 先壬次丙（水暖金温） |
+| **壬** | 先庚发源→丙除寒→戊止流 | 先壬比助→辛发源→庚佐 | 戊土堤防→丁制庚 | 戊为尊丙为佐（止水暖局） |
+| **癸** | 先辛发源→丙照暖 | 先辛（庚）发源→壬比助 | 丁制金→辛配壬（金白水清） | 先丙解冻（冬至后）→辛滋扶 |
+
+**使用方法**：排盘后查此表定大方向 → 再查穷通宝鉴具体月份段落定细节。
+
+---
+
+## 附录B：子平真诠各格取运的一句话总结
+
+> 从各格取运章逐行提取的核心原则
+
+| 格局 | 一句话取运原则 |
+|------|---------------|
+| 正官用财印 | 身轻助身，官轻助官；忌合官、杂煞、伤官 |
+| 正官佩印 | 身旺喜财食，官重身轻宜印比 |
+| 正官带伤用印 | 喜官旺印旺，忌财破印 |
+| 正官带煞 | 用劫合煞则忌再露煞；用伤合煞则忌印夺伤 |
+| 财旺生官 | 喜身旺印绶，忌煞伤 |
+| 财用食生 | 身重喜财食，身轻喜助身；煞不忌官印反晦 |
+| 财格佩印 | 喜官乡通关，身弱喜印旺 |
+| 财带七煞 | 不论合制，喜食伤身旺之方 |
+| 印用官 | 官露印重则喜财食泄秀；官重身轻则喜印比 |
+| 印用食伤 | 财运反吉食伤亦利，官运反灾煞运反福 |
+| 印用七煞 | 喜伤食身旺，忌财乡 |
+| 印多用财 | 喜财地，忌印运 |
+| 食神生财 | 身重喜财食，身轻喜印比；官煞忌 |
+| 食用煞印 | 喜印旺忌财乡 |
+| 煞用食制 | 煞重食轻助食，煞轻食重助煞；忌财印 |
+| 煞用印化 | 喜印旺忌财乡 |
+| 煞带正官 | 莫去取清之物，无伤制煞之神 |
+| 伤官生财 | 身强喜财食，身弱喜印比 |
+| 伤官佩印 | 喜官煞印运，忌财地 |
+| 伤官用官（金水） | 喜财印，忌食伤 |
+| 阳刃用官 | 官根深则印比亦利，忌伤食合官 |
+| 阳刃用煞 | 煞轻助煞，煞重助身；伤食不忌 |
+| 建禄用官 | 喜财印相随；忌合官杂煞 |
+| 建禄用财 | 须带食伤（通关）；忌劫争 |
+| 建禄用煞 | 必须制伏；与煞格同 |
+
+---
+
+## 附录C：四本书中反复出现的核心金句
+
+> 需要内化的几句话，出处标注
+
+1. "用神专求月令"——《子平真诠》第八章（格神以月令为主）
+2. "生与克同用，克与生同功"——《子平真诠》第二章（中和之道）
+3. "伤用神甚于伤身，伤相甚于伤用"——《子平真诠》第十五章（相神最要）
+4. "一清到底有精神"——《滴天髓》清浊篇（格局审美）
+5. "真神得用平生贵，用假终为碌碌人"——《滴天髓》真假篇（真假用神）
+6. "天覆地载，上下有情"——《滴天髓》干支总论（干支配合标准）
+7. "五阳从气不从势，五阴从势无情义"——《滴天髓》论天干（从格判断根本）
+8. "调候为急，权而用之"——《子平真诠》第十四章（调候压过常规）
+9. "有病方为贵，无伤不是奇"——《滴天髓》病药（有缺有补方成大器）
+10. "非丙不暖，非甲不灵"——《穷通宝鉴》多处（冬令调候+疏土两大铁律）
+11. "甲以乙妹妻庚，凶为吉兆"——《穷通宝鉴》（合煞之美）
+12. "提纲有用提纲重，有官莫寻格局"——《子平真诠》第二十二章（不要舍近求远）
+13. "论运与看命无二法也"——《子平真诠》第二十五章（运的看法等同命）
+14. "澄浊求清清得净，时来寒谷也回春"——《滴天髓》清浊篇（浊中有清运助亦发）
+
+
+========== 文件来源：core/梁湘润子平基础概要通读笔记.md ==========
+
+# 梁湘润《子平基础概要》通读笔记
+
+> 含楊鶴朋《玄宗八字歲運真訣》（梁湘润监修收入）
+
+---
+
+## 一、梁湘润的核心方法论：层次观
+
+梁湘润的最大贡献不是某个具体技法，而是他明确提出了**子平法的推理层次**，并且反复警告不要把入门层次当成全部。
+
+### 1.1 三阶段九个月
+
+- 第一阶段（3个月）：入门基础——背熟刑冲合会、十神生克、六亲所属、十干禄绝
+- 第二阶段（3个月）：格局与调候的兼顾达悟
+- 第三阶段（3个月）：诸家比判融合 + 全流神煞会合
+
+### 1.2 "日主强弱"不是论命第一优先
+
+这是梁湘润最重要的一句话：
+
+> "日主强弱是入门之优先，不是子平法全部涵义的第一优先。如果在初阶段之时，先被日主强弱视为论命程式上的第一优先，日后将终身困于扶抑日主的小范围之中矣。"
+
+他举了一个极端例子：丙日主生酉月，日主不得令，但仍然以壬水为第一优先——不论日主如何弱，不论入任何格，缺水则全盘皆堕。
+
+**结论：调候 > 日主强弱。** 日主强弱的范围，在调候用神之后。
+
+### 1.3 用神的五个层面
+
+梁湘润把"用神"这个被滥用的词明确分为五种，这比徐乐吾清晰得多：
+
+| 用神类型 | 含义 | 适用场景 |
+|----------|------|----------|
+| 格局用神 | 顺用、逆用的用神 | 格局成败的主线 |
+| 通关用神 | 破格时的调节用神 | 格局受损时的补救 |
+| 病药用神 | 调候忌神的对治 | 食神制杀、伤官配印等 |
+| 专旺用神 | 从旺、从势格中的用神 | 特别格 |
+| 调候用神 | 十干对十二月支的用神 | 寒暖燥湿的根本需求 |
+
+### 1.4 十神定位法：独立于格局的速判系统
+
+梁湘润独创的实战方法——不依赖格局判断、不依赖调候，单纯用十神在四柱的位置+坐支+神煞来推论吉凶。
+
+核心原则：
+- 十神定位可以与格局并论，也可以与调候并论，也可以独立使用
+- 初学者用此法"在二个月内可对八字勾画50%以上的吉凶范围"
+- 然后再进一步研究格局的顺逆用、调候等主流层面
+
+精华规则举例：
+- 比肩坐空亡：在年不利父，在月不利兄弟
+- 偏印天干二见或三见：主迟婚、变缘、独身
+- 偏印坐月支专位入格：以艺文技专长为业
+- 正官坐桃花：主夫良（唯一桃花论吉的情况）
+- 正财坐正官同根透出：书香门第
+- 日支专位坐正财（戊子日）：得勤俭持家的贤淑妻室
+- 壬午日、癸巳日：自坐财官印，为"禄马同乡"，大吉
+- 七殺坐桃花遇刑冲：因感情而引祸
+- 食神坐羊刃：劳碌之命
+- 傷官坐羊刃：背禄逐马，主十五年力不从心
+
+---
+
+## 二、顺用逆用体系
+
+梁湘润把沈孝瞻的理论组织成了极清晰的框架。
+
+### 2.1 顺用四格
+
+正官、正印、食神、正财——只能泄不能克。
+
+"格局强而日主弱"时，不可反克格局，只能用泄的方式调停。
+
+### 2.2 逆用四格
+
+七殺、傷官、偏印、羊刃——可以顺用也可以逆用，但采用逆用时命格更高。
+
+### 2.3 各格喜忌速查
+
+| 格局 | 喜 | 忌 | 扶身首选 |
+|------|-----|-----|----------|
+| 正官 | 透财佩印 | 伤官/七殺/合官/刑冲/身弱 | 临官(禄) |
+| 正财 | 身强用官 | 比劫/合财/刑冲/身弱 | 临官(禄)，不宜比劫 |
+| 正印 | 官殺相生 | 财星/合印/刑冲/**身强** | 不忌身弱，忌身太强 |
+| 食神 | 财星 | 偏印/合食/刑冲/身弱 | 比劫禄刃皆可，唯不宜印 |
+| 七殺 | 食制/印化/身殺二停/刃驾殺 | 财殺齐出/合殺/刑冲/身弱 | 羊刃最佳 |
+| 傷官 | 生财/佩印/伤尽 | 见官(无调候时)/刑冲/身弱 | 视调候而定 |
+| 偏印 | 偏财+天月德 | 食神/羊刃/刑冲 | 身强透财即佳 |
+| 羊刃 | 七殺 | 孤刃无依/双合/冲合并见 | 必须配七殺或正官 |
+
+### 2.4 梁湘润的关键补充
+
+**正官格**：用比肩扶身——可以，但比肩会制财，失去官星优点。用临官（禄）扶身——最佳。用印扶身——若官印根强则嫌过度。
+
+**财格**：先财后印无碍，先印后财则不利。经曰"先财后印反成其福，先印后财恐增忧辱"。
+
+**印格**：印格不忌身弱，反忌身强。印格+羊刃同在八字中——身体经常有病，或性格优柔不易合群。
+
+**七殺格**：食神制殺——食神必须在前，七殺在后。食制与印化不可并见，否则印克食神，七殺无制。身殺二停的标准组合：甲寅日庚申月、丙午日壬子月。
+
+**傷官格**：核心在调候而非格局。调候用财则伤官生财，调候用印则伤官佩印，调候用官则伤官见官亦佳。五行傷官中，金水/土金/木火三种命造较高，火土傷官最难处理（火炎土燥）。
+
+---
+
+## 三、取格优先级与特殊规则
+
+### 3.1 取格优先级
+
+1. 月柱天透地藏 — 第一优先
+2. 月支透年时天干 — 第二优先
+3. 月干坐根于年日时地支 — 第三优先
+4. 地支三合三会取格 — 最后手段
+5. 同类相聚勉认 — 无格可取时
+
+双格同时成立时：同五行取偏（偏财>正财，七殺>正官，傷官>食神，偏印>正印）。不同五行则以月令及排位先后论别。
+
+### 3.2 半合半刑的严格规则
+
+- 半三合必须带子午卯酉，否则不算（申辰不算半三合水）
+- 半合半刑不能取格
+- 冲合并见时：先冲后合为吉，先合后冲为凶
+- 经曰"先合后冲，祸患隐于吉中；先冲后合，吉祥来自冲刑"
+
+### 3.3 拱夹法
+
+三柱天干相同、地支相隔一字，可以"拱"出缺位的地支。
+
+- 拱出的地支可以取格
+- 拱出的地支可以与大运流年构成刑冲合会
+- 拱的含义是"意料不及"
+- 拱贵人——有意料不到之人相助
+- 拱驿马——意料不到的升迁
+
+### 3.4 本运年限精确划分
+
+| 柱位 | 天干主 | 地支主 |
+|------|--------|--------|
+| 年柱 | 1-7.5岁 | 7.5-15岁 |
+| 月柱 | 16-22.5岁 | 22.5-30岁 |
+| 日柱 | 30-37.5岁 | 37.5-45岁 |
+| 时柱 | 46岁至终 | — |
+
+---
+
+## 四、楊鶴朋用神新论：统计反推体系
+
+这是全书后半部分最核心的思想，也是梁湘润认可收入的原因。
+
+### 4.1 核心命题：大运用神 ≠ 流年用神
+
+> "适合大运的用神绝对不可用在流年上，适合流年的用神亦不可用在大运上。"
+
+- **大运重月令**（从节气月令演化），取法偏格局调候
+- **流年重时支**（从出生时辰感应），取法偏统计验证
+- 两者从不同角度演化而来，喜用绝对不可混淆共用
+
+### 4.2 方法论：从结果反推用神
+
+传统方法：理论推导 → 定用神 → 预测吉凶（理 → 用）
+楊鶴朋方法：观察实际行运结果 → 分辨吉凶运 → 择出固定用神（用 → 理）
+
+> "从既往的歲运分辨出吉运与凶运，而取用固定的用神，与扶抑、调候、通关有所不同，比较接近科学统计原则。"
+
+### 4.3 五个反传统案例
+
+这些案例说明传统用神取法与实际行运可能相矛盾：
+
+1. **乙日生亥月（冬）**：调候取丙丁己午，但逢己午大运必定夫妻磨擦外遇
+2. **乙生午月（夏）**：传统取癸水为用，但亥运（癸水长生）反为凶运
+3. **丁生亥月逢子运**：亥为正官子为七殺，三会水，但不论官殺混杂——依运途显示，仍以正官纯清论
+4. **己土生亥月**：穷通宝鉴取甲木，但地支无根则效用大打折扣，可用酉丑合化食傷吐秀替代
+5. **辛日生亥月逢巳运**：冲提月令，传统大凶，但实际安然无恙且发财无数
+
+### 4.4 十天干大运喜忌地支统计表
+
+（以下为楊鶴朋从实际验证中归纳的结果）
+
+**最喜大运地支**：
+
+| 日干 | 喜行地支（按频次排列） |
+|------|------------------------|
+| 甲 | 亥、巳、午、酉、戌、子、申 |
+| 乙 | 卯、巳、午、申、戌、亥、丑、戌 |
+| 丙 | 卯、巳、酉、午、申、戌、丑、子 |
+| 丁 | 巳、午、酉、戌、申、亥、子 |
+| 戊 | 寅、午、申、辰、酉、戌 |
+| 己 | 巳、午、酉、寅、戌 |
+| 庚 | 寅、卯、午、酉、子、申 |
+| 辛 | 申、午、丑、亥、辰、申 |
+| 壬 | 午、戌、巳、寅、未、亥 |
+| 癸 | 卯、午、戌、巳、申 |
+
+**最忌大运地支**：
+
+| 日干 | 忌行地支 |
+|------|----------|
+| 甲 | 戌、未、亥、丑 |
+| 乙 | 寅、未、丑 |
+| 丙 | 未、寅、子、丑 |
+| 丁 | 未、寅、卯、戌、丑 |
+| 戊 | 卯、巳、子、丑 |
+| 己 | 子、辰、未、申、亥 |
+| 庚 | 巳、戌、亥、丑 |
+| 辛 | 卯、寅 |
+| 壬 | 未、辰、戌、子 |
+| 癸 | 辰、丑、申 |
+
+### 4.5 戊土×申月大运喜用（条文摘录）
+
+戊土申月喜行大运地支：**寅、卯、午**
+说明：官化食傷，印綬富贵。驿马逢冲，根基雄厚。
+
+戊土最喜大运地支：寅（七殺）、午（正印）、申（食神）、辰（比肩）、酉（伤官）、戌（比肩）
+戊土最忌大运地支：卯（正官）、巳（偏印）、子（正财）、丑（劫财）
+
+### 4.6 戊土×庚申时流年喜用（条文摘录）
+
+戊日庚申时喜行流年地支：**寅年、戌年、亥年、丑年**
+戊日庚申时生人，运势较亨通。
+
+---
+
+## 五、六十干支诗词条文（第八章）
+
+逐柱套入四言/七言诗解读命造。诗词条文按六十甲子逐一查阅，每柱对应一首四言/七言。
+
+示例（壬午柱）："一镜破，有兴衰。有中人，重整续。" — 先破后立，中间有贵人助力重整
+
+具体六十甲子条文请查阅梁湘润《子平基础概要》第八章原文。
+
+---
+
+## 六、102条歲运公式精选
+
+以下为楊鶴朋102条中最有实战价值的条目：
+
+### 身旺类
+- 身旺食神制殺，逢七殺歲运则名利双辉（条1）
+- 身旺帶伤官，逢财星歲运发财无数（条63）
+- 身旺逢财运，娶妻贤能（条36）
+- 身旺财入库，妻理家勤俭。逢歲运刑冲财库，发财无数（条41）
+
+### 身弱类
+- 身弱逢七殺运，容易贪心劳而无功，官司车祸等（条9）
+- 身弱逢财运，娶妻败耗财产（条37）
+- 财多身弱，常负债，接近女色事业惨败。逢比劫歲运反而事业蓬勃（条38）
+- 身弱逢财歲运，流年再逢官殺，则官司是非多身体欠安（条40）
+
+### 食伤类
+- 食神为喜用，歲运逢偏印，无法成功发展，身体易有痔疮牙齿不良（条74）
+- 歲运逢食伤，朋友合伙投资生意或学技术（条64）
+- 时上伤官逢正印大运流年，勤奋向上且较会读书（条76）
+
+### 女命类
+- 坤命逢官殺歲，所认识交往的男人具稳重正直品德（条20）
+- 坤命逢伤官歲运，所认识交往的男人较风流不上进（条21）
+- 坤命伤官重行劫财羊刃歲运，家庭不幸夫败亡（条60）
+- 坤命时柱食神逢歲运偏印，怀孕不吉（条83）
+
+### 五行太过不及
+- 土多金埋，金多水浊，水多木泛，木多火塞，火多土焦（条95）
+- 湿木不生火，燥土不生金，寒金增水冷，火炎必土焦（条101）
+- 燥土不制水，燥土不泄火（条102）
+
+---
+
+## 七、与徐乐吾体系的对比
+
+| 维度 | 徐乐吾 | 梁湘润+楊鶴朋 |
+|------|---------|----------------|
+| 方法论方向 | 理→用（从理论推导实践） | 用→理（从实践统计反推理论） |
+| 用神观 | 格局用神为主线，调候为补充 | 用神分五层，大运用神≠流年用神 |
+| 论命入口 | 月令格局 → 成败救应 | 十神定位（速判50%）→ 格局 → 调候 |
+| 形象哲学 | 情和气协、清浊真假、体用精神 | 无，偏实务统计 |
+| 十干性情 | 十干实物说，详细展开 | 无 |
+| 调候深度 | 五个技术系统，逐月逐干详解 | 给表不给思路 |
+| 行运判断 | 格局成败救应+运能变格 | 诗词系统+102条公式+大运/流年分离 |
+| 神煞态度 | 几乎不用 | 有限度采用，重天月德、桃花、孤寡 |
+| 对"冲"的态度 | 冲多为凶 | 正气无刑，正位越冲越旺 |
+
+### 互补关系
+
+徐乐吾解决"为什么"——格局为什么成、为什么败、为什么这个用神比那个好。
+梁湘润解决"怎么入手"——先看什么、后看什么、用什么速判。
+楊鶴朋解决"实际验证"——理论推导的用神与实际行运不符时怎么办。
+
+三者的实战使用顺序：
+1. 排盘后，先用**十神定位法**速判50%吉凶（梁）
+2. 查**穷通宝鉴**定调候方向（徐）
+3. 定**格局成败救应**框架（徐·子平真诠）
+4. 用**情和气协**审美标准精修判断（徐·滴天髓）
+5. 行运判断：先用**格局变格**理论（徐），再用**大运/流年分离**交叉验证（楊）
+6. 遇到理论与实际矛盾时，以**统计验证结果**为准（楊）
+
+---
+
+## 附录：出生地纳气差异
+
+楊鶴朋举了一个极端案例：同年同月同日同时生的两人，一个台北一个台中，因"纳气"不同：
+- 台北（纳气属木）：身弱，喜用火土
+- 台中（纳气属土）：身强，喜用金水
+
+喜用完全相反，职业、家庭、健康均有差异。这说明出生地的五行气场会影响八字取用。这个观点在其他命理书中几乎未见。
+
+
+========== 文件来源：core/梁湘润子平教材讲义通读笔记.md ==========
+
+# 梁湘润《子平教材讲义》一二通读笔记
+
+> 讲义一：第一级次，169页/5564行，1999年初版，梁74岁
+> 讲义二：第二级次，121页/4980行，2010年初版，梁81岁
+> 与《子平基础概要》是同一教学体系：概要=规则手册，讲义一=入门教材，讲义二=进阶教材
+
+---
+
+## 一、教学体系总架构
+
+### 1.1 四阶段一年制
+
+| 阶段 | 时长 | 内容 | 教材 |
+|------|------|------|------|
+| 第一 | 3个月 | 背诵四组规则 + 十神性格六亲 + 女命 | 子平基础概要 + 讲义一 |
+| 第二 | 3个月 | 格局顺逆用 + 日主五行喜忌 + 调候 | 讲义一后半 + 讲义二前半 |
+| 第三 | 3个月 | 实务论命 + 六十甲子 + 流年 | 讲义二 + 古今图书集成选读 |
+| 第四 | 3个月 | 细批终身 + 大运流年流月 + 史观 | 讲义二后半 + 金不换大运 |
+
+### 1.2 授课次序（与传统截然不同）
+
+传统次序：排八字 → 身强身弱 → 格局喜忌 → 用神 → 流年
+梁的次序：排八字 → **十神性格** → **十神六亲** → **女命** → 偏印偏财 → **坐引论** → 格局常识 → 调候 → 大运 → 流年
+
+核心逻辑：先让学员"开口能说"（十神定位可速断性格六亲），再回头补理论（格局喜忌调候）。
+
+### 1.3 为什么先讲偏印偏财，不先讲正官
+
+梁的理由极其实务：
+- 正官格一上来就是"傷官见官、官殺混杂"，初学者听了只会更糊涂
+- **偏印格**在八格中推理最简单：喜偏财+天月德，忌食神
+- **偏财格**最贴近来宾关心的事：父亲、钱财、女人
+- 两者在性格描述上最有代入感，学员不觉枯燥
+
+### 1.4 七种论命层次
+
+梁把论命方式分为七个层次，层层递进：
+
+1. **样本八股**（滴天髓式）：身强制财，先财后印，取戊为用
+2. **传统诗赋**（三命通会赋文）：三甲分明天上光，甲日申逢喜运中
+3. **中和素描**（五行十神泛论）：比肩通根，食傷过多变伤官
+4. **书生说理**（业余层次）：通根年限量度 + 刑冲合会全局平衡
+5. **对答就事论事**（实务初阶）：来宾问什么答什么，不展开理论
+6. **代客统筹规划**（实务高阶）：为来宾制定未来三年行动方针
+7. **综合现实流年**（终极层次）：以上全部融合，但以眼前流年为第一优先
+
+**实务论命只需第5-7层。** 前4层是"说理"，业余研究的层次。
+
+---
+
+## 二、十神实务八法（讲义一核心框架）
+
+每个十神按统一框架论述，此为梁独创的教学结构：
+
+### 2.1 框架
+
+1. 五行性 → 陰陽异同决定有情无情
+2. 性格定位 → 天干二见或过多时的人格特征
+3. 六亲单向生克 → 该十神生什么、克什么，代入六亲
+4. 四柱年限 → 在年/月/日/时各有不同的实际人生意义
+5. 坐引禄绝 → 同柱坐旺坐绝、引向其他三支的旺绝
+6. 格局喜忌 → 该十神成格时的顺逆用
+7. 天干坐地支十神 → 干支互换后的十神对十神
+8. 实务周边 → 天透地藏的形势、过多的判定标准
+
+### 2.2 "过多"的统一判定标准
+
+任何十神的"过多"定义：
+- 天干2见 + 地支1见 = 性格上有决定性力量
+- 地支三合或三会 + 天干再透1个 = 吉凶上有明显凶兆
+
+### 2.3 比肩与劫财的实务差异
+
+| 维度 | 比肩 | 劫财 |
+|------|------|------|
+| 阴阳 | 同性相斥 | 异性情切 |
+| 性格 | 不稳定、自我否定、举棋不定 | 精明刚强、得理不让、外柔内刚 |
+| 无利害时 | 设身处地、引小人图利 | 客气保持距离、微妙打量他人 |
+| 涉利害时 | 答应了吃亏也承担 | 慣诺、吃亏立刻反悔 |
+| 论命取舍 | 有理也肯让人（除非大事） | 小事也不让，引小人来攻击 |
+| 扶身质量 | 如二十块薄板拼合，撑不久 | 如原木，有情相助但性烈 |
+
+### 2.4 偏印性格三层次
+
+梁对偏印的性格描写极为精细：
+
+**对内**：同性相生如"不良公务员上班"——能省就省、能推就推、应付式帮助。主性格孤僻、间断性反复不定、模棱两可、忸怩作态。
+
+**对外**：简短语刺、陈义太高、高雅式固执。做对了冷漠孤芳自赏，失意时椎心之压力与沉闷。
+
+**对亲属**：男命对外人沉默、对自己人斤斤计较。女命最宜艺术宗教、不适大家庭。
+
+偏印格的唯一吉路：偏财 + 天月德贵人。
+
+梁的人情化比喻："一位写字很好的人，需要部长级的人说他写得好才能成名书法家——所以一定要天月德贵人。定价五百元的字没有价值，不定价一百万也未必写——所以要偏财。"
+
+### 2.5 偏财性格精要
+
+偏财过多者的十五条特征（梁的实战描写）：
+
+- 讲原则不在细节，不斤斤计较
+- 经常保持笑容，不因小事勃然变色
+- 肯先吃虧，但不是圣贤之道，是"输得起"的心胸
+- 作事有战略思想，围标工程愿付日息五万
+- 肯帮助朋友，不是讲义气，是"一时高兴"的真正施恩不望报
+- 涉商业的话不可尽信——太过乐观，说谎如翻书
+- 日常不按常规，比自己大十岁或小二十岁的女人都可以交往
+- 财务弹性极强，破产六七次仍能东山再起
+- 最标准的偏财格——代理商
+- 女命偏财格是孝女
+
+---
+
+## 三、全方位坐引论（讲义一第八节，实务核心）
+
+这是梁湘润实务论命的真正核心方法。
+
+### 3.1 坐
+
+同一柱中天干与地支的关系。
+
+**坐禄**：天干十神在地支有临官位——该十神在此年限极旺
+**坐绝**：天干十神在地支为绝位——该十神似有似无，最低标准
+**坐十神**：将地支换为祿位天干，天干十神对地支十神互论
+
+例：正财己坐卯（乙劫财祿位）——以劫财透正财论，先劫后成。
+反之：劫财乙坐卯（乙劫财祿位）坐正财——正财有一部分被劫，先劫后成。
+
+### 3.2 引
+
+天干对照其余三个地支的禄绝关系。
+
+例：年干庚偏财坐申（庚禄在申，15岁前父运好）→ 引月支寅（庚绝在寅，20-30岁父败或父子不和）→ 引日支申（又为庚祿，35-45岁偏财事业成功）→ 引时支戌（庚在戌为衰，晚年财力渐退）
+
+### 3.3 拱
+
+三柱天干相同，地支相隔一字，拱出缺位地支。
+
+拱的特色：
+- 一定拱子午卯酉（四正位）
+- 拱出的字不在明处，代表"意料之外"
+- 拱出的字最怕被四柱另一字正冲——致命之伤
+- 拱出的字可以取格、可以与大运流年构成刑冲合会
+
+### 3.4 蓋头截脚
+
+天干坐绝（或地支是天干之绝位）：
+- **截脚**：偏财甲申——甲绝于申，最低标准的偏财
+- **蓋头**：七殺庚寅——庚绝于寅，寅中甲财旺但被庚蓋住
+
+比喻：进得了电影院，但坐在第一排最偏边的座位。
+
+### 3.5 疊旺疊绝
+
+地支二见同一旺位或绝位：
+- 日主地支二个帝旺（羊刃）→ 过份自信，凶多吉少
+- 日主地支二个绝 → 一生难有佳绩
+- 女命正官七殺分别在地支居旺位 → 二度婚姻
+
+---
+
+## 四、女命论法（讲义一第七节）
+
+梁把女命列为基础教材的重点，因为女性来宾占大多数。
+
+### 4.1 十项推理框架
+
+1. 夫星子星地支轻重（月支看夫，时支看子）
+2. 日主旺相（禄刃印俱全 = 无婚姻）
+3. 官殺混杂（天干/地支/月柱坐专位三种形态）
+4. 三德天乙文昌（天月德增福，天乙解难但女命忌多，文昌主艺文）
+5. 十神疊遇（同一十神年月干干透坐 = 定位吉凶）
+6. 反克（比劫反克财、伤官反克官、财反克印、印反克食伤）
+7. 五行缺一（女命最忌缺官殺夫星）
+8. 神殺五元次生克
+9. 刑冲空合会
+10. 四生四旺四库
+
+### 4.2 女命日主"出局"标准
+
+祿+刃+印俱全 = 无婚姻：
+
+| 日主 | 出局条件（四柱地支同时有） |
+|------|--------------------------|
+| 甲 | 寅、卯、子 |
+| 乙 | 寅、卯、子 |
+| 丙 | 巳、午、卯 |
+| 丁 | 巳、午、寅 |
+| 戊 | 巳、午、午 |
+| 己 | 巳、午、午 |
+| 庚 | 申、酉、巳 |
+| 辛 | 申、酉、巳 |
+| 壬 | 亥、子、酉 |
+| 癸 | 亥、子、申 |
+
+### 4.3 天乙贵人女命特论
+
+一座天乙是好命，二座天乙心不定，三座天乙反为下。
+
+原因：天乙贵人是"解难"之神，女人向男人借钱只有后遗症。一个贵人嫁给他就好，二三个贵人则"扯不清"。
+
+### 4.4 官殺混杂三种形态
+
+**天干明见**：年月混 = 30岁前感情阻折；月时混 = 体弱多病（中间隔日柱15年，不构成道德问题）；年时混 = 头胎子女有伤
+
+**地支禄位**：天干无官殺，地支有申酉 = 暗中之事，很少人知道
+
+**月柱专位**：月柱正官坐七殺 = 先有对象后再有另一位
+
+---
+
+## 五、三论并行（讲义一第十一节）
+
+### 5.1 财官论
+
+出处：三命通会·金玉赋·元机赋。重地支不重天干。
+
+核心：四柱但有一支是财官当令地支，即构成"有用"。一个地支平均管八年，一般市民有八年顺运就能买房安家。
+
+实例：庚日主见卯（乙正财禄位）在年 = 出身富有；在月 = 少年得佳伴；在日 = 中年得佳妻十五年好运；在时 = 晚年得佳妻
+
+### 5.2 格局论
+
+出处：子平真诠。重天透地藏，重顺逆用。适合"功名富贵"层次。
+
+### 5.3 十神定位论
+
+出处：梁湘润综合三命通会散赋编成。不谈理论，直接答案。
+
+三者适用对象：
+- 士大夫问功名 → 格局论 + 调候
+- 百姓问妻财子禄 → 财官论 + 十神定位
+- 短期问事（一两年内）→ 流年刑冲合会
+
+---
+
+## 六、讲义二核心：实务提要
+
+### 6.1 生旺库凶年（第一优先，不问格局强弱）
+
+观察四柱有无二字属同组：
+- 四生：寅申巳亥
+- 四旺（四正）：子午卯酉
+- 四库：辰戌丑未
+
+四柱已有二字，大运流年补齐 → **该年作凶论，不问任何格局强弱**
+
+天罗地网（戌亥辰巳齐全）比四生四旺四库更凶，涉及寿元。
+
+拱合也算：年月暗拱巳，四柱有辰戌 → 大运或流年逢丑即补齐四库。
+
+复式：四柱同时有子午卯酉和寅申巳亥 → 一生至少八次凶流年。
+
+### 6.2 格与局的根本区别
+
+这是讲义二最核心的理论贡献：
+
+**格**：天透地藏取出。用**顺法**——不可反克。
+**局**：三合三会取出。用**逆法**——必须反克。
+
+例：甲生酉月，酉即辛正官 → 正官格（顺用）→ 忌伤官
+甲生地支申酉戌三会金 → 七殺格（逆用）→ 要食制或印化
+
+**三合三会之格局律作逆用**，不分正偏。这是子平真诠（论格）和造化元钥（论局）的根本区别。
+
+具体规则：
+- 生我者三合三会 → 偏印格
+- 我生者三合三会 → 伤官格
+- 我克者三合三会 → 偏财格
+- 克我者三合三会 → 七殺格
+
+### 6.3 四见成格
+
+天干地支合计四个同五行：
+- 四见透天干 + 有旺支 → 成格（等同三合三会）
+- 四见透天干 + 无旺支 → 也可成格
+- 四见不透天干 + 有旺支 → 不成格，只是"多根"（终身难除的性格特征）
+- 四见不透天干 + 无旺支 → 多根，终身难除
+
+四见多根的四种性格答案：
+- 食伤多根：刚柔不定，想出头又不甘落后
+- 财多根：容易到手但只能办小事，多女人缘
+- 印多根：没有定性的文艺爱好，时常改变
+- 七殺多根：一生犯小人（其实是借用小人之心），女命感情困扰
+
+### 6.4 拱与夹的精确区分
+
+| 类型 | 条件 | 拱出内容 | 稳定性 |
+|------|------|----------|--------|
+| 三合拱 | 同天干二柱，地支差二位 | 子午卯酉 | 不稳定（只留一孤支） |
+| 三会夹 | 同天干二柱，地支差一位 | 三会成局 | 较稳定（留二余位） |
+| 夹角拱 | 同天干二柱，地支隔一位但跨越不同三会 | 角位地支 | 最不稳定（如路人顺手扶一把） |
+
+**三合拱夫**（女命）：可以有等同夫妻之待遇，但无名份（暗夫同居）
+**夹角拱夫**（女命）：感情不会维持太久
+
+### 6.5 金不换大运（讲义二后半核心）
+
+原理：
+- 调候用神取**天干**
+- 金不换大运取**地支**
+- 两者不矛盾，互补
+
+金不换大运三大特色：
+1. 只取月令地支为主格（甲生酉月 = 正官格）
+2. 不必每步运都论，只指出一生中最佳与最坏的三步运
+3. 除吉凶外，还直接论寿夭
+
+大运地支的层次不是五行生克，而是十二生旺库：
+- 庚日主行寅运：不论寅是甲木（偏财），而论庚绝在寅 → 此运中另有新的意外成功
+- 大运天干坐绝于地支：该天干十神无效（甲申运，甲绝于申 → 偏财无效益）
+
+### 6.6 流月规则
+
+流月与四柱**无**刑冲合会关系（五年一循环，重复率太高）
+流月与流年**无**刑冲合会关系（固定组合，全人类相同）
+
+流月吉凶只看：
+1. 月运同甲子（与大运伏吟）
+2. 月运反吟大运
+3. 月运双合大运
+4. 月运拱合四柱+大运
+
+---
+
+## 七、天元巫咸经注释（讲义二81-121页）
+
+梁81岁时的最后力作。此经早于三命通会，载于古今图书集成·艺术典。以日时统计取吉凶，不涉月令调候。
+
+### 7.1 此经术语体系
+
+**秀**：财官印贵人，在地支有禄旺长生库位 = 秀。有秀即有福。
+**通月气**：秀之重点在月支 = 三十岁前亨通。
+**通时气**：秀在时支 = 晚年始亨通。
+**地支禄位即天干十神代词**：卯即乙，申即庚——不另说明。
+
+### 7.2 十天干日主喜用提要
+
+| 日主 | 第一喜用 | 特殊忌讳 | 经文要旨 |
+|------|----------|----------|----------|
+| 甲 | 庚（甲不离庚） | 四见壬癸透干+有亥子 = 漂泊 | 陽金须广；食傷生财者富 |
+| 乙 | 丙（偏财为厚福） | 癸水四见 = 四海漂流；最忌乙木见庚合而不化 | 偏财旺在巳午；忌水多木漂 |
+| 丙 | 壬（不畏水） | 寅午戌透甲 = 火焚木灾 | 食神生偏财多福；丙辛合逢亥子真化 |
+| 丁 | 甲（丁不离甲） | 壬水三见+冬生 = 灯灭 | 三宫有巳午即佳；陰火最忌水多 |
+| 戊 | 甲（疏土） | 戊寅戊申冲 = 厚土忌冲 | 辰戌丑未全最喜；忌水局透壬 |
+| 己 | 甲丙（缺一不可） | 乙木坐根 = 第一忌神 | 喜四季月当令；忌壬庚二字 |
+| 庚 | 丁（庚不离丁） | 申子辰透壬灭丁 | 食傷生偏财吉；时支长生主长寿 |
+| 辛 | 壬 | 丁合壬灭用神 | 喜水忌土；冬月喜丁 |
+| 壬 | 丙（不用戊！） | 戊出干地支多土根 = 水土混浊 | 壬用土只用辰戌丑未巳午（地支），独不用戊（天干） |
+| 癸 | 庚辛 | 水多用乙；忌四见戊己 | 水日主有智；逢龙（辰）则化 |
+
+### 7.3 日干对时支120组速断（天元巫咸经 + 古今图书集成合编）
+
+此表在讲义一第十一节已列出完整的十干×十二时，此处提取实战中最关键的规则：
+
+**偏印禄位在时支 = 夫灾子寡**（十干通用）：
+甲日亥时、乙日子时、丙日寅时、丁日卯时、戊日巳时、己日午时、庚日申时、辛日酉时、壬日亥时、癸日子时
+
+**五阳干食神合正官 = 子孙迟见**：
+甲日辛官+丙食、丙日癸官+戊食、戊日乙官+庚食、庚日丁官+壬食、壬日己官+甲食
+
+**合神受克 = 妨妻妨夫**（十干通用）：
+甲合己见乙（劫财克财）→ 失妻；乙合庚见丙（伤官克官）→ 失夫
+丙合辛见壬（七殺克日主）→ 失妻；丁合壬见戊（伤官克官）→ 失夫
+戊合癸见己（劫财克财）→ 失妻；己合甲见庚（伤官克官）→ 失夫
+庚合乙见辛（劫财克财）→ 失妻；辛合丙见壬（七殺克官）→ 失夫
+壬合丁见癸（劫财克财）→ 失妻；癸合戊见甲（伤官克官）→ 失夫
+
+### 7.4 壬日主的特殊发现
+
+天元巫咸经对壬日主的取用与其他经文不同：
+
+传统：壬用戊土（七殺制身）
+此经：壬用**丙火**（偏财），**独不用戊天干**
+
+壬日用土只取地支（辰戌丑未巳午），不取天干戊。
+壬日天干见戊+地支多土根 = "水土混浊"，大忌。
+此说与沈孝瞻"能行于地支者，未必可行之于天干"一致。
+
+---
+
+## 八、何重建批命实例（讲义二收录的上海命理师批命全文）
+
+乾造：己酉、乙亥、甲寅、壬申
+
+此例展示了两岸命理文化交流的实务水平，要点：
+
+1. 先看结构性指标（二十四络、干邻支合、四干皆有长生或禄、日柱天德月德）
+2. 再看调候（亥月壬透，水寒木冷，用火为急）
+3. 逐步大运论（庚戌拱午三合火→癸酉金旺用神→壬申二十四络→辛未金土→庚午殺印相生最佳组合）
+4. 精细流年（双冲日柱、歲运并临、三申冲寅、拱午被冲等）
+5. 最后附风水建议和命理准确率说明（70%左右）
+
+梁收录此文的目的：展示1949-2010六十年后上海命理界的实务水准，为两岸祿命文化交流留史料。
+
+---
+
+## 九、实务批命的完整流程示范
+
+讲义二以甲辰、甲戌、甲寅、壬申为贯穿全书的示范八字，从七个层次逐一展示：
+
+### 第一层（样本八股）
+甲生戌月，日坐禄透比，身强足以制财。时干印通根，先财后印，必得其禄。取戊为用。
+
+### 第二层（传统诗赋）
+三甲分明天上光，甲日申逢喜运中。可惜官印见刑沖，年月比肩白手起家。
+
+### 第三层（中和素描）
+比肩年月通根日支，三十歲以前一事无成。食傷拱午变伤官格。偏印时柱成格，晚年宗教艺文。
+
+### 第四层（书生说理）
+十神通根年限量度 + 刑冲合会 + 三合透干 + 四生四旺四库流年 → 定出一生至少四次意外大起大落
+
+### 第五层（实务初阶）
+来宾问什么答什么。偏印用偏财 → 代理商自由业。先比后财 → 先贫中年富。
+
+### 第六层（实务高阶）
+三式合论（生旺库 + 合会拱 + 四见）→ 列出5-54岁每年凶流年：
+壬子年冲拱午凶、丁巳年寅申巳亥全是非、戊午年冲大运、庚申年三合冲拱午凶...逐年标注。
+
+### 第七层（终极层次）
+甲辰甲戌拱午，寅午戌三合，解辰戌冲——但拱力消失，只剩孤财，虚富之命。
+
+---
+
+## 十、与《子平基础概要》笔记的关系
+
+基础概要笔记已收录：层次观、五用神、十神定位法、顺用逆用、取格优先级、半合半刑规则、拱夹法、本运年限、大运流年用神分离、统计反推、102条公式、六十干支条文
+
+本笔记新增内容：
+1. 完整的教学体系四阶段架构
+2. 七种论命层次的清晰分级
+3. 十神实务八法（统一框架）
+4. 全方位坐引论的完整方法（坐/引/拱/蓋截/疊旺绝）
+5. 女命十项推理框架 + 出局标准表
+6. 三论并行（财官论/格局论/十神定位论的分工）
+7. **格与局的根本区别**（格顺法、局逆法）
+8. 四见成格 vs 四见多根的区分
+9. 拱与夹的三种类型及稳定性差异
+10. 金不换大运的原理与十干合表
+11. 流月规则（与四柱、流年均无刑冲合会）
+12. 天元巫咸经十干总论 + 120组日时速断
+13. 壬日主用丙不用戊的特殊发现
+14. 合神受克妨妻妨夫的十干通用公式
+15. 实务批命完整七层流程示范
+
+---
+
+## 十一、实战排盘自检清单（任意八字适用）
+
+排出八字后，依次检查：
+
+1. **生旺库凶年检查** — 四柱地支属于四生（寅申巳亥）/四旺（子午卯酉）/四库（辰戌丑未）哪几组？已占几字？补齐何字会成凶年？
+2. **天罗地网** — 缺辰巳戌亥中哪几字？大运流年补齐时需警惕
+3. **格与局** — 月支本气是否透干？是否构成三合三会？
+4. **天元巫咸经** — 按日干查特定喜忌（如戊日喜甲疏土、忌壬透干+地支水多、最喜辰戌丑未全）
+5. **合神受克** — 日干合神（如戊合癸）是否被劫财克？
+6. **日干对时支** — 查日时组合的特殊提要（如戊日申时主慳吝有财）
+
+每一条独立检查，结果汇总后参与综合判断。
+
+---
+
+## 十二、《子平母法大流年判例》通读笔记
+
+> 262页/8661行，行卯出版社，初版戊午年(1978)，此为丙子年(1996)第八版改编
+> 梁湘润最重要的实务流年教材，真人实事批命实例
+> 核心主张：流年重流月，不重身强弱；财官派与用神派是两套系统
+
+### 12.1 三大命学体系（梁的终极分类）
+
+| 体系 | 核心方法 | 适用对象 | 代表 |
+|------|----------|----------|------|
+| **指标命学** | 格局顺逆用+调候+身强弱 | 士大夫论功名（三榜进士、亿万富翁） | 子平真诠、滴天髓、穷通宝鉴 |
+| **生态命学** | 十二生旺库性格+十神生态+神煞 | 百姓妻财子禄 | 三命通会散赋、巫咸经 |
+| **财官派** | 地支财官禄位+刑冲合会 | 一般中产（一宅一车） | 元机赋、巾箱经验 |
+
+**关键认识**：
+- 指标命学是"说理"层次，能论方向但不能论细节
+- "身弱不能托财官"此语是指司道大员的官、亿万资财之财。一般中产，身弱身强并不是唯一必须重视的事项
+- 财官派：四柱地支中但有一支二支是日主财官禄位，不遇刑冲，即可论为一宅一车之命
+- **三者不是非此即彼，是层次递进：指标定上限，生态定性格，财官定日常**
+
+### 12.2 流年实务核心法则
+
+**流年与四柱的两种看法**（梁的核心区分）：
+
+| 方向 | 程序 | 适用 |
+|------|------|------|
+| 四柱→流年 | 先定格局用神，再推大运流年 | 细批终身（业余研究） |
+| **流年→四柱** | 先看眼前流年，以大运为桥梁回看四柱 | **实务论命（专业应用）** |
+
+**流年批导七大法则**：
+
+1. **大运是桥梁**：大运干支对四柱的刑合冲拱，形成"半成型架构"，流年在此架构中触发吉凶
+2. **流月是重点**：流年干支定大方向，流月干支定具体月份吉凶。不能批流月就不能批流年
+3. **流月三个关键**：月运同途（流月=大运）、月运反吟（流月冲大运）、月运双合（流月合大运）
+4. **八字喜忌≠流年喜忌**：好八字未必年年好，好流年不必好八字才有
+5. **伏吟反吟优先**：流年与四柱同干支=伏吟，干支双冲=反吟，二者不利六亲，非横破财
+6. **连续看2-3年**：不能只看当年，须兼顾前年和明年的干支趋势
+7. **日犯岁君最重**：日干克流年天干=下犯上，灾殃必重
+
+### 12.3 双轨命学——十二生旺库性格论（独立体系）
+
+此体系不论格局、不论调候、不论身强弱，只论日支坐什么生旺库位，推其处世性格：
+
+| 位 | 性格核心 | 要点 |
+|----|----------|------|
+| 长生 | 有生发之机，无自我保护能力 | 适合现成基础上发展，不适逆境求生 |
+| 沐浴 | **后悔星** | 易厌倦已有之事物，不只是桃花，是对一切"换了再换" |
+| 冠带 | 初生之犊 | 喜支配他人，不知轻重，易树敌 |
+| 临官 | 自信不怕攻坚 | 不愿领人情，先做后谈，女子有凌驾丈夫之心 |
+| 帝旺 | 盛极有衰象 | 忙中想退休，有虚荣，不利于妻家 |
+| 衰 | 顺势无所谓 | 不极积不消极，规规曹随 |
+| 病 | 自知条件不如人 | 两极端：极细心或极冒险。有风度，认输不后悔 |
+| 死 | 外柔内刚 | 绝对不反应，堅持到底，外不露迹 |
+| 墓 | 有条理，与人有距离 | 实实在在 |
+| 绝 | 绝对安静或绝对热闹 | 最适群体生活、官宦军政 |
+| 胎 | 体型虚弱 | 适合设计、观察、守业 |
+| 养 | 受母亲影响最大 | 温和识大体，顾全大局 |
+
+**示例**：戊寅日，戊土坐寅。寅为戊土的长生位（火土同行）。→ "有生发之机，适合在现成基础上发展"。如果格局是食神生偏财，则与"在现成市场中靠才华变现"路线吻合。
+
+### 12.4 冲合的精密法则
+
+**梁的冲合体系远比一般书详细**：
+
+1. **辰戌丑未双冲**：只冲当月司令之神，不冲其余藏干
+   - 三月辰月遇辰戌冲 → 只冲戌中辛（冲乙木），辰中戊癸不受影响
+   - 六月未月遇丑未冲 → 只冲丑中癸（制丁火）
+
+2. **六合可解双冲，三合三会不能解反加重**
+   - 子丑合+午未合 → 子午冲完全解除
+   - 子午冲+巳午半会 → 不解冲，反增冲势（因三会不改变五行）
+
+3. **天合地，地旺喜静忌冲**
+   - 戊子日（戊癸合）生亥月（癸旺）→ 地旺喜静，最忌甲午/壬午冲
+   - 丁亥日（丁壬合）生亥月（壬旺）→ 同理最忌冲
+
+4. **合绝则不绝**
+   - 丙日主绝在亥，若见寅 → 寅亥合木，亥不作绝论
+
+5. **隔位三合三会不能取格，但有调候效益**
+
+### 12.5 任铁樵批命实例分析（极重要的方法论示范）
+
+梁用任铁樵自己的八字（癸巳·戊午·丙午·壬辰），分别用五种论式批导：
+
+| 论式 | 结论 | 梁的评价 |
+|------|------|----------|
+| 四支论式（农民历） | 有才气不贫困的读书人 | 最粗但有框架 |
+| 十神定位 | 官杀两头挂难留子，双妻命 | 速断50%的工具 |
+| 格局论式（沈孝瞻） | 羊刃格配正官，但食神合去官星+官根不深=虚形吉命 | 能看出破格原因 |
+| 调候论式（余春台） | 丙日午月用壬，一壬无根+戊合癸=平常命 | 能定先天层次 |
+| **任铁樵自己的论式** | 合官留殺，潜心学命糊口之计 | 文人落魄自怨自艾 |
+
+**梁的关键发现**：任铁樵把对比命造的月柱搞错了（己未月误作戊午月），导致他以为两个八字只差一个年支，其实差了整个月柱。
+
+### 12.6 格局临界度——破格的精确判断
+
+八字中三格四格并存时，五行局势克泄到"无法调停"，即为"有救无救"的临界度。
+
+**关键规则（从实例中提取）**：
+- 地支会官杀+天干透官杀+无食伤制 = 残疾或终身诉讼之人
+- 四柱全阴或全阳+带刑冲 = 精神或痼疾
+- 日主极弱+冲刑极重+年日互换空亡 = 三者有其一常年有病，有其二不能工作，三者全备白痴残疾
+- 三格混合无通关 = 无事业，市井随缘之人
+- **偏印格无偏财+三印透根 = 必败之命局**
+
+### 12.7 疾病论式要点
+
+- 四柱无格局+全阴或全阳+冲刑 → 精神类疾病
+- 日主极弱，天干扶之不见功反见灾（极弱不可扶，只能从）
+- 大运入"伏冲"之运 → 疾病触发点
+- **梁收录大量精神病、白痴、残疾案例，目的：让学者知道命学不只论富贵，也要能论最坏情况**
+
+### 12.8 五行四季用神体系（独立于穷通宝鉴的另一套）
+
+梁在本书后半部列出完整的十干×十二月提要，与穷通宝鉴大体一致但有细节差异。
+
+**戊土部分摘要**：
+
+| 月份 | 第一优先 | 要点 |
+|------|----------|------|
+| 正月 | 丙甲 | 甲七杀当权，无丙只是平常人 |
+| 七月 | **先丙后癸，甲次** | 丙甲癸三干齐出=一代成功人物；丙透癸藏=民间绅士名人 |
+| 九月 | 癸甲 | 戊土当权可缺丙不可缺甲 |
+| 冬月 | 丙为尊 | 冬土严寒必以丙火，宁可缺甲不可缺丙 |
+
+春戊土：丙甲为第一优先
+夏戊土：丙癸为优先
+秋戊土：丙甲癸三者俱为优先
+冬戊土：必以丙火为尊
+
+### 12.9 花园十二宫论子息（民间命学独立体系）
+
+此体系不用五行十神推论子息，而以"月令对时支"的十二生旺库位，推其子女多寡。
+
+子平真诠的"长生四子中旬半"即节引自此民间体系，但沈孝瞻没有注明出处也没说明用法。
+
+梁的关键揭示：沈孝瞻对格局独步命坛三百年，但对子息只是"聊备一格"，随意节引民间歌诀。
+
+### 12.10 鸳鸯谱与六冲合婚
+
+梁列出六冲对婚姻/合作的详细影响：
+- 子午冲：恩怨两极端，可二度相助
+- 丑未冲：有义无情，分居但经济互助
+- 卯酉冲：藕断丝连，离婚又再结婚
+- 寅申冲：互相看不起，临时凑合
+- **辰戌冲：先败后成，最特殊** — 先彻底失败再东山再起
+- 巳亥冲：怕没有钱，不交贫困之人
+
+### 12.11 与已有笔记的关系
+
+基础概要笔记已收录：层次观、五用神、十神定位法、顺逆用、统计反推等
+讲义一二笔记已收录：教学四阶段、十神八法、坐引论、女命、三论并行、格与局、金不换大运等
+
+本笔记新增内容：
+1. 三大命学体系（指标/生态/财官）的终极分类
+2. 流年实务七大法则（流月为重、伏吟反吟、日犯岁君等）
+3. 双轨命学十二生旺库性格论（完整十二位性格）
+4. 冲合精密法则（辰戌丑未只冲司令之神、六合解冲三合加重等）
+5. 任铁樵五种论式对比（含梁发现任氏月柱错误）
+6. 格局临界度（三格混合无通关的破格判断）
+7. 疾病论式（精神病/白痴/残疾的八字特征）
+8. 戊土十二月独立提要（与穷通宝鉴对照）
+9. 花园十二宫论子息（民间体系，沈孝瞻节引）
+10. 鸳鸯谱六冲详解（辰戌冲先败后成最特殊）
+11. 十多个完整批命实例的方法论提取
+
+### 12.12 实战要点速查
+
+排盘后逐项检查以下要点：
+
+- **双轨命学**：日主对日支的生旺库位 → 性格倾向（参见 12.3）
+- **财官派检查**：日主财、官、禄位是否在地支得地？是否遇刑冲？决定是否中产以上
+- **月令调候提要**：按日干 × 月份查穷通宝鉴/讲义二，看四柱是否符合"成功人物"等级条件
+- **辰戌冲适用**：原局或大运流年补出辰戌冲 → 梁说辰戌冲"先败后成"，最特殊
+- **伏吟法则**：流年地支与日支/月支同字 → "岁运压日谓之伏吟，不利六亲，非横破财"
+- **日犯岁君**：日干克流年天干 → 渊海子平"日犯岁君灾殃必重"，是最重凶筛之一
+
+每条独立排查，结果累加形成五道筛子综合判断。
+
+
+========== 文件来源：core/梁湘润神煞探原通读笔记.md ==========
+
+# 梁湘润《神煞探原》通读笔记
+
+> 165页/4994行，行卯出版社
+> 全书分三大部分：命理实用神煞 + 协纪辨方书提要（择日神煞） + 江湖术语与实务论命
+
+---
+
+## 一、神煞的根本立场
+
+### 1.1 神煞与格局的关系
+
+梁的核心观点：**神煞不能取代格局，格局也无法覆盖神煞所指的全部吉凶。**
+
+> "有一些八字，其吉凶祸福之运程，几乎与一般格局、用神、喜忌完全解释不通之情形发生。这可能就是受了神煞之影响。"
+
+格局论"富贵贫贱"，神煞论"意外灾变"。两者各有所长：
+- 火灾、车祸、官讼、伤残——格局推不出来，神煞有或然率
+- 功名事业、财务兴衰——格局为主，神煞为辅
+
+### 1.2 神煞的八种组合原理
+
+1. **卦理**（如天罗地网取乾坤卦位）
+2. **日月行度**（如天月德以三百六十五度分十二宫）
+3. **奇偶方圆**（三合法、四生四旺四库）
+4. **统计累积**（如"乙巳癸三干全，肢体有伤"）
+5. **象形字义**（如甲丙丁壬为"平头"）
+6. **佛伽博理**（如百日关、落井关等俗说）
+7. **先天数理**（太玄数推驿马等）
+8. **特殊排列组合**（如三奇贵人）
+
+### 1.3 神煞吉凶的四大类
+
+1. **论吉不论凶**：天乙贵人、天月德贵人
+2. **可吉可凶**：劫煞、亡神、空亡
+3. **论凶不论吉**：挂剑、天屠
+4. **干支统计论凶**：乙巳癸三干全主伤残
+
+### 1.4 神煞的使用层次
+
+- 先天八字带神煞 → 一生基调
+- 大运中遇神煞 → 十年隐忧
+- 流年中遇神煞 → 该年具体凶兆
+
+---
+
+## 二、命理实用神煞（核心内容）
+
+### 2.1 天火杀（火灾）
+
+条件：四柱寅午戌全 + 天干有丙或丁 + 合计五个火字 + 四柱无水
+流年：行火旺处或合去水的大运流年
+
+### 2.2 戳肢杀（后天伤残）
+
+按月取日时天干双见：正月甲甲、二月乙乙、三月戊戊...
+大运流年忌忌神旺支、刑合之期
+
+### 2.3 破杀（少年多灾连累家长）
+
+年支与时支对应：卯见午、丑见辰、子见酉、未见戌
+
+### 2.4 天刑杀（一生多病）
+
+年支配时干：子丑年忌乙时、寅年忌庚时、卯辰年忌辛时、巳年忌壬时、午未年忌癸时、申年忌丙时、酉戌年忌丁时、亥年忌戊时
+**时干为甲、己者免此煞。**
+
+### 2.5 电灵狂杀（卒然临难）
+
+月配时：正七月生子时、二八月生寅时、三九月生辰时、四十月生午时、五十一月生申时、六十二月生戌时
+
+### 2.6 死病符（痼疾）
+
+歲後一辰，带冲。如巳年后一辰为辰，辰见戌冲 → 日时有戌者带痼疾。
+
+### 2.7 官符杀（官讼是非）
+
+太歲前五辰落在日时 → 一生有官灾
+干支顺行五辰落在日主 → 多为受害者而招官非
+
+### 2.8 挂剑杀（刀刃血光）
+
+四柱巳酉丑申全，或四柱有局部而大运流年会齐。
+兼带元辰、亡神、白虎者更重。
+
+### 2.9 天屠杀（疑难杂症）
+
+日支与时支对照：子日午时、丑日亥时、寅日戌时、卯日酉时、辰日申时、巳日未时（反向亦同）
+
+### 2.10 自缢杀（自杀倾向）
+
+年支与时支对应（五行反业）：子年酉时、丑年午时、寅年未时、卯年申时、辰年亥时、巳年戌时（反向亦同）
+
+### 2.11 冲天杀（少年夭折）
+
+条件极严格：
+1. 年月冲 + 日时冲（双冲）
+2. 双冲**不在同一组**（四生/四旺/四库须分属两组）
+3. 纳音五行须相克（时克年之纳音）
+
+### 2.12 天罗地网
+
+**天罗**：戌亥。**地网**：辰巳。四字齐全为天罗地网。
+- 男怕天罗（日时见戌亥，火命为忌）
+- 女怕地网（日时见辰巳，水命为忌）
+- 四柱本身齐全 → 一生灾不能息
+- 大运流年补齐 → 该年大凶
+- 出生日数 = 灾年数（初一生一年灾，初二生二年灾...初三十生三十年灾）
+
+**或然率高于贵人** —— 梁个人特别重视此煞。
+
+### 2.13 干支统计规则（极重要的"无名神煞"）
+
+这些出自明代统计，虽无神煞名称，但有实际验证价值：
+
+| 条件 | 主事 |
+|------|------|
+| 壬癸见酉亥多 | 因酒惹事 |
+| 乙巳癸三干全 | 四肢眼目可能被伤 |
+| 乙癸干同见丑 | 主富而少寿 |
+| 丁辛二干同见巳 | 伤父母 |
+| 乙辛二干同见未 | 主富贵中夭 |
+| 庚壬二干同见戌 | 主富贵中夭 |
+
+---
+
+## 三、子平法常用神煞补充
+
+### 3.1 孤辰寡宿
+
+并非只论"鳏寡离婚"。古义：老而无夫曰寡，幼而无父曰孤。
+
+沈芝独特论法（年支对时支互冲 = 孤鸾）：
+少年欠儿。日时克之，活不过房，必克妻。
+
+广录论法：二重孤寡 = 克妻害子、少六亲、不聚财、多生女。
+
+### 3.2 劫煞十六种
+
+梁列出劫煞的十六种细分组合——不是见劫煞就凶：
+- 聚宝劫煞（五行与日主不配 → 富）
+- 宜催劫煞（临官+空亡 → 贵人）
+- 福禄劫煞（身强劫弱+贵人 → 安康）
+- 刀枪劫煞（干坐七殺克日主 → 真凶）
+- 空闲劫煞（兼带孤寡 → 宗教人士）
+
+### 3.3 亡神十五种
+
+同样细分：亡神带马星 → 三灾；亡神带祿马贵 → 发达；亡神带咸池 → 凶...
+
+### 3.4 驿马的真正含义
+
+**古注从未说驿马是"出远门"。**
+
+古经原文：驿马者，五行有为待之气强名也。
+
+壽總曰：
+- 生旺 → 气韵凝峻，通变超时，多声望
+- 死绝 → 有头无尾，漂泊不定
+- 与禄同乡 → 福力优游
+- 与煞相冲 → 离乡背井
+
+驿马五配（三命通会原表）：
+- 寅午戌马在申：甲申=截路空亡马、戊申=福星伏马、壬申=大败马、丙申=大败马、庚申=天昌马
+- 其余三组类推
+
+### 3.5 咸池（艺术性格）
+
+咸池在旺宫 → 智慧艺术秉奇高秀
+咸池在衰宫+空亡+七殺 → 偏激个性、不信鬼神
+
+### 3.6 羊刃作为神煞（非格局）
+
+梁特别指出：羊刃与建禄在明代都是神煞，到清代才被列为"格局"。
+
+实务要点：
+- 甲见乙卯为刃最怪
+- 庚逢酉为刃最怪
+- 壬逢子为刃最怪
+- 时干逆对日支为刃 → 夫妻不和
+- 朝元羊刃（年支对日干/时干之刃位）→ 不利父母
+
+---
+
+## 四、天乙贵人的陰陽分论
+
+梁引郭景纯的原始推导：
+
+**阳贵**起于先天坤（子），甲加子 → 己用子为贵人，不居午（天空）
+**阴贵**起于后天坤（申），辛加酉 → 丙用酉为贵人，不居寅
+
+戊为天罡/河魁，贵人不临。
+
+---
+
+## 五、协纪辨方书提要（择日神煞，参考用）
+
+梁节录了清代协纪辨方书的完整神煞体系，作为理解命理神煞来源的参考。
+
+核心框架：建除十二神（建满平收黑，除危定执黄，成开皆可用，闭破不相当）
+
+重要择日概念：
+- 歲德（年之吉神，陽干为主）
+- 歲德合（年之吉神，陰干为辅）
+- 天德月德（命理择日通用）
+- 三煞（劫煞+灾煞+歲煞，最凶之组合）
+- 黄道黑道（十二神的吉凶日，青龙明堂金匮天德玉堂司命为黄道吉日）
+
+---
+
+## 六、江湖术语探原与实务论命
+
+### 6.1 清代巾行二十种
+
+梁详列清代民间算命的二十种形式：大金（六壬）、小运（拆字）、八分卦（奇门）、追子巾（鸟卦）、量巾（量手）、弯巾（少年敲板）、斩盘（面相）、旺巾（开口算命）、八黑（笔批流年）...
+
+### 6.2 四字诀（率擸扣代）
+
+梁传授的"业余论命"实务心法：
+
+- **率**：率出来宾真正关心什么事（用试探性语句）
+- **擸**：奉承，测出对方喜好加以讲美
+- **扣**：重语扣住人心，令对方不再追问
+- **代**：收场送客的学问
+
+### 6.3 根苗花果实务示范
+
+梁以乙未、甲申、丁卯、庚子女命为例，完整演示：
+
+**八字一瞥**：一财得所、自坐偏印、七殺桃花 → 婚姻不美满
+
+**已知因**（来宾是亲友介绍的离婚女士+富翁遗孀）→ 与八字完全符合
+
+**开口论命**："你早婚不吉，癸亥年有夫妻灾难，属于有自由职业之女性。中年有帮夫运，相夫教子之贤妻。虽有中途镜[?]之分，无碍一生富足之命。"
+
+**三阶段**：
+1. 观听感（来宾身份、言谈气质）
+2. 落实局（八字核心推理的客切表达）
+3. 收关局（补充发问+送客收场）
+
+---
+
+## 七、神煞实战排查流程（适用任何八字）
+
+排八字后，依次检查以下凶煞是否成立：
+
+1. **天火杀** — 四柱寅午戌全 + 天干丙丁 + 五火 + 无水
+2. **天刑杀** — 年支与时支特定组合（午年忌癸时等）
+3. **电灵狂杀** — 月份与时支特定组合（七月生子时等）
+4. **天罗地网** — 辰巳戌亥四地支齐全
+5. **干支统计** — 特定双干/三干组合（庚壬同见戌、乙巳癸三干全等）
+6. **自缢杀** — 年支与时支特定对应关系（午年未时等）
+7. **冲天杀** — 年月冲 + 日时冲 + 不同组 + 纳音克
+8. **孤辰寡宿** — 按年支查（如午年孤辰在申，寡宿在辰）
+
+排查原则：
+
+- 各项独立检查，分别记录"犯/不犯"
+- 神煞只是辅助信号，不能作为主要断法（陈素庵原则）
+- 命带孤辰主性格独立、不依靠六亲；命带寡宿主孤独感强
+- 神煞排完后必须回到正五行格局综合判断
+
+
+========== 文件来源：core/紫微斗数概要.md ==========
+
+# 紫微斗数方法论概要
+
+> 基于陆斌兆《紫微斗数讲义》+ 王亭之注（中州派）+《紫微斗数全书》（明正统道藏版）
+> 解法：以原典征验为准，不作主观引申
+
+---
+
+## 一、紫微斗数与子平八字的差异
+
+| 维度 | 子平八字 | 紫微斗数 |
+|------|---------|---------|
+| 起源 | 唐李虚中 → 宋徐子平 | 陈抟传，宋代成书 |
+| 推演基础 | 天干地支 + 五行 | 星曜 + 十二宫 |
+| 时间维度 | 强（大运流年精到月） | 中（大运流年） |
+| 空间维度 | 弱 | 强（十二宫覆盖人生全维度） |
+| 性格分析 | 中（十神） | 强（主星辅星组合） |
+| 事象分析 | 强 | 强 |
+| 排盘复杂度 | 中（72 字左右） | 高（百余颗星） |
+
+**两套系统不冲突，互相补充。** 八字看命运的"质"，紫微看命运的"量与位"。
+
+---
+
+## 二、排盘核心步骤
+
+### 2.1 定命宫
+
+由出生月支与时支推命宫地支（寅 = 1 起数）：
+
+\`\`\`
+命宫地支 = 寅 + (生月数 - 生时数)
+\`\`\`
+
+命宫天干用五虎遁（生年起寅顺数）。
+
+### 2.2 定身宫
+
+身宫与命宫同时定，根据出生时辰落入：命/夫妻/财帛/迁移/官禄/福德 六宫之一。
+
+### 2.3 定五行局
+
+由命宫纳音定（水二局/木三局/金四局/土五局/火六局）。**五行局决定起大运岁数和紫微星位置。**
+
+### 2.4 安紫微
+
+按五行局，从命宫起子，找紫微在哪一宫。然后顺安天机、逆隔太阳、顺安武曲...等。
+
+### 2.5 安其他主星
+
+按口诀依次安：天府（与紫微对照）、天机、太阳、武曲、天同、廉贞、太阴、贪狼、巨门、天相、天梁、七杀、破军。
+
+### 2.6 安辅星煞星
+
+- 左辅、右弼（生月起）
+- 文昌、文曲（生时起）
+- 天魁、天钺（生年起）
+- 禄存、擎羊、陀罗（生年干起）
+- 火星、铃星（生年支+时辰起）
+- 地空、地劫（生时起）
+
+### 2.7 起大运
+
+按五行局对应岁数起，男阳女阴顺行，男阴女阳逆行。
+
+---
+
+## 三、十二宫的定义与定位
+
+| 宫位 | 定义 | 现代解读 |
+|------|------|----------|
+| 命宫 | 先天本质 | 性格底色、人生路径基调 |
+| 兄弟 | 兄弟姐妹 | 同辈关系、合伙人 |
+| 夫妻 | 配偶 | 婚姻关系、亲密关系 |
+| 子女 | 子女 | 创造力、投资项目、下属 |
+| 财帛 | 钱财 | 现金流、赚钱方式 |
+| 疾厄 | 疾病灾厄 | 身体健康、心理状态 |
+| 迁移 | 出门 | 异地发展、人际广度 |
+| 仆役 | 朋友下属 | 社交圈、团队 |
+| 官禄 | 事业 | 事业、职业、社会角色 |
+| 田宅 | 家产 | 不动产、家庭根基 |
+| 福德 | 享受福气 | 精神生活、内在满足 |
+| 父母 | 父母 | 上司、长辈、权威关系 |
+
+---
+
+## 四、十四主星核心特征（陆斌兆讲义）
+
+### 4.1 紫微（北斗主，帝星）
+
+- **本质**：尊贵、领导、独行
+- **入庙**：午（极庙）、子、寅、申、辰、戌
+- **关键格局**：
+  - 紫微七杀同宫见化权 → "化杀为权" 上格
+  - 紫府同宫 → 帝座加财库
+  - 百官朝拱（左右昌曲魁钺禄马） → 真正发挥帝星之力
+- **凶煞干扰**：见火铃羊陀 → 减格不破
+
+### 4.2 武曲（财星 + 将星）
+
+- **本质**：决断、刚强、财
+- **关键格局**：
+  - 武曲贪狼丑未 → 三十后发福，先贫后富
+  - 武曲化忌 → 财星受克，结构性漏洞
+  - 武曲会火铃 → 火铃贪格，主横发
+- **最忌**：化忌 + 空劫同度
+
+### 4.3 廉贞（次桃花，囚星）
+
+- **本质**：决断冒险、感情、政事
+- **特点**：陷地易凶（卯酉），庙旺（寅申）则吉
+- **关键格局**：
+  - 廉贞破军同宫 → 先破后立
+  - 廉贞化禄 → 事业生财
+  - 廉贞化忌 → 官非感情困扰
+
+### 4.4 天府（南斗主，财库）
+
+- **本质**：储藏、稳重、仁慈
+- **入庙**：丑未、巳亥、卯酉
+- **关键格局**：
+  - 天府临迁移宫 → 出外得福（最佳位置之一）
+  - 天府对紫微七杀（巳亥） → "最有威权的组合"
+  - 必须见禄存或化禄才富
+
+### 4.5 七杀（将星）
+
+- **本质**：威猛、果决、孤剋
+- **关键搭配**：
+  - 七杀守命 → 喜禄存或化权制
+  - 紫微七杀 → 化杀为权
+  - 七杀加四煞 → 多刑剋
+
+### 4.6 破军（先锋）
+
+- **本质**：去旧换新、破坏、开创
+- **关键搭配**：
+  - 破军在卯酉 → 弃祖离宗
+  - 破军化禄 → 后队补给，源源不绝
+
+### 4.7 贪狼（次桃花，多才）
+
+- **本质**：欲望、多才多艺、应变
+- **关键格局**：
+  - 贪狼庙旺 → 白手成家
+  - 火贪铃贪格 → 横发横破
+  - 武贪格（贪狼+武曲） → 三十后发福
+
+### 4.8 巨门（暗星）
+
+- **本质**：辩才、是非、深沉
+- **关键搭配**：
+  - 巨门化禄 → 因口舌得财
+  - 巨门化忌 → 是非缠身
+  - 太阳巨门同宫 → 异国发展利
+
+### 4.9 太阳（中天主星）
+
+- **本质**：光明、博爱、消耗
+- **庙旺**：卯辰巳午（昼时区）
+- **陷地**：戌亥子丑（夜时区）
+
+### 4.10 太阴（中天主星）
+
+- **本质**：内敛、柔和、积累
+- **庙旺**：酉戌亥子（夜时区）
+
+### 4.11 天机（智星）
+
+- **本质**：机变、智慧、变动
+- **关键搭配**：
+  - 天机天梁同宫 → 必有高艺随身
+  - 加羊陀空曜 → 易出家或漂泊
+
+### 4.12 天梁（荫星）
+
+- **本质**：清高、化解、贵气
+- **化气**：化荫
+- **特点**：救灾解难，但带孤独性
+
+### 4.13 天同（福星）
+
+- **本质**：温和、享福、被动
+- **关键搭配**：
+  - 天同太阴 → 需见吉星才发挥
+  - 加杀重 → 肢体疾病
+
+### 4.14 天相（印星）
+
+- **本质**：辅佐、慈悲、随和
+- **关键格局**：
+  - "刑忌夹印"（前擎羊后化忌） → 大凶
+  - "财荫夹印"（前化禄后天梁） → 大吉
+
+---
+
+## 五、四化（紫微斗数核心）
+
+四化 = 化禄、化权、化科、化忌。
+
+每个天干对应一组四化星。**大运、流年、流月按其天干起四化，飞入原盘十二宫。**
+
+### 5.1 十干四化表
+
+| 天干 | 化禄 | 化权 | 化科 | 化忌 |
+|------|------|------|------|------|
+| 甲 | 廉贞 | 破军 | 武曲 | 太阳 |
+| 乙 | 天机 | 天梁 | 紫微 | 太阴 |
+| 丙 | 天同 | 天机 | 文昌 | 廉贞 |
+| 丁 | 太阴 | 天同 | 天机 | 巨门 |
+| 戊 | 贪狼 | 太阴 | 右弼 | 天机 |
+| 己 | 武曲 | 贪狼 | 天梁 | 文曲 |
+| 庚 | 太阳 | 武曲 | 太阴 | 天同 |
+| 辛 | 巨门 | 太阳 | 文曲 | 文昌 |
+| 壬 | 天梁 | 紫微 | 左辅 | 武曲 |
+| 癸 | 破军 | 巨门 | 太阴 | 贪狼 |
+
+### 5.2 四化的含义
+
+- **化禄**：财、缘、机会、流通
+- **化权**：权、势、控制、主动
+- **化科**：名、贵人、文书、清誉
+- **化忌**：阻、损、纠缠、固执
+
+### 5.3 飞星法判断
+
+大运/流年的天干起四化 → 飞入原盘十二宫 → 看落到哪宫激活什么。
+
+**示例：**
+- 流年化禄飞入财帛宫 → 该年钱顺
+- 流年化忌飞入夫妻宫 → 该年感情有阻
+- 流年化禄+流年化忌都飞入同宫 → 该宫今年大震荡
+
+### 5.4 化禄解化忌
+
+原盘化忌 + 大运/流年化禄飞到同宫 → 化禄解化忌，凶中见吉。
+
+---
+
+## 六、关键格局诗诀（紫微斗数全书）
+
+### 6.1 紫微在亥彖曰
+
+> "亥紫到天門，孑身浮若雲。
+> 憂不憂已事，識高必近君。"
+
+四句意：紫微到亥宫为"天门位"，格局成立但孤独感强。心忧天下事不忧己事，认知水平高自然近权贵。
+
+### 6.2 限到亥卯未
+
+> "限到亥卯未宮，亦驟發驟富，
+>  僧道清高，常人奮發。"
+
+三方四正在亥卯未的人，运行至亥卯未宫位发福。
+
+### 6.3 武贪丑未
+
+> "武曲貪狼同丑未，少年不利，
+>  三十後發福，先貧後富。"
+
+三十岁前积累，三十岁后发福。早年莫强求。
+
+### 6.4 武贪格的警告
+
+> "武曲貪狼，見火鈴同度則主橫發，
+>  再見刑忌，則橫發橫破。"
+
+横发也容易横破，**得意不宜再往**。
+
+### 6.5 天府临迁移
+
+> "天府臨遷移宮，主出行得福，在外遇貴人。"
+
+最佳出外发展星。
+
+---
+
+## 七、实战要点
+
+### 7.1 看一个宫位看三方四正
+
+任何宫位的判断不能只看本宫，必须看：
+- 本宫
+- 对宫
+- 三合方两宫
+
+四宫合看才有完整画面。
+
+### 7.2 命宫定本质，身宫定取向
+
+命宫 = 出生时定的本质（你是什么人）
+身宫 = 后天追求的方向（你想成为什么人）
+
+身宫落官禄 = 灵魂在事业里
+身宫落夫妻 = 灵魂在感情里
+身宫落财帛 = 灵魂在财富里
+身宫落迁移 = 灵魂在远方
+身宫落福德 = 灵魂在精神世界
+身宫落命宫 = 自我认同极强
+
+### 7.3 大运比流年重要
+
+> "大運看支，歲君看干。"
+
+大运是十年大背景，流年是一年具体表现。**大运好流年差只是小波折，大运差流年好只是回光。**
+
+### 7.4 化忌的化解
+
+化忌不是绝对凶。讲义提供五重化解路径：
+1. 禄存照同宫 → 财路不断
+2. 主星庙旺 → 跌倒能起
+3. 化禄从三方来 → 对冲补血
+4. 迁移宫吉 → 外部保护
+5. 配偶宫吉 → 人事补救
+
+操作原则：**赚到就走，不恋战；多线收入；异地理财；配偶守财。**
+
+### 7.5 桃花星不在命/夫妻 = 非桃花命
+
+天生桃花命的判断：贪狼/廉贞/天姚/咸池等桃花星落在命宫或夫妻宫。
+
+桃花星散落其他宫位 = 桃花在某个具体维度（财帛宫桃花 = 因财遇异性）。
+
+---
+
+## 八、八字-紫微对照原则
+
+### 8.1 八维度交叉
+
+| 维度 | 八字看 | 紫微看 |
+|------|-------|-------|
+| 财运 | 财星状态 + 食伤生财链条 | 财帛宫主星 + 化禄化忌 |
+| 事业 | 官杀 + 食伤 | 官禄宫 + 身宫 |
+| 婚姻 | 日支 + 配偶星 | 夫妻宫 + 桃花星 |
+| 迁移 | 驿马 + 冲 | 迁移宫主星 |
+| 健康 | 五行受克 | 疾厄宫 |
+| 贵人 | 天乙贵人 + 印星 | 天魁天钺 + 紫微百官朝拱 |
+| 黄金期 | 大运喜用 | 大运走入吉宫 |
+| 最差期 | 大运忌神 | 大运走入煞宫 |
+
+### 8.2 矛盾时怎么办
+
+两系统冲突时：
+1. 重新核对排盘是否准确
+2. 优先八字（时间精度高）+ 紫微辅证
+3. 用已知事实验证哪边对
+4. 标注分歧点，等后续事实校准
+
+---
+
+## 九、紫微斗数禁忌
+
+1. **禁止只看主星**：辅星煞星同样重要，组合才决定吉凶
+2. **禁止脱离三方四正**：单看本宫不准
+3. **禁止忽略四化**：四化是动态变化的核心
+4. **禁止机械套口诀**：每个盘的星曜组合都独特
+5. **禁止简单粗暴定吉凶**：化忌不一定凶，化禄不一定吉
+
+---
+
+## 十、参考典籍
+
+- 《紫微斗数全书》（明正统道藏版） — 排盘法 + 主星诗诀
+- 《紫微斗数讲义》（陆斌兆，民国中州派代表作） — 逐星逐宫详解
+- 《紫微斗数精成》（大德山人） — 系统教材
+- 《命理天机》（周德元） — 流派梳理最详细
+
+
+========== 文件来源：crystal-kb/水晶知识库_20260507_v1.md ==========
+
+# 水晶知识库 v1.0
+> 整理日期：2026-05-07 | 涵盖：五行对应 / 星座对应 / 功效分类 / 配戴与净化
+
+---
+
+## 一、水晶 × 五行对应
+
+### 1.1 五行颜色对应原则
+
+| 五行 | 对应颜色 | 脏腑对应 | 方位 |
+|------|----------|----------|------|
+| 金 | 白色、金色 | 肺、大肠 | 西 |
+| 木 | 绿色、青色 | 肝、胆 | 东 |
+| 水 | 黑色、蓝色、深茶色 | 肾、膀胱、耳 | 北 |
+| 火 | 红色、橙色、粉色 | 心、小肠 | 南 |
+| 土 | 黄色、棕色、土色 | 脾、胃 | 中 |
+
+### 1.2 各五行水晶详细对应
+
+**金性水晶（补金、益肺）**
+- 白水晶、白幽灵、乳白水晶
+- 白碧玺、白玛瑙
+- 月光石（白色系）
+- 功效：补金气、益肺、增强意志力、净化能量
+
+**木性水晶（补木、益肝）**
+- 绿幽灵、绿发晶、绿水晶
+- 绿碧玺、绿玛瑙、绿松石
+- 萤石（绿色系）、翡翠
+- 紫水晶（紫色偏青，归木）
+- 功效：补木气、养肝、促进生长、招财旺业
+
+**水性水晶（补水、益肾）**
+- 黑曜石、黑水晶、茶水晶
+- 黑幽灵、黑碧玺、黑发晶
+- 蓝发晶、海蓝宝、蓝玛瑙
+- 墨晶、烟晶
+- 功效：补水气、养肾、辟邪化煞、吸纳负能量
+
+**火性水晶（补火、益心）**
+- 红水晶、红幽灵、红发晶
+- 红碧玺、红玛瑙、草莓晶
+- 石榴石、红纹石
+- 功效：补火气、益心、提升热情活力、促进感情
+
+**土性水晶（补土、益脾）**
+- 黄水晶、黄幽灵、黄发晶
+- 黄碧玺、黄玛瑙、黄虎眼石
+- 金发晶、钛晶（黄金色）
+- 功效：补土气、健脾胃、聚财、稳定情绪
+
+### 1.3 八字喜忌配戴逻辑
+
+**配戴原则：补用神所属五行，避忌神所属五行。**
+
+| 八字喜（用神）| 推荐水晶五行 | 代表水晶 |
+|-------------|------------|---------|
+| 喜火 | 火性水晶 | 石榴石、红发晶、草莓晶 |
+| 喜木 | 木性水晶 | 绿幽灵、绿松石、紫水晶 |
+| 喜水 | 水性水晶 | 海蓝宝、蓝发晶、茶水晶 |
+| 喜金 | 金性水晶 | 白水晶、白幽灵、月光石 |
+| 喜土 | 土性水晶 | 黄水晶、黄幽灵、虎眼石 |
+
+**五行相生（可叠加增强）：** 金生水 → 水生木 → 木生火 → 火生土 → 土生金
+
+**五行相克（避免同戴）：** 金克木 / 木克土 / 土克水 / 水克火 / 火克金
+
+---
+
+## 二、水晶 × 十二星座对应
+
+### 2.1 完整对应表
+
+| 星座 | 时间 | 守护石 | 辅助石 | 主要功效 |
+|------|------|--------|--------|----------|
+| 白羊座 | 3.21–4.19 | 石榴石 | 碧玺、紫水晶 | 增强活力与行动力，提升勇气 |
+| 金牛座 | 4.20–5.20 | 金发晶 | 黄水晶、海蓝宝、玛瑙 | 聚财、增强意志力与耐性 |
+| 双子座 | 5.21–6.21 | 海蓝宝 | 萤石、黄水晶、粉水晶 | 促进沟通、增强表达力与适应性 |
+| 巨蟹座 | 6.22–7.22 | 月光石 | 玛瑙、绿陨石、紫水晶 | 稳定情绪、增强直觉、提升人缘 |
+| 狮子座 | 7.23–8.22 | 红宝石 | 金发晶、石榴石、青金石 | 增强自信与领导力、彰显尊贵 |
+| 处女座 | 8.23–9.22 | 黄水晶 | 海蓝宝、白水晶、绿幽灵 | 净化思维、提升分析力与平衡感 |
+| 天秤座 | 9.23–10.22 | 碧玺 | 蓝玛瑙、粉水晶 | 平衡内心、增进和谐与人际关系 |
+| 天蝎座 | 10.23–11.21 | 黑曜石 | 红榴石、琥珀 | 辟邪护体、提升洞察力与领导力 |
+| 射手座 | 11.22–12.21 | 紫水晶 | 绿松石、黄水晶 | 激发冒险精神、带来智慧与旅行平安 |
+| 摩羯座 | 12.22–1.19 | 石榴石 | 粉晶、虎眼石 | 增强意志力与毅力、提升运势 |
+| 水瓶座 | 1.20–2.18 | 琥珀 | 石榴石、紫水晶 | 激发创意与灵感、保护免受负能量 |
+| 双鱼座 | 2.19–3.20 | 紫水晶 | 月光石、海蓝宝 | 安神助眠、提升直觉与灵性 |
+
+### 2.2 守护石与行星对应（西方占星）
+
+| 行星 | 主管星座 | 对应水晶 |
+|------|----------|----------|
+| 太阳 | 狮子座 | 红宝石、金发晶 |
+| 月亮 | 巨蟹座 | 月光石、珍珠 |
+| 水星 | 双子/处女 | 海蓝宝、萤石 |
+| 金星 | 金牛/天秤 | 粉水晶、碧玺 |
+| 火星 | 白羊/天蝎 | 石榴石、红碧玺 |
+| 木星 | 射手/双鱼 | 紫水晶、绿松石 |
+| 土星 | 摩羯/水瓶 | 黑曜石、石榴石 |
+
+---
+
+## 三、水晶功效分类
+
+### 3.1 招财类
+
+| 水晶 | 主要功效 | 说明 |
+|------|----------|------|
+| 金发晶 | 正财偏财皆招，权力象征 | 能量最强的招财石之一，适合商人、主管 |
+| 钛晶 | 财富与地位 | 磁场极强，慎用，体弱者不宜 |
+| 黄水晶 | 偏财运，意外之财 | 又称"财富之石"，聚集财富因缘 |
+| 绿幽灵 | 事业财、正财 | 招财首选，尤宜事业发展 |
+| 黄幽灵 | 招财纳福 | 温和聚财，适合大多数人 |
+| 虎眼石 | 财运、判断力 | 增强商业判断，防止被骗 |
+| 黄玛瑙 | 稳定财运 | 守财效果佳 |
+
+### 3.2 感情类
+
+| 水晶 | 主要功效 | 说明 |
+|------|----------|------|
+| 粉水晶（芙蓉晶）| 增进人缘、招姻缘 | 感情类首选，七星阵效果加倍 |
+| 红纹石（菱锰矿）| 召唤真爱 | 增强吸引力，寻找真命天子/女 |
+| 草莓晶 | 活力感情、桃花运 | 充满活力的爱情石 |
+| 月光石 | 直觉、情感治愈 | 增强女性魅力，促进情感流动 |
+| 石榴石 | 爱情、激情 | 增强爱情热度，改善夫妻感情 |
+| 紫水晶 | 感情忠诚、助眠 | 增进感情稳定性，防止外遇 |
+| 海蓝宝 | 沟通、夫妻和谐 | 改善沟通，减少争吵 |
+
+### 3.3 健康类
+
+| 水晶 | 主要功效 | 对应部位 |
+|------|----------|----------|
+| 茶水晶（烟晶）| 过滤病气浊气 | 全身净化，增强免疫 |
+| 黑曜石 | 强健下三轮，改善睡眠 | 肾、脊椎、消化系统 |
+| 白水晶 | 能量净化，通透全身 | 全身，大脑 |
+| 紫水晶 | 安神助眠，缓解压力 | 神经系统，头部 |
+| 绿松石 | 解毒、增强免疫 | 喉部，甲状腺 |
+| 海蓝宝 | 舒缓喉咙，净化 | 喉轮，呼吸系统 |
+| 黄水晶 | 促进消化，增强活力 | 脾胃，太阳神经丛 |
+
+### 3.4 事业类
+
+| 水晶 | 主要功效 | 适合人群 |
+|------|----------|----------|
+| 绿幽灵 | 事业财，升职 | 上班族、创业者 |
+| 金发晶 | 领导力，权威 | 管理者、企业家 |
+| 青金石 | 智慧，表达力 | 教育、创意、艺术工作者 |
+| 白水晶 | 思维清晰，专注 | 需要高度专注的工作 |
+| 黄水晶 | 自信，决策力 | 需要快速决策的工作 |
+| 虎眼石 | 洞察力，判断力 | 商业谈判，竞争性工作 |
+
+### 3.5 辟邪化煞类
+
+| 水晶 | 主要功效 | 强度 |
+|------|----------|------|
+| 黑曜石 | 辟邪化煞，吸纳负能量 | ★★★★★ 最强 |
+| 黑发晶 | 防小人，化解是非 | ★★★★ |
+| 黑碧玺 | 除病气，防电磁波 | ★★★★ |
+| 茶水晶 | 过滤浊气，净化空间 | ★★★ |
+| 白水晶 | 净化空间能量 | ★★★ |
+| 朱砂 | 镇煞，辟邪 | ★★★★ |
+
+### 3.6 智慧与灵性类
+
+| 水晶 | 主要功效 |
+|------|----------|
+| 紫水晶 | 开发直觉、灵性成长、提升智慧 |
+| 青金石 | 开启第三眼，增强洞察力 |
+| 白水晶 | 扩展意识，连接更高维度 |
+| 月光石 | 增强女性直觉，情感智慧 |
+| 琥珀 | 净化灵魂，带来古老智慧 |
+
+---
+
+## 四、配戴方式与净化方法
+
+### 4.1 配戴基本原则
+
+**手腕配戴规则（传统说法）：**
+- 左手接收能量（吸纳宇宙能量）→ 适合戴招财、提升运势类水晶
+- 右手释放能量（向外散发）→ 适合戴辟邪、化煞、防小人类水晶
+
+**具体建议：**
+- 招财（黄水晶、绿幽灵、金发晶）→ 左手
+- 感情（粉水晶、红纹石）→ 左手
+- 辟邪（黑曜石、黑发晶）→ 右手
+- 健康净化 → 两手皆可
+
+**配戴数量：** 不宜过多，建议每次1-3种，功效相近或相生五行为宜。能量过多易紊乱，内消效果。
+
+### 4.2 水晶净化方法
+
+| 方法 | 操作 | 时间 | 注意 |
+|------|------|------|------|
+| 阳光照射 | 放置阳光直射处 | 30分钟至1小时 | 含铜铁成分的水晶（如绿松石、孔雀石）不宜，会褪色 |
+| 月光净化 | 农历十五放于月光下 | 整夜 | 所有水晶皆适用，最温和 |
+| 御守盐浸泡 | 放入盐水中浸泡 | 3-4小时 | 金属配件会被腐蚀，镶嵌类不宜 |
+| 流水冲洗 | 清水持续冲洗 | 5-20分钟 | 避免温差过大，脆性水晶慎用 |
+| 香熏净化 | 檀香或白鼠尾草烟熏 | 绕行三圈 | 所有水晶皆适用 |
+| 白水晶簇净化 | 放在白水晶簇上 | 一夜至数小时 | 最方便，所有水晶适用 |
+| 音频净化 | 颂钵声波净化 | 数分钟 | 所有水晶适用 |
+
+**净化频率建议：**
+- 新买水晶：立即净化一次再配戴
+- 日常配戴：每月净化1-2次
+- 情绪激烈或接触负能量后：及时净化
+
+### 4.3 开光与启动
+
+开光本质是为水晶设定意念与目标：
+1. **寺庙开光**：送至当地寺庙供奉，接受香火熏陶（建议7天以上）
+2. **意念开光**：净化后双手捧住水晶，闭眼冥想，清晰表达配戴意图
+3. **满月开光**：农历十五夜，净化后放于月光下同时设定意念
+
+### 4.4 搭配禁忌
+
+**功效相冲的组合（不建议同时配戴）：**
+
+| 组合 | 问题 |
+|------|------|
+| 红发晶 + 黑曜石 | 能量方向相冲，互相抵消 |
+| 绿幽灵/绿发晶 + 红纹石 | 绿幽灵主冲劲，红纹石使人沉迷情感，互相消耗 |
+| 月光石 + 黑发晶 | 情感治愈与强力辟邪能量冲突，容易情绪不稳 |
+| 钛晶 + 黑曜石 | 两者能量均极强，普通人难以承受 |
+
+**五行相克的组合：**
+- 火克金：红发晶/石榴石 + 白水晶（火性克金性）
+- 金克木：白水晶/白幽灵 + 绿幽灵（金性克木性）
+- 土克水：黄水晶/黄幽灵 + 黑曜石（土性克水性）
+
+**体质注意：**
+- 阴虚火旺、易激动者：慎用黄水晶（能量偏阳）
+- 体质虚弱者：慎用钛晶（能量过强）
+- 孕妇：一般建议只戴白水晶，其他慎用
+
+### 4.5 保养方法
+
+- 不佩戴时放置于饰盒内，避免落灰与碰撞
+- 避免接触化妆品、香水、洗涤剂、酒精
+- 避免长期暴露于强光（部分水晶褪色）
+- 避免温度骤变（热水澡、桑拿时取下）
+- 定期用软布轻擦保持光泽
+
+---
+
+## 五、八字 × 水晶配戴速查
+
+### 使用方法
+1. 先排八字，确定用神喜忌五行
+2. 查下表找对应水晶
+3. 结合自身星座守护石叠加参考
+
+### 五行喜忌配戴速查表
+
+| 用神 | 首选水晶 | 次选水晶 | 忌戴五行 |
+|------|----------|----------|----------|
+| 喜火 | 石榴石、红发晶、草莓晶 | 红纹石、红碧玺 | 水性（黑曜石、茶晶）|
+| 喜木 | 绿幽灵、绿发晶 | 绿松石、紫水晶 | 金性（白水晶、月光石）|
+| 喜水 | 海蓝宝、茶水晶 | 蓝发晶、黑曜石 | 土性（黄水晶、虎眼石）|
+| 喜金 | 白水晶、白幽灵 | 月光石、白碧玺 | 火性（石榴石、红发晶）|
+| 喜土 | 黄水晶、黄幽灵 | 虎眼石、黄碧玺 | 木性（绿幽灵、绿发晶）|
+
+---
+
+## 六、常见水晶速查索引
+
+| 水晶名称 | 五行 | 星座 | 核心功效 |
+|----------|------|------|----------|
+| 白水晶 | 金 | 通用 | 净化、增强其他水晶能量、智慧 |
+| 紫水晶 | 木 | 射手、双鱼 | 智慧、安神、感情忠诚 |
+| 粉水晶 | 火 | 通用 | 感情、人缘、美容 |
+| 黄水晶 | 土 | 处女、双子 | 招财（偏财）、自信、消化 |
+| 绿幽灵 | 木 | 通用 | 事业财、升职、招财 |
+| 金发晶 | 土/金 | 金牛、狮子 | 招财（正偏财）、权威、领导力 |
+| 黑曜石 | 水 | 天蝎 | 辟邪化煞、健康、睡眠 |
+| 茶水晶 | 水 | 通用 | 净化病气、健康 |
+| 红发晶 | 火 | 白羊 | 活力、事业冲劲、热情 |
+| 石榴石 | 火 | 白羊、摩羯 | 感情、活力、血液循环 |
+| 海蓝宝 | 水/金 | 双子、金牛 | 沟通、净化、夫妻和谐 |
+| 月光石 | 金/水 | 巨蟹 | 直觉、女性能量、情感治愈 |
+| 绿松石 | 木/水 | 射手 | 平安旅行、招财、免疫力 |
+| 虎眼石 | 土 | 摩羯 | 洞察力、财运、判断力 |
+| 青金石 | 水/木 | 狮子 | 智慧、灵性、领导力 |
+| 红纹石 | 火 | 通用 | 召唤真爱、情感治愈 |
+| 草莓晶 | 火 | 白羊 | 桃花运、活力 |
+| 萤石 | 木 | 双子 | 净化思维、学习力 |
+| 琥珀 | 土/火 | 水瓶 | 智慧、保护、净化 |
+| 黑碧玺 | 水 | 通用 | 辟邪、防电磁波、除病气 |
+
+---
+
+*本知识库整合自多方命理与水晶研究资料，结合八字五行应用体系整理。*
+*建议与个人八字用神结合使用，效果更佳。*
+`;
+</script>
+<script>
+// ═══════════════════════════════════════════════════
+// 一、八字推算引擎（移植自 bazi_engine.py）
+// ═══════════════════════════════════════════════════
+
+const TG = ["甲","乙","丙","丁","戊","己","庚","辛","壬","癸"];
+const DZ = ["子","丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+
+const TG_WX  = {甲:"木",乙:"木",丙:"火",丁:"火",戊:"土",己:"土",庚:"金",辛:"金",壬:"水",癸:"水"};
+const TG_YY  = {甲:"阳",乙:"阴",丙:"阳",丁:"阴",戊:"阳",己:"阴",庚:"阳",辛:"阴",壬:"阳",癸:"阴"};
+const DZ_WX  = {子:"水",丑:"土",寅:"木",卯:"木",辰:"土",巳:"火",午:"火",未:"土",申:"金",酉:"金",戌:"土",亥:"水"};
+
+const CANGGAN = {
+  子:["癸"],丑:["己","癸","辛"],寅:["甲","丙","戊"],卯:["乙"],
+  辰:["戊","乙","癸"],巳:["丙","庚","戊"],午:["丁","己"],未:["己","丁","乙"],
+  申:["庚","壬","戊"],酉:["辛"],戌:["戊","辛","丁"],亥:["壬","甲"]
+};
+
+// 节气近似公式（误差 ±1 天）
+function getJieDate(year, ji) {
+  const C = {
+    0:[4.6295,4.6095],1:[6.3826,6.3926],2:[5.6200,5.5900],3:[6.3780,6.3670],
+    4:[6.5765,6.5340],5:[7.7180,7.7116],6:[7.5928,7.5794],7:[8.3742,8.3683],
+    8:[8.0942,7.9019],9:[7.6900,7.4922],10:[7.4124,7.1794],11:[5.4055,5.3411]
+  };
+  const months = [2,3,4,5,6,7,8,9,10,11,12,1];
+  const c = year >= 2000 ? C[ji][0] : C[ji][1];
+  const Y = ji !== 11 ? (year % 100) : ((year+1) % 100);
+  const day = Math.floor(Y * 0.2422 + c) - Math.floor(Y / 4);
+  return [months[ji], day];
+}
+
+function jieDateObj(year, ji) {
+  const [m, d] = getJieDate(year, ji);
+  const yr = ji !== 11 ? year : year + 1;
+  return new Date(yr, m - 1, d);
+}
+
+// 年柱
+function getYearPillar(year, month, day) {
+  const [lcM, lcD] = getJieDate(year, 0);
+  let y = year;
+  if (month < lcM || (month === lcM && day < lcD)) y -= 1;
+  const off = ((y - 1984) % 60 + 60) % 60;
+  return [TG[off % 10], DZ[off % 12]];
+}
+
+// 月柱
+function getMonthPillar(year, month, day, yearTg) {
+  const cur = new Date(year, month - 1, day);
+  const jieDzMap = ["寅","卯","辰","巳","午","未","申","酉","戌","亥","子","丑"];
+  let monthDz = "寅";
+  outer: for (const yrOff of [0, -1]) {
+    for (let ji = 11; ji >= 0; ji--) {
+      const jd = jieDateObj(year + yrOff, ji);
+      if (jd <= cur) { monthDz = jieDzMap[ji]; break outer; }
+    }
+  }
+  const wuhu = [2, 4, 6, 8, 0];
+  const base = wuhu[TG.indexOf(yearTg) % 5];
+  const off = ((DZ.indexOf(monthDz) - 2) % 12 + 12) % 12;
+  return [TG[(base + off) % 10], monthDz];
+}
+
+// 日柱（儒略日，基准 2451545+54 经张学良/毛泽东验证）
+function solarToJd(y, m, d) {
+  if (m <= 2) { y -= 1; m += 12; }
+  const A = Math.floor(y / 100);
+  const B = 2 - A + Math.floor(A / 4);
+  return Math.floor(365.25*(y+4716)) + Math.floor(30.6001*(m+1)) + d + B - 1524;
+}
+function getDayPillar(year, month, day) {
+  const jd = solarToJd(year, month, day);
+  const n = ((jd - 2451545 + 54) % 60 + 60) % 60;
+  return [TG[n % 10], DZ[n % 12]];
+}
+
+// 时柱
+function getHourDz(hour) {
+  const h = Math.floor(hour);
+  if (h === 23 || h === 0) return "子";
+  const sc = ["丑","寅","卯","辰","巳","午","未","申","酉","戌","亥"];
+  return sc[Math.min(Math.floor((h - 1) / 2), sc.length - 1)];
+}
+function getHourPillar(dayTg, hour) {
+  const dz = getHourDz(hour);
+  const wushu = [0, 2, 4, 6, 8];
+  const base = wushu[TG.indexOf(dayTg) % 5];
+  return [TG[(base + DZ.indexOf(dz)) % 10], dz];
+}
+
+// 空亡
+function getKongwang(dayTg, dayDz) {
+  const ti = TG.indexOf(dayTg), di = DZ.indexOf(dayDz);
+  const xunHead = ((di - ti) % 12 + 12) % 12;
+  const covered = Array.from({length:10}, (_,i) => (xunHead+i) % 12);
+  const kw = DZ.filter((_,i) => !covered.includes(i));
+  return [kw, "甲" + DZ[xunHead]];
+}
+
+// 命宫
+function getMinggong(yearTg, monthDz, hourDz) {
+  const dzN = {};
+  DZ.forEach((d,i) => dzN[d] = i+1);
+  let r = 14 - dzN[monthDz] - dzN[hourDz];
+  if (r <= 0) r += 12;
+  if (r > 12) r -= 12;
+  const mgDz = DZ[r - 1];
+  const wuhu = [2, 4, 6, 8, 0];
+  const base = wuhu[TG.indexOf(yearTg) % 5];
+  const off = ((DZ.indexOf(mgDz) - 2) % 12 + 12) % 12;
+  return [TG[(base + off) % 10], mgDz];
+}
+
+// 十神
+function getShishen(dayTg, tgt) {
+  const sheng = {木:"火",火:"土",土:"金",金:"水",水:"木"};
+  const ke    = {木:"土",火:"金",土:"水",金:"木",水:"火"};
+  const dw = TG_WX[dayTg], dy = TG_YY[dayTg];
+  const tw = TG_WX[tgt],   ty = TG_YY[tgt];
+  const same = dy === ty;
+  if (tw === dw)           return same ? "比肩" : "劫财";
+  if (sheng[dw] === tw)    return same ? "食神" : "伤官";
+  if (ke[dw] === tw)       return same ? "偏财" : "正财";
+  if (ke[tw] === dw)       return same ? "七杀" : "正官";
+  if (sheng[tw] === dw)    return same ? "偏印" : "正印";
+  return "？";
+}
+
+// 大运
+function getDayun(gender, yearTg, monthTg, monthDz, by, bm, bd) {
+  const yang = TG_YY[yearTg] === "阳";
+  const male = gender === "男";
+  const shun = (yang && male) || (!yang && !male);
+  const birth = new Date(by, bm - 1, bd);
+  let before = null, after = null;
+  for (const yrOff of [-1, 0, 1]) {
+    for (let ji = 0; ji < 12; ji++) {
+      const jd = jieDateObj(by + yrOff, ji);
+      if (jd < birth) { if (!before || jd > before) before = jd; }
+      else if (jd > birth) { if (!after  || jd < after)  after  = jd; }
+    }
+  }
+  const days = shun ? Math.round((after-birth)/86400000) : Math.round((birth-before)/86400000);
+  const qiyunAge = Math.floor(days / 3);
+  const qiyunMon = (days % 3) * 4;
+  const mti = TG.indexOf(monthTg), mdi = DZ.indexOf(monthDz);
+  const list = [];
+  for (let i = 1; i <= 8; i++) {
+    const s = shun ? 1 : -1;
+    const tg = TG[((mti + s*i) % 10 + 10) % 10];
+    const dz = DZ[((mdi + s*i) % 12 + 12) % 12];
+    const sa = qiyunAge + (i-1)*10;
+    list.push({ step:i, tg, dz, gz:tg+dz, startAge:sa, endAge:sa+9, startYear:by+sa, endYear:by+sa+9 });
+  }
+  return { qiyunAge, qiyunMon, shun, list };
+}
+
+// 真太阳时校正
+function correctSolarTime(hour, minute, lon) {
+  let total = hour * 60 + minute + (lon - 120) * 4;
+  let h = total / 60;
+  if (h < 0) h += 24;
+  if (h >= 24) h -= 24;
+  return h;
+}
+
+// 流年（未来15年）
+function getLiuyear(count = 15) {
+  const cy = new Date().getFullYear();
+  return Array.from({length:count}, (_,i) => {
+    const y = cy + i;
+    const n = ((y - 1984) % 60 + 60) % 60;
+    return { year:y, gz:TG[n%10]+DZ[n%12], tg:TG[n%10], dz:DZ[n%12] };
+  });
+}
+
+// 主排盘函数
+function paipan(name, gender, year, month, day, hour, minute, lon) {
+  const ch = correctSolarTime(hour, minute, lon);
+  const chInt = Math.floor(ch);
+  const cmInt = Math.floor((ch - chInt) * 60);
+
+  const [yTg, yDz] = getYearPillar(year, month, day);
+  const [mTg, mDz] = getMonthPillar(year, month, day, yTg);
+  const [dTg, dDz] = getDayPillar(year, month, day);
+  const [hTg, hDz] = getHourPillar(dTg, chInt);
+
+  function pillar(tg, dz) {
+    const ss = tg !== dTg ? getShishen(dTg, tg) : "日主";
+    return {
+      tg, dz, gz:tg+dz,
+      tgWx: TG_WX[tg], tgYy: TG_YY[tg], dzWx: DZ_WX[dz],
+      ss, cgs: CANGGAN[dz].map(t => ({ t, ss: getShishen(dTg, t) }))
+    };
+  }
+
+  const sz = { year:pillar(yTg,yDz), month:pillar(mTg,mDz), day:pillar(dTg,dDz), hour:pillar(hTg,hDz) };
+  const [kw, xh] = getKongwang(dTg, dDz);
+  const [mgTg, mgDz] = getMinggong(yTg, mDz, hDz);
+  const dy = getDayun(gender, yTg, mTg, mDz, year, month, day);
+  const curAge = new Date().getFullYear() - year;
+  const curDy = dy.list.find(d => d.startAge <= curAge && curAge <= d.endAge) || null;
+
+  return {
+    meta: { name, gender, year, month, day, hour, minute, lon, chInt, cmInt },
+    sz, dTg, dDz,
+    kongwang: { dz:kw, xh },
+    minggong: { tg:mgTg, dz:mgDz, gz:mgTg+mgDz, cgs:CANGGAN[mgDz].map(t=>({t,ss:getShishen(dTg,t)})) },
+    dayun: { ...dy, current:curDy },
+    liuyear: getLiuyear(),
+  };
+}
+
+// 文字版盘面（注入 system prompt）
+function chartToText(r) {
+  const {sz, dTg, dDz, kongwang, minggong, dayun, meta} = r;
+  const cols = ["year","month","day","hour"];
+  const colNames = ["年柱","月柱","日柱","时柱"];
+  let t = `【命主】${meta.name||"（未填）"} ${meta.gender}\n`;
+  t += `【出生】阳历 ${meta.year}年${meta.month}月${meta.day}日 ${meta.hour}时${meta.minute}分\n`;
+  t += `【真太阳时】${meta.chInt}时${meta.cmInt}分（经度${meta.lon}°）\n\n`;
+  t += `【四柱】\n`;
+  t += `       年柱      月柱      日柱      时柱\n`;
+  t += `天干   ${cols.map(c=>sz[c].tg+'('+sz[c].ss+')').join('  ')}\n`;
+  t += `地支   ${cols.map(c=>sz[c].dz).join('         ')}\n`;
+  t += `五行   ${cols.map(c=>sz[c].tgWx+sz[c].dzWx).join('       ')}\n\n`;
+  t += `【藏干十神】\n`;
+  for (const [c, n] of [["year","年"],["month","月"],["day","日"],["hour","时"]]) {
+    const cgs = sz[c].cgs.map(x=>`${x.t}(${x.ss})`).join(" ");
+    t += `${n}支${sz[c].dz}：${cgs}\n`;
+  }
+  t += `\n【空亡】${kongwang.dz.join("、")}（${kongwang.xh}旬）\n`;
+  t += `【命宫】${minggong.gz}，藏干：${minggong.cgs.map(x=>`${x.t}(${x.ss})`).join(" ")}\n`;
+  t += `\n【大运】${dayun.qiyunAge}岁起运，${dayun.shun?"顺行":"逆行"}\n`;
+  for (const d of dayun.list) {
+    const cur = dayun.current && d.step === dayun.current.step ? " ◀当前" : "";
+    t += `  ${d.startAge}-${d.endAge}岁 ${d.gz}（${d.startYear}-${d.endYear}）${cur}\n`;
+  }
+  t += `\n【流年】\n`;
+  for (const ly of r.liuyear) t += `  ${ly.year}年 ${ly.gz}\n`;
+  return t;
+}
+
+// ═══════════════════════════════════════════════════
+// 二、状态
+// ═══════════════════════════════════════════════════
+let selectedGender = "男";
+let currentChart = null;
+let chatHistory = [];
+let isStreaming = false;
+
+// ═══════════════════════════════════════════════════
+// 三、UI 渲染
+// ═══════════════════════════════════════════════════
+
+function wxClass(wx) { return "wx-" + wx; }
+
+function renderChart(r) {
+  const {sz, dTg, kongwang, minggong, dayun, liuyear} = r;
+  const cols = ["year","month","day","hour"];
+  const colNames = ["年","月","日","时"];
+
+  // 四柱表
+  const table = document.getElementById("sizhu-table");
+  let html = `<tr><th class="label-col">四柱</th>`;
+  for (let i = 0; i < 4; i++) html += `<th>${colNames[i]}柱</th>`;
+  html += `</tr><tr><td class="label-col">天干</td>`;
+  for (const [i, c] of cols.entries()) {
+    const p = sz[c];
+    const rizhu = c === "day" ? " rizhu" : "";
+    html += `<td class="${rizhu}">
+      <span class="tg-char ${wxClass(p.tgWx)}">${p.tg}</span>
+      <span class="tg-ss">${p.ss}</span>
+      <span class="dz-wx" style="opacity:.6">${p.tgYy}${p.tgWx}</span>
+    </td>`;
+  }
+  html += `</tr><tr><td class="label-col">地支</td>`;
+  for (const [i, c] of cols.entries()) {
+    const p = sz[c];
+    const rizhu = c === "day" ? " rizhu" : "";
+    html += `<td class="${rizhu}">
+      <span class="dz-char ${wxClass(p.dzWx)}">${p.dz}</span>
+      <span class="dz-wx">${p.dzWx}</span>
+    </td>`;
+  }
+  html += `</tr>`;
+  table.innerHTML = html;
+
+  // 藏干
+  const cgRow = document.getElementById("canggan-row");
+  cgRow.innerHTML = cols.map((c, i) => {
+    const p = sz[c];
+    const items = p.cgs.map(x =>
+      `<div class="cg-item"><span class="${wxClass(TG_WX[x.t])}">${x.t}</span><span class="cg-ss"> ${x.ss}</span></div>`
+    ).join("");
+    return `<div class="canggan-col"><div class="col-label">${colNames[i]}·${p.dz}</div>${items}</div>`;
+  }).join("");
+
+  // 信息块
+  const chips = document.getElementById("info-chips");
+  const dy = dayun;
+  chips.innerHTML = `
+    <div class="chip">
+      <div class="ck">空亡</div>
+      <div class="cv">${kongwang.dz.join("、")}</div>
+      <div class="cs">${kongwang.xh}旬</div>
+    </div>
+    <div class="chip">
+      <div class="ck">命宫</div>
+      <div class="cv">${minggong.gz}</div>
+      <div class="cs">${minggong.cgs.map(x=>x.t).join(" ")}</div>
+    </div>
+    <div class="chip">
+      <div class="ck">起运</div>
+      <div class="cv">${dy.qiyunAge}岁</div>
+      <div class="cs">${dy.shun?"顺行":"逆行"}</div>
+    </div>
+    <div class="chip">
+      <div class="ck">日主</div>
+      <div class="cv ${wxClass(TG_WX[dTg])}">${dTg}</div>
+      <div class="cs">${TG_YY[dTg]}${TG_WX[dTg]}</div>
+    </div>
+  `;
+
+  // 大运
+  const curYear = new Date().getFullYear();
+  const dyList = document.getElementById("dayun-list");
+  dyList.innerHTML = dy.list.map(d => {
+    const isCur = dy.current && d.step === dy.current.step;
+    return `<div class="dy-item ${isCur?"current":""}">
+      <span class="dy-age">${d.startAge}–${d.endAge}岁</span>
+      <span class="dy-gz ${wxClass(TG_WX[d.tg])}">${d.gz}</span>
+      <span class="dy-years">${d.startYear}–${d.endYear}</span>
+      ${isCur ? '<span class="dy-tag">当前</span>' : ''}
+    </div>`;
+  }).join("");
+
+  // 流年
+  const lyGrid = document.getElementById("liuyear-grid");
+  lyGrid.innerHTML = liuyear.map(ly => {
+    const isCur = ly.year === curYear;
+    return `<div class="ly-item ${isCur?"ly-cur":""}">
+      <div class="ly-year">${ly.year}</div>
+      <div class="ly-gz ${wxClass(TG_WX[ly.tg])}">${ly.gz}</div>
+    </div>`;
+  }).join("");
+
+  // 显示
+  document.getElementById("chartWrap").style.display = "block";
+  document.getElementById("chatWrap").style.display = "block";
+}
+
+// ═══════════════════════════════════════════════════
+// 四、排盘入口
+// ═══════════════════════════════════════════════════
+
+function doPaipan() {
+  const name   = document.getElementById("f-name").value.trim() || "命主";
+  const year   = parseInt(document.getElementById("f-year").value);
+  const month  = parseInt(document.getElementById("f-month").value);
+  const day    = parseInt(document.getElementById("f-day").value);
+  const hour   = parseInt(document.getElementById("f-hour").value);
+  const minute = parseInt(document.getElementById("f-minute").value) || 0;
+  const lonRaw = document.getElementById("f-lon").value;
+  let lon = parseFloat(lonRaw);
+  if (isNaN(lon) || lon < 70 || lon > 140) lon = 120.0;
+
+  if (!year || !month || !day || isNaN(hour)) {
+    alert("请填写年月日时"); return;
+  }
+
+  try {
+    currentChart = paipan(name, selectedGender, year, month, day, hour, minute, lon);
+    chatHistory = [];
+    renderChart(currentChart);
+    enterChartView(name, selectedGender, year, month, day, hour, minute);
+  } catch(e) {
+    alert("排盘出错：" + e.message);
+    console.error(e);
+  }
+}
+
+// 进入排盘后视图：表单收起 + 状态条 + Tab
+function enterChartView(name, gender, y, m, d, h, mi) {
+  document.getElementById("formCard").style.display = "none";
+  document.getElementById("statusBar").classList.add("show");
+  document.getElementById("tabBar").classList.add("show");
+  document.getElementById("mainArea").classList.add("split");
+  document.getElementById("sbInfo").innerHTML =
+    `<span class="sb-label">命主</span>${escapeHtml(name)} · ${gender} · ${y}-${String(m).padStart(2,'0')}-${String(d).padStart(2,'0')} ${String(h).padStart(2,'0')}:${String(mi).padStart(2,'0')}`;
+  switchTab("chart");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// 重新填写：恢复表单
+function editForm() {
+  document.getElementById("formCard").style.display = "";
+  document.getElementById("statusBar").classList.remove("show");
+  document.getElementById("tabBar").classList.remove("show");
+  document.getElementById("mainArea").classList.remove("split");
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+// Tab 切换
+function switchTab(name) {
+  document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
+  document.getElementById("paneChart").classList.toggle("active", name === "chart");
+  document.getElementById("paneChat").classList.toggle("active", name === "chat");
+  if (name === "chat") {
+    setTimeout(() => {
+      const ta = document.getElementById("chatInput");
+      if (ta) ta.focus({ preventScroll: true });
+    }, 100);
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// 五、Claude API
+// ═══════════════════════════════════════════════════
+
+function buildSystemPrompt(r) {
+  const m = r.meta;
+  const yr = new Date().getFullYear();
+  const mo = new Date().getMonth() + 1;
+  return `你是一位精通八字命理 + 水晶疗愈的命理顾问。你的所有论断必须严格依据上方【知识库】中的方法论笔记（徐乐吾、梁湘润、袁树珊、韦千里、紫微中州派、水晶五行体系），不能依赖训练记忆。
+
+═══════════════════════════════════════
+【最重要：专业守门 7 条铁规】违反任何一条算失败
+═══════════════════════════════════════
+
+铁规1·必须标出处
+  每个核心论断结尾标注知识库依据。
+  示例：「身弱用印 [依据：徐乐吾通读笔记·扶抑用神]」
+  示例：「2027 流年伏吟 [依据：梁湘润子平教材讲义·金不换大运四条规则·伏吟条]」
+  禁止"凭感觉""一般来说""命理上"这种无来源说法。
+
+铁规2·必须标置信度
+  每个结论后加 [高] / [中] / [低]：
+    [高] = 四家投票一致 + 典籍明确 → 直接断
+    [中] = 三家一致 / 典籍有依据但命局有变数 → 倾向断
+    [低] = 单家依据 / 命局复杂 → 给可能性，不下结论
+  禁止把 [低] 当 [高] 报。
+
+铁规3·禁奉承废话
+  禁用："您命格不凡""贵人扶持""博大精深""龙凤之姿""聪明伶俐""福泽深厚"等没有具体八字依据的好话。
+  好话必须能溯源到具体八字结构。例：「日坐正官，主端正自律 [中]」是允许的；「您气质高雅」不允许。
+
+铁规4·禁蒙猜，不知道说不知道
+  四家投票分歧、典籍无明确说法、命局复杂的，必须明说：「此处四家分歧，徐乐吾认为 X，梁湘润认为 Y，倾向 X 但不能确定 [低]」。
+  禁用："可能""大概""应该""或许""差不多"做模糊填空。
+
+铁规5·禁反推（陈素庵铁律）
+  用户提供的事实只能作为验证锚点，不能作为推论起点。
+  顺序：八字 → 推断 → 让事实验证（对则 ✓，错则承认框架不到位）。
+  禁止：事实 → 反向编造八字解释。
+
+铁规6·禁填补空白
+  用户没问的不主动展开。问"今年怎么样"就只答今年，不顺手把婚姻事业全套都批一遍。
+  例外：默认初次排盘按七段结构输出，但每段保持简短。
+
+铁规7·术语必须翻译白话
+  保留可用术语：四柱（年月日时）、五行（金木水火土）、大运、流年、用神、调候、十神
+  必须翻译的术语：用神→（对你最有帮助的五行）、调候→（命局冷热平衡）、伏吟→（重复出现的不利结构）、反吟→（冲克的不利结构）
+  其他生僻术语（枭印夺食/官杀混杂等）出现一次必须立即括号解释。
+
+═══════════════════════════════════════
+
+【命主信息】
+姓名：${m.name||"（未填）"}
+性别：${m.gender}
+阳历生日：${m.year}年${m.month}月${m.day}日 ${m.hour}时${m.minute}分
+出生地经度：东经${m.lon}°
+
+═══════════════════════════════════════
+第一部分：你的内部工作流（不展示给用户）
+═══════════════════════════════════════
+
+在思考中严格按下列方法推演，但绝不要把过程写给用户看：
+
+1. 真太阳时校正、推年柱（立春界）、月柱（节令界+五虎遁）、日柱（万年历）、时柱（五鼠遁）
+2. 列藏干、空亡、命宫、起大运
+3. 判定身强身弱、格局、调候、用神（确定喜用五行：金/木/水/火/土）
+4. 四家投票：徐乐吾/梁湘润/袁树珊/韦千里 各派结论交叉验证
+
+【八条铁律——内部推演必须遵守】
+1. 禁止脚本排盘——必须手动逐步推
+2. 禁止反推——不能拿已知事实凑八字
+3. 禁止蒙猜——不知道说不知道
+4. 禁止截看大运——通观十年整体
+5. 禁止唯一论——不能只用一个视角
+6. 半三合必须带子午卯酉（巳丑/寅戌/卯未都不算）
+7. 流月必须梁法+袁法两栏对照
+8. 不用 emoji
+
+═══════════════════════════════════════
+第二部分：输出给用户看的（这是真正交付的东西）
+═══════════════════════════════════════
+
+【输出风格——必须严格遵守】
+- 大白话，初中文化能懂
+- 不用术语：禁止出现"用神""比劫""枭印""七杀""官星""伤官""偏印""调候""格局""三合三会"等任何八字术语
+- 必须保留的术语：四柱（年月日时）、五行（金木水火土）、大运、流年——这几个用了就用了，别的全部翻译成白话
+- 像朋友聊天，不写论文
+- 不用 emoji，不堆叠"博大精深"之类废话
+
+【默认输出结构——必须按此模板填空，[依据] 和 [置信度] 都不能省】
+
+例：「你的财运中等。靠手艺吃饭比靠运气强。[依据：徐乐吾通读笔记·财星论；月支食神生财] [中]」
+例：「2026 下半年要小心人际矛盾。[依据：梁湘润金不换大运法·伏吟条] [中]」
+例：「适合戴绿幽灵在左手。补你五行所缺的木，旺事业。[依据：水晶库·木性水晶] [高]」
+
+模板（每条都必须带 [依据] 和 [高/中/低]）：
+
+一、你是个什么样的人
+  4-5 句话。每句结尾必须带 [依据：xx 笔记·xx 段] [高/中/低]。
+  禁奉承——"善良勤奋""聪明有才""贵人扶持"这种没有八字依据的全部禁止。
+
+二、命里几个数（每行一句）
+  · 五行偏向：你命里 ___ 多 / ___ 少 [依据：xx] [高/中/低]
+  · 财运体质：旺/中/弱·一句解释 [依据：xx] [高/中/低]
+  · 事业方向：____ [依据：xx] [高/中/低]
+  · 感情体质：早/晚/稳定/波折 [依据：xx] [高/中/低]
+  · 健康提醒：____器官要注意 [依据：xx] [高/中/低]
+
+三、人生波段
+  · 黄金期：__岁到__岁，因为 ____ [依据：xx 大运法] [高/中/低]
+  · 低谷期：__岁到__岁，因为 ____ [依据：xx 大运法] [高/中/低]
+  · 当前阶段：你现在在 ___ 段，____ [依据：xx] [高/中/低]
+
+四、今年（${yr}年）
+  · 整体：____ [依据：流年 xx 干支 + xx 法] [高/中/低]
+  · 财：____ [依据：xx] [高/中/低]
+  · 事业：____ [依据：xx] [高/中/低]
+  · 感情：____ [依据：xx] [高/中/低]
+  · 健康提醒：____ [依据：xx] [高/中/低]
+  · 重点月份：____月要小心 ____（梁湘润法）+ ____（袁树珊法）[置信度]
+
+五、推荐水晶（必须详细，每种都要带依据）
+  主推 2-3 种，辅助 1-2 种。每种格式：
+  「水晶名 · 戴左/右手 · 解决 ____ 问题 [依据：水晶库·xx 五行 / xx 用途分类] [高/中/低]」
+
+六、实用建议（3 条）
+  每条具体可操作 + [依据：xx] [高/中/低]
+  禁"多积德""保持善良"这种废话。
+
+七、忌讳提示（1-2 条）
+  你命里要避开 ____ [依据：xx] [高/中/低]
+
+【发出回答前的自检——必须做】
+□ 每个论断都带 [依据：xx 知识库出处] 了吗？没有的删掉或补上。
+□ 每个论断都带 [高] 或 [中] 或 [低] 吗？没有的补上。
+□ 出现奉承废话（命格不凡/贵人扶持/聪明伶俐）了吗？删掉。
+□ 出现"可能/大概/应该是"模糊词了吗？换成"倾向 X [低]"或者"不能确定"。
+□ 用了术语（用神/调候/伏吟/反吟/三合）但没括号翻译白话？补上括号。
+任何一条没通过都不能发出。
+
+═══════════════════════════════════════
+第三部分：水晶推荐知识库（你必须熟记并准确推荐）
+═══════════════════════════════════════
+
+【五行 → 水晶对照表】
+
+金（白色金色系）：白水晶、白幽灵、月光石、白碧玺、月光石
+  作用：补金气、益肺、强意志、净化能量
+
+木（绿色青色系）：绿幽灵、绿发晶、绿碧玺、绿松石、紫水晶（紫偏青归木）、萤石、翡翠
+  作用：补木气、养肝、招财旺业
+
+水（黑蓝深茶色系）：黑曜石、茶水晶（烟晶）、黑发晶、海蓝宝、蓝发晶、墨晶
+  作用：补水气、养肾、辟邪、吸纳负能量
+
+火（红橙粉色系）：石榴石、红发晶、草莓晶、红碧玺、红玛瑙、红纹石
+  作用：补火气、益心、提活力、旺感情
+
+土（黄棕色系）：黄水晶、黄发晶、虎眼石、金发晶、钛晶、黄玛瑙
+  作用：补土气、健脾胃、聚财、稳情绪
+
+【按需求推荐】
+· 招正财/事业财 → 绿幽灵（首选）、金发晶（能量强）
+· 招偏财 → 黄水晶、虎眼石
+· 招桃花/旺感情 → 粉水晶（首选）、红纹石、草莓晶
+· 防小人/辟邪 → 黑曜石（最强）、黑发晶、黑碧玺
+· 安神助眠/缓压 → 紫水晶、茶水晶
+· 增强自信判断 → 黄水晶、虎眼石
+· 健康净化全身 → 白水晶、茶水晶
+· 沟通表达 → 海蓝宝、青金石
+
+【配戴规则】
+· 左手吸能量（招财、提运、感情）：黄水晶、粉水晶、绿幽灵、金发晶
+· 右手散能量（辟邪、化煞、防小人）：黑曜石、黑发晶、黑碧玺
+· 一次戴 1-3 种，避相克：金克木 / 木克土 / 土克水 / 水克火 / 火克金
+· 含铜铁成分的（绿松石、孔雀石）不能晒太阳会褪色
+· 净化最方便：放在白水晶簇上过夜；或农历十五月光下整夜
+
+═══════════════════════════════════════
+
+整个回答控制在 1500 字以内。用户追问时只针对问题答，不要重复全部。
+
+现在开始为这位命主推演并按上面格式回答。`;
+}
+
+function diagnoseError(e, apiKey) {
+  const msg = e.message || String(e);
+  console.error("[BaZi App Error]", e);
+  // 只在严格匹配真正的网络层错误时显示网络提示
+  const isPureNetwork = msg === "Failed to fetch"
+                     || msg.includes("NetworkError when attempting to fetch")
+                     || msg.includes("ERR_INTERNET_DISCONNECTED")
+                     || msg.includes("ERR_NAME_NOT_RESOLVED");
+  if (isPureNetwork) {
+    let hints = [];
+    if (location.protocol === "file:") hints.push("· 你在用 file:// 打开文件，请改用浏览器双击直接打开，或用 http 服务");
+    hints.push("· 国内默认连不上 api.anthropic.com，需要开 VPN（全局模式，不是 PAC）");
+    hints.push("· 检查电脑能不能访问 console.anthropic.com");
+    return "网络无法连接：\n" + hints.join("\n") + "\n\n原始错误：" + msg;
+  }
+  if (msg.includes("401") || msg.toLowerCase().includes("authentication_error") || msg.toLowerCase().includes("invalid api key")) {
+    return "API Key 无效：\n· key 应以 sk-ant- 开头\n· 在 console.anthropic.com 检查 key 是否还有效\n\n原始错误：" + msg;
+  }
+  if (msg.includes("credit") || msg.toLowerCase().includes("billing") || msg.includes("402")) {
+    return "API 账户余额不足：\n· 需要在 console.anthropic.com 充值后才能调用\n· 充值入口：左侧 Plans & Billing\n\n原始错误：" + msg;
+  }
+  if (msg.includes("429") || msg.toLowerCase().includes("rate")) return "请求过于频繁，稍等几秒再试\n\n原始错误：" + msg;
+  if (msg.includes("529") || msg.toLowerCase().includes("overloaded")) return "Anthropic 服务器繁忙，稍后再试\n\n原始错误：" + msg;
+  if (msg.toLowerCase().includes("model") && msg.toLowerCase().includes("not")) {
+    return "选择的模型不可用：\n· 在「设置」里换一个模型试试（Sonnet/Haiku 可用范围更广）\n\n原始错误：" + msg;
+  }
+  return "出错（请把下面这行截图反馈）：\n" + msg;
+}
+
+async function callClaude(userMsg) {
+  let apiKey = (localStorage.getItem("apiKey") || "").trim();
+  if (!apiKey) { showKeyPanel(); return; }
+  if (!apiKey.startsWith("sk-ant-")) {
+    alert("API Key 格式不对，应以 sk-ant- 开头。\n请到 console.anthropic.com 重新获取。");
+    showKeyPanel();
+    return;
+  }
+  if (!currentChart) { alert("请先排盘"); return; }
+
+  chatHistory.push({ role:"user", content:userMsg });
+  addBubble("user", userMsg);
+
+  const aiDiv = addBubble("ai", "", true);
+  isStreaming = true;
+  document.getElementById("sendBtn").disabled = true;
+
+  try {
+    const resp = await fetch("https://api.anthropic.com/v1/messages", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": apiKey,
+        "anthropic-version": "2023-06-01",
+        "anthropic-dangerous-direct-browser-access": "true"
+      },
+      body: JSON.stringify({
+        model: localStorage.getItem("model") || "claude-haiku-4-5-20251001",
+        max_tokens: 4096,
+        system: [
+          {
+            type: "text",
+            text: "═══════════════════════════════════════\n【知识库——你的所有论断必须从此处溯源】\n═══════════════════════════════════════\n\n" + KNOWLEDGE_BASE,
+            cache_control: { type: "ephemeral" }
+          },
+          {
+            type: "text",
+            text: buildSystemPrompt(currentChart)
+          }
+        ],
+        messages: chatHistory
+      })
+    });
+
+    const raw = await resp.text();
+    let data;
+    try { data = JSON.parse(raw); }
+    catch(e) { throw new Error("响应解析失败：" + raw.slice(0, 300)); }
+
+    if (!resp.ok) {
+      throw new Error(data.error?.message || data.error?.type || `HTTP ${resp.status}: ${raw.slice(0,200)}`);
+    }
+
+    const aiText = (data.content || []).map(b => b.text || "").join("");
+    if (!aiText) throw new Error("返回内容为空：" + JSON.stringify(data).slice(0, 200));
+    aiDiv.querySelector(".bubble").innerHTML = simpleMarkdown(aiText);
+    const msgs = document.getElementById("chatMsgs");
+    msgs.scrollTop = msgs.scrollHeight;
+    chatHistory.push({ role:"assistant", content:aiText });
+  } catch(e) {
+    chatHistory.pop();
+    aiDiv.querySelector(".bubble").innerHTML = "<strong>" + diagnoseError(e, apiKey).replace(/\n/g, "<br>") + "</strong>";
+  } finally {
+    isStreaming = false;
+    document.getElementById("sendBtn").disabled = false;
+    const dots = aiDiv.querySelector(".loading-dots");
+    if (dots) dots.remove();
+  }
+}
+
+// 简单 Markdown 渲染
+function simpleMarkdown(text) {
+  // 转义 HTML 实体
+  text = text.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+  // 表格
+  text = text.replace(/^\|(.+)\|$/gm, row => {
+    if (row.match(/^\|[-\s|]+\|$/)) return "";
+    const cells = row.split("|").slice(1,-1).map(c => c.trim());
+    return "<tr>" + cells.map(c => `<td>${c}</td>`).join("") + "</tr>";
+  });
+  text = text.replace(/((<tr>.*<\/tr>\n?)+)/gs, m => `<table>${m}</table>`);
+  // 标题
+  text = text.replace(/^### (.+)$/gm, "<strong>$1</strong>");
+  text = text.replace(/^## (.+)$/gm, "<strong>$1</strong>");
+  text = text.replace(/^# (.+)$/gm, "<strong>$1</strong>");
+  // 加粗
+  text = text.replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
+  // 换行
+  text = text.replace(/\n/g, "<br>");
+  return text;
+}
+
+// 添加气泡
+function addBubble(role, text, loading = false) {
+  const msgs = document.getElementById("chatMsgs");
+  const div = document.createElement("div");
+  div.className = "msg " + role;
+  div.innerHTML = `<div class="bubble">${loading ? '<span class="loading-dots"><span></span><span></span><span></span></span>' : simpleMarkdown(text)}</div>`;
+  msgs.appendChild(div);
+  msgs.scrollTop = msgs.scrollHeight;
+  return div;
+}
+
+// 快捷提问
+function quickAsk(q) {
+  if (isStreaming) return;
+  if (!currentChart) { alert("请先排盘"); return; }
+  switchTab("chat");
+  callClaude(q);
+}
+
+// 发送消息
+function sendMsg() {
+  if (isStreaming) return;
+  const ta = document.getElementById("chatInput");
+  const msg = ta.value.trim();
+  if (!msg) return;
+  ta.value = "";
+  ta.style.height = "";
+  callClaude(msg);
+}
+
+// ═══════════════════════════════════════════════════
+// 六、工具函数
+// ═══════════════════════════════════════════════════
+
+function setGender(g) {
+  selectedGender = g;
+  document.getElementById("btn-male").classList.toggle("on", g === "男");
+  document.getElementById("btn-female").classList.toggle("on", g === "女");
+}
+
+function showKeyPanel() {
+  const k = localStorage.getItem("apiKey") || "";
+  document.getElementById("keyInput").value = k;
+  // 高亮当前选中模型
+  const cur = localStorage.getItem("model") || "claude-haiku-4-5-20251001";
+  document.querySelectorAll(".model-opt").forEach(el => {
+    el.classList.toggle("on", el.dataset.model === cur);
+  });
+  document.getElementById("keyOverlay").classList.add("show");
+}
+function hideKeyPanel() {
+  document.getElementById("keyOverlay").classList.remove("show");
+}
+function selectModel(el) {
+  document.querySelectorAll(".model-opt").forEach(x => x.classList.remove("on"));
+  el.classList.add("on");
+  localStorage.setItem("model", el.dataset.model);
+}
+function saveKey() {
+  const v = document.getElementById("keyInput").value.trim();
+  if (v) localStorage.setItem("apiKey", v);
+  hideKeyPanel();
+}
+
+// ─── 档案管理 ───
+function getProfiles() {
+  try { return JSON.parse(localStorage.getItem("profiles") || "[]"); }
+  catch(e) { return []; }
+}
+function saveProfiles(arr) {
+  localStorage.setItem("profiles", JSON.stringify(arr));
+}
+function showProfilePanel() {
+  renderProfileList();
+  document.getElementById("profileOverlay").classList.add("show");
+}
+function hideProfilePanel() {
+  document.getElementById("profileOverlay").classList.remove("show");
+}
+function renderProfileList() {
+  const list = getProfiles();
+  const el = document.getElementById("profileList");
+  if (list.length === 0) {
+    el.innerHTML = '<div class="profile-empty">还没有保存的档案<br>填好生辰后点「保存当前」</div>';
+    return;
+  }
+  el.innerHTML = list.map((p, i) => `
+    <div class="profile-item">
+      <div class="pi-info">
+        <div class="pi-name">${escapeHtml(p.name)} · ${p.gender}</div>
+        <div class="pi-meta">${p.year}-${p.month}-${p.day} ${p.hour}:${String(p.minute||0).padStart(2,'0')} · 经度${p.lon}</div>
+      </div>
+      <button class="pi-load" onclick="loadProfile(${i})">载入</button>
+      <button class="pi-del" onclick="deleteProfile(${i})">×</button>
+    </div>
+  `).join("");
+}
+function escapeHtml(s) {
+  return String(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;");
+}
+function saveCurrentProfile() {
+  const name   = document.getElementById("f-name").value.trim();
+  const year   = document.getElementById("f-year").value;
+  const month  = document.getElementById("f-month").value;
+  const day    = document.getElementById("f-day").value;
+  const hour   = document.getElementById("f-hour").value;
+  const minute = document.getElementById("f-minute").value || 0;
+  const lonRaw = document.getElementById("f-lon").value;
+  let lon = parseFloat(lonRaw);
+  if (isNaN(lon) || lon < 70 || lon > 140) lon = 120.0;
+
+  if (!name) { alert("请先在表单里填姓名"); return; }
+  if (!year || !month || !day || hour === "") { alert("请先填完整年月日时"); return; }
+
+  const list = getProfiles();
+  const idx = list.findIndex(p => p.name === name);
+  const profile = { name, gender: selectedGender, year:+year, month:+month, day:+day, hour:+hour, minute:+minute, lon };
+  if (idx >= 0) {
+    if (!confirm(`已存在「${name}」，覆盖吗？`)) return;
+    list[idx] = profile;
+  } else {
+    list.push(profile);
+  }
+  saveProfiles(list);
+  renderProfileList();
+}
+function loadProfile(i) {
+  const p = getProfiles()[i];
+  if (!p) return;
+  document.getElementById("f-name").value   = p.name;
+  document.getElementById("f-year").value   = p.year;
+  document.getElementById("f-month").value  = p.month;
+  document.getElementById("f-day").value    = p.day;
+  document.getElementById("f-hour").value   = p.hour;
+  document.getElementById("f-minute").value = p.minute || 0;
+  document.getElementById("f-lon").value    = p.lon;
+  setGender(p.gender);
+  hideProfilePanel();
+}
+function deleteProfile(i) {
+  const list = getProfiles();
+  if (!confirm(`删除「${list[i].name}」？`)) return;
+  list.splice(i, 1);
+  saveProfiles(list);
+  renderProfileList();
+}
+
+function autoResize(ta) {
+  ta.style.height = "auto";
+  ta.style.height = Math.min(ta.scrollHeight, 100) + "px";
+}
+
+function handleKey(e) {
+  if (e.key === "Enter" && !e.shiftKey) {
+    e.preventDefault();
+    sendMsg();
+  }
+}
+
+// 复制盘面
+function copyChart() {
+  if (!currentChart) return;
+  const text = chartToText(currentChart);
+  document.getElementById("copyText").value = text;
+  document.getElementById("copyOverlay").classList.add("show");
+  setTimeout(() => document.getElementById("copyText").select(), 100);
+}
+
+function tryCopy() {
+  const ta = document.getElementById("copyText");
+  ta.select();
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(ta.value).then(() => {
+      const btn = document.querySelector("#copyOverlay .btn-save");
+      btn.textContent = "已复制！";
+      setTimeout(() => { btn.textContent = "一键复制"; }, 2000);
+    }).catch(() => { document.execCommand("copy"); });
+  } else {
+    document.execCommand("copy");
+  }
+}
+
+// 点击 overlay 背景关闭
+document.getElementById("keyOverlay").addEventListener("click", function(e) {
+  if (e.target === this) hideKeyPanel();
+});
+document.getElementById("profileOverlay").addEventListener("click", function(e) {
+  if (e.target === this) hideProfilePanel();
+});
+
+// 首次使用提示
+window.addEventListener("load", () => {
+  if (!localStorage.getItem("apiKey")) showKeyPanel();
+});
+</script>
+</body>
+</html>
