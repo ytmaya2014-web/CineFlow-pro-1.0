@@ -144,6 +144,67 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 .profile-item .pi-del{padding:6px 8px;background:none;color:#c00;border:1px solid #f0c0c0;border-radius:6px;font-size:12px;cursor:pointer;margin-left:4px}
 .profile-empty{text-align:center;padding:20px;color:#aaa;font-size:13px}
 
+/* ── 合婚模块 ── */
+.match-summary{background:linear-gradient(135deg,#fff8f0 0%,#fef0e0 100%);border:1.5px solid #d4a96a;border-radius:12px;padding:14px;margin-bottom:12px}
+.match-score-row{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.match-score-circle{width:64px;height:64px;border-radius:50%;background:#3d1a00;color:#f5e6d3;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:bold;flex-shrink:0}
+.match-score-circle .ms-num{font-size:22px;line-height:1}
+.match-score-circle .ms-lab{font-size:10px;letter-spacing:1px;margin-top:2px;opacity:.85}
+.match-score-circle.high{background:#2d7a2d}
+.match-score-circle.mid{background:#a0622b}
+.match-score-circle.low{background:#c0392b}
+.match-score-text{flex:1}
+.match-score-text .mst-tag{font-size:13px;font-weight:600;color:#3d1a00;margin-bottom:2px}
+.match-score-text .mst-desc{font-size:12px;color:#666;line-height:1.5}
+.match-relations{display:flex;flex-direction:column;gap:6px;margin-top:8px}
+.match-rel-row{display:flex;align-items:center;font-size:12px;color:#555;padding:6px 10px;background:white;border-radius:8px;border:1px solid #f0e0cc}
+.match-rel-row .mr-pos{width:46px;color:#a0622b;font-weight:600;flex-shrink:0}
+.match-rel-row .mr-pair{font-family:'Songti SC',serif;font-size:14px;color:#3d1a00;width:60px;flex-shrink:0}
+.match-rel-row .mr-tag{padding:1px 8px;border-radius:8px;font-size:11px;margin-right:6px;flex-shrink:0;font-weight:600}
+.tag-合{background:#fef0e0;color:#a05500;border:1px solid #d4a96a}
+.tag-冲{background:#fde8e8;color:#c0392b;border:1px solid #f0a0a0}
+.tag-刑{background:#fde8e8;color:#c0392b;border:1px solid #f0a0a0}
+.tag-害{background:#fde8e8;color:#c0392b;border:1px solid #f0a0a0}
+.tag-生{background:#e8f5e8;color:#2d7a2d;border:1px solid #a0d0a0}
+.tag-克{background:#fff0e0;color:#c0392b;border:1px solid #e0a070}
+.tag-比{background:#f5f0e8;color:#666;border:1px solid #d0c0a0}
+.tag-同{background:#f5f0e8;color:#666;border:1px solid #d0c0a0}
+.tag-自刑{background:#fde8e8;color:#c0392b;border:1px solid #f0a0a0}
+.tag-无{background:#f5f0e8;color:#888;border:1px solid #e0d0c0}
+.match-rel-row .mr-desc{flex:1;font-size:12px;color:#666;overflow:hidden;text-overflow:ellipsis}
+
+/* 双盘对照表 */
+.pair-table{width:100%;border-collapse:collapse;font-size:11px}
+.pair-table th{background:#3d1a00;color:#f5e6d3;padding:6px 4px;font-weight:normal;font-size:11px}
+.pair-table th.pair-name{padding:6px 8px;text-align:left}
+.pair-table td{padding:6px 4px;text-align:center;border:1px solid #f0e0cc;vertical-align:middle}
+.pair-table td.pair-name{text-align:left;background:#fafafa;font-weight:600;color:#3d1a00;font-size:12px}
+.pair-table .ptg{font-size:18px;font-weight:bold;line-height:1.1;display:block}
+.pair-table .pdz{font-size:16px;line-height:1.2;display:block;margin-top:1px}
+.pair-table .pwx{font-size:9px;color:#888;display:block;margin-top:2px}
+
+/* 选择 B 列表 */
+#matchPickList .profile-item{cursor:pointer;transition:.15s}
+#matchPickList .profile-item:hover{border-color:#8b4513;background:#fff8f0}
+#matchPickList .profile-item.selected{border-color:#8b4513;background:#fff0e0;box-shadow:inset 4px 0 0 #8b4513}
+#matchPickList .pi-pickbtn{padding:6px 12px;background:#8b4513;color:white;border:none;border-radius:6px;font-size:12px;cursor:pointer;margin-left:6px;flex-shrink:0}
+#matchPickList .pi-pickbtn.picked{background:#2d7a2d}
+
+/* ── 今日速判面板 ── */
+.today-quick{background:linear-gradient(135deg,#fff8f0 0%,#fef0e0 100%);border:1.5px solid #d4a96a;border-radius:12px;padding:14px;margin-bottom:12px}
+.tq-score-row{display:flex;align-items:center;gap:14px;margin-bottom:10px}
+.tq-circle{width:60px;height:60px;border-radius:50%;color:white;display:flex;flex-direction:column;align-items:center;justify-content:center;font-weight:bold;flex-shrink:0}
+.tq-circle.high{background:#2d7a2d}
+.tq-circle.mid{background:#a0622b}
+.tq-circle.low{background:#c0392b}
+.tq-circle .tqc-num{font-size:20px;line-height:1}
+.tq-circle .tqc-lab{font-size:10px;letter-spacing:1px;margin-top:2px;opacity:.9}
+.tq-text{flex:1;font-size:13px;color:#3d1a00;line-height:1.5}
+.tq-tag-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.tq-tag{padding:2px 8px;border-radius:8px;font-size:11px;background:white;border:1px solid #d4a96a;color:#3d1a00}
+.tq-tag.bad{background:#fde8e8;color:#c0392b;border-color:#f0a0a0}
+.tq-tag.good{background:#e8f5e8;color:#2d7a2d;border-color:#a0d0a0}
+
 /* ── 排盘后的布局容器 ── */
 .status-bar{display:none;background:#fff8f0;border-bottom:1px solid #f0e0cc;padding:10px 16px;align-items:center;justify-content:space-between;position:sticky;top:50px;z-index:90}
 .status-bar.show{display:flex}
@@ -172,13 +233,21 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 @media (min-width: 900px) {
   body{padding-bottom:0}
   .form-card,.api-section,.btn-paipan{max-width:520px;margin-left:auto;margin-right:auto}
-  .tab-bar{display:none !important}
+  /* 桌面下也保留 tab，但样式更紧凑 */
+  .tab-bar{position:sticky;top:50px;z-index:89}
   .status-bar{top:50px}
+  /* 桌面：左半边为切换的 tab pane，右半边为常驻聊天 */
   .main-area.split{display:grid;grid-template-columns:1fr 1fr;gap:0;align-items:start;max-width:1400px;margin:0 auto}
-  .main-area.split .tab-pane{display:block !important;padding:0 8px}
-  .chart-wrap{margin:8px;max-height:calc(100vh - 80px);overflow-y:auto;display:block}
-  .chat-wrap{margin:8px;display:flex;position:sticky;top:60px;height:calc(100vh - 80px)}
+  .main-area.split #paneChart,
+  .main-area.split #paneToday,
+  .main-area.split #paneMatch{padding:0 8px;max-height:calc(100vh - 130px);overflow-y:auto}
+  /* paneChat 在桌面上常驻右栏 */
+  .main-area.split #paneChat{display:block !important;padding:0 8px}
+  .chart-wrap{margin:8px;display:block}
+  .chat-wrap{margin:8px;display:flex;position:sticky;top:100px;height:calc(100vh - 130px)}
   .chat-card{min-height:auto;max-height:none;height:100%}
+  /* 桌面下，"问命理师"tab 不需要单独切换 —— 隐藏它 */
+  .tab-bar .tab-btn[data-tab="chat"]{display:none}
 }
 
 .hidden{display:none}
@@ -251,9 +320,10 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
 <!-- Tab 切换栏（手机端排盘后显示） -->
 <div class="tab-bar" id="tabBar">
-  <button class="tab-btn on" data-tab="chart" onclick="switchTab('chart')">命 盘</button>
-  <button class="tab-btn" data-tab="today" onclick="switchTab('today')">今 日</button>
-  <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')">问命理师</button>
+  <button class="tab-btn on" data-tab="chart" onclick="switchTab('chart')">命盘</button>
+  <button class="tab-btn" data-tab="today" onclick="switchTab('today')">今日</button>
+  <button class="tab-btn" data-tab="tools" onclick="switchTab('tools')">工具</button>
+  <button class="tab-btn" data-tab="chat" onclick="switchTab('chat')">问答</button>
 </div>
 
 <!-- 输入表单 -->
@@ -348,14 +418,20 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
 
 <!-- 分享卡弹层 -->
 <div class="overlay" id="shareOverlay">
-  <div class="key-panel" style="max-width:380px">
+  <div class="key-panel" style="max-width:400px">
     <h2>命盘分享卡</h2>
-    <p style="font-size:12px;color:#888;margin-bottom:8px">长按图片可保存到相册</p>
-    <label style="display:flex;align-items:center;font-size:13px;color:#666;margin-bottom:10px;cursor:pointer">
-      <input type="checkbox" id="hideName" onchange="generateShareCard()" style="margin-right:8px">
-      隐藏姓名（保护隐私）
-    </label>
-    <canvas id="shareCanvas" width="640" height="1080" style="width:100%;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15)"></canvas>
+    <p style="font-size:12px;color:#888;margin-bottom:8px">长按图片可保存到相册，也可点下方按钮下载</p>
+    <div style="display:flex;gap:8px;margin-bottom:10px">
+      <label style="flex:1;display:flex;align-items:center;font-size:13px;color:#666;cursor:pointer;padding:8px;border:1px solid #e8e0d0;border-radius:8px">
+        <input type="checkbox" id="hideName" onchange="generateShareCard()" style="margin-right:6px">
+        隐藏姓名
+      </label>
+      <label style="flex:1;display:flex;align-items:center;font-size:13px;color:#666;cursor:pointer;padding:8px;border:1px solid #e8e0d0;border-radius:8px">
+        <input type="checkbox" id="darkTheme" onchange="generateShareCard()" style="margin-right:6px">
+        深色主题
+      </label>
+    </div>
+    <canvas id="shareCanvas" width="720" height="1280" style="width:100%;border-radius:12px;box-shadow:0 4px 16px rgba(0,0,0,0.15)"></canvas>
     <div class="row" style="margin-top:14px">
       <button class="btn-cancel" onclick="document.getElementById('shareOverlay').classList.remove('show')">关闭</button>
       <button class="btn-save" onclick="downloadShareCard()">下载图片</button>
@@ -376,6 +452,76 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
   </div>
 </div>
 
+<!-- 工具 Tab -->
+<div class="tab-pane" id="paneTools">
+<div class="chart-wrap" style="display:block">
+
+  <!-- 名字打分 -->
+  <div class="chart-card">
+    <h3>名字打分（起名 / 公司 / 宠物）</h3>
+    <p style="font-size:12px;color:#888;line-height:1.6;margin-bottom:10px">输入候选名字（每行一个，最多 10 个）。AI 按笔画数理 + 五行属性 + 与命主八字喜用神匹配度打分。</p>
+    <textarea id="namesInput" rows="4" placeholder="例：&#10;王浩然&#10;李子欣&#10;张明远" style="width:100%;padding:10px;border:1.5px solid #e8e0d0;border-radius:10px;font-size:14px;resize:vertical;font-family:inherit;line-height:1.6"></textarea>
+    <button class="btn-paipan" onclick="askNameScore()" style="margin-top:10px">开始打分</button>
+  </div>
+
+  <!-- 择吉日 -->
+  <div class="chart-card">
+    <h3>择吉日</h3>
+    <p style="font-size:12px;color:#888;line-height:1.6;margin-bottom:10px">告诉 AI 你想做什么 + 时间范围，AI 在你的命盘基础上挑出最合适的几天。</p>
+    <div class="form-group">
+      <label>事件类型</label>
+      <select id="eventType" style="width:100%;padding:11px 12px;border:1.5px solid #e8e0d0;border-radius:10px;font-size:15px;background:white;-webkit-appearance:none">
+        <option value="结婚">结婚 / 领证</option>
+        <option value="搬家">搬家 / 入宅</option>
+        <option value="开业">开业 / 公司开张</option>
+        <option value="签约">签约 / 合作</option>
+        <option value="动工">动工 / 装修</option>
+        <option value="出行">出行 / 远行</option>
+        <option value="提车">提车 / 购大件</option>
+        <option value="求职">求职 / 面试</option>
+        <option value="谈判">谈判 / 重要决定</option>
+      </select>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label>从（YYYY-MM-DD）</label>
+        <input type="date" id="dateFrom">
+      </div>
+      <div class="form-group">
+        <label>到</label>
+        <input type="date" id="dateTo">
+      </div>
+    </div>
+    <button class="btn-paipan" onclick="askAuspiciousDate()" style="margin-top:0">查吉日</button>
+  </div>
+
+  <!-- 我俩孩子何时生最好 -->
+  <div class="chart-card">
+    <h3>我俩孩子何时生最好</h3>
+    <p style="font-size:12px;color:#888;line-height:1.6;margin-bottom:10px">命主A = 当前已排盘的人。命主B 从档案里选。AI 推荐适合受孕的年月，让孩子拥有相对最优八字。</p>
+    <div class="form-group">
+      <label>另一半（从档案中选）</label>
+      <select id="childPartner" style="width:100%;padding:11px 12px;border:1.5px solid #e8e0d0;border-radius:10px;font-size:15px;background:white;-webkit-appearance:none">
+        <option value="">请先在档案里建一个</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label>计划范围（年）</label>
+      <input type="text" id="childYearRange" placeholder="例：2026-2030">
+    </div>
+    <button class="btn-paipan" onclick="askChildTiming()" style="margin-top:0">推算最佳怀孕窗口</button>
+  </div>
+
+  <!-- 名人对比 -->
+  <div class="chart-card">
+    <h3>名人命例对比</h3>
+    <p style="font-size:12px;color:#888;line-height:1.6;margin-bottom:10px">从近代 26 位名人（毛泽东、蒋介石、邵逸夫、张大千、梅兰芳、曾国藩等）中找出与你最像的 5 位，附 AI 解读为何相似。</p>
+    <button class="btn-paipan" onclick="askFamousMatch()" style="margin-top:0">找出最像我的名人</button>
+  </div>
+
+</div>
+</div><!-- /paneTools -->
+
 <!-- 今日 Tab -->
 <div class="tab-pane" id="paneToday">
 <div class="chart-wrap" style="display:block">
@@ -387,13 +533,55 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
       <div id="todayWx" style="font-size:13px;color:#a0622b;margin-top:8px;letter-spacing:2px"></div>
     </div>
   </div>
+
+  <div class="chart-card" id="todayQuickCard" style="display:none">
+    <h3>今日速判（机械算出）</h3>
+    <div id="todayQuickBody"></div>
+  </div>
+
   <div class="chart-card">
     <h3>今日运势速查</h3>
-    <p style="font-size:13px;color:#666;line-height:1.7;margin-bottom:14px">点下方按钮，AI 根据今日干支 + 你的命盘，给出当天运势：宜做什么、忌做什么、戴哪种水晶最配、要小心什么人和事。</p>
+    <p style="font-size:13px;color:#666;line-height:1.7;margin-bottom:14px">基于上面的速判 + 你的命盘 + 知识库，AI 给出当天宜忌、推荐水晶、要小心的人事。</p>
     <button class="btn-paipan" onclick="askToday()" style="margin-top:0">查看今日运势</button>
+    <button class="btn-copy" onclick="askToday(true)" style="margin-top:8px;font-size:13px;padding:10px">重新生成（不读缓存）</button>
   </div>
 </div>
 </div><!-- /paneToday -->
+
+<!-- 合婚 Tab -->
+<div class="tab-pane" id="paneMatch">
+<div class="chart-wrap" style="display:block">
+
+  <!-- 命主A 提示 -->
+  <div class="chart-card">
+    <h3>合 婚 合 盘</h3>
+    <div id="matchHeader" style="font-size:13px;color:#666;line-height:1.7;margin-bottom:6px">
+      命主 A：当前排盘的人。<br>
+      命主 B：从下方档案选一个，或先去「档案」保存对方生辰再回来。
+    </div>
+  </div>
+
+  <!-- 选 B -->
+  <div class="chart-card">
+    <h3>选择 命主 B</h3>
+    <div id="matchPickList" class="profile-list" style="margin:0;max-height:none"></div>
+  </div>
+
+  <!-- 速判区（选好 B 后才显示） -->
+  <div class="chart-card" id="matchQuickCard" style="display:none">
+    <h3>结构速判（自动算出，给 AI 当锚点）</h3>
+    <div id="matchQuickBody"></div>
+  </div>
+
+  <!-- 双盘对照（选好 B 后才显示） -->
+  <div class="chart-card" id="matchPairCard" style="display:none">
+    <h3>双 盘 对 照</h3>
+    <div id="matchPairBody"></div>
+  </div>
+
+  <button id="matchAskBtn" class="btn-paipan" onclick="askMatch()" style="display:none;margin-top:0">让 AI 详细合婚分析</button>
+</div>
+</div><!-- /paneMatch -->
 
 <!-- 对话 Tab -->
 <div class="tab-pane" id="paneChat">
@@ -4192,6 +4380,58 @@ const CANGGAN = {
   申:["庚","壬","戊"],酉:["辛"],戌:["戊","辛","丁"],亥:["壬","甲"]
 };
 
+// ─── 干支关系（合婚/今日速判用） ───
+const TG_HE = { 甲:"己", 乙:"庚", 丙:"辛", 丁:"壬", 戊:"癸", 己:"甲", 庚:"乙", 辛:"丙", 壬:"丁", 癸:"戊" };
+const TG_HE_WX = { "甲己":"土", "乙庚":"金", "丙辛":"水", "丁壬":"木", "戊癸":"火" };
+const TG_CHONG = { 甲:"庚", 乙:"辛", 丙:"壬", 丁:"癸", 戊:null, 己:null, 庚:"甲", 辛:"乙", 壬:"丙", 癸:"丁" };
+const DZ_LIUHE = { 子:"丑", 丑:"子", 寅:"亥", 卯:"戌", 辰:"酉", 巳:"申", 午:"未", 未:"午", 申:"巳", 酉:"辰", 戌:"卯", 亥:"寅" };
+const DZ_LIUHE_WX = { "子丑":"土", "寅亥":"木", "卯戌":"火", "辰酉":"金", "巳申":"水", "午未":"火土" };
+const DZ_CHONG = { 子:"午", 丑:"未", 寅:"申", 卯:"酉", 辰:"戌", 巳:"亥", 午:"子", 未:"丑", 申:"寅", 酉:"卯", 戌:"辰", 亥:"巳" };
+const DZ_XING = { // 三刑 / 自刑
+  寅:"巳", 巳:"申", 申:"寅",  // 寅巳申无恩之刑
+  丑:"戌", 戌:"未", 未:"丑",  // 丑戌未恃势之刑
+  子:"卯", 卯:"子",            // 子卯无礼之刑
+  辰:"辰", 午:"午", 酉:"酉", 亥:"亥"  // 自刑
+};
+const DZ_HAI = { 子:"未", 未:"子", 丑:"午", 午:"丑", 寅:"巳", 巳:"寅", 卯:"辰", 辰:"卯", 申:"亥", 亥:"申", 酉:"戌", 戌:"酉" };
+
+// 五行生克
+const WX_SHENG = { 木:"火", 火:"土", 土:"金", 金:"水", 水:"木" }; // 谁生谁
+const WX_KE    = { 木:"土", 土:"水", 水:"火", 火:"金", 金:"木" }; // 谁克谁
+
+// 干支组合 -> 关系标签（用于成对比较，A 在前 B 在后均可）
+function ganRelation(a, b) {
+  if (a === b) return { type:"同", desc:"同干" };
+  if (TG_HE[a] === b) return { type:"合", desc:`${a}${b}合化${TG_HE_WX[a<b?a+b:b+a] || "?"}` };
+  if (TG_CHONG[a] === b) return { type:"冲", desc:`${a}${b}相冲` };
+  if (TG_WX[a] === TG_WX[b]) return { type:"比", desc:`同属${TG_WX[a]}` };
+  if (WX_SHENG[TG_WX[a]] === TG_WX[b]) return { type:"生", desc:`${a}(${TG_WX[a]})生${b}(${TG_WX[b]})` };
+  if (WX_SHENG[TG_WX[b]] === TG_WX[a]) return { type:"生", desc:`${b}(${TG_WX[b]})生${a}(${TG_WX[a]})` };
+  if (WX_KE[TG_WX[a]] === TG_WX[b]) return { type:"克", desc:`${a}(${TG_WX[a]})克${b}(${TG_WX[b]})` };
+  if (WX_KE[TG_WX[b]] === TG_WX[a]) return { type:"克", desc:`${b}(${TG_WX[b]})克${a}(${TG_WX[a]})` };
+  return { type:"无", desc:"无明显关系" };
+}
+
+function zhiRelation(a, b) {
+  if (a === b) {
+    if (DZ_XING[a] === a) return { type:"自刑", desc:`${a}${a}自刑` };
+    return { type:"同", desc:"同支" };
+  }
+  if (DZ_LIUHE[a] === b) {
+    const k = a < b ? a + b : b + a;
+    return { type:"合", desc:`${a}${b}六合${DZ_LIUHE_WX[k] ? "化" + DZ_LIUHE_WX[k] : ""}` };
+  }
+  if (DZ_CHONG[a] === b) return { type:"冲", desc:`${a}${b}相冲` };
+  if (DZ_XING[a] === b || DZ_XING[b] === a) return { type:"刑", desc:`${a}${b}相刑` };
+  if (DZ_HAI[a] === b) return { type:"害", desc:`${a}${b}相害` };
+  if (DZ_WX[a] === DZ_WX[b]) return { type:"比", desc:`同属${DZ_WX[a]}` };
+  if (WX_SHENG[DZ_WX[a]] === DZ_WX[b]) return { type:"生", desc:`${DZ_WX[a]}生${DZ_WX[b]}` };
+  if (WX_SHENG[DZ_WX[b]] === DZ_WX[a]) return { type:"生", desc:`${DZ_WX[b]}生${DZ_WX[a]}` };
+  if (WX_KE[DZ_WX[a]] === DZ_WX[b]) return { type:"克", desc:`${DZ_WX[a]}克${DZ_WX[b]}` };
+  if (WX_KE[DZ_WX[b]] === DZ_WX[a]) return { type:"克", desc:`${DZ_WX[b]}克${DZ_WX[a]}` };
+  return { type:"无", desc:"无明显关系" };
+}
+
 // 节气近似公式（误差 ±1 天）
 function getJieDate(year, ji) {
   const C = {
@@ -4425,6 +4665,7 @@ let selectedGender = "男";
 let currentChart = null;
 let chatHistory = [];
 let isStreaming = false;
+let matchSelectedB = null;  // 合婚选中的命主 B
 
 // 城市经度查表（用于真太阳时校正）
 const CITY_LON = {
@@ -4567,6 +4808,7 @@ function doPaipan() {
   try {
     currentChart = paipan(name, selectedGender, year, month, day, hour, minute, lon);
     chatHistory = [];
+    matchSelectedB = null;  // 换命主A就清掉B
     document.getElementById("chatMsgs").innerHTML = "";
     renderChart(currentChart);
     enterChartView(name, selectedGender, year, month, day, hour, minute);
@@ -4602,8 +4844,11 @@ function switchTab(name) {
   document.querySelectorAll(".tab-btn").forEach(b => b.classList.toggle("on", b.dataset.tab === name));
   document.getElementById("paneChart").classList.toggle("active", name === "chart");
   document.getElementById("paneToday").classList.toggle("active", name === "today");
+  const toolsPane = document.getElementById("paneTools");
+  if (toolsPane) toolsPane.classList.toggle("active", name === "tools");
   document.getElementById("paneChat").classList.toggle("active", name === "chat");
   if (name === "today") renderToday();
+  if (name === "tools") refreshToolsTab();
   if (name === "chat") {
     setTimeout(() => {
       const ta = document.getElementById("chatInput");
@@ -4612,7 +4857,29 @@ function switchTab(name) {
   }
 }
 
-// 今日干支显示
+// 进入工具 Tab 时初始化
+function refreshToolsTab() {
+  const sel = document.getElementById("childPartner");
+  if (!sel) return;
+  const list = getProfiles().filter(p => !currentChart || p.name !== currentChart.meta.name);
+  sel.innerHTML = list.length === 0
+    ? '<option value="">请先在档案里建一个另一半的档案</option>'
+    : '<option value="">— 请选择 —</option>' + list.map((p,i) => `<option value="${i}">${escapeHtml(p.name)} · ${p.gender} · ${p.year}-${p.month}-${p.day}</option>`).join("");
+  const df = document.getElementById("dateFrom"), dt = document.getElementById("dateTo");
+  if (df && !df.value) {
+    const today = new Date();
+    df.value = today.toISOString().slice(0,10);
+    const end = new Date(today.getTime() + 90*86400000);
+    dt.value = end.toISOString().slice(0,10);
+  }
+  const cyr = document.getElementById("childYearRange");
+  if (cyr && !cyr.value) {
+    const yy = new Date().getFullYear();
+    cyr.value = `${yy}-${yy+4}`;
+  }
+}
+
+// 今日干支显示 + 速判
 function renderToday() {
   const now = new Date();
   const y = now.getFullYear(), m = now.getMonth()+1, d = now.getDate();
@@ -4625,10 +4892,114 @@ function renderToday() {
   document.getElementById("todayDate").textContent = dateStr + " · 流年" + yTg + yDz + " · 流月" + mTg + mDz;
   document.getElementById("todayGz").innerHTML = `<span class="${'wx-'+TG_WX[dTg]}">${dTg}</span><span class="${'wx-'+DZ_WX[dDz]}">${dDz}</span>`;
   document.getElementById("todayWx").textContent = "日柱五行：" + wxStr;
+
+  // 速判（需要 currentChart）
+  if (!currentChart) {
+    document.getElementById("todayQuickCard").style.display = "none";
+    return;
+  }
+  const judge = computeTodayJudge(currentChart, dTg, dDz, yTg, yDz, mTg, mDz);
+  let html = `
+    <div class="today-quick">
+      <div class="tq-score-row">
+        <div class="tq-circle ${judge.level}">
+          <div class="tqc-num">${judge.score}</div>
+          <div class="tqc-lab">分 / 100</div>
+        </div>
+        <div class="tq-text">
+          <div style="font-weight:600;color:#3d1a00;margin-bottom:4px">${judge.tagline}</div>
+          <div style="font-size:12px;color:#666">${judge.summary}</div>
+        </div>
+      </div>
+      <div class="tq-tag-row">
+        ${judge.tags.map(t => `<span class="tq-tag ${t.kind}">${t.text}</span>`).join("")}
+      </div>
+    </div>
+  `;
+  document.getElementById("todayQuickBody").innerHTML = html;
+  document.getElementById("todayQuickCard").style.display = "";
+}
+
+// 计算今日 vs 命主的结构关系
+function computeTodayJudge(chart, dTg, dDz, yTg, yDz, mTg, mDz) {
+  const myDayTg = chart.dTg, myDayDz = chart.dDz;
+  // 与本命日柱
+  const tgRel = ganRelation(dTg, myDayTg);
+  const dzRel = zhiRelation(dDz, myDayDz);
+
+  // 与本命四支检查
+  const allDz = ["year","month","day","hour"].map(k => ({ pos:k, dz:chart.sz[k].dz }));
+  const conflicts = [];
+  const harmonies = [];
+  for (const {pos, dz} of allDz) {
+    if (DZ_CHONG[dDz] === dz) conflicts.push(`今日${dDz}冲${pos}支${dz}`);
+    if (DZ_LIUHE[dDz] === dz) harmonies.push(`今日${dDz}合${pos}支${dz}`);
+  }
+
+  // 落空亡？
+  const inKw = chart.kongwang.dz.includes(dDz);
+
+  // 十神关系（今日干 vs 日主）
+  const todaySs = dTg === myDayTg ? "比肩(同我)" : getShishen(myDayTg, dTg);
+
+  let score = 50;
+  if (tgRel.type === "合") score += 6;
+  if (tgRel.type === "冲") score -= 6;
+  if (tgRel.type === "克") score -= 3;  // 今日克日主
+  if (tgRel.type === "生") score += 4;  // 今日生日主
+  if (tgRel.type === "比") score += 2;
+  if (dzRel.type === "合") score += 8;
+  if (dzRel.type === "冲") score -= 10;
+  if (dzRel.type === "刑") score -= 6;
+  if (dzRel.type === "害") score -= 4;
+  if (dzRel.type === "自刑") score -= 4;
+  if (dzRel.type === "生") score += 4;
+  if (dzRel.type === "克") score -= 2;
+  // 与其他三支
+  score -= conflicts.length * 3;
+  score += harmonies.length * 3;
+  if (inKw) score -= 5;
+
+  score = Math.max(15, Math.min(92, Math.round(score)));
+
+  let level = "mid", tagline = "今日中等", summary = "";
+  if (score >= 68) {
+    level = "high";
+    tagline = "今日吉";
+    summary = "可以做点重要的事，比如谈合作、表白、面试。";
+  } else if (score >= 45) {
+    level = "mid";
+    tagline = "今日中等";
+    summary = "无大风波，按部就班；不强求大动作。";
+  } else {
+    level = "low";
+    tagline = "今日宜静";
+    summary = "今天有冲克，重大决定推到明天，少出风头。";
+  }
+  if (dzRel.type === "冲") {
+    tagline = "今日冲日支，要小心";
+    summary = `今日${dDz}冲你日支${myDayDz}，传统认为冲日不宜动土、远行、签约。`;
+    level = "low";
+  }
+  if (dzRel.type === "合" && tgRel.type === "合") {
+    tagline = "今日天地双合本命";
+    summary = "今天和你气场最和，适合做想做的事。";
+    level = "high";
+  }
+
+  const tags = [];
+  tags.push({ kind:"", text:`今日干 ${dTg}：${todaySs}` });
+  if (tgRel.type !== "无") tags.push({ kind: tgRel.type === "合"||tgRel.type==="生"||tgRel.type==="比" ? "good" : "bad", text:`干·${tgRel.type}` });
+  if (dzRel.type !== "无") tags.push({ kind: dzRel.type === "合"||dzRel.type==="生"||dzRel.type==="比" ? "good" : "bad", text:`支·${dzRel.type}` });
+  if (inKw) tags.push({ kind:"bad", text:"落空亡" });
+  for (const c of conflicts) tags.push({ kind:"bad", text:c });
+  for (const h of harmonies) tags.push({ kind:"good", text:h });
+
+  return { score, level, tagline, summary, tags, conflicts, harmonies, inKw, todaySs, tgRel, dzRel };
 }
 
 // 今日运势提问
-function askToday() {
+function askToday(forceFresh) {
   if (isStreaming) return;
   if (!currentChart) { alert("请先排盘"); return; }
   const now = new Date();
@@ -4638,34 +5009,94 @@ function askToday() {
   const [dTg, dDz] = getDayPillar(y, m, d);
   const dateStr = `${y}年${m}月${d}日`;
 
+  // 缓存检查
+  const meta = currentChart.meta;
+  const chartKey = `${meta.name}_${meta.year}${meta.month}${meta.day}${meta.hour}${meta.minute}`;
+  const cacheKey = `today_${y}${m}${d}_${chartKey}`;
   switchTab("chat");
-  const prompt = `今天是 ${dateStr}，今日干支 ${dTg}${dDz}（流年${yTg}${yDz} · 流月${mTg}${mDz}）。请根据我的命盘 + 今日干支，给我今日运势速报，结构如下：
+
+  if (!forceFresh) {
+    const cached = localStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        const obj = JSON.parse(cached);
+        addBubble("user", `查看 ${dateStr} 的今日运势`);
+        const aiDiv = addBubble("ai", "");
+        aiDiv.querySelector(".bubble").innerHTML = simpleMarkdown(obj.text) +
+          '<div style="margin-top:10px;padding-top:8px;border-top:1px dashed #d4a96a;font-size:11px;color:#a0622b">↑ 今日已生成过，从缓存读取（无费用）。点「重新生成」可重新算。</div>';
+        chatHistory.push({ role:"user", content:`查看 ${dateStr} 的今日运势` });
+        chatHistory.push({ role:"assistant", content: obj.text });
+        return;
+      } catch(e) {}
+    }
+  }
+
+  const judge = computeTodayJudge(currentChart, dTg, dDz, yTg, yDz, mTg, mDz);
+  const structText = `
+机械算出的今日结构（直接采用，不要重算）：
+  · 今日干 ${dTg} 对你日主${currentChart.dTg} 是 ${judge.todaySs}
+  · 今日干${dTg} vs 你日干${currentChart.dTg}：${judge.tgRel.type}（${judge.tgRel.desc}）
+  · 今日支${dDz} vs 你日支${currentChart.dDz}：${judge.dzRel.type}（${judge.dzRel.desc}）
+  · 与本命四支冲合：${judge.conflicts.length ? judge.conflicts.join("、") : "无冲"}；${judge.harmonies.length ? judge.harmonies.join("、") : "无合"}
+  · 是否落空亡：${judge.inKw ? "是（"+currentChart.kongwang.dz.join("")+"）" : "否"}
+  · 机械总评：${judge.score}/100（${judge.tagline}）`;
+
+  const prompt = `今天是 ${dateStr}，今日干支 ${dTg}${dDz}（流年${yTg}${yDz} · 流月${mTg}${mDz}）。
+${structText}
+
+请基于上面的结构 + 我的命盘，给我今日运势速报，结构如下：
 
 一、今日整体 [高/中/低]
-  一句话总结今天对你而言是什么样的日子。
-  [依据：今日 ${dTg}${dDz} 与你日主 ${currentChart.dTg} 的关系；流月 ${mTg}${mDz} 与本命 xx 关系]
+  一句话总结。要呼应机械总评但能解释"为什么"。
+  [依据：今日 ${dTg}${dDz} 与你日主 ${currentChart.dTg}${currentChart.dDz} 的关系；流月 ${mTg}${mDz}]
 
 二、今日宜（3 项）
-  · 宜 ____（如：求职/谈判/告白/出行/签约/学习）[依据：xx]
+  · 宜 ____（具体事：谈判/告白/出行/签约/学习等）[依据：xx]
   · 宜 ____ [依据：xx]
   · 宜 ____ [依据：xx]
 
 三、今日忌（3 项）
-  · 忌 ____（如：动怒/借贷/远行/重大决策/动土）[依据：xx]
+  · 忌 ____ [依据：xx]
   · 忌 ____ [依据：xx]
   · 忌 ____ [依据：xx]
 
-四、今日水晶（1 种主推）
-  推荐戴 ____（左/右手），原因 ____ [依据：水晶库·xx 五行]
+四、今日水晶（1 种主推 + 1 种辅）
+  主推 ____（左/右手），原因 ____ [依据：水晶库·xx 五行]
+  辅 ____ [依据：xx]
 
 五、今日提防
   小心的人或事 ____（"什么样的人"，不要说"小人"这种空话）[依据：xx]
 
 六、今日金句
-  根据今日干支组合，给一句具体可执行的实用箴言（如："今天少说多听""把决定推到明天""见到老朋友主动联系"）
+  根据今日干支组合，给一句具体可执行的实用箴言。
 
 简短直接，全文 400 字内。所有结论沿用之前的铁规：标依据、标置信度、禁奉承、禁蒙猜。`;
-  callClaude(prompt);
+
+  // 调用并缓存
+  callClaudeAndCache(prompt, cacheKey);
+}
+
+// 调 Claude + 写入缓存（用于今日运势这种"一天一次"的场景）
+async function callClaudeAndCache(userMsg, cacheKey) {
+  await callClaude(userMsg);
+  // 拿到最后一条 AI 回复存入缓存
+  const last = chatHistory[chatHistory.length - 1];
+  if (last && last.role === "assistant") {
+    try {
+      localStorage.setItem(cacheKey, JSON.stringify({ text: last.content, ts: Date.now() }));
+      // 顺手清掉一周前的旧缓存
+      const now = Date.now();
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && k.startsWith("today_")) {
+          try {
+            const v = JSON.parse(localStorage.getItem(k));
+            if (v.ts && now - v.ts > 7*24*3600*1000) localStorage.removeItem(k);
+          } catch(e) {}
+        }
+      }
+    } catch(e) { /* 配额满了就算了 */ }
+  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -5070,7 +5501,6 @@ function renderProfileList() {
         <div class="pi-meta">${p.year}-${p.month}-${p.day} ${p.hour}:${String(p.minute||0).padStart(2,'0')} · 经度${p.lon}</div>
       </div>
       <button class="pi-load" onclick="loadProfile(${i})">载入</button>
-      ${hasCurrent && !isCurrent ? `<button class="pi-match" onclick="matchProfile(${i})">合婚</button>` : ''}
       <button class="pi-del" onclick="deleteProfile(${i})">×</button>
     </div>`;
   }).join("");
@@ -5130,13 +5560,244 @@ function deleteProfile(i) {
   renderProfileList();
 }
 
+// ═══════════════════════════════════════════════════
+// 工具 Tab 的四个功能
+// ═══════════════════════════════════════════════════
+
+// ─── 1. 名字打分 ───
+function askNameScore() {
+  if (isStreaming) return;
+  if (!currentChart) { alert("请先排盘"); return; }
+  const raw = document.getElementById("namesInput").value.trim();
+  if (!raw) { alert("请填入候选名字（每行一个）"); return; }
+  const names = raw.split("\n").map(s => s.trim()).filter(Boolean).slice(0, 10);
+  if (names.length === 0) { alert("没有有效名字"); return; }
+
+  switchTab("chat");
+  const prompt = `请对下面这 ${names.length} 个候选名字打分。命主八字已知（在系统中）。
+
+候选名字：
+${names.map((n,i) => `${i+1}. ${n}`).join("\n")}
+
+每个名字按以下三个维度打分（0-100）：
+A. 笔画数理（康熙字典繁体笔画 + 三才五格 + 81 数理吉凶表）
+B. 五行属性（每字的五行 + 整名五行配置 + 是否补命主喜用神）
+C. 音韵气场（读音是否流畅、避口忌 / 有无谐音）
+
+输出格式（必须严格按这个 markdown 表格）：
+
+| 名字 | A 数理 | B 五行 | C 音韵 | 总分 | 评语 |
+|------|--------|--------|--------|------|------|
+| 王浩然 | 92 | 88 | 90 | 90 | 一句话评价 [依据：xx] [高/中/低] |
+...
+
+排序后给出**推荐顺序前 3 名**，每名:
+- 笔画拆解（每字繁体笔画 + 五行）
+- 关键优点 [依据]
+- 一句风险提示 [依据]
+
+最后给出**最不推荐的 1 个**，说明原因。
+
+禁奉承（"大富大贵""龙凤之姿"全禁）。每个论断要标 [依据] 和置信度。`;
+  callClaude(prompt);
+}
+
+// ─── 2. 择吉日 ───
+function askAuspiciousDate() {
+  if (isStreaming) return;
+  if (!currentChart) { alert("请先排盘"); return; }
+  const event = document.getElementById("eventType").value;
+  const from = document.getElementById("dateFrom").value;
+  const to   = document.getElementById("dateTo").value;
+  if (!from || !to) { alert("请填日期范围"); return; }
+  if (new Date(to) <= new Date(from)) { alert("结束日期必须晚于开始日期"); return; }
+  const days = Math.round((new Date(to) - new Date(from)) / 86400000);
+  if (days > 180) { if (!confirm(`日期范围 ${days} 天，跨度较大，AI 推算时间会久一些。继续？`)) return; }
+
+  switchTab("chat");
+  const prompt = `请帮我择吉日。
+
+【事件】${event}
+【范围】${from} 到 ${to}（共 ${days} 天）
+【命主八字】见系统中已排盘的命主信息。
+
+请按以下流程：
+1. 判断本事件应避开的天干地支结构（如：结婚忌冲日柱/冲流年；开业忌空亡日；动土忌岁破方）
+2. 推演范围内每一天的干支
+3. 在范围内挑出 5 个最佳日子，按推荐度排序
+
+输出格式（严格 markdown 表格）：
+
+| 排名 | 阳历日期 | 当日干支 | 与命主关系 | 推荐度 | 一句话理由 |
+|------|----------|----------|------------|--------|------------|
+| 1 | 2026-05-15 | xxxx | xx合 / xx生扶 | [高] | xx [依据：xx] |
+...
+
+每个日子的"理由"必须带 [依据：xx 黄历/方法论笔记/xx 派xx 法] 和 [高/中/低] 置信度。
+
+【硬规则——必须执行】
+- 必须避开冲日柱日（命主大忌）
+- 必须避开空亡日（${event}尤其忌）
+- 优先选与命主用神相生 / 三合 / 六合 的日子
+- 列出每天具体几点最旺（时辰精准到 2 小时区间）
+
+最后一句话给"次选 3 天"作为备选（同样格式），万一这 5 天都不行用。`;
+  callClaude(prompt);
+}
+
+// ─── 3. 我俩孩子何时生最好 ───
+function askChildTiming() {
+  if (isStreaming) return;
+  if (!currentChart) { alert("请先排盘命主A"); return; }
+  const idx = document.getElementById("childPartner").value;
+  if (idx === "") { alert("请从档案选择另一半"); return; }
+  const range = document.getElementById("childYearRange").value.trim();
+  if (!range || !range.match(/^\d{4}-\d{4}$/)) { alert("年份范围格式：2026-2030"); return; }
+  const [y1, y2] = range.split("-").map(Number);
+  if (y2 - y1 > 6) { alert("范围最多 6 年"); return; }
+
+  const other = getProfiles()[parseInt(idx)];
+  if (!other) { alert("档案丢失"); return; }
+
+  switchTab("chat");
+  const A = currentChart.meta;
+  const prompt = `推算我俩孩子何时生最好。
+
+【父母A】${A.name} · ${A.gender}
+出生：${A.year}-${A.month}-${A.day} ${A.hour}:${String(A.minute).padStart(2,'0')}
+四柱：${currentChart.sz.year.gz} ${currentChart.sz.month.gz} ${currentChart.sz.day.gz} ${currentChart.sz.hour.gz}
+
+【父母B】${other.name} · ${other.gender}
+出生：${other.year}-${other.month}-${other.day} ${other.hour}:${String(other.minute||0).padStart(2,'0')}（请你手推 B 的四柱）
+
+【目标受孕窗口】${y1} 到 ${y2} 年
+
+请按以下结构分析：
+
+一、父母双方的命局缺口（各方缺什么五行、用什么）[依据 + 置信度]
+二、孩子需补什么五行：综合父母双方，孩子若八字含 X 五行能与全家最和谐 [依据 + 置信度]
+三、推算 ${y2-y1+1} 年中每年的 流年五行属性 + 当年怀孕生子（次年生）的子女命格倾向
+四、推荐受孕年份 TOP 3
+   按表格：
+   | 排名 | 受孕年 | 出生年 | 子女八字主结构倾向 | 推荐度 [置信度] | 一句话理由 [依据] |
+
+五、推荐受孕月份（受孕年的哪几个月最佳，到月份为止）
+六、需避开的年份/月份（如冲父母、流年凶星、空亡月）
+七、对父母身体的提醒（结合年龄 + 五行特征）
+
+禁套话："早生贵子""龙凤呈祥"全禁。每条结论必须有依据和置信度。`;
+  callClaude(prompt);
+}
+
+// ─── 4. 名人对比 ───
+const FAMOUS_PEOPLE = [
+  { name:"毛泽东", gender:"男", sz:"癸巳 甲子 丁酉 癸卯", role:"政治领袖", note:"建国领袖，丁火生子月七杀格" },
+  { name:"邵逸夫", gender:"男", sz:"丁未 辛亥 壬申 甲辰", role:"影视大亨", note:"TVB 创始人，食神生正财格，稳健型上等命" },
+  { name:"张学良", gender:"男", sz:"辛丑 癸巳 壬子 庚子", role:"民国军阀", note:"少帅，金水联珠无食伤" },
+  { name:"杜月笙", gender:"男", sz:"戊子 庚申 乙丑 壬午", role:"上海大亨", note:"青帮，正官格财官印三全" },
+  { name:"张作霖", gender:"男", sz:"乙亥 己卯 庚辰 丁丑", role:"东北王", note:"北洋军阀，财官印三透" },
+  { name:"蒋介石", gender:"男", sz:"丁亥 庚戌 己巳 庚午", role:"民国总统", note:"伤官佩印格，丙午运风云际会" },
+  { name:"孔祥熙", gender:"男", sz:"庚辰 乙酉 癸卯 庚申", role:"财政部长", note:"民国首富，独木三犯庚辛" },
+  { name:"宋子文", gender:"男", sz:"甲午 乙亥 庚辰 庚卯", role:"财政部长", note:"亥中食神得禄" },
+  { name:"阎锡山", gender:"男", sz:"癸未 辛酉 乙巳 丁亥", role:"山西王", note:"富贵牧高官" },
+  { name:"孙传芳", gender:"男", sz:"乙酉 庚辰 壬寅 戊申", role:"五省联军总司令", note:"宜为疆帅" },
+  { name:"哈同", gender:"男", sz:"己酉 庚午 庚子 丙子", role:"上海地产大王", note:"空拳致富" },
+  { name:"章太炎", gender:"男", sz:"戊辰 乙丑 癸卯 庚申", role:"国学大师", note:"官印两透，贵而不富" },
+  { name:"于右任", gender:"男", sz:"己卯 戊辰 甲子 壬申", role:"书法家/政治家", note:"清秀学宫" },
+  { name:"张大千", gender:"男", sz:"己亥 己巳 戊寅 甲寅", role:"画家", note:"画追秦汉，创造力非凡" },
+  { name:"梅兰芳", gender:"男", sz:"甲午 甲戌 丁酉 癸卯", role:"京剧大师", note:"伶界大王，艺术独精" },
+  { name:"徐乐吾", gender:"男", sz:"丙戌 壬辰 丙申 丙申", role:"命理学家", note:"近代命理研究大师" },
+  { name:"朱家骅", gender:"男", sz:"癸巳 丁巳 丁卯 丙午", role:"中央研究院院长", note:"主持研究院 18 年" },
+  { name:"韦千里", gender:"男", sz:"辛亥 辛卯 庚子 庚辰", role:"命理学家", note:"自批身弱之命" },
+  { name:"马占山", gender:"男", sz:"乙酉 丁亥 己丑 甲子", role:"抗日将军", note:"八字贵重，生生不息" },
+  { name:"吴佩孚", gender:"男", sz:"甲戌 戊辰 戊申 壬子", role:"北洋军阀", note:"身财两美，屡起屡仆" },
+  { name:"何应钦", gender:"男", sz:"庚寅 己卯 癸丑 戊午", role:"军事领袖", note:"庚金透天，官来就我" },
+  { name:"曾国藩", gender:"男", sz:"辛未 己亥 丙辰 己亥", role:"晚清三杰", note:"伤官驾杀格，出将入相" },
+  { name:"左宗棠", gender:"男", sz:"壬申 辛亥 丙午 庚寅", role:"晚清三杰", note:"杀刃两停，封侯拜相" },
+  { name:"彭玉麟", gender:"男", sz:"丙子 辛丑 戊子 癸丑", role:"晚清三杰", note:"千古人物" },
+  { name:"关羽", gender:"男", sz:"庚午 庚申 戊午 戊午", role:"武圣", note:"三奇顺布，四柱纯阳" },
+  { name:"钟森", gender:"男", sz:"丁未 辛亥 辛亥 甲午", role:"矿业大王", note:"赤手起创伟业，财来如潮" },
+];
+
+// 计算两组四柱的相似度
+function similarityScore(myChart, famousSz) {
+  const cols = ["year","month","day","hour"];
+  const fSz = famousSz.split(" ");
+  if (fSz.length !== 4) return 0;
+  let score = 0;
+  cols.forEach((col, i) => {
+    const myGz = myChart.sz[col].gz;
+    const fGz = fSz[i];
+    if (myGz === fGz) score += 8;
+    else {
+      if (myGz[0] === fGz[0]) score += 3;
+      if (myGz[1] === fGz[1]) score += 2;
+    }
+  });
+  if (myChart.dTg === fSz[2][0]) score += 6;
+  // 五行结构相似度
+  const myStats = computeWuxingStats(myChart);
+  const fStats = {木:0,火:0,土:0,金:0,水:0};
+  cols.forEach((c, i) => {
+    fStats[TG_WX[fSz[i][0]]] += 1;
+    fStats[DZ_WX[fSz[i][1]]] += 1;
+  });
+  let cosSim = 0, mNorm = 0, fNorm = 0;
+  for (const wx of ["木","火","土","金","水"]) {
+    cosSim += myStats[wx] * fStats[wx];
+    mNorm  += myStats[wx] ** 2;
+    fNorm  += fStats[wx] ** 2;
+  }
+  cosSim = cosSim / (Math.sqrt(mNorm) * Math.sqrt(fNorm) || 1);
+  score += cosSim * 12;
+  return Math.round(score);
+}
+
+function askFamousMatch() {
+  if (isStreaming) return;
+  if (!currentChart) { alert("请先排盘"); return; }
+  // 本地算 top 5
+  const ranked = FAMOUS_PEOPLE.map(p => ({ ...p, score: similarityScore(currentChart, p.sz) }))
+                              .sort((a,b) => b.score - a.score)
+                              .slice(0, 5);
+
+  switchTab("chat");
+  const myInfo = currentChart.meta;
+  const mySz = `${currentChart.sz.year.gz} ${currentChart.sz.month.gz} ${currentChart.sz.day.gz} ${currentChart.sz.hour.gz}`;
+
+  const prompt = `本系统已经从 26 位近代名人中算出与命主八字结构最像的 5 位（基于四柱重合度 + 五行分布余弦相似度 + 日主匹配）。请你解读"为什么像"以及"命主能从他们身上学到什么"。
+
+【命主】${myInfo.name||"命主"} · ${myInfo.gender} · ${mySz}（日主 ${currentChart.dTg}${TG_WX[currentChart.dTg]}）
+
+【相似 TOP 5】
+${ranked.map((p,i) => `${i+1}. ${p.name}（${p.role}）· 相似度 ${p.score} 分
+   四柱：${p.sz}
+   背景：${p.note}`).join("\n\n")}
+
+请逐个分析（每位不超过 150 字）：
+
+【N】${ranked[0].name}：
+- 像在哪：具体到哪柱、哪个十神结构、哪种格局倾向相似 [依据：xx 笔记]
+- 学习价值：命主可以从 ${ranked[0].name} 的人生经历里借鉴什么 [中/高]
+- 警示价值：${ranked[0].name} 的"运败"或"晚境"对命主有何提醒（如有）
+
+最后一段【整体启示】：
+基于这 5 位的共性，命主可能拥有的优势是 ___ ，需警惕的是 ___ [依据：综合相似度模式]。
+
+【硬规则】
+- 不许说"前世是 XX""转世为 XX"这种话
+- 不许吹"贵不可言""命格罕见"
+- 实事求是：相似不等于命运一样，环境/家世/努力差异巨大，必须明说`;
+  callClaude(prompt);
+}
+
 // ─── 命盘分享卡（Canvas 绘制） ───
 const WX_CRYSTAL_REC = {
-  木: "绿幽灵 / 绿松石",
-  火: "石榴石 / 红发晶",
-  土: "黄水晶 / 虎眼石",
-  金: "白水晶 / 月光石",
-  水: "黑曜石 / 茶水晶"
+  木: { main:"绿幽灵", sub:"绿松石", color:"#2d7a2d" },
+  火: { main:"石榴石", sub:"红发晶", color:"#c0392b" },
+  土: { main:"黄水晶", sub:"虎眼石", color:"#a0622b" },
+  金: { main:"白水晶", sub:"月光石", color:"#b8860b" },
+  水: { main:"黑曜石", sub:"茶水晶", color:"#2471a3" }
 };
 
 function computeWuxingStats(c) {
@@ -5150,6 +5811,36 @@ function computeWuxingStats(c) {
   return cnt;
 }
 
+// 从十神组合 + 五行强弱推一组性格关键词（机械的，三个）
+function deriveKeywords(c) {
+  const stats = computeWuxingStats(c);
+  const wxOrder = ["木","火","土","金","水"];
+  const max = wxOrder.reduce((a,b) => stats[a] > stats[b] ? a : b);
+  const min = wxOrder.reduce((a,b) => stats[a] < stats[b] ? a : b);
+  const wxTraits = {
+    木:"开朗仁厚",火:"热情急躁",土:"稳重务实",金:"果断刚毅",水:"机敏多思"
+  };
+  const wxLack = {
+    木:"耐心可补",火:"热情可补",土:"沉稳可补",金:"决断可补",水:"灵活可补"
+  };
+  // 看月支十神判性格倾向
+  const monthCgs = c.sz.month.cgs.map(x => x.ss);
+  const dayCgs = c.sz.day.cgs.map(x => x.ss);
+  const allSs = [...monthCgs, ...dayCgs, c.sz.month.ss, c.sz.year.ss, c.sz.hour.ss];
+  let thirdTrait = "";
+  if (allSs.includes("正官")) thirdTrait = "守规矩";
+  else if (allSs.includes("七杀")) thirdTrait = "有锋芒";
+  else if (allSs.includes("正印")) thirdTrait = "重感情";
+  else if (allSs.includes("食神")) thirdTrait = "懂享受";
+  else if (allSs.includes("伤官")) thirdTrait = "有创意";
+  else if (allSs.includes("偏财")) thirdTrait = "讲灵活";
+  else if (allSs.includes("正财")) thirdTrait = "重积累";
+  else if (allSs.includes("比肩") || allSs.includes("劫财")) thirdTrait = "讲义气";
+  else thirdTrait = "性格鲜明";
+
+  return [wxTraits[max] || "性情独立", wxLack[min] || "可补五行", thirdTrait];
+}
+
 function generateShareCard() {
   if (!currentChart) { alert("请先排盘"); return; }
   document.getElementById("shareOverlay").classList.add("show");
@@ -5160,170 +5851,315 @@ function generateShareCard() {
   const ctx = cv.getContext("2d");
   const W = cv.width, H = cv.height;
   const hideName = document.getElementById("hideName").checked;
+  const dark = document.getElementById("darkTheme").checked;
 
-  // 五行色
-  const wxColor = {木:"#2d7a2d",火:"#c0392b",土:"#a0622b",金:"#b8860b",水:"#2471a3"};
+  // 主题
+  const T = dark ? {
+    bgTop:"#0d0a08", bgBot:"#1a1410",
+    cardBg:"#1f1812", cardBorder:"#3d2818",
+    textMain:"#f5e6d3", textSub:"#c9a882", textDim:"#8a6f55",
+    accent:"#d4a96a", divider:"#3d2818",
+    shadow:"rgba(212,169,106,0.08)"
+  } : {
+    bgTop:"#3d1a00", bgBot:"#2c1810",
+    cardBg:"#f5e6d3", cardBorder:"#d4a96a",
+    textMain:"#2c1810", textSub:"#8b4513", textDim:"#a0826a",
+    accent:"#8b4513", divider:"#d4a96a",
+    shadow:"rgba(0,0,0,0.06)"
+  };
+  // 五行色（深浅版各调一套，深色版微亮）
+  const wxColor = dark ? {
+    木:"#5fb35f", 火:"#e85d4a", 土:"#d4a96a", 金:"#e8c970", 水:"#5fa3d4"
+  } : {
+    木:"#2d7a2d", 火:"#c0392b", 土:"#a0622b", 金:"#b8860b", 水:"#2471a3"
+  };
 
-  // 背景
+  const FONT_SERIF = "'Songti SC','STSong','Noto Serif CJK SC',serif";
+  const FONT_SANS = "'PingFang SC','Microsoft YaHei','Noto Sans CJK SC',sans-serif";
+
+  // ─── 1. 背景 ───
   const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0, "#2c1810");
-  grad.addColorStop(1, "#3d1a00");
+  grad.addColorStop(0, T.bgTop);
+  grad.addColorStop(1, T.bgBot);
   ctx.fillStyle = grad;
   ctx.fillRect(0,0,W,H);
 
-  // 米色卡纸
-  ctx.fillStyle = "#f5e6d3";
-  ctx.fillRect(40, 40, W-80, H-80);
-
-  // 装饰边框
-  ctx.strokeStyle = "#8b4513";
-  ctx.lineWidth = 2;
-  ctx.strokeRect(60, 60, W-120, H-120);
-  ctx.strokeRect(50, 50, W-100, H-100);
-
-  // 标题
-  ctx.fillStyle = "#3d1a00";
-  ctx.font = "bold 56px 'Songti SC', 'STSong', serif";
-  ctx.textAlign = "center";
-  ctx.fillText("命 盘", W/2, 150);
-  ctx.font = "20px 'Songti SC', serif";
-  ctx.fillStyle = "#8b4513";
-  ctx.fillText("BaZi Chart · 八字命理", W/2, 185);
-
-  // 分隔线
-  ctx.strokeStyle = "#d4a96a";
-  ctx.lineWidth = 1;
+  // 卡纸
+  const cardX = 36, cardY = 36, cardW = W - 72, cardH = H - 72;
+  ctx.fillStyle = T.cardBg;
   ctx.beginPath();
-  ctx.moveTo(120, 220); ctx.lineTo(W-120, 220);
+  // 圆角矩形
+  const r = 18;
+  ctx.moveTo(cardX+r, cardY);
+  ctx.lineTo(cardX+cardW-r, cardY);
+  ctx.quadraticCurveTo(cardX+cardW, cardY, cardX+cardW, cardY+r);
+  ctx.lineTo(cardX+cardW, cardY+cardH-r);
+  ctx.quadraticCurveTo(cardX+cardW, cardY+cardH, cardX+cardW-r, cardY+cardH);
+  ctx.lineTo(cardX+r, cardY+cardH);
+  ctx.quadraticCurveTo(cardX, cardY+cardH, cardX, cardY+cardH-r);
+  ctx.lineTo(cardX, cardY+r);
+  ctx.quadraticCurveTo(cardX, cardY, cardX+r, cardY);
+  ctx.closePath();
+  ctx.fill();
+
+  // 内框装饰
+  ctx.strokeStyle = T.divider;
+  ctx.lineWidth = 1;
+  ctx.strokeRect(cardX+14, cardY+14, cardW-28, cardH-28);
+
+  // ─── 2. Header ───
+  ctx.textAlign = "center";
+  ctx.fillStyle = T.textMain;
+  ctx.font = `bold 56px ${FONT_SERIF}`;
+  ctx.fillText("命 盘", W/2, 140);
+
+  ctx.font = `18px ${FONT_SERIF}`;
+  ctx.fillStyle = T.textSub;
+  ctx.fillText("BaZi · 八字命理", W/2, 168);
+
+  // 分隔短线
+  ctx.strokeStyle = T.accent;
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(W/2 - 30, 188); ctx.lineTo(W/2 + 30, 188);
   ctx.stroke();
 
-  // 命主信息
-  ctx.fillStyle = "#3d1a00";
-  ctx.font = "26px 'Songti SC', serif";
+  // 命主名 / 性别 / 生日
+  ctx.font = `26px ${FONT_SERIF}`;
+  ctx.fillStyle = T.textMain;
   const nameStr = hideName ? "（命主信息已隐藏）" : `${m.name||"命主"} · ${m.gender}`;
-  ctx.fillText(nameStr, W/2, 270);
-  ctx.font = "18px 'Songti SC', serif";
-  ctx.fillStyle = "#8b4513";
+  ctx.fillText(nameStr, W/2, 230);
+  ctx.font = `15px ${FONT_SERIF}`;
+  ctx.fillStyle = T.textDim;
   if (!hideName) {
-    ctx.fillText(`${m.year}年${m.month}月${m.day}日 ${m.hour}时${String(m.minute).padStart(2,'0')}分`, W/2, 300);
+    ctx.fillText(`阳历 ${m.year}年${m.month}月${m.day}日 ${m.hour}时${String(m.minute).padStart(2,'0')}分`, W/2, 257);
   } else {
-    ctx.fillText("生辰已隐藏", W/2, 300);
+    ctx.fillText("生辰已隐藏", W/2, 257);
   }
 
-  // 四柱表头
-  const sizhuY = 360;
-  ctx.font = "14px 'Songti SC', serif";
-  ctx.fillStyle = "#8b4513";
-  const cols = ["年柱","月柱","日柱","时柱"];
-  const colW = (W - 160) / 4;
-  cols.forEach((label, i) => {
-    ctx.fillText(label, 80 + colW*i + colW/2, sizhuY);
-  });
+  // 性格关键词（小标签）
+  const keywords = deriveKeywords(c);
+  const tagY = 290;
+  ctx.font = `14px ${FONT_SANS}`;
+  // 先量出每个 tag 宽度
+  let tagPaddingX = 14, tagGap = 10;
+  const tagH = 28;
+  let tagWidths = keywords.map(k => ctx.measureText(k).width + tagPaddingX*2);
+  let totalTagW = tagWidths.reduce((s,w) => s+w, 0) + tagGap * (keywords.length - 1);
+  // 防溢出：如果超出卡片可用宽度，缩 padding 和 gap
+  const maxTagsW = cardW - 60;
+  if (totalTagW > maxTagsW) {
+    tagPaddingX = 9; tagGap = 6;
+    tagWidths = keywords.map(k => ctx.measureText(k).width + tagPaddingX*2);
+    totalTagW = tagWidths.reduce((s,w) => s+w, 0) + tagGap * (keywords.length - 1);
+  }
+  let tagX = (W - totalTagW) / 2;
+  for (let i = 0; i < keywords.length; i++) {
+    const tw = tagWidths[i];
+    // tag 背景
+    ctx.fillStyle = dark ? "rgba(212,169,106,0.12)" : "rgba(139,69,19,0.08)";
+    ctx.beginPath();
+    ctx.moveTo(tagX+8, tagY);
+    ctx.lineTo(tagX+tw-8, tagY);
+    ctx.quadraticCurveTo(tagX+tw, tagY, tagX+tw, tagY+8);
+    ctx.lineTo(tagX+tw, tagY+tagH-8);
+    ctx.quadraticCurveTo(tagX+tw, tagY+tagH, tagX+tw-8, tagY+tagH);
+    ctx.lineTo(tagX+8, tagY+tagH);
+    ctx.quadraticCurveTo(tagX, tagY+tagH, tagX, tagY+tagH-8);
+    ctx.lineTo(tagX, tagY+8);
+    ctx.quadraticCurveTo(tagX, tagY, tagX+8, tagY);
+    ctx.closePath();
+    ctx.fill();
+    ctx.strokeStyle = T.accent;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    ctx.fillStyle = T.textSub;
+    ctx.fillText(keywords[i], tagX + tw/2, tagY + 19);
+    tagX += tw + tagGap;
+  }
 
-  // 四柱内容
+  // ─── 3. 四柱 ───
+  const sizhuTopY = 360;
+  ctx.font = `14px ${FONT_SERIF}`;
+  ctx.fillStyle = T.textSub;
+  const colLabels = ["年柱","月柱","日柱","时柱"];
+  const colW = (cardW - 80) / 4;
+  const sizhuStartX = cardX + 40;
+  for (let i = 0; i < 4; i++) {
+    ctx.fillText(colLabels[i], sizhuStartX + colW*i + colW/2, sizhuTopY);
+  }
+
   const colKeys = ["year","month","day","hour"];
+  const pillarBoxY = sizhuTopY + 18;
+  const pillarBoxH = 200;
   colKeys.forEach((k, i) => {
     const p = c.sz[k];
-    const cx = 80 + colW*i + colW/2;
-
-    // 卡片背景
+    const cx = sizhuStartX + colW*i + colW/2;
+    const bx = sizhuStartX + colW*i + 8;
+    const bw = colW - 16;
+    // 日柱高亮
     if (k === "day") {
-      ctx.fillStyle = "#fff8f0";
-      ctx.fillRect(80 + colW*i + 6, sizhuY+15, colW-12, 180);
+      ctx.fillStyle = dark ? "rgba(212,169,106,0.10)" : "rgba(139,69,19,0.06)";
+      ctx.fillRect(bx, pillarBoxY, bw, pillarBoxH);
+      ctx.strokeStyle = T.accent;
+      ctx.lineWidth = 1.5;
+      ctx.strokeRect(bx, pillarBoxY, bw, pillarBoxH);
     }
-
-    // 天干（大字）
-    ctx.font = "bold 64px 'Songti SC', serif";
+    // 天干
+    ctx.font = `bold 64px ${FONT_SERIF}`;
     ctx.fillStyle = wxColor[p.tgWx];
-    ctx.fillText(p.tg, cx, sizhuY + 90);
+    ctx.fillText(p.tg, cx, pillarBoxY + 70);
     // 十神
-    ctx.font = "12px 'Songti SC', serif";
-    ctx.fillStyle = "#8b4513";
-    ctx.fillText(p.ss, cx, sizhuY + 110);
-
+    ctx.font = `12px ${FONT_SANS}`;
+    ctx.fillStyle = T.textSub;
+    ctx.fillText(p.ss, cx, pillarBoxY + 90);
     // 地支
-    ctx.font = "bold 56px 'Songti SC', serif";
+    ctx.font = `bold 56px ${FONT_SERIF}`;
     ctx.fillStyle = wxColor[p.dzWx];
-    ctx.fillText(p.dz, cx, sizhuY + 175);
+    ctx.fillText(p.dz, cx, pillarBoxY + 160);
     // 地支五行
-    ctx.font = "11px 'Songti SC', serif";
-    ctx.fillStyle = "#888";
-    ctx.fillText(p.dzWx, cx, sizhuY + 195);
+    ctx.font = `11px ${FONT_SANS}`;
+    ctx.fillStyle = T.textDim;
+    ctx.fillText(p.tgWx + p.dzWx, cx, pillarBoxY + 184);
   });
 
-  // 分隔
-  ctx.strokeStyle = "#d4a96a";
-  ctx.beginPath(); ctx.moveTo(120, 580); ctx.lineTo(W-120, 580); ctx.stroke();
+  // ─── 4. 五行雷达 ───
+  // pillar 底=578；标题 605；雷达圆心 760，半径 95（顶 665，与标题间隙 60；木标签中心 ≈ 644，与标题 39 像素余量）
+  const sectionTopY = 605;
+  ctx.font = `15px ${FONT_SERIF}`;
+  ctx.fillStyle = T.textMain;
+  ctx.textAlign = "center";
+  ctx.fillText("五 行 分 布", W/2, sectionTopY);
 
-  // 五行分布
+  const radarR = 95;
+  const radarCX = W/2;
+  const radarCY = 760;
   const stats = computeWuxingStats(c);
-  const max = Math.max(...Object.values(stats));
   const wxOrder = ["木","火","土","金","水"];
-  ctx.font = "16px 'Songti SC', serif";
-  ctx.fillStyle = "#3d1a00";
-  ctx.textAlign = "left";
-  ctx.fillText("五行分布", 80, 620);
-  let xOffset = 80;
-  const barW = (W - 160) / 5;
-  wxOrder.forEach((wx, i) => {
-    const v = stats[wx];
-    const cx = xOffset + barW*i + barW/2;
-    // 标签
-    ctx.font = "bold 22px 'Songti SC', serif";
-    ctx.fillStyle = wxColor[wx];
-    ctx.textAlign = "center";
-    ctx.fillText(wx, cx, 660);
-    // 柱状
-    const h = (v / max) * 80;
-    ctx.fillStyle = wxColor[wx];
-    ctx.fillRect(cx - 24, 750 - h, 48, h);
-    // 数值
-    ctx.font = "13px 'Songti SC', serif";
-    ctx.fillStyle = "#666";
-    ctx.fillText(v.toFixed(1), cx, 770);
-  });
+  const max = Math.max(...wxOrder.map(w => stats[w]), 1);
 
-  // 分隔
-  ctx.strokeStyle = "#d4a96a";
-  ctx.beginPath(); ctx.moveTo(120, 800); ctx.lineTo(W-120, 800); ctx.stroke();
-
-  // 推荐水晶（按最弱五行）
-  const minWx = wxOrder.reduce((a,b) => stats[a] < stats[b] ? a : b);
-  ctx.font = "16px 'Songti SC', serif";
-  ctx.fillStyle = "#3d1a00";
-  ctx.textAlign = "left";
-  ctx.fillText("推荐水晶（补五行所缺）", 80, 840);
-  ctx.font = "bold 28px 'Songti SC', serif";
-  ctx.fillStyle = wxColor[minWx];
-  ctx.textAlign = "center";
-  ctx.fillText(WX_CRYSTAL_REC[minWx], W/2, 880);
-  ctx.font = "13px 'Songti SC', serif";
-  ctx.fillStyle = "#888";
-  ctx.fillText(`补 ${minWx} 之气`, W/2, 905);
-
-  // 空亡 + 命宫
-  ctx.font = "14px 'Songti SC', serif";
-  ctx.fillStyle = "#8b4513";
-  ctx.textAlign = "center";
-  ctx.fillText(`命宫 ${c.minggong.gz}　·　空亡 ${c.kongwang.dz.join("")}`, W/2, 950);
-
-  // 当前大运
-  if (c.dayun.current) {
-    const cd = c.dayun.current;
-    ctx.font = "13px 'Songti SC', serif";
-    ctx.fillStyle = "#666";
-    ctx.fillText(`当前大运：${cd.gz}（${cd.startAge}-${cd.endAge}岁 / ${cd.startYear}-${cd.endYear}）`, W/2, 975);
+  // 同心环
+  ctx.strokeStyle = T.divider;
+  ctx.lineWidth = 1;
+  for (let g = 1; g <= 4; g++) {
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const ang = -Math.PI/2 + i * (2*Math.PI/5);
+      const x = radarCX + Math.cos(ang) * radarR * (g/4);
+      const y = radarCY + Math.sin(ang) * radarR * (g/4);
+      if (i === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.closePath();
+    ctx.stroke();
+  }
+  // 轴线
+  for (let i = 0; i < 5; i++) {
+    const ang = -Math.PI/2 + i * (2*Math.PI/5);
+    ctx.beginPath();
+    ctx.moveTo(radarCX, radarCY);
+    ctx.lineTo(radarCX + Math.cos(ang) * radarR, radarCY + Math.sin(ang) * radarR);
+    ctx.stroke();
+  }
+  // 数据多边形
+  ctx.beginPath();
+  for (let i = 0; i < 5; i++) {
+    const ang = -Math.PI/2 + i * (2*Math.PI/5);
+    const v = stats[wxOrder[i]] / max;
+    const x = radarCX + Math.cos(ang) * radarR * v;
+    const y = radarCY + Math.sin(ang) * radarR * v;
+    if (i === 0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = dark ? "rgba(212,169,106,0.30)" : "rgba(139,69,19,0.22)";
+  ctx.fill();
+  ctx.strokeStyle = T.accent;
+  ctx.lineWidth = 2;
+  ctx.stroke();
+  // 数据点
+  for (let i = 0; i < 5; i++) {
+    const ang = -Math.PI/2 + i * (2*Math.PI/5);
+    const v = stats[wxOrder[i]] / max;
+    const x = radarCX + Math.cos(ang) * radarR * v;
+    const y = radarCY + Math.sin(ang) * radarR * v;
+    ctx.fillStyle = wxColor[wxOrder[i]];
+    ctx.beginPath();
+    ctx.arc(x, y, 5, 0, 2*Math.PI);
+    ctx.fill();
+  }
+  // 五行标签（外围）
+  for (let i = 0; i < 5; i++) {
+    const ang = -Math.PI/2 + i * (2*Math.PI/5);
+    const x = radarCX + Math.cos(ang) * (radarR + 28);
+    const y = radarCY + Math.sin(ang) * (radarR + 28) + 7;
+    ctx.font = `bold 22px ${FONT_SERIF}`;
+    ctx.fillStyle = wxColor[wxOrder[i]];
+    ctx.fillText(wxOrder[i], x, y);
+    ctx.font = `11px ${FONT_SANS}`;
+    ctx.fillStyle = T.textDim;
+    ctx.fillText(stats[wxOrder[i]].toFixed(1), x, y + 16);
   }
 
-  // 底部箴言
-  ctx.font = "italic 14px 'Songti SC', serif";
-  ctx.fillStyle = "#a0622b";
+  // ─── 5. 当前大运 + 命宫 + 空亡 + 流年 ───
+  // radar 底沿 = radarCY + radarR + 22 (label below); 雷达数据底 = 740 + 95 + 16 = 851
+  const stripY = radarCY + radarR + 60;  // 留余量
+  ctx.font = `13px ${FONT_SERIF}`;
+  ctx.fillStyle = T.textSub;
   ctx.textAlign = "center";
-  ctx.fillText("非稽其已往，无以测其将来 — 陈素庵", W/2, 1020);
+  let stripText = "";
+  if (c.dayun.current) {
+    const cd = c.dayun.current;
+    stripText += `当前大运 ${cd.gz}（${cd.startAge}-${cd.endAge}岁）　`;
+  }
+  stripText += `命宫 ${c.minggong.gz}　空亡 ${c.kongwang.dz.join("")}`;
+  ctx.fillText(stripText, W/2, stripY);
 
-  ctx.font = "11px 'Songti SC', serif";
-  ctx.fillStyle = "#bbb";
-  ctx.fillText("八字命盘 · 仅供参考", W/2, 1045);
+  // 今年流年
+  if (c.liuyear && c.liuyear[0]) {
+    ctx.font = `12px ${FONT_SERIF}`;
+    ctx.fillStyle = T.textDim;
+    ctx.fillText(`今年流年 ${c.liuyear[0].year}年 ${c.liuyear[0].gz}`, W/2, stripY + 22);
+  }
+
+  // 分隔
+  ctx.strokeStyle = T.divider;
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(cardX+60, stripY+50); ctx.lineTo(cardX+cardW-60, stripY+50);
+  ctx.stroke();
+
+  // ─── 6. 推荐水晶 ───
+  const minWx = wxOrder.reduce((a,b) => stats[a] < stats[b] ? a : b);
+  const cryY = stripY + 90;
+  ctx.font = `15px ${FONT_SERIF}`;
+  ctx.fillStyle = T.textMain;
+  ctx.fillText("推 荐 水 晶", W/2, cryY);
+  ctx.font = `11px ${FONT_SANS}`;
+  ctx.fillStyle = T.textDim;
+  ctx.fillText(`补五行所缺：${minWx}`, W/2, cryY + 20);
+
+  const cry = WX_CRYSTAL_REC[minWx];
+  ctx.font = `bold 30px ${FONT_SERIF}`;
+  ctx.fillStyle = wxColor[minWx];
+  ctx.fillText(cry.main, W/2 - 95, cryY + 65);
+  ctx.font = `bold 26px ${FONT_SERIF}`;
+  ctx.fillStyle = T.textSub;
+  ctx.fillText(cry.sub, W/2 + 95, cryY + 65);
+  ctx.font = `11px ${FONT_SANS}`;
+  ctx.fillStyle = T.textDim;
+  ctx.fillText("主 推", W/2 - 95, cryY + 88);
+  ctx.fillText("辅", W/2 + 95, cryY + 88);
+
+  // ─── 7. 底部箴言 ───
+  ctx.font = `italic 14px ${FONT_SERIF}`;
+  ctx.fillStyle = T.textSub;
+  ctx.fillText("非稽其已往，无以测其将来", W/2, H - 95);
+  ctx.font = `11px ${FONT_SANS}`;
+  ctx.fillStyle = T.textDim;
+  ctx.fillText("— 陈素庵 ·《命理约言》", W/2, H - 75);
+
+  ctx.font = `10px ${FONT_SANS}`;
+  ctx.fillStyle = T.textDim;
+  ctx.fillText("八字命盘 · 仅供参考", W/2, H - 50);
 }
 
 function downloadShareCard() {
@@ -5343,44 +6179,226 @@ window.addEventListener("DOMContentLoaded", () => {
 });
 
 // ─── 合婚合盘 ───
-function matchProfile(i) {
-  if (!currentChart) { alert("请先载入或排盘命主A"); return; }
-  const other = getProfiles()[i];
-  if (!other) return;
-  hideProfilePanel();
-  switchTab("chat");
+// ─── 合婚合盘（独立 Tab） ───
+// matchSelectedB 在文件顶部全局区已声明
 
-  const A = currentChart.meta;
-  const otherChart = paipan(other.name, other.gender, other.year, other.month, other.day, other.hour, other.minute, other.lon);
-  const Bsz = otherChart.sz;
-  const Bdz = otherChart.dayun;
-  const Bsz_text = `${Bsz.year.gz} ${Bsz.month.gz} ${Bsz.day.gz} ${Bsz.hour.gz}`;
-  const Asz = currentChart.sz;
-  const Asz_text = `${Asz.year.gz} ${Asz.month.gz} ${Asz.day.gz} ${Asz.hour.gz}`;
+function renderMatchTab() {
+  const list = getProfiles();
+  const el = document.getElementById("matchPickList");
+  if (!currentChart) {
+    el.innerHTML = '<div class="profile-empty">请先在「命盘」Tab 排盘</div>';
+    document.getElementById("matchQuickCard").style.display = "none";
+    document.getElementById("matchPairCard").style.display = "none";
+    document.getElementById("matchAskBtn").style.display = "none";
+    return;
+  }
+  // 排除当前命主自己
+  const candidates = list.map((p,i)=>({p,i})).filter(x => !(x.p.name === currentChart.meta.name && x.p.year === currentChart.meta.year && x.p.month === currentChart.meta.month && x.p.day === currentChart.meta.day));
+  if (candidates.length === 0) {
+    el.innerHTML = '<div class="profile-empty">还没有其他档案<br>去「档案」保存对方的生辰，再回来合婚</div>';
+    document.getElementById("matchQuickCard").style.display = "none";
+    document.getElementById("matchPairCard").style.display = "none";
+    document.getElementById("matchAskBtn").style.display = "none";
+    return;
+  }
+  el.innerHTML = candidates.map(({p, i}) => {
+    const isPicked = matchSelectedB && matchSelectedB.idx === i;
+    return `
+    <div class="profile-item ${isPicked ? 'selected' : ''}" onclick="pickMatchB(${i})">
+      <div class="pi-info">
+        <div class="pi-name">${escapeHtml(p.name)} · ${p.gender}</div>
+        <div class="pi-meta">${p.year}-${p.month}-${p.day} ${p.hour}:${String(p.minute||0).padStart(2,'0')}</div>
+      </div>
+      <button class="pi-pickbtn ${isPicked ? 'picked' : ''}">${isPicked ? '已选 ✓' : '选这个'}</button>
+    </div>`;
+  }).join("");
+
+  if (matchSelectedB) {
+    renderMatchPair();
+  }
+}
+
+function pickMatchB(i) {
+  const p = getProfiles()[i];
+  if (!p) return;
+  // 排盘命主 B
+  const bChart = paipan(p.name, p.gender, p.year, p.month, p.day, p.hour, p.minute || 0, p.lon || 120);
+  matchSelectedB = { idx: i, profile: p, chart: bChart };
+  renderMatchTab();
+}
+
+function renderMatchPair() {
+  const A = currentChart, B = matchSelectedB.chart;
+  // 1) 双盘对照表
+  const cols = ["year","month","day","hour"];
+  const colNames = ["年","月","日","时"];
+  const wxColor = {木:"#2d7a2d",火:"#c0392b",土:"#a0622b",金:"#b8860b",水:"#2471a3"};
+  let table = `<table class="pair-table">
+    <tr><th class="pair-name">　</th>${colNames.map(n=>`<th>${n}柱</th>`).join("")}</tr>`;
+  for (const [chart, label] of [[A, "A·"+(A.meta.name||"命主")], [B, "B·"+B.meta.name]]) {
+    table += `<tr><td class="pair-name">${escapeHtml(label)}</td>`;
+    for (const c of cols) {
+      const p = chart.sz[c];
+      table += `<td>
+        <span class="ptg" style="color:${wxColor[p.tgWx]}">${p.tg}</span>
+        <span class="pdz" style="color:${wxColor[p.dzWx]}">${p.dz}</span>
+        <span class="pwx">${p.tgWx}${p.dzWx}</span>
+      </td>`;
+    }
+    table += `</tr>`;
+  }
+  table += `</table>`;
+  document.getElementById("matchPairBody").innerHTML = table;
+  document.getElementById("matchPairCard").style.display = "";
+
+  // 2) 速判
+  const judge = computeMatchJudge(A, B);
+  let body = `
+    <div class="match-summary">
+      <div class="match-score-row">
+        <div class="match-score-circle ${judge.level}">
+          <div class="ms-num">${judge.score}</div>
+          <div class="ms-lab">分 / 100</div>
+        </div>
+        <div class="match-score-text">
+          <div class="mst-tag">${judge.tagline}</div>
+          <div class="mst-desc">${judge.summary}</div>
+        </div>
+      </div>
+      <div class="match-relations">
+        ${judge.rels.map(r => `
+          <div class="match-rel-row">
+            <span class="mr-pos">${r.pos}</span>
+            <span class="mr-pair">${r.a}-${r.b}</span>
+            <span class="mr-tag tag-${r.type}">${r.type}</span>
+            <span class="mr-desc">${r.desc}</span>
+          </div>
+        `).join("")}
+      </div>
+      <div style="font-size:11px;color:#888;margin-top:10px;line-height:1.6">
+        以上是机械算出的结构关系。是否真的相配，要看八字整体强弱、用神是否互补，下面让 AI 详细分析。
+      </div>
+    </div>
+  `;
+  document.getElementById("matchQuickBody").innerHTML = body;
+  document.getElementById("matchQuickCard").style.display = "";
+  document.getElementById("matchAskBtn").style.display = "";
+}
+
+// 计算合婚结构速判
+function computeMatchJudge(A, B) {
+  const positions = [
+    { key:"year",  label:"年柱" },
+    { key:"month", label:"月柱" },
+    { key:"day",   label:"日柱" },
+    { key:"hour",  label:"时柱" },
+  ];
+  const rels = [];
+  let score = 50;  // 基准分
+  for (const {key, label} of positions) {
+    const aTg = A.sz[key].tg, bTg = B.sz[key].tg;
+    const aDz = A.sz[key].dz, bDz = B.sz[key].dz;
+    const tg = ganRelation(aTg, bTg);
+    const zh = zhiRelation(aDz, bDz);
+    rels.push({ pos: label+"·干", a:aTg, b:bTg, type:tg.type, desc:tg.desc });
+    rels.push({ pos: label+"·支", a:aDz, b:bDz, type:zh.type, desc:zh.desc });
+
+    // 加权打分（日柱权重最高）
+    const w = key === "day" ? 3 : (key === "month" ? 2 : 1);
+    if (tg.type === "合") score += 4*w;
+    if (tg.type === "冲") score -= 4*w;
+    if (tg.type === "克") score -= 2*w;
+    if (tg.type === "生") score += 2*w;
+    if (tg.type === "比" || tg.type === "同") score += 1*w;
+    if (zh.type === "合") score += 5*w;
+    if (zh.type === "冲") score -= 5*w;
+    if (zh.type === "刑") score -= 3*w;
+    if (zh.type === "害") score -= 2*w;
+    if (zh.type === "自刑") score -= 2*w;
+    if (zh.type === "生") score += 2*w;
+    if (zh.type === "克") score -= 1*w;
+    if (zh.type === "比" || zh.type === "同") score += 1*w;
+  }
+  // 钳位
+  score = Math.max(10, Math.min(95, Math.round(score)));
+
+  // 五行互补检查（用日主五行算）
+  const aWx = TG_WX[A.dTg], bWx = TG_WX[B.dTg];
+  const compl = (WX_SHENG[aWx] === bWx) || (WX_SHENG[bWx] === aWx) ||
+                (WX_KE[aWx] === bWx) || (WX_KE[bWx] === aWx) ||
+                (aWx === bWx);
+  // 日柱关系是关键
+  const dayTg = ganRelation(A.sz.day.tg, B.sz.day.tg);
+  const dayDz = zhiRelation(A.sz.day.dz, B.sz.day.dz);
+
+  let level = "mid";
+  let tagline = "结构中等";
+  let summary = "";
+  if (score >= 70) {
+    level = "high";
+    tagline = "结构良好";
+    summary = `日柱${dayTg.type === "合" || dayDz.type === "合" ? "见合" : "无大冲"}，整体气场可调。`;
+  } else if (score >= 50) {
+    level = "mid";
+    tagline = "结构中等";
+    summary = `有合有冲，看大运流年配合。`;
+  } else {
+    level = "low";
+    tagline = "结构有冲克，要慎重";
+    summary = `多处冲刑，相处需要更多磨合，建议看 AI 详细分析后再判断。`;
+  }
+  if (dayDz.type === "冲") {
+    tagline = "日支相冲，要小心";
+    summary = `日支${A.sz.day.dz}${B.sz.day.dz}冲，传统认为夫妻宫不和。具体好坏看用神是否互补。`;
+  }
+  if (dayTg.type === "合" && dayDz.type === "合") {
+    tagline = "日柱天地双合";
+    summary = "日干日支都见合，传统视为良配。但要再看五行是否互补。";
+    level = "high";
+  }
+
+  return { score, level, tagline, summary, rels };
+}
+
+function askMatch() {
+  if (isStreaming) return;
+  if (!currentChart || !matchSelectedB) { alert("请先选择命主 B"); return; }
+  const A = currentChart, B = matchSelectedB.chart;
+  const judge = computeMatchJudge(A, B);
+
+  const Asz_text = `${A.sz.year.gz} ${A.sz.month.gz} ${A.sz.day.gz} ${A.sz.hour.gz}`;
+  const Bsz_text = `${B.sz.year.gz} ${B.sz.month.gz} ${B.sz.day.gz} ${B.sz.hour.gz}`;
+
+  const relText = judge.rels.map(r => `  ${r.pos} ${r.a}-${r.b}：${r.type}（${r.desc}）`).join("\n");
 
   const prompt = `请做合婚合盘分析。
 
-【命主A】${A.name} · ${A.gender}
-出生：${A.year}-${A.month}-${A.day} ${A.hour}:${String(A.minute).padStart(2,'0')}
-四柱（仅供参考，你需自己手推验证）：${Asz_text}
+【命主 A】${A.meta.name||"命主A"} · ${A.meta.gender}
+出生：${A.meta.year}-${A.meta.month}-${A.meta.day} ${A.meta.hour}:${String(A.meta.minute).padStart(2,'0')}
+四柱：${Asz_text}（日主${A.dTg}${TG_WX[A.dTg]}）
 
-【命主B】${other.name} · ${other.gender}
-出生：${other.year}-${other.month}-${other.day} ${other.hour}:${String(other.minute||0).padStart(2,'0')}
-经度：${other.lon}°
-四柱（仅供参考，你需自己手推验证）：${Bsz_text}
+【命主 B】${B.meta.name} · ${B.meta.gender}
+出生：${B.meta.year}-${B.meta.month}-${B.meta.day} ${B.meta.hour}:${String(B.meta.minute||0).padStart(2,'0')}
+四柱：${Bsz_text}（日主${B.dTg}${TG_WX[B.dTg]}）
 
-请按以下结构输出（每段都要带 [依据] 和 [高/中/低]，沿用之前的铁规）：
+【已自动算出的结构关系——你必须直接采用，不要再算一遍】
+${relText}
+
+机械打分：${judge.score}/100（${judge.tagline}）
+
+请按以下结构输出（每段都要 [依据] 和 [置信度]，沿用之前的铁规）：
 
 一、第一印象配对度
-  整体匹配度 [高/中/低] + 一句话定性。
+  整体匹配度 [高/中/低] + 一句话定性。要呼应上面机械算出的关系，但不能照搬——你要解释"为什么这些关系会导致这个结果"。
 
 二、性格契合
-  A 是 ___ 性格 [依据：xx]
-  B 是 ___ 性格 [依据：xx]
+  A 是 ___ 性格 [依据：日柱${A.sz.day.gz} + xx]
+  B 是 ___ 性格 [依据：日柱${B.sz.day.gz} + xx]
   → 配不配，为什么 [置信度]
 
 三、五行互补 / 相克
-  A 喜 ___ 忌 ___ ，B 喜 ___ 忌 ___
+  A 日主${A.dTg}（${TG_WX[A.dTg]}），B 日主${B.dTg}（${TG_WX[B.dTg]}）
+  A 喜 ___ 忌 ___ ，B 喜 ___ 忌 ___ [依据：xx]
   互补：B 能给 A 什么？A 能给 B 什么？[置信度]
   冲突：哪些五行/天干地支相互冲克？影响什么？[置信度]
 
@@ -5400,7 +6418,15 @@ function matchProfile(i) {
 
 禁止套话："郎才女貌""天作之合""琴瑟和鸣"等没有具体八字依据的话全部禁。要有结构化分析。`;
 
+  switchTab("chat");
   callClaude(prompt);
+}
+
+// 旧入口保留兼容（已不再有 UI 调用，但避免破坏）
+function matchProfile(i) {
+  pickMatchB(i);
+  switchTab("match");
+  hideProfilePanel();
 }
 
 function autoResize(ta) {
