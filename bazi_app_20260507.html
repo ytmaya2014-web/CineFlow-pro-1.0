@@ -389,6 +389,11 @@ body{font-family:-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;backgr
     <input type="text" id="f-lon" placeholder="如：北京、上海、成都，或直接输经度 121.5">
     <div class="form-hint">用于校正真太阳时。东北哈尔滨约127，广州约113，成都约104</div>
   </div>
+  <div class="form-group">
+    <label>喜用五行（AI 分析后填入，如"木火"）</label>
+    <input type="text" id="f-xiyong" placeholder="如：木火 / 金水 / 火土（可空）" maxlength="10">
+    <div class="form-hint">填入后水晶推荐将锁定此五行，确保每次一致。首次排盘可空，AI 分析完再填。</div>
+  </div>
   <button class="btn-paipan" onclick="doPaipan()">排 盘</button>
 </div>
 
@@ -5213,6 +5218,8 @@ ${structText}
   · 忌 ____ [依据：xx]
 
 四、今日水晶（1 种主推 + 1 种辅）
+  要求：主推必须同时满足——①补本命喜用五行；②今日日柱能量不与其相克。
+  若今日能量与本命喜用五行冲突，优先选补本命喜用五行的水晶，并说明今日能量的影响。
   主推 ____（左/右手），原因 ____ [依据：水晶库·xx 五行]
   辅 ____ [依据：xx]
 
@@ -5308,15 +5315,19 @@ function buildSystemPrompt(r) {
 阳历生日：${m.year}年${m.month}月${m.day}日 ${m.hour}时${m.minute}分
 出生地经度：东经${m.lon}°
 
+【已计算四柱——直接采用，禁止重新推导】
+${chartToText(r)}
+注意：以上四柱由程序精确计算（含真太阳时校正），直接使用，不要重算。
+${m.xiyong ? `\n【锁定喜用五行：${m.xiyong}】\n这是用户已确认的喜用五行，优先级最高。若本次推演结论与此不符，以此为准。所有水晶推荐必须补此五行，不得与此矛盾。\n` : ""}
 ═══════════════════════════════════════
 第一部分：你的内部工作流（不展示给用户）
 ═══════════════════════════════════════
 
 在思考中严格按下列方法推演，但绝不要把过程写给用户看：
 
-1. 真太阳时校正、推年柱（立春界）、月柱（节令界+五虎遁）、日柱（万年历）、时柱（五鼠遁）
-2. 列藏干、空亡、命宫、起大运
-3. 判定身强身弱、格局、调候、用神（确定喜用五行：金/木/水/火/土）
+1. 四柱已由程序计算完毕（见上方），直接进入分析，不要重新推导四柱
+2. 列藏干、空亡、命宫、起大运（以上方已计算数据为准）
+3. 判定身强身弱、格局、调候、用神（确定喜用五行：金/木/水/火/土）${m.xiyong ? `——已锁定为「${m.xiyong}」，直接采用` : ""}
 4. 四家投票：徐乐吾/梁湘润/袁树珊/韦千里 各派结论交叉验证
 
 【十一条铁律——内部推演必须遵守】
@@ -5682,7 +5693,7 @@ function renderProfileList() {
     <div class="profile-item">
       <div class="pi-info">
         <div class="pi-name">${escapeHtml(p.name)} · ${p.gender}</div>
-        <div class="pi-meta">${p.year}-${p.month}-${p.day} ${p.hour}:${String(p.minute||0).padStart(2,'0')} · 经度${p.lon}</div>
+        <div class="pi-meta">${p.year}-${p.month}-${p.day} ${p.hour}:${String(p.minute||0).padStart(2,'0')} · 经度${p.lon}${p.xiyong ? ' · 喜'+p.xiyong : ''}</div>
       </div>
       <button class="pi-load" onclick="loadProfile(${i})">载入</button>
       <button class="pi-del" onclick="deleteProfile(${i})">×</button>
@@ -5713,7 +5724,8 @@ function saveCurrentProfile() {
 
   const list = getProfiles();
   const idx = list.findIndex(p => p.name === name);
-  const profile = { name, gender: selectedGender, year:+year, month:+month, day:+day, hour:+hour, minute:+minute, lon };
+  const xiyong = (document.getElementById("f-xiyong").value || "").trim();
+  const profile = { name, gender: selectedGender, year:+year, month:+month, day:+day, hour:+hour, minute:+minute, lon, xiyong };
   if (idx >= 0) {
     if (!confirm(`已存在「${name}」，覆盖吗？`)) return;
     list[idx] = profile;
@@ -5733,6 +5745,7 @@ function loadProfile(i) {
   document.getElementById("f-hour").value   = p.hour;
   document.getElementById("f-minute").value = p.minute || 0;
   document.getElementById("f-lon").value    = p.lon;
+  document.getElementById("f-xiyong").value = p.xiyong || "";
   setGender(p.gender);
   hideProfilePanel();
 }
