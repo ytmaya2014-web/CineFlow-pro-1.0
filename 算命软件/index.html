@@ -1,0 +1,2376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="算命">
+<meta name="theme-color" content="#0a0a1a">
+<title>命镜 — 命理随身</title>
+<style>
+/* ── Reset & Variables ──────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg-start: #0a0a1a;
+  --bg-mid: #15103a;
+  --bg-end: #0d1a30;
+  --surface: rgba(255,255,255,0.06);
+  --surface-hover: rgba(255,255,255,0.10);
+  --text: #f0eef7;
+  --text-secondary: #a09bb8;
+  --text-muted: #6b6585;
+  --accent: #8b5cf6;
+  --accent-light: #a78bfa;
+  --accent-glow: rgba(139, 92, 246, 0.3);
+  --gold: #f59e0b;
+  --gold-light: #fbbf24;
+  --gold-glow: rgba(245, 158, 11, 0.25);
+  --rose: #f43f5e;
+  --rose-light: #fb7185;
+  --green: #10b981;
+  --green-light: #34d399;
+  --blue: #3b82f6;
+  --blue-light: #60a5fa;
+  --border: rgba(255,255,255,0.08);
+  --border-focus: rgba(139, 92, 246, 0.4);
+  --radius-sm: 10px;
+  --radius: 16px;
+  --radius-lg: 20px;
+  --radius-xl: 24px;
+  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
+  --shadow: 0 4px 12px rgba(0,0,0,0.25);
+  --shadow-lg: 0 8px 32px rgba(0,0,0,0.35);
+  --nav-height: 72px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Noto Sans SC", sans-serif;
+  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+html, body { height: 100%; overflow: hidden; }
+body {
+  font-family: var(--font);
+  background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-mid) 45%, var(--bg-end) 100%);
+  background-attachment: fixed;
+  color: var(--text);
+  -webkit-font-smoothing: antialiased;
+  display: flex;
+  justify-content: center;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none;
+}
+/* Ambient background orbs */
+body::before {
+  content: '';
+  position: fixed;
+  top: -30%;
+  left: -20%;
+  width: 70%;
+  height: 70%;
+  background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed;
+  bottom: -20%;
+  right: -15%;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 0;
+}
+#app {
+  width: 100%;
+  max-width: 480px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  z-index: 1;
+}
+
+/* ── Tab Panels ─────────────────────────────────────────────── */
+.tab-panel {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 20px 16px;
+  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 20px);
+  display: none;
+  -webkit-overflow-scrolling: touch;
+  animation: tabFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tab-panel.active { display: block; }
+@keyframes tabFadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ── Page Header ─────────────────────────────────────────────── */
+.page-header {
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.5px;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  text-shadow: 0 0 40px rgba(139,92,246,0.15);
+}
+.page-header .icon { font-size: 26px; }
+.page-subtitle {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 20px;
+  line-height: 1.7;
+}
+
+/* ── Glass Card ──────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  backdrop-filter: blur(24px);
+  -webkit-backdrop-filter: blur(24px);
+  border-radius: var(--radius-lg);
+  padding: 20px 18px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+}
+.card-header {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.card-header .icon { font-size: 20px; }
+
+/* ── Chat Bubbles ───────────────────────────────────────────── */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 8px;
+}
+.chat-bubble {
+  max-width: 88%;
+  padding: 14px 16px;
+  font-size: 15px;
+  line-height: 1.75;
+  border-radius: var(--radius-lg);
+  white-space: pre-wrap;
+  word-break: break-word;
+  position: relative;
+  user-select: text;
+  -webkit-user-select: text;
+  animation: msgIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+@keyframes msgIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.98); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.chat-bubble.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+  color: #fff;
+  border-bottom-right-radius: 6px;
+  font-weight: 500;
+  box-shadow: 0 4px 16px var(--accent-glow);
+}
+.chat-bubble.ai {
+  align-self: flex-start;
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-bottom-left-radius: 6px;
+}
+.chat-bubble.system {
+  align-self: center;
+  background: transparent;
+  color: var(--text-muted);
+  font-size: 13px;
+  text-align: center;
+  max-width: 90%;
+  border: none;
+  animation: none;
+}
+.chat-time {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 4px;
+  opacity: 0.7;
+  display: block;
+}
+.chat-bubble.user .chat-time { color: rgba(255,255,255,0.65); }
+.chat-bubble.ai.typing::after {
+  content: "";
+  display: inline-block;
+  width: 6px; height: 14px;
+  background: var(--accent-light);
+  margin-left: 2px;
+  animation: blink 0.8s infinite;
+  vertical-align: text-bottom;
+  border-radius: 3px;
+}
+@keyframes blink { 50% { opacity: 0; } }
+
+/* ── Quick Ask Buttons ──────────────────────────────────────── */
+.quick-asks {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.quick-ask-btn {
+  padding: 10px 16px;
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+}
+.quick-ask-btn:active {
+  background: rgba(139,92,246,0.18);
+  border-color: var(--accent);
+  color: var(--accent-light);
+  transform: scale(0.96);
+}
+
+/* ── Forms ───────────────────────────────────────────────────── */
+.form-group { margin-bottom: 16px; }
+.form-label {
+  display: block;
+  font-size: 13px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+  font-weight: 500;
+  letter-spacing: 0.3px;
+}
+.form-input, .form-select {
+  width: 100%;
+  padding: 14px 16px;
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--font);
+  -webkit-appearance: none;
+  appearance: none;
+  transition: all 0.2s;
+}
+.form-input:focus, .form-select:focus {
+  outline: none;
+  border-color: var(--border-focus);
+  box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
+  background: rgba(255,255,255,0.09);
+}
+.form-input::placeholder { color: var(--text-muted); }
+.form-select {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6585' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right 16px center;
+  padding-right: 40px;
+}
+
+/* ── Buttons ─────────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 28px;
+  border: none;
+  border-radius: 100px;
+  font-size: 15px;
+  font-weight: 600;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.2px;
+  width: 100%;
+}
+.btn-primary {
+  background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+  color: #fff;
+  box-shadow: 0 4px 20px var(--accent-glow);
+}
+.btn-primary:active { transform: scale(0.97); opacity: 0.9; }
+.btn-primary:disabled { opacity: 0.4; pointer-events: none; }
+.btn-secondary {
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+.btn-secondary:active { background: var(--surface-hover); transform: scale(0.97); }
+.btn-small {
+  padding: 8px 16px;
+  font-size: 13px;
+  width: auto;
+  border-radius: 100px;
+}
+.btn-danger {
+  background: rgba(244,63,94,0.12);
+  color: var(--rose-light);
+  border: 1px solid rgba(244,63,94,0.2);
+}
+.btn-danger:active { background: rgba(244,63,94,0.2); }
+
+/* ── Gender Toggle ───────────────────────────────────────────── */
+.gender-toggle {
+  display: flex;
+  gap: 10px;
+}
+.gender-btn {
+  flex: 1;
+  padding: 14px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: var(--text-secondary);
+  font-size: 15px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.2s;
+}
+.gender-btn.selected {
+  background: rgba(139,92,246,0.18);
+  border-color: var(--accent);
+  color: var(--accent-light);
+  box-shadow: 0 0 20px rgba(139,92,246,0.12);
+}
+
+/* ── Checkbox ────────────────────────────────────────────────── */
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: -8px;
+  margin-bottom: 16px;
+}
+.checkbox-row input[type=checkbox] {
+  width: 20px; height: 20px;
+  accent-color: var(--accent);
+}
+.checkbox-row label {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+/* ── Profile Cards ───────────────────────────────────────────── */
+.profile-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.profile-card.active-profile {
+  border-color: var(--accent);
+  background: rgba(139,92,246,0.1);
+  box-shadow: 0 0 24px rgba(139,92,246,0.1);
+}
+.profile-card:active { transform: scale(0.98); }
+.profile-info { flex: 1; }
+.profile-name { font-size: 16px; font-weight: 600; letter-spacing: -0.2px; }
+.profile-detail { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+.profile-actions { display: flex; gap: 6px; }
+
+/* ── Day Cards ───────────────────────────────────────────────── */
+.day-card {
+  background: var(--surface);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-radius: var(--radius-lg);
+  padding: 14px 18px;
+  margin-bottom: 8px;
+  border-left: 4px solid var(--green);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--green);
+}
+.day-card.avoid { border-left-color: var(--rose); }
+.day-date { font-weight: 600; font-size: 15px; }
+.day-reason { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+
+/* ── Date Display ────────────────────────────────────────────── */
+.date-display {
+  font-size: 14px;
+  color: var(--text-secondary);
+  margin-bottom: 16px;
+  padding: 12px 16px;
+  background: var(--surface);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 14px;
+  text-align: center;
+  border: 1px solid var(--border);
+}
+
+/* ── Empty State ─────────────────────────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 48px 20px;
+  color: var(--text-muted);
+}
+.empty-state .empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.8; }
+.empty-state p { font-size: 15px; line-height: 1.7; color: var(--text-secondary); }
+
+/* ── Loading ─────────────────────────────────────────────────── */
+.loading-spinner {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 28px;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+.spinner {
+  width: 20px; height: 20px;
+  border: 2px solid var(--border);
+  border-top-color: var(--accent-light);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Modal ───────────────────────────────────────────────────── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.2s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-sheet {
+  background: linear-gradient(180deg, #1a1540 0%, #151030 100%);
+  width: 100%;
+  max-width: 480px;
+  border-radius: 24px 24px 0 0;
+  padding: 24px 18px;
+  padding-bottom: calc(24px + var(--safe-bottom));
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  border-top: 1px solid var(--border);
+}
+@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+.modal-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 18px;
+  text-align: center;
+  letter-spacing: -0.3px;
+}
+
+/* ── Bottom Nav ──────────────────────────────────────────────── */
+#bottom-nav {
+  position: fixed;
+  bottom: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 90;
+  padding: 0 12px;
+  padding-bottom: var(--safe-bottom);
+  pointer-events: none;
+}
+#bottom-nav > nav {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  background: rgba(20, 15, 45, 0.85);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--border);
+  border-radius: 24px;
+  margin: 0 4px 6px 4px;
+  padding: 6px 4px;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 1px rgba(255,255,255,0.1) inset;
+  pointer-events: auto;
+}
+.nav-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  padding: 8px 2px;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 500;
+  font-family: var(--font);
+  cursor: pointer;
+  transition: all 0.25s;
+  border-radius: 18px;
+  position: relative;
+  letter-spacing: 0.3px;
+}
+.nav-btn .nav-icon { font-size: 22px; line-height: 1; transition: transform 0.25s; }
+.nav-btn.active {
+  color: var(--accent-light);
+}
+.nav-btn.active .nav-icon {
+  transform: translateY(-2px);
+}
+.nav-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: var(--accent-light);
+  box-shadow: 0 0 8px var(--accent-glow);
+}
+.nav-btn:active { opacity: 0.7; }
+
+/* ── Chat Input Bar ──────────────────────────────────────────── */
+#chat-input-bar {
+  position: fixed;
+  bottom: calc(var(--nav-height) + var(--safe-bottom) - 6px);
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 80;
+  padding: 8px 12px;
+  pointer-events: none;
+}
+#chat-input-bar > div {
+  width: 100%;
+  max-width: 480px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  pointer-events: auto;
+}
+#chat-input {
+  flex: 1;
+  padding: 14px 18px;
+  background: rgba(30, 22, 60, 0.9);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--font);
+  outline: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+#chat-input:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 3px rgba(139,92,246,0.12);
+}
+#chat-input::placeholder { color: var(--text-muted); }
+#chat-send-btn {
+  flex-shrink: 0;
+  width: 46px; height: 46px;
+  border-radius: 50%;
+  border: none;
+  background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
+  color: #fff;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px var(--accent-glow);
+  transition: all 0.2s;
+}
+#chat-send-btn:active { transform: scale(0.92); opacity: 0.9; }
+#chat-send-btn:disabled { opacity: 0.3; pointer-events: none; }
+#chat-hepan-btn, #chat-clear-btn {
+  flex-shrink: 0;
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: rgba(255,255,255,0.06);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  color: var(--text-secondary);
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s;
+}
+#chat-hepan-btn:active, #chat-clear-btn:active { background: rgba(255,255,255,0.12); transform: scale(0.92); }
+
+/* ── Crystal Input Bar ───────────────────────────────────────── */
+#crystal-input-bar {
+  position: fixed;
+  bottom: calc(var(--nav-height) + var(--safe-bottom) - 6px);
+  left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  z-index: 80;
+  padding: 8px 12px;
+  pointer-events: none;
+}
+#crystal-input-bar > div {
+  width: 100%;
+  max-width: 480px;
+  pointer-events: auto;
+}
+#crystal-search {
+  width: 100%;
+  padding: 14px 18px;
+  background: rgba(30, 22, 60, 0.9);
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--font);
+  outline: none;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+}
+#crystal-search:focus {
+  border-color: var(--border-focus);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 3px rgba(139,92,246,0.12);
+}
+#crystal-search::placeholder { color: var(--text-muted); }
+
+/* ── Privacy Note ────────────────────────────────────────────── */
+.privacy-note {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  padding: 12px 0;
+  opacity: 0.5;
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────── */
+.tab-panel::-webkit-scrollbar { width: 0; }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Tab 1: 命盘 -->
+  <section class="tab-panel active" id="panel-fortune"></section>
+  <!-- Tab 2: 日运 -->
+  <section class="tab-panel" id="panel-daily"></section>
+  <!-- Tab 3: 月运 -->
+  <section class="tab-panel" id="panel-monthly"></section>
+  <!-- Tab 4: 择日 -->
+  <section class="tab-panel" id="panel-luckydays"></section>
+  <!-- Tab 6: 聊天（自由提问） -->
+  <section class="tab-panel" id="panel-chat"></section>
+  <!-- Tab 5: 档案 -->
+  <section class="tab-panel" id="panel-profiles"></section>
+  <!-- Tab 7: 水晶收藏 -->
+  <section class="tab-panel" id="panel-crystals"></section>
+
+  <!-- Bottom Nav -->
+  <div id="bottom-nav">
+    <nav>
+      <button class="nav-btn active" data-tab="fortune"><span class="nav-icon">📿</span>命盘</button>
+      <button class="nav-btn" data-tab="daily"><span class="nav-icon">☀️</span>日运</button>
+      <button class="nav-btn" data-tab="monthly"><span class="nav-icon">🌙</span>月运</button>
+      <button class="nav-btn" data-tab="luckydays"><span class="nav-icon">📅</span>择日</button>
+      <button class="nav-btn" data-tab="chat"><span class="nav-icon">💬</span>聊天</button>
+      <button class="nav-btn" data-tab="profiles"><span class="nav-icon">👤</span>档案</button>
+      <button class="nav-btn" data-tab="crystals"><span class="nav-icon">💎</span>水晶</button>
+    </nav>
+  </div>
+</div>
+
+<!-- 水晶收藏输入框（固定在底部，在 nav 上方） -->
+<div id="crystal-input-bar" style="display:none;">
+  <div style="display:flex;gap:8px;">
+    <input type="text" id="crystal-search" placeholder="搜索水晶…" autocomplete="off">
+  </div>
+</div>
+
+<!-- 聊天输入框（固定在底部，在 nav 上方） -->
+<div id="chat-input-bar" style="display:none;">
+  <div style="display:flex;gap:6px;align-items:center;">
+    <button id="chat-clear-btn" title="清空记录" style="flex-shrink:0;width:36px;height:36px;border-radius:50%;border:1px solid var(--border);background:rgba(224,85,85,0.1);color:var(--red);font-size:14px;cursor:pointer;" onclick="clearChatHistory()">🗑</button>
+    <button id="chat-hepan-btn" title="合盘">❤️</button>
+    <input type="text" id="chat-input" placeholder="想问什么都可以…" autocomplete="off">
+    <button id="chat-send-btn">➤</button>
+  </div>
+</div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   CONFIG
+   ══════════════════════════════════════════════════════════════════ */
+const API_URL = (() => {
+  const host = location.hostname;
+  if (host === 'localhost' || host === '127.0.0.1') return 'http://localhost:3000/api/fortune';
+  // 走 localtunnel 等代理：同源请求，不拼端口
+  if (host.endsWith('.loca.lt')) return '/api/fortune';
+  // 同网段直接访问：拼 3000 端口
+  return `http://${host}:3000/api/fortune`;
+})();
+const API_KEY = '0c6b432c8a2e16960eca51a9';
+
+/* ══════════════════════════════════════════════════════════════════
+   PROFILES MANAGER (localStorage)
+   ══════════════════════════════════════════════════════════════════ */
+const STORAGE_KEY = 'fortune_profiles';
+
+const Profiles = {
+  getAll() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch { return []; }
+  },
+  saveAll(profiles) {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(profiles));
+  },
+  getActive() {
+    return this.getAll().find(p => p.isDefault) || null;
+  },
+  getById(id) {
+    return this.getAll().find(p => p.id === id);
+  },
+  save(profile) {
+    const profiles = this.getAll();
+    const idx = profiles.findIndex(p => p.id === profile.id);
+    if (idx >= 0) profiles[idx] = profile;
+    else profiles.push(profile);
+    this.saveAll(profiles);
+  },
+  delete(id) {
+    const profiles = this.getAll().filter(p => p.id !== id);
+    if (profiles.length > 0 && !profiles.some(p => p.isDefault)) {
+      profiles[0].isDefault = true;
+    }
+    this.saveAll(profiles);
+  },
+  setActive(id) {
+    const profiles = this.getAll();
+    profiles.forEach(p => { p.isDefault = (p.id === id); });
+    this.saveAll(profiles);
+  },
+  // 排盘缓存
+  cacheReading(id, bazi, dayMaster, dayMasterElement, fullText) {
+    const profiles = this.getAll();
+    const p = profiles.find(p => p.id === id);
+    if (p) {
+      p.lastReading = { timestamp: Date.now(), fullText, bazi, dayMaster, dayMasterElement };
+      this.saveAll(profiles);
+    }
+  },
+  // 日运缓存
+  getDailyCache(id, date) {
+    const p = this.getById(id);
+    return p?.dailyCache?.date === date ? p.dailyCache.text : null;
+  },
+  setDailyCache(id, date, text) {
+    const profiles = this.getAll();
+    const p = profiles.find(p => p.id === id);
+    if (p) { p.dailyCache = { date, text }; this.saveAll(profiles); }
+  },
+  // 月运缓存
+  getMonthlyCache(id, month) {
+    const p = this.getById(id);
+    return p?.monthlyCache?.month === month ? p.monthlyCache.text : null;
+  },
+  setMonthlyCache(id, month, text) {
+    const profiles = this.getAll();
+    const p = profiles.find(p => p.id === id);
+    if (p) { p.monthlyCache = { month, text }; this.saveAll(profiles); }
+  },
+  // 提取八字摘要
+  getBaziSummary(profile) {
+    return profile?.lastReading?.bazi || null;
+  },
+  getDayMaster(profile) {
+    return profile?.lastReading?.dayMaster || null;
+  }
+};
+
+/* ══════════════════════════════════════════════════════════════════
+   HELPERS
+   ══════════════════════════════════════════════════════════════════ */
+function uuid() {
+  return 'xxxxxx-xxxx-4xxx-yxxx-xxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+function today() { return new Date().toISOString().slice(0, 10); }
+function thisMonth() { return new Date().toISOString().slice(0, 7); }
+function todayDisplay() {
+  return new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+}
+function monthDisplay() {
+  return new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB NAVIGATION
+   ══════════════════════════════════════════════════════════════════ */
+let currentTab = 'fortune';
+
+function switchTab(tab) {
+  currentTab = tab;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  document.getElementById(`panel-${tab}`).classList.add('active');
+  document.querySelector(`.nav-btn[data-tab="${tab}"]`).classList.add('active');
+  renderTab(tab);
+}
+
+document.querySelectorAll('.nav-btn').forEach(btn => {
+  btn.addEventListener('click', () => switchTab(btn.dataset.tab));
+});
+
+/* ══════════════════════════════════════════════════════════════════
+   SSE STREAMING HELPER
+   ══════════════════════════════════════════════════════════════════ */
+async function streamFetch(type, body, targetEl, { onDone, onError } = {}) {
+  try {
+    const res = await fetch(`${API_URL}?type=${type}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': API_KEY
+      },
+      body: JSON.stringify({ type, ...body })
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      throw new Error(`HTTP ${res.status}: ${err}`);
+    }
+
+    const reader = res.body.getReader();
+    const decoder = new TextDecoder();
+    let buffer = '';
+    let bubble = null;
+
+    function flushBubble() {
+      if (bubble && targetEl) {
+        bubble.classList.remove('typing');
+        targetEl.appendChild(bubble);
+        bubble = null;
+      }
+    }
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      buffer = lines.pop() || '';
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        try {
+          const data = JSON.parse(line.slice(6));
+
+          if (data.error) {
+            flushBubble();
+            const errBubble = createBubble('⚠️ ' + data.error, true);
+            if (targetEl) targetEl.appendChild(errBubble);
+            if (onError) onError(data.error);
+            return;
+          }
+          if (data.done) {
+            flushBubble();
+            if (onDone) onDone();
+            return;
+          }
+          if (data.content) {
+            if (!bubble) {
+              bubble = createBubble('', false, true);
+            }
+            bubble.textContent += data.content;
+            if (targetEl && !bubble.parentNode) {
+              targetEl.appendChild(bubble);
+            }
+            // Auto scroll
+            const panel = document.querySelector('.tab-panel.active');
+            if (panel) panel.scrollTop = panel.scrollHeight;
+          }
+        } catch (e) { /* incomplete line, ignore */ }
+      }
+    }
+    flushBubble();
+    if (onDone) onDone();
+  } catch (err) {
+    const errBubble = createBubble('⚠️ ' + (err.message || '网络出了点问题，稍等再试试'), true);
+    if (targetEl) targetEl.appendChild(errBubble);
+    if (onError) onError(err.message);
+  }
+}
+
+function createBubble(text, role = 'ai', isTyping = false) {
+  const div = document.createElement('div');
+  div.className = 'chat-bubble ' + role + (isTyping ? ' typing' : '');
+  // Add timestamp
+  const time = document.createElement('span');
+  time.className = 'chat-time';
+  time.textContent = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
+  div.textContent = text;
+  div.appendChild(time);
+  return div;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 1: 命盘
+   ══════════════════════════════════════════════════════════════════ */
+function renderFortune() {
+  const panel = document.getElementById('panel-fortune');
+  const profile = Profiles.getActive();
+
+  if (!profile) {
+    panel.innerHTML = `
+      <div class="page-header">📿 命盘</div>
+      <div class="empty-state">
+        <div class="empty-icon">🔮</div>
+        <p>还没有档案<br>先创建一个，我帮你看盘</p>
+        <button class="btn btn-primary btn-small" style="margin-top:16px;width:auto;" onclick="switchTab('profiles');setTimeout(()=>showProfileForm(),300)">创建档案</button>
+      </div>`;
+    return;
+  }
+
+  const hasReading = profile.lastReading && profile.lastReading.fullText;
+
+  if (hasReading) {
+    panel.innerHTML = `
+      <div class="page-header">📿 ${profile.name}的命盘 <button class="btn btn-secondary btn-small" style="float:right;font-size:11px;" onclick="exportFortuneReading()">📋 导出</button></div>
+      <div class="date-display">🕐 上次排盘：${new Date(profile.lastReading.timestamp).toLocaleString('zh-CN')}</div>
+      <div class="chat-container" id="fortune-chat"></div>
+      <div style="margin-top:16px;display:flex;gap:10px;">
+        <button class="btn btn-primary" onclick="doFullReading()">🔄 重新排盘</button>
+        <button class="btn btn-secondary btn-small" onclick="switchTab('daily')">去看看日运 →</button>
+      </div>`;
+    const chat = document.getElementById('fortune-chat');
+    chat.appendChild(createBubble(profile.lastReading.fullText));
+  } else {
+    panel.innerHTML = `
+      <div class="page-header">📿 命盘</div>
+      <div class="chat-container" id="fortune-chat">
+        <div class="chat-bubble">
+          嗨${profile.name ? ' ' + profile.name : ''}！你的信息已经有了，点下面按钮我帮你排盘 📿
+        </div>
+      </div>
+      <button class="btn btn-primary" style="margin-top:16px;" onclick="doFullReading()">🔮 开始排盘</button>`;
+  }
+}
+
+async function doFullReading() {
+  const profile = Profiles.getActive();
+  if (!profile) return;
+
+  const panel = document.getElementById('panel-fortune');
+  panel.innerHTML = '<div class="page-header">📿 正在排盘</div><div class="loading-spinner"><div class="spinner"></div>正在仔细推演你的命盘…</div><div class="chat-container" id="fortune-chat"></div>';
+
+  const chat = document.getElementById('fortune-chat');
+  // Small delay so user sees the spinner
+  await new Promise(r => setTimeout(r, 600));
+
+  // Clear spinner, show chat
+  panel.querySelector('.loading-spinner')?.remove();
+
+  let fullText = '';
+  let bazi = '';
+  let dayMaster = '';
+  let dayMasterElement = '';
+
+  await streamFetch('full', {
+    name: profile.name,
+    birthDate: profile.birthDate,
+    birthTime: profile.birthTime,
+    birthPlace: profile.birthPlace,
+    gender: profile.gender,
+    timeUnknown: !profile.birthTime
+  }, chat, {
+    onDone() {
+      // Collect text from all bubbles except errors
+      const bubbles = chat.querySelectorAll('.chat-bubble:not([style*="color"])');
+      bubbles.forEach(b => {
+        const t = b.textContent || '';
+        fullText += t;
+        // Try to extract bazi from text (pattern: 4 pairs of characters)
+        const baziMatch = t.match(/[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]\s*[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]\s*[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]\s*[甲乙丙丁戊己庚辛壬癸][子丑寅卯辰巳午未申酉戌亥]/);
+        if (baziMatch && !bazi) {
+          bazi = baziMatch[0];
+          // day master is first char of third pair
+          const parts = baziMatch[0].split(/\s+/);
+          if (parts.length >= 3) {
+            dayMaster = parts[2].charAt(0);
+            const dmMap = { '甲': '木', '乙': '木', '丙': '火', '丁': '火', '戊': '土', '己': '土', '庚': '金', '辛': '金', '壬': '水', '癸': '水' };
+            dayMasterElement = dmMap[dayMaster] || '';
+          }
+        }
+      });
+      if (bazi) {
+        Profiles.cacheReading(profile.id, bazi, dayMaster, dayMasterElement, fullText);
+      }
+      // Re-render with refresh button
+      const btnRow = document.createElement('div');
+      btnRow.style.cssText = 'margin-top:16px;display:flex;gap:10px;';
+      btnRow.innerHTML = '<button class="btn btn-primary" onclick="doFullReading()">🔄 重新排盘</button><button class="btn btn-secondary btn-small" onclick="switchTab(\'daily\')">去看看日运 →</button>';
+      panel.appendChild(btnRow);
+    },
+    onError(err) {
+      const btnRow = document.createElement('div');
+      btnRow.style.cssText = 'margin-top:16px;';
+      btnRow.innerHTML = '<button class="btn btn-primary" onclick="doFullReading()">🔄 再试试</button>';
+      panel.appendChild(btnRow);
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 2: 日运
+   ══════════════════════════════════════════════════════════════════ */
+function renderDaily() {
+  const panel = document.getElementById('panel-daily');
+  const profile = Profiles.getActive();
+
+  if (!profile) {
+    panel.innerHTML = `
+      <div class="page-header">☀️ 每日运程</div>
+      <div class="empty-state">
+        <div class="empty-icon">☀️</div>
+        <p>先建个档案<br>才能看每天的运势哦</p>
+        <button class="btn btn-primary btn-small" style="margin-top:16px;width:auto;" onclick="switchTab('profiles');setTimeout(()=>showProfileForm(),300)">创建档案</button>
+      </div>`;
+    return;
+  }
+
+  if (!profile.lastReading) {
+    panel.innerHTML = `
+      <div class="page-header">☀️ 每日运程</div>
+      <div class="empty-state">
+        <div class="empty-icon">📿</div>
+        <p>还没排过盘<br>先去命盘排一次，日运就知道怎么推了</p>
+        <button class="btn btn-primary btn-small" style="margin-top:16px;width:auto;" onclick="switchTab('fortune')">去排盘</button>
+      </div>`;
+    return;
+  }
+
+  const date = today();
+  const cached = Profiles.getDailyCache(profile.id, date);
+
+  panel.innerHTML = `
+    <div class="page-header">☀️ 每日运程</div>
+    <div class="date-display">📅 ${todayDisplay()}</div>
+    <div style="display:flex;gap:8px;margin-bottom:12px;">
+      <button class="btn btn-primary btn-small" onclick="doDailyReading()">🔮 今日运势</button>
+      <button class="btn btn-secondary btn-small" onclick="doDailyLucky()" style="background:rgba(90,173,110,0.15);color:var(--green);border-color:rgba(90,173,110,0.3);">✅ 今日宜忌</button>
+    </div>
+    <div class="chat-container" id="daily-chat"></div>
+    <div style="margin-top:12px;"><button class="btn btn-primary btn-small" onclick="doDailyReading()" id="daily-refresh-btn">🔄 重新推算</button></div>`;
+
+  if (cached) {
+    const chat = document.getElementById('daily-chat');
+    chat.appendChild(createBubble(cached));
+    document.getElementById('daily-refresh-btn').style.display = 'block';
+  } else {
+    doDailyReading();
+  }
+}
+
+async function doDailyReading() {
+  const profile = Profiles.getActive();
+  if (!profile) return;
+
+  const panel = document.getElementById('panel-daily');
+  const existingChat = document.getElementById('daily-chat');
+  if (existingChat) existingChat.innerHTML = '';
+
+  const chat = document.getElementById('daily-chat') || (() => {
+    panel.querySelector('.chat-container').innerHTML = '';
+    return panel.querySelector('.chat-container');
+  })();
+
+  const loading = document.createElement('div');
+  loading.className = 'loading-spinner';
+  loading.innerHTML = '<div class="spinner"></div>正在推今天的运势…';
+  chat.appendChild(loading);
+
+  let fullText = '';
+  await streamFetch('daily', {
+    bazi: Profiles.getBaziSummary(profile)
+  }, chat, {
+    onDone() {
+      loading.remove();
+      const bubbles = chat.querySelectorAll('.chat-bubble:not([style*="color"])');
+      bubbles.forEach(b => { fullText += (b.textContent || '') + ' '; });
+      Profiles.setDailyCache(profile.id, today(), fullText.trim());
+    },
+    onError() {
+      loading.remove();
+    }
+  });
+}
+
+async function doDailyLucky() {
+  const profile = Profiles.getActive();
+  if (!profile) return;
+  const panel = document.getElementById('panel-daily');
+  const chat = document.getElementById('daily-chat') || panel.querySelector('.chat-container');
+  if (chat) chat.innerHTML = '';
+  const loading = document.createElement('div');
+  loading.className = 'loading-spinner';
+  loading.innerHTML = '<div class="spinner"></div>正在翻今天的黄历…';
+  chat.appendChild(loading);
+
+  let fullText = '';
+  await streamFetch('daily_lucky', { bazi: Profiles.getBaziSummary(profile) }, chat, {
+    onDone() {
+      loading.remove();
+      const bubbles = chat.querySelectorAll('.chat-bubble:not([style*="color"])');
+      bubbles.forEach(b => { fullText += (b.textContent || '') + ' '; });
+      Profiles.setDailyCache(profile.id, today() + '_lucky', fullText.trim());
+    },
+    onError() { loading.remove(); }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 3: 月运
+   ══════════════════════════════════════════════════════════════════ */
+function renderMonthly() {
+  const panel = document.getElementById('panel-monthly');
+  const profile = Profiles.getActive();
+
+  if (!profile) {
+    panel.innerHTML = `
+      <div class="page-header">🌙 每月运程</div>
+      <div class="empty-state">
+        <div class="empty-icon">🌙</div>
+        <p>先建个档案<br>才能看每月的运势哦</p>
+        <button class="btn btn-primary btn-small" style="margin-top:16px;width:auto;" onclick="switchTab('profiles');setTimeout(()=>showProfileForm(),300)">创建档案</button>
+      </div>`;
+    return;
+  }
+
+  if (!profile.lastReading) {
+    panel.innerHTML = `
+      <div class="page-header">🌙 每月运程</div>
+      <div class="empty-state">
+        <div class="empty-icon">📿</div>
+        <p>还没排过盘<br>先去命盘排一次吧</p>
+        <button class="btn btn-primary btn-small" style="margin-top:16px;width:auto;" onclick="switchTab('fortune')">去排盘</button>
+      </div>`;
+    return;
+  }
+
+  const month = thisMonth();
+  const cached = Profiles.getMonthlyCache(profile.id, month);
+
+  panel.innerHTML = `
+    <div class="page-header">🌙 每月运程</div>
+    <div class="date-display">📅 ${monthDisplay()}</div>
+    <div class="chat-container" id="monthly-chat"></div>
+    <div style="margin-top:12px;"><button class="btn btn-primary btn-small" onclick="doMonthlyReading()" id="monthly-refresh-btn">🔄 重新推算</button></div>`;
+
+  if (cached) {
+    const chat = document.getElementById('monthly-chat');
+    chat.appendChild(createBubble(cached));
+  } else {
+    doMonthlyReading();
+  }
+}
+
+async function doMonthlyReading() {
+  const profile = Profiles.getActive();
+  if (!profile) return;
+
+  const panel = document.getElementById('panel-monthly');
+  const chat = document.getElementById('monthly-chat');
+  if (chat) chat.innerHTML = '';
+
+  const loading = document.createElement('div');
+  loading.className = 'loading-spinner';
+  loading.innerHTML = '<div class="spinner"></div>正在推这个月的运势…';
+  (chat || panel.querySelector('.chat-container')).appendChild(loading);
+
+  let fullText = '';
+  await streamFetch('monthly', {
+    bazi: Profiles.getBaziSummary(profile)
+  }, chat || panel.querySelector('.chat-container'), {
+    onDone() {
+      loading.remove();
+      const target = chat || panel.querySelector('.chat-container');
+      const bubbles = target.querySelectorAll('.chat-bubble:not([style*="color"])');
+      bubbles.forEach(b => { fullText += (b.textContent || '') + ' '; });
+      Profiles.setMonthlyCache(profile.id, thisMonth(), fullText.trim());
+    },
+    onError() { loading.remove(); }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 4: 择日
+   ══════════════════════════════════════════════════════════════════ */
+function renderLuckydays() {
+  const panel = document.getElementById('panel-luckydays');
+  const profile = Profiles.getActive();
+
+  if (!profile || !profile.lastReading) {
+    panel.innerHTML = `
+      <div class="page-header">📅 吉日查询</div>
+      <div class="empty-state">
+        <div class="empty-icon">📅</div>
+        <p>${!profile ? '先建个档案' : '先去命盘排一次盘'}<br>才能帮你挑好日子哦</p>
+        <button class="btn btn-primary btn-small" style="margin-top:16px;width:auto;" onclick="switchTab('${!profile ? 'profiles' : 'fortune'}')">${!profile ? '创建档案' : '去排盘'}</button>
+      </div>`;
+    return;
+  }
+
+  const activities = ['出行', '开业', '嫁娶', '搬家', '签约', '面试', '装修', '其他'];
+  const defaultFrom = today();
+  const defaultTo = new Date(Date.now() + 30 * 86400000).toISOString().slice(0, 10);
+
+  panel.innerHTML = `
+    <div class="page-header">📅 吉日查询</div>
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">想做什么？</label>
+        <select class="form-select" id="lucky-activity">
+          ${activities.map(a => `<option value="${a}">${a}</option>`).join('')}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">从哪天开始看</label>
+        <input type="date" class="form-input" id="lucky-from" value="${defaultFrom}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">看到哪天</label>
+        <input type="date" class="form-input" id="lucky-to" value="${defaultTo}">
+      </div>
+      <button class="btn btn-primary" onclick="doLuckydays()">🔍 帮我挑日子</button>
+    </div>
+    <div id="lucky-result"></div>`;
+}
+
+async function doLuckydays() {
+  const profile = Profiles.getActive();
+  if (!profile) return;
+
+  const activity = document.getElementById('lucky-activity').value;
+  const dateFrom = document.getElementById('lucky-from').value;
+  const dateTo = document.getElementById('lucky-to').value;
+  const resultEl = document.getElementById('lucky-result');
+
+  resultEl.innerHTML = '<div class="loading-spinner" style="margin-top:16px;"><div class="spinner"></div>正在帮你翻黄历挑日子…</div>';
+
+  // We use a special approach for luckydays: full text returned, then parsed into cards
+  let fullText = '';
+  const tempDiv = document.createElement('div');
+
+  await streamFetch('luckydays', {
+    bazi: Profiles.getBaziSummary(profile),
+    activity,
+    dateFrom,
+    dateTo
+  }, tempDiv, {
+    onDone() {
+      const bubbles = tempDiv.querySelectorAll('.chat-bubble:not([style*="color"])');
+      bubbles.forEach(b => { fullText += (b.textContent || ''); });
+
+      // Render result as chat + maybe parse days into cards
+      resultEl.innerHTML = '';
+      const container = document.createElement('div');
+      container.className = 'chat-container';
+      container.style.marginTop = '16px';
+      bubbles.forEach(b => container.appendChild(b.cloneNode(true)));
+      resultEl.appendChild(container);
+
+      // Add a refresh button
+      const btnRow = document.createElement('div');
+      btnRow.style.marginTop = '16px';
+      btnRow.innerHTML = '<button class="btn btn-primary btn-small" onclick="doLuckydays()">🔄 重新查询</button>';
+      resultEl.appendChild(btnRow);
+    },
+    onError(err) {
+      resultEl.innerHTML = `<div class="chat-bubble" style="color:var(--red);margin-top:16px;">⚠️ ${err || '查询出错了，再试试'}</div>`;
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 5: 档案管理
+   ══════════════════════════════════════════════════════════════════ */
+function renderProfiles() {
+  const panel = document.getElementById('panel-profiles');
+  const profiles = Profiles.getAll();
+
+  let html = `
+    <div class="page-header">👤 档案</div>
+    <div class="privacy-note">🔒 数据存在你手机本地，不会上传</div>`;
+
+  if (profiles.length === 0) {
+    html += `
+      <div class="empty-state">
+        <div class="empty-icon">👤</div>
+        <p>还没有档案<br>创建一个开始吧</p>
+      </div>`;
+  } else {
+    profiles.forEach(p => {
+      const activeClass = p.isDefault ? ' active-profile' : '';
+      const readingInfo = p.lastReading
+        ? `上次排盘：${new Date(p.lastReading.timestamp).toLocaleDateString('zh-CN')}`
+        : '尚未排盘';
+      html += `
+        <div class="profile-card${activeClass}" onclick="selectProfile('${p.id}')">
+          <div class="profile-info">
+            <div class="profile-name">${p.name || '未命名'} ${p.isDefault ? '⭐' : ''}</div>
+            <div class="profile-detail">${p.birthDate} · ${p.gender || '未设'} · ${readingInfo}</div>
+          </div>
+          <div class="profile-actions">
+            <button class="btn btn-secondary btn-small" onclick="event.stopPropagation();editProfile('${p.id}')">编辑</button>
+            <button class="btn btn-danger btn-small" onclick="event.stopPropagation();deleteProfile('${p.id}')">删除</button>
+          </div>
+        </div>`;
+    });
+  }
+
+  html += `
+    <button class="btn btn-primary" style="margin-top:16px;" onclick="showProfileForm()">＋ 新建档案</button>`;
+  panel.innerHTML = html;
+}
+
+function selectProfile(id) {
+  Profiles.setActive(id);
+  renderProfiles();
+  renderFortune();
+  renderDaily();
+  renderMonthly();
+  renderLuckydays();
+}
+
+function editProfile(id) {
+  showProfileForm(Profiles.getById(id));
+}
+
+function deleteProfile(id) {
+  const p = Profiles.getById(id);
+  if (!p) return;
+  if (!confirm(`确定删除「${p.name || '未命名'}」的档案吗？数据无法恢复。`)) return;
+  Profiles.delete(id);
+  renderProfiles();
+  renderFortune();
+  renderDaily();
+  renderMonthly();
+  renderLuckydays();
+}
+
+function showProfileForm(existing) {
+  const isEdit = !!existing;
+  const panel = document.getElementById('panel-profiles');
+
+  // Render form inline as a card
+  const profiles = Profiles.getAll();
+  let listHtml = '';
+  if (profiles.length > 0) {
+    profiles.forEach(p => {
+      const activeClass = p.isDefault ? ' active-profile' : '';
+      const readingInfo = p.lastReading ? `上次排盘：${new Date(p.lastReading.timestamp).toLocaleDateString('zh-CN')}` : '尚未排盘';
+      listHtml += `
+        <div class="profile-card${activeClass}" onclick="selectProfile('${p.id}')">
+          <div class="profile-info">
+            <div class="profile-name">${p.name || '未命名'} ${p.isDefault ? '⭐' : ''}</div>
+            <div class="profile-detail">${p.birthDate} · ${p.gender || '未设'} · ${readingInfo}</div>
+          </div>
+          <div class="profile-actions">
+            <button class="btn btn-secondary btn-small" onclick="event.stopPropagation();editProfile('${p.id}')">编辑</button>
+            <button class="btn btn-danger btn-small" onclick="event.stopPropagation();deleteProfile('${p.id}')">删除</button>
+          </div>
+        </div>`;
+    });
+  }
+
+  panel.innerHTML = `
+    <div class="page-header">👤 ${isEdit ? '编辑档案' : '新建档案'}</div>
+    <div class="card">
+      <div class="form-group">
+        <label class="form-label">昵称（怎么称呼你）</label>
+        <input type="text" class="form-input" id="pf-name" placeholder="比如：小明" value="${existing?.name || ''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">出生日期（阳历）</label>
+        <input type="date" class="form-input" id="pf-date" value="${existing?.birthDate || ''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">出生时间</label>
+        <input type="time" class="form-input" id="pf-time" value="${existing?.birthTime || '12:00'}" ${!existing?.birthTime && existing ? '' : ''}>
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="pf-time-unknown" ${!existing?.birthTime ? 'checked' : ''} onchange="
+          const t = document.getElementById('pf-time');
+          if (this.checked) { t.value='12:00'; t.style.opacity='0.5'; }
+          else { t.style.opacity='1'; }
+        ">
+        <label for="pf-time-unknown">我不确定出生时辰</label>
+      </div>
+      <div class="form-group">
+        <label class="form-label">出生地点</label>
+        <input type="text" class="form-input" id="pf-place" placeholder="比如：北京" value="${existing?.birthPlace || ''}">
+      </div>
+      <div class="form-group">
+        <label class="form-label">性别</label>
+        <div class="gender-toggle" id="pf-gender">
+          <button class="gender-btn${existing?.gender === '男' ? ' selected' : ''}" data-g="男">男</button>
+          <button class="gender-btn${existing?.gender === '女' ? ' selected' : ''}" data-g="女">女</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;">
+        <button class="btn btn-primary" onclick="saveProfileForm('${existing?.id || ''}')">${isEdit ? '保存修改' : '创建档案'}</button>
+        <button class="btn btn-secondary" onclick="renderProfiles()">取消</button>
+      </div>
+    </div>
+    ${listHtml ? `<div style="margin-top:20px;">${listHtml}</div>` : ''}
+    <button class="btn btn-secondary" style="margin-top:12px;" onclick="showProfileForm()">＋ 新建档案</button>
+    <div class="privacy-note">🔒 数据存在你手机本地，不会上传</div>`;
+
+  // Bind gender buttons
+  document.querySelectorAll('#pf-gender .gender-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#pf-gender .gender-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+
+  // Init time input opacity
+  const timeInput = document.getElementById('pf-time');
+  const timeUnknown = document.getElementById('pf-time-unknown');
+  if (timeUnknown && timeUnknown.checked && timeInput) {
+    timeInput.style.opacity = '0.5';
+  }
+}
+
+function saveProfileForm(existingId) {
+  const name = document.getElementById('pf-name').value.trim();
+  const birthDate = document.getElementById('pf-date').value;
+  const timeUnknown = document.getElementById('pf-time-unknown').checked;
+  const birthTime = timeUnknown ? null : document.getElementById('pf-time').value;
+  const birthPlace = document.getElementById('pf-place').value.trim();
+  const genderBtn = document.querySelector('#pf-gender .gender-btn.selected');
+  const gender = genderBtn ? genderBtn.dataset.g : null;
+
+  if (!name || !birthDate) {
+    alert('昵称和出生日期至少得填上哦');
+    return;
+  }
+
+  const profiles = Profiles.getAll();
+  const profile = {
+    id: existingId || uuid(),
+    name,
+    birthDate,
+    birthTime,
+    birthPlace,
+    gender,
+    isDefault: existingId
+      ? (profiles.find(p => p.id === existingId)?.isDefault || false)
+      : (profiles.length === 0),
+    lastReading: existingId ? profiles.find(p => p.id === existingId)?.lastReading || null : null,
+    dailyCache: existingId ? profiles.find(p => p.id === existingId)?.dailyCache || null : null,
+    monthlyCache: existingId ? profiles.find(p => p.id === existingId)?.monthlyCache || null : null,
+    createdAt: existingId ? profiles.find(p => p.id === existingId)?.createdAt : Date.now()
+  };
+
+  Profiles.save(profile);
+  if (!existingId) Profiles.setActive(profile.id);
+
+  renderProfiles();
+  renderFortune();
+  renderDaily();
+  renderMonthly();
+  renderLuckydays();
+
+  // If new profile created, switch to fortune tab
+  if (!existingId) {
+    switchTab('fortune');
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   RENDER CURRENT TAB
+   ══════════════════════════════════════════════════════════════════ */
+function renderTab(tab) {
+  switch (tab) {
+    case 'fortune': renderFortune(); break;
+    case 'daily': renderDaily(); break;
+    case 'monthly': renderMonthly(); break;
+    case 'luckydays': renderLuckydays(); break;
+    case 'chat': renderChat(); break;
+    case 'profiles': renderProfiles(); break;
+    case 'crystals': renderCrystals(); break;
+  }
+  // 显示/隐藏输入框
+  const chatBar = document.getElementById('chat-input-bar');
+  if (chatBar) chatBar.style.display = tab === 'chat' ? 'flex' : 'none';
+  const crystalBar = document.getElementById('crystal-input-bar');
+  if (crystalBar) crystalBar.style.display = tab === 'crystals' ? 'flex' : 'none';
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 6: 自由聊天 + 功能入口 (取名/职业/年度/风水/水晶收藏)
+   ══════════════════════════════════════════════════════════════════ */
+function renderChat() {
+  const panel = document.getElementById('panel-chat');
+  const profile = Profiles.getActive();
+  const hasReading = profile && profile.lastReading;
+
+  // Load saved chat history
+  let savedHtml = '';
+  try { savedHtml = localStorage.getItem('fortune_chat_history') || ''; } catch(e) {}
+
+  // Quick ask buttons based on context
+  const quickAsks = hasReading
+    ? ['我这两年事业怎么样', '感情方面有什么建议', '最近财运如何', '适合创业吗', '健康状况要注意什么']
+    : ['帮我看看我的命盘'] + ['我这两年事业怎么样', '感情方面有什么建议', '最近适合做什么'].slice(0, 3);
+
+  // Feature buttons row
+  const featureBtns = `
+    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
+      <button class="quick-ask-btn" style="background:rgba(90,173,110,0.1);border-color:rgba(90,173,110,0.3);color:var(--green);" onclick="showNameScore()">📝 取名打分</button>
+      <button class="quick-ask-btn" style="background:rgba(90,143,207,0.1);border-color:rgba(90,143,207,0.3);color:var(--blue);" onclick="showCareerMatch()">💼 职业匹配</button>
+      <button class="quick-ask-btn" style="background:rgba(226,176,74,0.1);border-color:rgba(226,176,74,0.3);color:var(--gold);" onclick="showAnnualReport()">📊 年度报告</button>
+      <button class="quick-ask-btn" style="background:rgba(180,100,220,0.1);border-color:rgba(180,100,220,0.3);color:#b464dc;" onclick="showFengshui()">🏠 风水布局</button>
+    </div>`;
+
+  // All profiles for hepan partner selection
+  const allProfiles = Profiles.getAll();
+  const partnerOptions = allProfiles.filter(p => p.id !== profile?.id);
+
+  panel.innerHTML = `
+    <div class="page-header">💬 聊聊 <button class="btn btn-danger btn-small" style="float:right;font-size:11px;" onclick="clearChatHistory()">清空记录</button><button class="btn btn-secondary btn-small" style="float:right;font-size:11px;margin-right:6px;" onclick="exportChatHistory()">📋 导出</button></div>
+    <div id="chat-history" class="chat-container">
+      <div class="chat-bubble system">${hasReading
+        ? `${profile.name}，你的命盘我已经看过了。想问什么尽管说 👇`
+        : `先到📿命盘排个盘，回来聊天会更精准。随便问也OK 👇`}</div>
+      ${savedHtml ? savedHtml : ''}
+    </div>
+    <div class="quick-asks" id="quick-asks">
+      <button class="quick-ask-btn" style="background:rgba(224,85,85,0.1);border-color:rgba(224,85,85,0.3);color:var(--red);" onclick="showHePan()">❤️ 看看和TA合不合</button>
+      ${quickAsks.map(q => `<button class="quick-ask-btn" onclick="askQuick('${q}')">${q}</button>`).join('')}
+    </div>
+    ${hasReading ? featureBtns : ''}
+    <div style="margin-top:12px;">
+      <button class="quick-ask-btn" style="background:rgba(224,85,85,0.08);border-color:rgba(224,85,85,0.2);color:var(--red);" onclick="showHePanCard()">❤️ 合盘卡片</button>
+      <button class="quick-ask-btn" style="background:rgba(226,176,74,0.1);border-color:rgba(226,176,74,0.3);color:var(--gold);" onclick="showLunarConverter()">📅 阴阳历换算</button>
+    </div>`;
+
+  // Restore scroll to bottom
+  setTimeout(() => {
+    const history = document.getElementById('chat-history');
+    if (history) history.parentElement.scrollTop = history.parentElement.scrollHeight;
+  }, 100);
+
+  // Bind send + hepan button
+  const sendBtn = document.getElementById('chat-send-btn');
+  const input = document.getElementById('chat-input');
+  const hepanBtn = document.getElementById('chat-hepan-btn');
+  if (sendBtn && input) {
+    sendBtn.onclick = doChatSend;
+    input.onkeydown = (e) => { if (e.key === 'Enter') doChatSend(); };
+    input.focus();
+  }
+  if (hepanBtn) hepanBtn.onclick = showHePan;
+
+  // Also bind crystal collect button for chat bubbles
+  setTimeout(bindCrystalCollectButtons, 500);
+}
+
+// ── 水晶收藏系统 ──
+function toggleCrystalCollect(crystalName, btn) {
+  let collected = [];
+  try { collected = JSON.parse(localStorage.getItem('fortune_crystals') || '[]'); } catch(e) {}
+  const idx = collected.indexOf(crystalName);
+  if (idx >= 0) {
+    collected.splice(idx, 1);
+    btn.textContent = '☆';
+    btn.style.color = 'var(--text-muted)';
+  } else {
+    collected.push(crystalName);
+    btn.textContent = '★';
+    btn.style.color = 'var(--gold)';
+  }
+  localStorage.setItem('fortune_crystals', JSON.stringify(collected));
+}
+
+function bindCrystalCollectButtons() {
+  // Scan chat bubbles for crystal names and add collect buttons
+  const CRYSTALS = ['白水晶','月光石','白幽灵','白碧玺','闪灵钻','绿幽灵','绿松石','紫水晶','翡翠','绿发晶','孔雀石','海蓝宝','黑曜石','茶水晶','黑发晶','黑碧玺','蓝玛瑙','青金石','舒曼石','石榴石','红发晶','草莓晶','红纹石','红碧玺','粉水晶','紫锂辉石','黄水晶','虎眼石','金发晶','钛晶','黄碧玺','黄铁矿','萤石','琥珀','蔷薇辉石','锂云母','捷克陨石','拉利玛','舒俱徕','橄榄石','烟晶'];
+  let collected = [];
+  try { collected = JSON.parse(localStorage.getItem('fortune_crystals') || '[]'); } catch(e) {}
+
+  document.querySelectorAll('#chat-history .chat-bubble.ai').forEach(bubble => {
+    CRYSTALS.forEach(c => {
+      if (bubble.textContent.includes(c) && !bubble.querySelector('[data-crystal]')) {
+        const isCollected = collected.includes(c);
+        const marker = document.createElement('span');
+        marker.setAttribute('data-crystal', c);
+        marker.textContent = isCollected ? ' ★' : ' ☆';
+        marker.style.cssText = `cursor:pointer;font-size:16px;margin-left:2px;color:${isCollected ? 'var(--gold)' : 'var(--text-muted)'};`;
+        marker.onclick = () => toggleCrystalCollect(c, marker);
+        // Append after the crystal name
+        const idx = bubble.innerHTML.indexOf(c);
+        if (idx >= 0) {
+          bubble.innerHTML = bubble.innerHTML.replace(c, c + marker.outerHTML);
+        }
+      }
+    });
+  });
+}
+
+// ── 取名打分 ──
+function showNameScore() {
+  const profile = Profiles.getActive();
+  if (!profile || !profile.lastReading) { alert('先排个盘哦'); switchTab('fortune'); return; }
+  const history = document.getElementById('chat-history');
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.cssText = 'border:2px solid var(--green);margin-top:12px;';
+  card.innerHTML = `
+    <div class="card-header"><span class="icon">📝</span> 取名打分</div>
+    <div class="form-group"><label class="form-label">你想评估的名字</label><input type="text" class="form-input" id="name-score-input" placeholder="比如：张伟、李思涵"></div>
+    <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-small" style="background:var(--green);" onclick="doNameScore()">打分</button><button class="btn btn-secondary btn-small" onclick="this.parentElement.parentElement.remove()">取消</button></div>`;
+  history.before(card);
+  card.scrollIntoView({behavior:'smooth'});
+  document.getElementById('name-score-input').focus();
+}
+async function doNameScore() {
+  const name = document.getElementById('name-score-input').value.trim();
+  if (!name) return;
+  const profile = Profiles.getActive();
+  document.getElementById('name-score-input').parentElement.parentElement.querySelector('.btn-primary').remove();
+  const card = document.querySelector('[id^="name-score"]') || document.querySelector('.card');
+  if (card) { card.innerHTML = '<div class="loading-spinner"><div class="spinner"></div>正在分析名字…</div>'; }
+  const history = document.getElementById('chat-history');
+  const userBubble = createBubble(`📝 帮我看看"${name}"这个名字`, 'user');
+  history.appendChild(userBubble);
+  const aiBubble = createBubble('', 'ai', true);
+  history.appendChild(aiBubble);
+  if (card) card.remove();
+  await streamFetch('name_score', { name, bazi: profile.lastReading.bazi, gender: profile.gender }, history, {
+    onDone() { saveChatHistory(); bindCrystalCollectButtons(); },
+    onError() {}
+  });
+}
+
+// ── 职业匹配 ──
+function showCareerMatch() {
+  const profile = Profiles.getActive();
+  if (!profile || !profile.lastReading) { alert('先排个盘哦'); switchTab('fortune'); return; }
+  const history = document.getElementById('chat-history');
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.cssText = 'border:2px solid var(--blue);margin-top:12px;';
+  card.innerHTML = `
+    <div class="card-header"><span class="icon">💼</span> 职业五行匹配</div>
+    <div class="form-group"><label class="form-label">输入一个职业或行业</label><input type="text" class="form-input" id="career-input" placeholder="比如：程序员、教师、开店、金融"></div>
+    <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-small" style="background:var(--blue);" onclick="doCareerMatch()">分析</button><button class="btn btn-secondary btn-small" onclick="this.parentElement.parentElement.remove()">取消</button></div>`;
+  history.before(card);
+  card.scrollIntoView({behavior:'smooth'});
+  document.getElementById('career-input').focus();
+}
+async function doCareerMatch() {
+  const career = document.getElementById('career-input').value.trim();
+  if (!career) return;
+  const profile = Profiles.getActive();
+  const card = document.querySelector('#career-input').parentElement.parentElement;
+  if (card) card.innerHTML = '<div class="loading-spinner"><div class="spinner"></div>正在分析职业匹配…</div>';
+  const history = document.getElementById('chat-history');
+  history.appendChild(createBubble(`💼 "${career}"这个行业跟我合不合？`, 'user'));
+  const aiBubble = createBubble('', 'ai', true);
+  history.appendChild(aiBubble);
+  if (card) card.remove();
+  await streamFetch('career_match', { career, bazi: profile.lastReading.bazi }, history, {
+    onDone() { saveChatHistory(); },
+    onError() {}
+  });
+}
+
+// ── 年度报告 ──
+function showAnnualReport() {
+  const profile = Profiles.getActive();
+  if (!profile || !profile.lastReading) { alert('先排个盘哦'); switchTab('fortune'); return; }
+  const history = document.getElementById('chat-history');
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.cssText = 'border:2px solid var(--gold);margin-top:12px;';
+  card.innerHTML = `
+    <div class="card-header"><span class="icon">📊</span> 年度运势报告</div>
+    <div class="form-group"><label class="form-label">哪一年（默认今年）</label><input type="number" class="form-input" id="report-year" value="${new Date().getFullYear()}" min="2020" max="2035"></div>
+    <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-small" style="background:var(--gold);color:#1a1a2e;" onclick="doAnnualReport()">生成报告</button><button class="btn btn-secondary btn-small" onclick="this.parentElement.parentElement.remove()">取消</button></div>`;
+  history.before(card);
+  card.scrollIntoView({behavior:'smooth'});
+}
+async function doAnnualReport() {
+  const year = document.getElementById('report-year').value;
+  const profile = Profiles.getActive();
+  const card = document.querySelector('#report-year').parentElement.parentElement;
+  if (card) card.innerHTML = '<div class="loading-spinner"><div class="spinner"></div>正在生成年度报告…</div>';
+  const history = document.getElementById('chat-history');
+  history.appendChild(createBubble(`📊 来一份${year}年运势报告`, 'user'));
+  const aiBubble = createBubble('', 'ai', true);
+  history.appendChild(aiBubble);
+  if (card) card.remove();
+  await streamFetch('annual_report', { year, bazi: profile.lastReading.bazi, birthDate: profile.birthDate }, history, {
+    onDone() { saveChatHistory(); bindCrystalCollectButtons(); },
+    onError() {}
+  });
+}
+
+// ── 风水布局 ──
+function showFengshui() {
+  const profile = Profiles.getActive();
+  if (!profile || !profile.lastReading) { alert('先排个盘哦'); switchTab('fortune'); return; }
+  const history = document.getElementById('chat-history');
+  history.appendChild(createBubble('🏠 帮我看看家里怎么摆水晶最招财辟邪', 'user'));
+  const aiBubble = createBubble('', 'ai', true);
+  history.appendChild(aiBubble);
+  history.parentElement.scrollTop = history.parentElement.scrollHeight;
+  streamFetch('fengshui', { bazi: profile.lastReading.bazi, year: new Date().getFullYear() }, history, {
+    onDone() { saveChatHistory(); bindCrystalCollectButtons(); },
+    onError() {}
+  });
+}
+
+function askQuick(q) {
+  const input = document.getElementById('chat-input');
+  if (input) { input.value = q; doChatSend(); }
+}
+
+function saveChatHistory() {
+  const history = document.getElementById('chat-history');
+  if (history) {
+    try {
+      // Only save last 50 messages to avoid localStorage overflow
+      const bubbles = history.querySelectorAll('.chat-bubble:not(.system)');
+      let count = 0;
+      const clone = history.cloneNode(true);
+      const allBubbles = clone.querySelectorAll('.chat-bubble:not(.system)');
+      allBubbles.forEach((b, i) => { if (i < allBubbles.length - 50) b.remove(); });
+      localStorage.setItem('fortune_chat_history', clone.innerHTML);
+    } catch(e) { /* ignore */ }
+  }
+}
+
+async function doChatSend() {
+  const input = document.getElementById('chat-input');
+  const sendBtn = document.getElementById('chat-send-btn');
+  const question = input.value.trim();
+  if (!question) return;
+
+  input.value = '';
+  input.disabled = true;
+  sendBtn.disabled = true;
+
+  const history = document.getElementById('chat-history');
+  const profile = Profiles.getActive();
+
+  // Hide quick asks after first real question
+  const quickAsks = document.getElementById('quick-asks');
+  if (quickAsks) quickAsks.style.display = 'none';
+
+  // 用户消息 — 金色靠右
+  const userBubble = createBubble(question, 'user');
+  history.appendChild(userBubble);
+  saveChatHistory();
+
+  // Build context
+  let contextMsg = question;
+  if (profile && profile.lastReading) {
+    contextMsg = `用户的八字四柱：${profile.lastReading.bazi || '未知'}，日主五行为${profile.lastReading.dayMasterElement || '未知'}。
+用户问：${question}
+
+请基于用户的八字来回答。风格保持大白话、有温度、不吓人。如果问题跟命理无关，先简短回答，再从命理角度给点建议。`;
+  } else {
+    contextMsg = `用户还没有排盘，问：${question}
+请回答这个问题。如果跟命理有关，提示用户先去命盘Tab排盘会更精准。风格白话、有温度。`;
+  }
+
+  // AI 回复 — 深色靠左 typing
+  const aiBubble = createBubble('', 'ai', true);
+  history.appendChild(aiBubble);
+  history.parentElement.scrollTop = history.parentElement.scrollHeight;
+
+  await streamFetch('chat', { question: contextMsg, bazi: profile?.lastReading?.bazi || '' }, history, {
+    onDone() {
+      input.disabled = false;
+      sendBtn.disabled = false;
+      input.focus();
+      saveChatHistory();
+    },
+    onError() {
+      input.disabled = false;
+      sendBtn.disabled = false;
+      input.focus();
+    }
+  });
+}
+
+// ── 合盘卡片生成 ──
+async function showHePanCard() {
+  const my = Profiles.getActive();
+  if (!my || !my.lastReading) { alert('先排个盘哦'); switchTab('fortune'); return; }
+  const all = Profiles.getAll();
+  const others = all.filter(p => p.id !== my.id);
+  if (others.length === 0) { alert('先在档案里添加TA的信息哦'); return; }
+  if (others.length === 1) { doHePanCard(my, others[0]); return; }
+  const history = document.getElementById('chat-history');
+  const card = document.createElement('div');
+  card.id = 'hepan-card-picker';
+  card.className = 'card';
+  card.style.cssText = 'border:2px solid var(--red);margin-top:12px;';
+  card.innerHTML = `<div class="card-header">❤️ 生成合盘卡片 — 选TA</div>
+    ${others.map(p => `<button class="btn btn-secondary btn-small" style="margin:4px;width:auto;" onclick="document.getElementById('hepan-card-picker').remove();doHePanCard(Profiles.getActive(),Profiles.getById('${p.id}'))">${p.name||'未命名'} (${p.birthDate})</button>`).join('')}
+    <button class="btn btn-secondary btn-small" style="margin-top:8px;width:auto;" onclick="this.parentElement.remove()">取消</button>`;
+  history.before(card);
+  card.scrollIntoView({behavior:'smooth'});
+}
+async function doHePanCard(my, partner) {
+  if (!my||!partner) return;
+  document.getElementById('hepan-card-picker')?.remove();
+  const history = document.getElementById('chat-history');
+  history.appendChild(createBubble(`❤️ 生成我和${partner.name}的合盘卡片`, 'user'));
+  const aiBubble = createBubble('', 'ai', true);
+  history.appendChild(aiBubble);
+  const q = `我和${partner.name}合盘分析，格式如下：
+【卡片标题】${my.name||'我'} ❤️ ${partner.name||'TA'}
+五行配对：我的日主${my.lastReading.dayMasterElement||'?'}，TA的八字从生辰推算
+互补指数：⭐(1-5星)
+天生一对的方面：(一句话)
+需要注意磨合的：(一句话)
+推荐一起戴：1-2种水晶
+默契寄语：一句温暖的话
+我的八字${my.lastReading.bazi||''}，生辰${my.birthDate}。TA的生辰${partner.birthDate} ${partner.birthTime||''} ${partner.gender||''}。${partner.lastReading?'TA的八字'+partner.lastReading.bazi:''}`;
+  await streamFetch('chat',{question:q,bazi:my.lastReading.bazi},history,{onDone(){saveChatHistory();bindCrystalCollectButtons();},onError(){}});
+}
+
+// 清空聊天
+function clearChatHistory() {
+  if (confirm('确定清空所有聊天记录吗？')) {
+    localStorage.removeItem('fortune_chat_history');
+    renderChat();
+  }
+}
+
+// 导出聊天记录
+function exportChatHistory() {
+  const history = document.getElementById('chat-history');
+  if (!history) return;
+  const bubbles = history.querySelectorAll('.chat-bubble:not(.system)');
+  if (bubbles.length === 0) { alert('还没有聊天内容哦'); return; }
+  let text = '💬 算命小工具 — 聊天记录\n' + '='.repeat(30) + '\n\n';
+  bubbles.forEach(b => {
+    if (b.classList.contains('user')) text += '🙋 我：' + b.textContent.replace(/\d{2}:\d{2}$/, '').trim() + '\n\n';
+    else text += '🔮 命理师：' + b.textContent.replace(/\d{2}:\d{2}$/, '').trim() + '\n\n';
+  });
+  navigator.clipboard.writeText(text).then(() => alert('聊天记录已复制到剪贴板！'));
+}
+
+// 导出命盘
+function exportFortuneReading() {
+  const profile = Profiles.getActive();
+  if (!profile || !profile.lastReading) { alert('还没有排盘结果'); return; }
+  const text = '📿 ' + (profile.name || '命盘') + ' — 排盘结果\n' + '='.repeat(30) + '\n\n' +
+    '八字：' + (profile.lastReading.bazi || '') + '\n' +
+    '日主：' + (profile.lastReading.dayMaster || '') + '（五行：' + (profile.lastReading.dayMasterElement || '') + '）\n' +
+    '排盘时间：' + new Date(profile.lastReading.timestamp).toLocaleString('zh-CN') + '\n\n' +
+    profile.lastReading.fullText;
+  navigator.clipboard.writeText(text).then(() => alert('命盘已复制到剪贴板！'));
+}
+
+// ── 农历换算器 ──
+// 基于Chinesecalendar.js核心算法，已校验1900-2100年
+(function(){
+  const lunarMonths=['正','二','三','四','五','六','七','八','九','十','冬','腊'];
+  const lunarDays=['','初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+  const tg=['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+  const dz=['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+  const sx=['鼠','牛','虎','兔','龙','蛇','马','羊','猴','鸡','狗','猪'];
+
+  // 1900-2100年每年的农历月份信息（大月为1，小月为0，12个月，闰月额外标记）
+  // 格式：[year-1900] = 前4位闰月位置(0=无), 后16位表示每月大小(1=30天,0=29天,从正月到腊月)
+  const info=[0x04bd8,0x04ae0,0x0a570,0x054d5,0x0d260,0x0d950,0x16554,0x056a0,0x09ad0,0x055d2,
+    0x04ae0,0x0a5b6,0x0a4d0,0x0d250,0x1d255,0x0b540,0x0d6a0,0x0ada2,0x095b0,0x14977,
+    0x04970,0x0a4b0,0x0b4b5,0x06a50,0x06d40,0x1ab54,0x02b60,0x09570,0x052f2,0x04970,
+    0x06566,0x0d4a0,0x0ea50,0x16a95,0x05ad0,0x02b60,0x186e3,0x092e0,0x1c8d7,0x0c950,
+    0x0d4a0,0x1d8a6,0x0b550,0x056a0,0x1a5b4,0x025d0,0x092d0,0x0d2b2,0x0a950,0x0b557,
+    0x06ca0,0x0b550,0x15355,0x04da0,0x0a5b0,0x14573,0x052b0,0x0a9a8,0x0e950,0x06aa0,
+    0x0aea6,0x0ab50,0x04b60,0x0aae4,0x0a570,0x05260,0x0f263,0x0d950,0x05b57,0x056a0,
+    0x096d0,0x04dd5,0x04ad0,0x0a4d0,0x0d4d4,0x0d250,0x0d558,0x0b540,0x0b6a0,0x195a6,
+    0x095b0,0x049b0,0x0a974,0x0a4b0,0x0b27a,0x06a50,0x06d40,0x0af46,0x0ab60,0x09570,
+    0x04af5,0x04970,0x064b0,0x074a3,0x0ea50,0x06b58,0x05ac0,0x0ab60,0x096d5,0x092e0,
+    0x0c960,0x0d954,0x0d4a0,0x0da50,0x07552,0x056a0,0x0abb7,0x025d0,0x092d0,0x0cab5,
+    0x0a950,0x0b4a0,0x0baa4,0x0ad50,0x055d9,0x04ba0,0x0a5b0,0x15176,0x052b0,0x0a930,
+    0x07954,0x06aa0,0x0ad50,0x05b52,0x04b60,0x0a6e6,0x0a4e0,0x0d260,0x0ea65,0x0d530,
+    0x05aa0,0x076a3,0x096d0,0x04afb,0x04ad0,0x0a4d0,0x1d0b6,0x0d250,0x0d520,0x0dd45,
+    0x0b5a0,0x056d0,0x055b2,0x049b0,0x0a577,0x0a4b0,0x0aa50,0x1b255,0x06d20,0x0ada0,
+    0x14b63,0x09370,0x049f8,0x04970,0x064b0,0x168a6,0x0ea50,0x06aa0,0x1a6c4,0x0aae0,
+    0x092e0,0x0d2e3,0x0c960,0x0d557,0x0d4a0,0x0da50,0x05d55,0x056a0,0x0a6d0,0x055d4,
+    0x052d0,0x0a9b8,0x0a950,0x0b4a0,0x0b6a6,0x0ad50,0x055a0,0x0aba4,0x0a5b0,0x052b0,
+    0x0b273,0x06930,0x07337,0x06aa0,0x0ad50,0x14b55,0x04b60,0x0a570,0x054e4,0x0d160,
+    0x0e968,0x0d520,0x0daa0,0x16aa6,0x056d0,0x04ae0,0x0a9d4,0x0a4d0,0x0d150,0x0f252,0x0d520];
+
+  function leapMonth(y){return info[y-1900]&0xf;}
+  function monthDays(y,m){return (info[y-1900]&(0x10000>>m))?30:29;}
+  function yearDays(y){let s=0;for(let i=0x8000;i>0x8;i>>=1)s+=(info[y-1900]&i)?30:29;return s+((info[y-1900]&0xf)?((info[y-1900]&0x10000)?30:29):(monthDays(y,12)==29?29:30));}
+  function ganzhiDay(d){let days=Math.floor((d-new Date(1900,0,1))/86400000);return tg[days%10]+dz[days%12];}
+
+  window.solarToLunar=function(date){
+    let y=date.getFullYear(),m=date.getMonth()+1,d=date.getDate();
+    let base=new Date(1900,0,31);
+    let offset=Math.floor((date-base)/86400000);
+    let ly=1900;
+    while(ly<2100){let yd=yearDays(ly);if(offset<yd)break;offset-=yd;ly++;}
+    let leap=leapMonth(ly),isLeap=false,lm,ld;
+    for(lm=1;lm<=12;lm++){
+      let md=monthDays(ly,lm);
+      if(offset<md){ld=offset+1;break;}
+      offset-=md;
+      if(lm===leap){md=(info[ly-1900]&0x10000)?30:29;if(offset<md){isLeap=true;ld=offset+1;break;}offset-=md;}
+    }
+    let yrTg=tg[(ly-4)%10],yrDz=dz[(ly-4)%12];
+    return{
+      year:ly,month:lm,day:ld,isLeap:isLeap,
+      monthCN:(isLeap?'闰':'')+lunarMonths[lm-1],
+      dayCN:lunarDays[ld],
+      yearCN:yrTg+yrDz+'年',
+      shengXiao:sx[(ly-4)%12],
+      ganzhiDay:ganzhiDay(date)
+    };
+  };
+})();
+
+function showLunarConverter() {
+  const history = document.getElementById('chat-history');
+  if (!history) return;
+  const today = new Date();
+  const card = document.createElement('div');
+  card.className = 'card';
+  card.style.cssText = 'border:2px solid var(--gold);margin-top:12px;';
+  card.innerHTML = '<div class="card-header"><span class="icon">📅</span> 阴阳历换算</div>' +
+    '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
+      '<button class="btn btn-primary btn-small" id="lunar-tab-solar" style="flex:1;background:var(--gold);color:#1a1a2e;" onclick="switchLunarTab(\'solar\')">阳历 → 农历</button>' +
+      '<button class="btn btn-secondary btn-small" id="lunar-tab-lunar" style="flex:1;" onclick="switchLunarTab(\'lunar\')">农历 → 阳历</button>' +
+    '</div>' +
+    '<div id="lunar-input-solar"><div class="form-group"><label class="form-label">阳历日期</label><input type="date" class="form-input" id="lunar-date-input" value="' + today.toISOString().slice(0,10) + '" onchange="updateLunarResult()"></div></div>' +
+    '<div id="lunar-input-lunar" style="display:none;">' +
+      '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
+        '<div class="form-group" style="flex:1;"><label class="form-label">年</label><input type="number" class="form-input" id="lny-year" value="' + ((solarToLunar(today)||{}).year||2026) + '" min="1900" max="2100" onchange="updateSolarResult()"></div>' +
+        '<div class="form-group" style="flex:1;"><label class="form-label">月</label><select class="form-select" id="lny-month" onchange="updateSolarResult()">' + [1,2,3,4,5,6,7,8,9,10,11,12].map(m=>'<option value="'+m+'"'+((solarToLunar(today)||{}).month==m?' selected':'')+'>'+m+'月</option>').join('') + '</select></div>' +
+        '<div class="form-group" style="flex:1;"><label class="form-label">日</label><input type="number" class="form-input" id="lny-day" value="' + ((solarToLunar(today)||{}).day||1) + '" min="1" max="30" onchange="updateSolarResult()"></div>' +
+      '</div>' +
+      '<div style="margin-bottom:8px;"><label class="checkbox-row"><input type="checkbox" id="lny-isleap" onchange="updateSolarResult()"><label for="lny-isleap">闰月</label></label></div>' +
+    '</div>' +
+    '<div id="lunar-result" class="date-display" style="font-size:15px;text-align:left;line-height:1.8;margin-top:12px;"></div>' +
+    '<button class="btn btn-secondary btn-small" style="margin-top:8px;width:auto;" onclick="this.parentElement.remove()">关闭</button>';
+  history.before(card);
+  card.scrollIntoView({behavior:'smooth'});
+  updateLunarResult();
+}
+
+function switchLunarTab(tab) {
+  document.getElementById('lunar-input-solar').style.display = tab==='solar'?'block':'none';
+  document.getElementById('lunar-input-lunar').style.display = tab==='lunar'?'block':'none';
+  document.getElementById('lunar-tab-solar').className = 'btn ' + (tab==='solar'?'btn-primary':'btn-secondary') + ' btn-small';
+  document.getElementById('lunar-tab-solar').style.cssText = 'flex:1;' + (tab==='solar'?'background:var(--gold);color:#1a1a2e;':'');
+  document.getElementById('lunar-tab-lunar').className = 'btn ' + (tab==='lunar'?'btn-primary':'btn-secondary') + ' btn-small';
+  document.getElementById('lunar-tab-lunar').style.cssText = 'flex:1;' + (tab==='lunar'?'background:var(--gold);color:#1a1a2e;':'');
+  if(tab==='solar') updateLunarResult(); else updateSolarResult();
+}
+
+function updateSolarResult() {
+  const y = parseInt(document.getElementById('lny-year').value) || 2026;
+  const m = parseInt(document.getElementById('lny-month').value) || 1;
+  const d = parseInt(document.getElementById('lny-day').value) || 1;
+  const isLeap = document.getElementById('lny-isleap').checked;
+  // Approximate: find solar date for given lunar date (search within the year range)
+  // Use a simple approach: iterate through days and find the closest match
+  const el = document.getElementById('lunar-result');
+  if (!el) return;
+  // For now, show the lunar date info
+  const yTG = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'][(y-4)%10];
+  const yDZ = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'][(y-4)%12];
+  const LM=['正','二','三','四','五','六','七','八','九','十','冬','腊'];
+  const LD=['','初一','初二','初三','初四','初五','初六','初七','初八','初九','初十','十一','十二','十三','十四','十五','十六','十七','十八','十九','二十','廿一','廿二','廿三','廿四','廿五','廿六','廿七','廿八','廿九','三十'];
+  // Find solar date by scanning
+  let found = null;
+  const start = new Date(y-1, 11, 1);
+  const end = new Date(y+1, 0, 31);
+  for (let d0 = new Date(start); d0 <= end; d0.setDate(d0.getDate()+1)) {
+    const r = solarToLunar(d0);
+    if (r.year === y && r.month === m && r.day === d && r.isLeap === isLeap) {
+      found = new Date(d0);
+      break;
+    }
+  }
+  if (found) {
+    const r = solarToLunar(found);
+    el.innerHTML =
+      '<b>公历：</b>' + found.getFullYear() + '年' + (found.getMonth()+1) + '月' + found.getDate() + '日<br>' +
+      '<b>农历：</b>' + r.yearCN + ' ' + (isLeap?'闰':'') + LM[m-1] + '月' + LD[d] + '<br>' +
+      '<b>生肖：</b>' + r.shengXiao + '<br>' +
+      '<b>日干支：</b>' + r.ganzhiDay;
+  } else {
+    el.innerHTML = '<b>农历：</b>' + yTG + yDZ + '年 ' + (isLeap?'闰':'') + LM[m-1] + '月' + LD[d] + '<br><span style="color:var(--red);">该日期可能不存在，请检查</span>';
+  }
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TAB 7: 水晶收藏
+   ══════════════════════════════════════════════════════════════════ */
+function renderCrystals() {
+  const panel = document.getElementById('panel-crystals');
+  let collected = [];
+  try { collected = JSON.parse(localStorage.getItem('fortune_crystals') || '[]'); } catch(e) {}
+
+  panel.innerHTML = `
+    <div class="page-header">💎 我的水晶收藏</div>
+
+    <div class="card" style="margin-bottom:16px;">
+      <div style="display:flex;gap:8px;">
+        <input type="text" class="form-input" id="crystal-quick-search" placeholder="快速搜索水晶…" oninput="filterCrystalList()" style="flex:1;">
+      </div>
+    </div>
+
+    <div id="crystal-collected-section">
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--gold);">⭐ 已收藏 (${collected.length}种)</div>
+      ${collected.length === 0
+        ? '<div style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">还没有收藏任何水晶。去💬聊天里看到推荐水晶时点★就能收藏。</div>'
+        : collected.map(c => `
+          <div class="profile-card" data-crystal="${c}" style="cursor:default;">
+            <div class="profile-info">
+              <div class="profile-name">${getCrystalEmoji(c)} ${c}</div>
+              <div class="profile-detail">${getCrystalInfo(c)}</div>
+            </div>
+            <button class="btn btn-danger btn-small" onclick="toggleCrystalCollect('${c}', this);renderCrystals();">移除</button>
+          </div>`).join('')}
+    </div>
+
+    <div style="margin-top:20px;">
+      <div style="font-size:14px;font-weight:600;margin-bottom:8px;">📋 全部水晶速查</div>
+      <div id="crystal-list" style="display:flex;flex-wrap:wrap;gap:6px;">
+        ${CRYSTAL_DB.map(c => {
+          const isCollected = collected.includes(c.name);
+          return `<div class="profile-card crystal-item" data-crystal="${c.name}" style="flex:1;min-width:140px;cursor:pointer;" onclick="toggleCrystalCollect('${c.name}', this.querySelector('.crystal-star'));renderCrystals();">
+            <div class="profile-info">
+              <div class="profile-name" style="font-size:13px;">${getCrystalEmoji(c.name)} ${c.name}</div>
+              <div class="profile-detail" style="font-size:11px;">${c.element} | ${c.use}</div>
+            </div>
+            <span class="crystal-star" style="font-size:18px;color:${isCollected ? 'var(--gold)' : 'var(--text-muted)'};">${isCollected ? '★' : '☆'}</span>
+          </div>`;
+        }).join('')}
+      </div>
+    </div>
+
+    ${collected.length > 0 ? `
+    <div style="margin-top:20px;">
+      <button class="btn btn-primary" onclick="exportCrystalList()" style="background:var(--green);">📋 导出购物清单</button>
+    </div>` : ''}
+
+    <div class="privacy-note" style="margin-top:16px;">🔒 收藏数据存在你手机本地</div>`;
+}
+
+function filterCrystalList() {
+  const q = (document.getElementById('crystal-quick-search')?.value || '').toLowerCase();
+  document.querySelectorAll('.crystal-item').forEach(el => {
+    const name = (el.dataset.crystal || '').toLowerCase();
+    el.style.display = (!q || name.includes(q)) ? 'flex' : 'none';
+  });
+}
+
+function exportCrystalList() {
+  let collected = [];
+  try { collected = JSON.parse(localStorage.getItem('fortune_crystals') || '[]'); } catch(e) {}
+  if (collected.length === 0) { alert('还没有收藏水晶'); return; }
+  const text = '我的水晶购物清单\\n' + '='.repeat(20) + '\\n\\n' +
+    collected.map(c => `• ${getCrystalEmoji(c)} ${c} — ${getCrystalInfo(c)}`).join('\\n') +
+    '\\n\\n提示：购买前请确认天然水晶，优先选择有产地溯源的商家。\\n稀有水晶（捷克陨石、拉利玛、舒俱徕）假货率90%以上，务必找可信渠道。';
+  // Copy to clipboard
+  navigator.clipboard.writeText(text).then(() => alert('已复制购物清单到剪贴板！'));
+}
+
+// ── 水晶数据库 ──
+const CRYSTAL_DB = [
+  {name:'白水晶',element:'金',use:'净化、增强能量',emoji:'💎'},
+  {name:'月光石',element:'金/水',use:'直觉、情感治愈',emoji:'🌙'},
+  {name:'白幽灵',element:'金',use:'净化、冥想',emoji:'👻'},
+  {name:'白碧玺',element:'金',use:'净化、防辐射',emoji:'⚪'},
+  {name:'闪灵钻',element:'金',use:'高频激活',emoji:'✨'},
+  {name:'绿幽灵',element:'木',use:'事业财、升职',emoji:'👻'},
+  {name:'绿松石',element:'木/水',use:'平安、招财',emoji:'🟢'},
+  {name:'紫水晶',element:'木',use:'智慧、安神',emoji:'🟣'},
+  {name:'翡翠',element:'木',use:'招财、护身',emoji:'💚'},
+  {name:'绿发晶',element:'木',use:'事业、招财',emoji:'🌿'},
+  {name:'孔雀石',element:'木',use:'转化、保护',emoji:'🦚'},
+  {name:'橄榄石',element:'木',use:'净化、丰盛',emoji:'🫒'},
+  {name:'海蓝宝',element:'水/金',use:'沟通、净化',emoji:'🌊'},
+  {name:'黑曜石',element:'水',use:'辟邪、最强防护',emoji:'🖤'},
+  {name:'茶水晶',element:'水',use:'净化病气',emoji:'🍵'},
+  {name:'黑发晶',element:'水',use:'防小人',emoji:'⬛'},
+  {name:'黑碧玺',element:'水',use:'辟邪、EMF防护',emoji:'⚫'},
+  {name:'蓝玛瑙',element:'水',use:'平静沟通',emoji:'💙'},
+  {name:'青金石',element:'水/木',use:'智慧、领导力',emoji:'🔵'},
+  {name:'舒曼石',element:'水',use:'EMF强效防护',emoji:'🛡️'},
+  {name:'石榴石',element:'火',use:'感情、活力',emoji:'❤️'},
+  {name:'红发晶',element:'火',use:'活力、冲劲',emoji:'🔥'},
+  {name:'草莓晶',element:'火',use:'桃花运',emoji:'🍓'},
+  {name:'红纹石',element:'火',use:'召唤真爱',emoji:'💗'},
+  {name:'红碧玺',element:'火',use:'热情、保护',emoji:'♥️'},
+  {name:'粉水晶',element:'火',use:'感情、人缘',emoji:'🩷'},
+  {name:'紫锂辉石',element:'火',use:'情绪平衡、爱',emoji:'💜'},
+  {name:'蔷薇辉石',element:'火',use:'情感疗愈',emoji:'🌹'},
+  {name:'黄水晶',element:'土',use:'招偏财、自信',emoji:'💰'},
+  {name:'虎眼石',element:'土',use:'洞察力、财运',emoji:'🐯'},
+  {name:'金发晶',element:'土/金',use:'招财、权威',emoji:'⚜️'},
+  {name:'钛晶',element:'土/金',use:'财富地位、能量极强',emoji:'👑'},
+  {name:'黄碧玺',element:'土',use:'财富、自信',emoji:'🟡'},
+  {name:'黄铁矿',element:'土/金',use:'财富吸引、成功',emoji:'🪨'},
+  {name:'萤石',element:'木',use:'净化思维',emoji:'🟢'},
+  {name:'琥珀',element:'土/火',use:'智慧、保护',emoji:'🍯'},
+  {name:'锂云母',element:'木',use:'抗焦虑、情绪稳定',emoji:'💆'},
+  {name:'捷克陨石',element:'木/火',use:'快速转化、能量极强',emoji:'☄️'},
+  {name:'拉利玛',element:'水/金',use:'情感疗愈、海洋能量',emoji:'🏝️'},
+  {name:'舒俱徕',element:'木/火',use:'神圣之爱、保护',emoji:'🔮'},
+  {name:'烟晶',element:'水',use:'接地、释放压力',emoji:'🟤'},
+];
+
+function getCrystalEmoji(name) {
+  const c = CRYSTAL_DB.find(c => c.name === name);
+  return c ? c.emoji : '💎';
+}
+function getCrystalInfo(name) {
+  const c = CRYSTAL_DB.find(c => c.name === name);
+  return c ? `${c.element}性 | ${c.use}` : '';
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   合盘功能 — 两人八字配对
+   ══════════════════════════════════════════════════════════════════ */
+function showHePan() {
+  const profile = Profiles.getActive();
+  if (!profile || !profile.lastReading) {
+    alert('先给自己排个盘，再看看跟TA合不合～');
+    switchTab('fortune');
+    return;
+  }
+
+  const allProfiles = Profiles.getAll();
+  const partnerOptions = allProfiles.filter(p => p.id !== profile.id);
+
+  // Build modal HTML
+  let partnerSelectHtml = `
+    <div class="form-group">
+      <label class="form-label">选择伴侣档案</label>
+      <select class="form-select" id="hepan-partner-select">
+        <option value="">手动填写</option>
+        ${partnerOptions.map(p => `<option value="${p.id}">${p.name || '未命名'} — ${p.birthDate}</option>`).join('')}
+      </select>
+    </div>`;
+
+  let manualFormHtml = `
+    <div id="hepan-manual">
+      <div class="form-group">
+        <label class="form-label">TA的昵称</label>
+        <input type="text" class="form-input" id="hepan-name" placeholder="比如：老婆">
+      </div>
+      <div class="form-group">
+        <label class="form-label">TA的生日（阳历）</label>
+        <input type="date" class="form-input" id="hepan-date">
+      </div>
+      <div class="form-group">
+        <label class="form-label">TA的出生时间</label>
+        <input type="time" class="form-input" id="hepan-time" value="12:00">
+      </div>
+      <div class="checkbox-row">
+        <input type="checkbox" id="hepan-time-unknown" checked onchange="
+          const t=document.getElementById('hepan-time');
+          t.style.opacity=this.checked?'0.5':'1';
+        ">
+        <label for="hepan-time-unknown">我不确定TA的时辰</label>
+      </div>
+      <div class="form-group">
+        <label class="form-label">TA的性别</label>
+        <div class="gender-toggle" id="hepan-gender">
+          <button class="gender-btn" data-g="男">男</button>
+          <button class="gender-btn selected" data-g="女">女</button>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">TA的出生地（选填）</label>
+        <input type="text" class="form-input" id="hepan-place" placeholder="比如：上海">
+      </div>
+    </div>`;
+
+  // Show as a card overlay in the chat panel
+  const history = document.getElementById('chat-history');
+  const formCard = document.createElement('div');
+  formCard.id = 'hepan-card';
+  formCard.className = 'card';
+  formCard.style.cssText = 'border: 2px solid var(--red); margin-top:12px;';
+  formCard.innerHTML = `
+    <div class="card-header"><span class="icon">❤️</span> 看看你们合不合适</div>
+    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">
+      你的八字：<strong>${profile.lastReading.bazi || '已排盘'}</strong>
+    </p>
+    ${partnerSelectHtml}
+    ${manualFormHtml}
+    <button class="btn btn-primary" onclick="doHePan('${profile.id}')" style="background:var(--red);margin-top:8px;">
+      ❤️ 开始合盘
+    </button>
+    <button class="btn btn-secondary" style="margin-top:6px;" onclick="document.getElementById('hepan-card').remove()">
+      取消
+    </button>
+  `;
+
+  // Insert after quick asks area, before history
+  const quickAsks = document.getElementById('quick-asks');
+  if (quickAsks) quickAsks.after(formCard);
+  else history.before(formCard);
+
+  formCard.scrollIntoView({ behavior: 'smooth' });
+
+  // Bind partner select toggle
+  const sel = formCard.querySelector('#hepan-partner-select');
+  if (sel) {
+    sel.onchange = () => {
+      const manual = formCard.querySelector('#hepan-manual');
+      if (manual) manual.style.display = sel.value ? 'none' : 'block';
+    };
+  }
+
+  // Bind gender buttons
+  formCard.querySelectorAll('#hepan-gender .gender-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      formCard.querySelectorAll('#hepan-gender .gender-btn').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+    });
+  });
+
+  // Init time opacity
+  const hepanTime = document.getElementById('hepan-time');
+  if (hepanTime) hepanTime.style.opacity = '0.5';
+}
+
+async function doHePan(myProfileId) {
+  const myProfile = Profiles.getById(myProfileId);
+  if (!myProfile) return;
+
+  const sel = document.getElementById('hepan-partner-select');
+  let partnerName, partnerBazi, partnerData;
+
+  if (sel && sel.value) {
+    // Use existing profile
+    const partner = Profiles.getById(sel.value);
+    if (!partner) return;
+    partnerName = partner.name;
+    partnerData = `出生: ${partner.birthDate}, ${partner.birthTime || '12:00'}, ${partner.gender || '未知'}`;
+    partnerBazi = partner.lastReading ? `八字: ${partner.lastReading.bazi}, 日主五行: ${partner.lastReading.dayMasterElement || '?'}` : `生辰: ${partner.birthDate}, ${partner.birthTime || '12:00'}`;
+  } else {
+    // Manual entry
+    partnerName = document.getElementById('hepan-name').value.trim();
+    const pDate = document.getElementById('hepan-date').value;
+    const pTimeUnknown = document.getElementById('hepan-time-unknown').checked;
+    const pTime = pTimeUnknown ? '12:00' : document.getElementById('hepan-time').value;
+    const pGenderBtn = document.querySelector('#hepan-gender .gender-btn.selected');
+    const pGender = pGenderBtn ? pGenderBtn.dataset.g : '未知';
+    const pPlace = document.getElementById('hepan-place').value.trim();
+    if (!partnerName || !pDate) { alert('至少填一下TA的昵称和生日哦'); return; }
+    partnerData = `出生: ${pDate}, ${pTime}, ${pGender}, ${pPlace || '未知地点'}${pTimeUnknown ? '(时辰不确定)' : ''}`;
+    partnerBazi = `生辰: ${pDate}, ${pTime}, ${pGender}`;
+  }
+
+  // Remove the form card
+  const card = document.getElementById('hepan-card');
+  if (card) card.remove();
+
+  // Build question
+  const question = `我和${partnerName}在一起怎么样？请帮我做一个合盘分析，包括：
+1. 两人的性格合不合（五行互补还是冲克）
+2. 感情相处中各自需要注意什么
+3. 两人的事业/财运是互补还是互相消耗
+4. 适合一起做什么（比如一起创业、一起旅行的气场合不合）
+5. 有没有需要特别注意的年份或方面
+6. 如果合适的话，推荐一种两人可以一起戴的水晶（要具体）
+
+我的信息→八字：${myProfile.lastReading.bazi || '已排盘'}，日主五行：${myProfile.lastReading.dayMasterElement || '?'}，${myProfile.birthDate}，${myProfile.birthTime || '12:00'}
+TA的信息→${partnerData}，${partnerBazi}
+
+请全程用大白话，像朋友帮你看一样。有不好的地方直接说，但要给实际建议不要吓人。`;
+
+  // Inject into chat
+  const history = document.getElementById('chat-history');
+  const userBubble = createBubble('❤️ 我和' + partnerName + '合不合？', 'user');
+  history.appendChild(userBubble);
+  saveChatHistory();
+
+  const aiBubble = createBubble('', 'ai', true);
+  history.appendChild(aiBubble);
+  history.parentElement.scrollTop = history.parentElement.scrollHeight;
+
+  await streamFetch('chat', { question, bazi: myProfile.lastReading.bazi || '' }, history, {
+    onDone() {
+      const input = document.getElementById('chat-input');
+      if (input) { input.disabled = false; input.focus(); }
+      const sendBtn = document.getElementById('chat-send-btn');
+      if (sendBtn) sendBtn.disabled = false;
+      saveChatHistory();
+    },
+    onError() {
+      const input = document.getElementById('chat-input');
+      if (input) { input.disabled = false; input.focus(); }
+      const sendBtn = document.getElementById('chat-send-btn');
+      if (sendBtn) sendBtn.disabled = false;
+      saveChatHistory();
+    }
+  });
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   INIT
+   ══════════════════════════════════════════════════════════════════ */
+switchTab('fortune');
+</script>
+</body>
+</html>

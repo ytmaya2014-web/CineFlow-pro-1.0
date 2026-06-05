@@ -1,0 +1,12 @@
+{
+  "name": "fortune-app",
+  "version": "1.0.0",
+  "description": "八字紫微算命小工具 API",
+  "type": "module",
+  "scripts": {
+    "start": "node api/fortune.js"
+  },
+  "dependencies": {
+    "openai": "^4.67.0"
+  }
+}
