@@ -741,10 +741,11 @@ body::after {
    ══════════════════════════════════════════════════════════════════ */
 const API_URL = (() => {
   const host = location.hostname;
+  // 本地开发
   if (host === 'localhost' || host === '127.0.0.1') return 'http://localhost:3000/api/fortune';
-  // 走 localtunnel 等代理：同源请求，不拼端口
-  if (host.endsWith('.loca.lt')) return '/api/fortune';
-  // 同网段直接访问：拼 3000 端口
+  // Vercel / localtunnel 等：同源访问
+  if (host.endsWith('.loca.lt') || host.endsWith('.vercel.app')) return '/api/fortune';
+  // 同网段直接访问
   return `http://${host}:3000/api/fortune`;
 })();
 const API_KEY = '0c6b432c8a2e16960eca51a9';
