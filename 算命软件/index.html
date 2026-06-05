@@ -737,18 +737,71 @@ body::after {
 
 <script>
 /* ══════════════════════════════════════════════════════════════════
+   SYSTEM PROMPTS
+   ══════════════════════════════════════════════════════════════════ */
+const SYSTEM_PROMPTS = {
+  full: `你是一位经验丰富的命理师，说话像朋友聊天一样自然、温暖。你的本事是帮人看懂自己的命盘，但你从不说吓人的话，也不故弄玄虚。
+
+【铁律——排盘必须严格遵循】
+1. 排盘必须手动一步步推演，不用脚本。每一步推理都要在脑中做但只在输出中说结果
+2. 四家合参投票法：徐乐吾（格局调候）、梁湘润（实务流月）、袁树珊（命宫小限）、韦千里（八步转角）
+   四家一致→高置信度；三家一致→中置信度（记少数派警告）；两两分歧→低置信度（诚实说各家看法不统一）
+3. 半合规则（最容易出错！）：
+   - 酉丑=半合金✓ 巳酉=半合金✓ 寅午=半合火✓（都带子午卯酉四正位）
+   - 巳丑≠半合金✗ 寅戌≠半合火✗ 卯未≠半合木✗（不含四正位，不算）
+4. 大运看十年不截断，先通观十年整体再"着重"前后五年
+5. 调候为急：冬寒优先火暖局，夏燥优先水润局，调候需求有时压过格局
+6. 禁止反推、禁止蒙猜、禁止唯一论（不能只用格局或只用强弱）
+7. 年柱以立春为界！不是春节不是元旦！立春在每年2月3-5日之间
+
+【排盘十五步流程——内部推演，输出时用人话翻译】
+1.编码：阳历→真太阳时→四柱+藏干
+2.识日主：滴天髓十干论，阳干阴干区分
+3.观月令：月支本气是否透干？季月注意分日用事
+4.强弱：旺看月令，强弱看党众
+5.调候：穷通宝鉴十干配十二月
+6.格局：取格优先级=月支本气透>中余气透>月干坐根>三合三会
+7.形象：清浊真假源流通关
+8.用神：格局/通关/病药/专旺/调候五种，不可混用
+9.性情 10.疾病 11.六亲 12.财官
+13.大运流年五道筛子：生旺库凶年、天罗地网、伏吟反吟、日犯岁君、格局喜忌
+14.神煞辅助 15.综合判断+已知事实验证
+补充：命宫(出生月数+时数推地支，五虎遁定天干)、小限(1岁=命宫，逐年逆行)、空亡(日柱旬空)
+
+【验证锚点】
+张学良1901年6月3日=辛丑年癸巳月壬子日，日主壬水坐子水羊刃。立春在2月4日，6月属辛丑年。
+
+【输出铁律——最重要的一条】
+- 全程大白话，像朋友发微信聊天
+- 绝对禁止术语：十神、比肩、劫财、伤官见官、食神制杀、从格、化气、调候、通关、扶抑、纳音、格局、正印、偏印、正官、七杀、命宫、小限
+- 非提不可时先翻译：不说"正印透干"说"你天生有一种被保护的气质"
+- 不说"你命带XX"说"你的盘面有个挺有意思的特点…"
+- 好话说得实在，不好的给实际建议不恐吓
+- 语气：温暖不油腻，直接不冷硬`,
+
+  daily: `你是一位经验丰富的命理师，说话像朋友聊天一样自然、温暖。
+今天是${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}。
+请基于用户八字和今日日柱推今日运势。不准说错当前日期和季节。4-5句话，不要重复排盘。`,
+
+  monthly: `你是一位经验丰富的命理师，说话像朋友聊天一样自然、温暖。
+现在是${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long'})}。
+请基于用户八字推本月运势。先看本月干支与用户大运关系（相同=集中、相冲=变动大、双合=转机），再看五行喜忌。简洁4-6句话。`,
+
+  luckydays: `你是一位经验丰富的命理师，说话像朋友聊天一样自然、温暖。
+帮用户选吉日：先排除冲日柱的六冲日，再找三合六合的吉日，参考黄历建除十二神（建满平收黑，除危定执黄，成开皆可用，闭破不相当）。给3-5个推荐日和1-2个避开日，大白话理由。`
+};
+
+/* ══════════════════════════════════════════════════════════════════
    CONFIG
    ══════════════════════════════════════════════════════════════════ */
-const API_URL = (() => {
-  const host = location.hostname;
-  // 本地开发
-  if (host === 'localhost' || host === '127.0.0.1') return 'http://localhost:3000/api/fortune';
-  // Vercel / localtunnel 等：同源访问
-  if (host.endsWith('.loca.lt') || host.endsWith('.vercel.app')) return '/api/fortune';
-  // 同网段直接访问
-  return `http://${host}:3000/api/fortune`;
-})();
-const API_KEY = '0c6b432c8a2e16960eca51a9';
+const API_URL = 'https://api.deepseek.com/v1/chat/completions';
+
+function getApiKey() {
+  try { return localStorage.getItem('deepseek_api_key') || ''; } catch(e) { return ''; }
+}
+function getSystemPrompt(type) {
+  return SYSTEM_PROMPTS[type] || SYSTEM_PROMPTS['full'];
+}
 
 /* ══════════════════════════════════════════════════════════════════
    PROFILES MANAGER (localStorage)
@@ -863,22 +916,44 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
 });
 
 /* ══════════════════════════════════════════════════════════════════
-   SSE STREAMING HELPER
+   STREAMING HELPER — 直接调 DeepSeek
    ══════════════════════════════════════════════════════════════════ */
 async function streamFetch(type, body, targetEl, { onDone, onError } = {}) {
+  const key = getApiKey();
+  if (!key) {
+    const errBubble = createBubble('⚠️ 还没设置 DeepSeek API Key，去👤档案页下方设置一下', true);
+    if (targetEl) targetEl.appendChild(errBubble);
+    if (onError) onError('未设置 API Key');
+    return;
+  }
+
   try {
-    const res = await fetch(`${API_URL}?type=${type}`, {
+    const messages = [
+      { role: 'system', content: getSystemPrompt(type) },
+      { role: 'user', content: buildUserPrompt(type, body) }
+    ];
+
+    const res = await fetch(API_URL, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': API_KEY
+        'Authorization': `Bearer ${key}`
       },
-      body: JSON.stringify({ type, ...body })
+      body: JSON.stringify({
+        model: 'deepseek-chat',
+        messages,
+        temperature: 0.7,
+        max_tokens: type === 'full' ? 4096 : type === 'luckydays' ? 2048 : 1024,
+        stream: true
+      })
     });
 
     if (!res.ok) {
       const err = await res.text();
-      throw new Error(`HTTP ${res.status}: ${err}`);
+      let msg = '请求出错了';
+      if (res.status === 401) msg = 'API Key 无效，去👤档案页检查一下';
+      else if (res.status === 402) msg = 'DeepSeek 余额不足了';
+      throw new Error(msg);
     }
 
     const reader = res.body.getReader();
@@ -904,34 +979,19 @@ async function streamFetch(type, body, targetEl, { onDone, onError } = {}) {
 
       for (const line of lines) {
         if (!line.startsWith('data: ')) continue;
+        const jsonStr = line.slice(6).trim();
+        if (jsonStr === '[DONE]') continue;
         try {
-          const data = JSON.parse(line.slice(6));
-
-          if (data.error) {
-            flushBubble();
-            const errBubble = createBubble('⚠️ ' + data.error, true);
-            if (targetEl) targetEl.appendChild(errBubble);
-            if (onError) onError(data.error);
-            return;
-          }
-          if (data.done) {
-            flushBubble();
-            if (onDone) onDone();
-            return;
-          }
-          if (data.content) {
-            if (!bubble) {
-              bubble = createBubble('', false, true);
-            }
-            bubble.textContent += data.content;
-            if (targetEl && !bubble.parentNode) {
-              targetEl.appendChild(bubble);
-            }
-            // Auto scroll
+          const data = JSON.parse(jsonStr);
+          const content = data.choices?.[0]?.delta?.content;
+          if (content) {
+            if (!bubble) bubble = createBubble('', false, true);
+            bubble.textContent += content;
+            if (targetEl && !bubble.parentNode) targetEl.appendChild(bubble);
             const panel = document.querySelector('.tab-panel.active');
             if (panel) panel.scrollTop = panel.scrollHeight;
           }
-        } catch (e) { /* incomplete line, ignore */ }
+        } catch (e) { /* skip incomplete line */ }
       }
     }
     flushBubble();
@@ -953,6 +1013,38 @@ function createBubble(text, role = 'ai', isTyping = false) {
   div.textContent = text;
   div.appendChild(time);
   return div;
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   BUILD USER PROMPT PER TYPE
+   ══════════════════════════════════════════════════════════════════ */
+function buildUserPrompt(type, body) {
+  const { name, birthDate, birthTime, birthPlace, gender, timeUnknown, activity, dateFrom, dateTo, bazi } = body;
+  const timeNote = timeUnknown ? '（时辰不确定，按中午12点推的，可能有偏差）' : '';
+
+  switch (type) {
+    case 'full':
+      return `请帮我排盘：
+出生日期：${birthDate || '未提供'}（阳历。注意：月份是${birthDate ? birthDate.split('-')[1] + '月' : '未知'}）
+出生时间：${birthTime || '12:00'}${timeNote}
+出生地点：${birthPlace || '未提供'}
+性别：${gender || '未提供'}
+${name ? '称呼：' + name : ''}
+
+请按顺序来：整体印象→性格→事业财运→感情家庭→未来一年注意→水晶推荐→温暖收尾。像讲故事不要列条列点。输出八字四柱（格式"甲子 丙寅 戊辰 丁巳"）方便后续查询。`;
+
+    case 'daily':
+      return `用户的八字：${bazi || '未知'}。今天是${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}，现在是${new Date().getMonth()+1}月。请推今日运势，4-5句话。`;
+
+    case 'monthly':
+      return `用户的八字：${bazi || '未知'}。现在是${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long'})}。请推本月运势，4-6句话。`;
+
+    case 'luckydays':
+      return `用户的八字：${bazi || '未知'}。想选"${activity || '出行'}"的吉日，范围${dateFrom || '今天'}到${dateTo || '30天后'}。请逐一检视，给3-5个推荐日和1-2个避开日。`;
+
+    default:
+      return body.question || '';
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -1388,6 +1480,14 @@ function editProfile(id) {
   showProfileForm(Profiles.getById(id));
 }
 
+/* ── API Key 管理 ── */
+function saveApiKey() {
+  const key = document.getElementById('api-key-input').value.trim();
+  localStorage.setItem('deepseek_api_key', key);
+  const s = document.getElementById('api-key-status');
+  if (s) { s.style.display = 'inline'; setTimeout(() => s.style.display = 'none', 2000); }
+}
+
 function deleteProfile(id) {
   const p = Profiles.getById(id);
   if (!p) return;
@@ -1466,7 +1566,16 @@ function showProfileForm(existing) {
     </div>
     ${listHtml ? `<div style="margin-top:20px;">${listHtml}</div>` : ''}
     <button class="btn btn-secondary" style="margin-top:12px;" onclick="showProfileForm()">＋ 新建档案</button>
-    <div class="privacy-note">🔒 数据存在你手机本地，不会上传</div>`;
+    <div class="card" style="margin-top:16px;">
+      <div class="card-header"><span class="icon">🔑</span> DeepSeek API Key</div>
+      <div class="form-group" style="margin-bottom:0;">
+        <label class="form-label">去 <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:var(--accent-light);">platform.deepseek.com</a> 注册，充10块够用很久</label>
+        <input type="password" class="form-input" id="api-key-input" placeholder="sk-..." value="${getApiKey()}" style="margin-bottom:6px;">
+      </div>
+      <button class="btn btn-primary btn-small" onclick="saveApiKey()" style="width:auto;margin-top:6px;">保存 Key</button>
+      <span id="api-key-status" style="font-size:12px;color:var(--green);margin-left:8px;display:none;">✓ 已保存</span>
+    </div>
+    <div class="privacy-note">🔒 Key 和档案都存在你手机本地，不会上传</div>`;
 
   // Bind gender buttons
   document.querySelectorAll('#pf-gender .gender-btn').forEach(btn => {
