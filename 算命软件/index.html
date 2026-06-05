@@ -8,105 +8,150 @@
 <meta name="apple-mobile-web-app-title" content="算命">
 <meta name="theme-color" content="#0a0a1a">
 <title>命镜 — 命理随身</title>
+<title>命镜 — 星辰为镜，照见本心</title>
 <style>
-/* ── Reset & Variables ──────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   ASTRAL GRIMOIRE · 暗黑魔典美学
+   ═══════════════════════════════════════════════════════════════════ */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700;900&family=Noto+Serif+SC:wght@300;400;600;700&display=swap');
+
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
 :root {
-  --bg-start: #0a0a1a;
-  --bg-mid: #15103a;
-  --bg-end: #0d1a30;
-  --surface: rgba(255,255,255,0.06);
-  --surface-hover: rgba(255,255,255,0.10);
-  --text: #f0eef7;
-  --text-secondary: #a09bb8;
-  --text-muted: #6b6585;
-  --accent: #8b5cf6;
-  --accent-light: #a78bfa;
-  --accent-glow: rgba(139, 92, 246, 0.3);
-  --gold: #f59e0b;
-  --gold-light: #fbbf24;
-  --gold-glow: rgba(245, 158, 11, 0.25);
-  --rose: #f43f5e;
-  --rose-light: #fb7185;
-  --green: #10b981;
-  --green-light: #34d399;
-  --blue: #3b82f6;
-  --blue-light: #60a5fa;
-  --border: rgba(255,255,255,0.08);
-  --border-focus: rgba(139, 92, 246, 0.4);
+  /* ── 星云底色 ── */
+  --void-deep: #06050f;
+  --void: #0c0a1a;
+  --void-mid: #120f28;
+  --nebula-purple: #1a1240;
+  --nebula-indigo: #14183a;
+
+  /* ── 魔法金 ── */
+  --gold: #d4a843;
+  --gold-bright: #f0cc6e;
+  --gold-pale: #c8a45c;
+  --gold-glow: rgba(212, 168, 67, 0.35);
+  --gold-ghost: rgba(212, 168, 67, 0.08);
+
+  /* ── 星尘 ── */
+  --stardust: #e8def8;
+  --stardust-dim: #a099c0;
+  --stardust-muted: #6b6388;
+
+  /* ── 魔法光泽 ── */
+  --surface: rgba(255, 255, 255, 0.04);
+  --surface-hover: rgba(255, 255, 255, 0.08);
+  --surface-gold: rgba(212, 168, 67, 0.06);
+  --surface-gold-hover: rgba(212, 168, 67, 0.12);
+
+  /* ── 魔法元素色 ── */
+  --arcane: #a78bfa;
+  --arcane-bright: #c4b5fd;
+  --arcane-glow: rgba(167, 139, 250, 0.3);
+  --rose: #e85d75;
+  --rose-light: #f493a8;
+  --rose-glow: rgba(232, 93, 117, 0.25);
+  --red: #e85d75;              /* alias for inline compat */
+  --emerald: #34d399;
+  --emerald-light: #6ee7b7;
+  --emerald-glow: rgba(52, 211, 153, 0.2);
+  --sapphire: #60a5fa;
+  --sapphire-glow: rgba(96, 165, 250, 0.2);
+
+  /* ── 边框 ── */
+  --border: rgba(255, 255, 255, 0.06);
+  --border-gold: rgba(212, 168, 67, 0.18);
+  --border-focus: rgba(212, 168, 67, 0.5);
+
+  /* ── 形状 ── */
   --radius-sm: 10px;
   --radius: 16px;
   --radius-lg: 20px;
   --radius-xl: 24px;
-  --shadow-sm: 0 1px 2px rgba(0,0,0,0.3);
-  --shadow: 0 4px 12px rgba(0,0,0,0.25);
-  --shadow-lg: 0 8px 32px rgba(0,0,0,0.35);
-  --nav-height: 72px;
+
+  /* ── 阴影 ── */
+  --shadow-sm: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow: 0 4px 20px rgba(0,0,0,0.3);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,0.4);
+  --shadow-gold: 0 4px 24px rgba(212, 168, 67, 0.15);
+
+  --nav-height: 68px;
   --safe-bottom: env(safe-area-inset-bottom, 0px);
-  --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Noto Sans SC", sans-serif;
-  --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  --font-display: 'Cinzel Decorative', 'Noto Serif SC', serif;
+  --font-body: 'Noto Serif SC', 'PingFang SC', 'Microsoft YaHei', serif;
+  --font-mono: 'SF Mono', 'Cascadia Code', monospace;
+  --transition: 0.35s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-magic: 0.5s cubic-bezier(0.22, 0.61, 0.36, 1);
 }
-/* 主题2：琥珀金 */
-:root.theme-gold {
-  --bg-start: #1a1405;
-  --bg-mid: #2a1f10;
-  --bg-end: #1a1008;
-  --accent: #f59e0b;
-  --accent-light: #fbbf24;
-  --accent-glow: rgba(245, 158, 11, 0.35);
-  --border-focus: rgba(245, 158, 11, 0.45);
-  --text: #f8f0e3;
-  --text-secondary: #c4b08a;
-  --text-muted: #8a7555;
+
+/* ── 暗黑星云底 ── */
+html, body {
+  height: 100%;
+  overflow: hidden;
 }
-/* 主题3：翡翠绿 */
-:root.theme-green {
-  --bg-start: #051a10;
-  --bg-mid: #102820;
-  --bg-end: #081a14;
-  --accent: #10b981;
-  --accent-light: #34d399;
-  --accent-glow: rgba(16, 185, 129, 0.35);
-  --border-focus: rgba(16, 185, 129, 0.45);
-  --text: #e3f8ef;
-  --text-secondary: #8ac4a8;
-  --text-muted: #557a68;
-}
-html, body { height: 100%; overflow: hidden; }
 body {
-  font-family: var(--font);
-  background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-mid) 45%, var(--bg-end) 100%);
-  color: var(--text);
+  font-family: var(--font-body);
+  background: var(--void-deep);
+  color: var(--stardust);
   -webkit-font-smoothing: antialiased;
   display: flex;
   justify-content: center;
   user-select: none;
   -webkit-tap-highlight-color: transparent;
-  -webkit-user-select: none;
 }
-/* Ambient background orbs */
+
+/* 星云层 */
 body::before {
   content: '';
   position: fixed;
-  top: -30%;
-  left: -20%;
-  width: 70%;
-  height: 70%;
-  background: radial-gradient(circle, rgba(139,92,246,0.12) 0%, transparent 70%);
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 25% 0%, rgba(167, 139, 250, 0.13) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 75% 15%, rgba(212, 168, 67, 0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 35% at 30% 70%, rgba(96, 165, 250, 0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 25% at 70% 85%, rgba(232, 93, 117, 0.06) 0%, transparent 50%);
   pointer-events: none;
   z-index: 0;
+  animation: nebulaDrift 30s ease-in-out infinite alternate;
 }
+@keyframes nebulaDrift {
+  0% { opacity: 0.7; transform: scale(1); }
+  100% { opacity: 1; transform: scale(1.05); }
+}
+
+/* 魔法粒子 */
 body::after {
   content: '';
   position: fixed;
-  bottom: -20%;
-  right: -15%;
-  width: 60%;
-  height: 60%;
-  background: radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%);
+  inset: 0;
+  background-image:
+    radial-gradient(1px 1px at 12% 8%, rgba(255,255,255,0.5), transparent),
+    radial-gradient(1px 1px at 23% 18%, rgba(255,255,255,0.4), transparent),
+    radial-gradient(1.5px 1.5px at 45% 12%, rgba(212,168,67,0.5), transparent),
+    radial-gradient(1px 1px at 67% 22%, rgba(255,255,255,0.35), transparent),
+    radial-gradient(1.5px 1.5px at 78% 7%, rgba(167,139,250,0.45), transparent),
+    radial-gradient(1px 1px at 8% 35%, rgba(212,168,67,0.4), transparent),
+    radial-gradient(1px 1px at 34% 42%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1.5px 1.5px at 55% 38%, rgba(96,165,250,0.4), transparent),
+    radial-gradient(1px 1px at 82% 45%, rgba(255,255,255,0.35), transparent),
+    radial-gradient(1px 1px at 15% 62%, rgba(232,93,117,0.3), transparent),
+    radial-gradient(1.5px 1.5px at 42% 68%, rgba(212,168,67,0.4), transparent),
+    radial-gradient(1px 1px at 63% 72%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 88% 65%, rgba(167,139,250,0.35), transparent),
+    radial-gradient(1.5px 1.5px at 28% 85%, rgba(52,211,153,0.3), transparent),
+    radial-gradient(1px 1px at 52% 88%, rgba(255,255,255,0.3), transparent),
+    radial-gradient(1px 1px at 73% 82%, rgba(212,168,67,0.35), transparent),
+    radial-gradient(1.5px 1.5px at 92% 88%, rgba(255,255,255,0.3), transparent);
+  background-size: 200% 200%;
   pointer-events: none;
   z-index: 0;
+  animation: starTwinkle 8s ease-in-out infinite alternate;
 }
+@keyframes starTwinkle {
+  0% { opacity: 0.5; background-position: 0% 0%; }
+  50% { opacity: 0.9; }
+  100% { opacity: 0.6; background-position: 100% 100%; }
+}
+
 #app {
   width: 100%;
   max-width: 480px;
@@ -118,472 +163,577 @@ body::after {
   z-index: 1;
 }
 
-/* ── Tab Panels ─────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   TAB PANELS
+   ═══════════════════════════════════════════════════════════════════ */
 .tab-panel {
-  flex: 1;
+  position: absolute;
+  inset: 0;
+  top: 0;
+  bottom: var(--nav-height);
   overflow-y: auto;
   overflow-x: hidden;
   padding: 20px 16px;
-  padding-bottom: calc(var(--nav-height) + var(--safe-bottom) + 20px);
+  padding-bottom: calc(20px + var(--safe-bottom));
   display: none;
   -webkit-overflow-scrolling: touch;
-  animation: tabFadeIn 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  scroll-behavior: smooth;
 }
-.tab-panel.active { display: block; }
-@keyframes tabFadeIn {
+.tab-panel.active { display: block; animation: tabReveal 0.5s var(--ease-magic); }
+@keyframes tabReveal {
   from { opacity: 0; transform: translateY(12px); }
   to { opacity: 1; transform: translateY(0); }
 }
+.tab-panel::-webkit-scrollbar { width: 3px; }
+.tab-panel::-webkit-scrollbar-track { background: transparent; }
+.tab-panel::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
 
-/* ── Page Header ─────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   PAGE HEADER
+   ═══════════════════════════════════════════════════════════════════ */
 .page-header {
-  font-size: 28px;
+  font-family: var(--font-display);
+  font-size: 22px;
   font-weight: 700;
-  letter-spacing: -0.5px;
-  margin-bottom: 20px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  color: var(--text);
-  text-shadow: 0 0 40px rgba(139,92,246,0.15);
+  letter-spacing: 0.04em;
+  margin-bottom: 18px;
+  text-align: center;
+  background: linear-gradient(180deg, var(--gold-bright) 0%, var(--gold-pale) 60%, var(--gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  position: relative;
 }
-.page-header .icon { font-size: 26px; }
-.page-subtitle {
-  font-size: 14px;
-  color: var(--text-secondary);
-  margin-bottom: 20px;
-  line-height: 1.7;
+.page-header::after {
+  content: '';
+  display: block;
+  width: 40px;
+  height: 2px;
+  margin: 10px auto 0;
+  background: linear-gradient(90deg, transparent, var(--gold-glow), var(--gold), var(--gold-glow), transparent);
+  border-radius: 1px;
 }
 
-/* ── Glass Card ──────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   CARDS — 魔法卡片
+   ═══════════════════════════════════════════════════════════════════ */
 .card {
-  background: var(--surface);
+  background: linear-gradient(160deg, var(--surface) 0%, rgba(255,255,255,0.02) 50%, var(--surface) 100%);
   border-radius: var(--radius-lg);
-  padding: 20px 18px;
-  margin-bottom: 12px;
+  padding: 18px;
+  margin-bottom: 14px;
   border: 1px solid var(--border);
-  box-shadow: var(--shadow-sm);
+  position: relative;
+  transition: all 0.4s var(--ease-magic);
+  overflow: hidden;
+}
+.card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(135deg, rgba(212,168,67,0.12), transparent 40%, transparent 60%, rgba(212,168,67,0.08));
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 .card-header {
-  font-size: 16px;
-  font-weight: 600;
-  margin-bottom: 14px;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-.card-header .icon { font-size: 20px; }
-
-/* ── Chat Bubbles ───────────────────────────────────────────── */
-.chat-container {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding-bottom: 8px;
-}
-.chat-bubble {
-  max-width: 88%;
-  padding: 14px 16px;
+  font-family: var(--font-display);
   font-size: 15px;
-  line-height: 1.75;
-  border-radius: var(--radius-lg);
-  white-space: pre-wrap;
-  word-break: break-word;
-  position: relative;
-  user-select: text;
-  -webkit-user-select: text;
-  animation: msgIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-@keyframes msgIn {
-  from { opacity: 0; transform: translateY(8px) scale(0.98); }
-  to { opacity: 1; transform: translateY(0) scale(1); }
-}
-.chat-bubble.user {
-  align-self: flex-end;
-  background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
-  color: #fff;
-  border-bottom-right-radius: 6px;
-  font-weight: 500;
-  box-shadow: 0 4px 16px var(--accent-glow);
-}
-.chat-bubble.ai {
-  align-self: flex-start;
-  background: var(--surface);
-  color: var(--text);
-  border: 1px solid var(--border);
-  border-bottom-left-radius: 6px;
-}
-.chat-bubble.system {
-  align-self: center;
-  background: transparent;
-  color: var(--text-muted);
-  font-size: 13px;
-  text-align: center;
-  max-width: 90%;
-  border: none;
-  animation: none;
-}
-.chat-time {
-  font-size: 11px;
-  color: var(--text-muted);
-  margin-top: 4px;
-  opacity: 0.7;
-  display: block;
-}
-.chat-bubble.user .chat-time { color: rgba(255,255,255,0.65); }
-.chat-bubble.ai.typing::after {
-  content: "";
-  display: inline-block;
-  width: 6px; height: 14px;
-  background: var(--accent-light);
-  margin-left: 2px;
-  animation: blink 0.8s infinite;
-  vertical-align: text-bottom;
-  border-radius: 3px;
-}
-@keyframes blink { 50% { opacity: 0; } }
-
-/* ── Quick Ask Buttons ──────────────────────────────────────── */
-.quick-asks {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin-top: 12px;
-}
-.quick-ask-btn {
-  padding: 10px 16px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  color: var(--text-secondary);
-  font-size: 13px;
-  font-weight: 500;
-  font-family: var(--font);
-  cursor: pointer;
-  white-space: nowrap;
-  transition: all 0.2s;
-  letter-spacing: 0.2px;
-}
-.quick-ask-btn:active {
-  background: rgba(139,92,246,0.18);
-  border-color: var(--accent);
-  color: var(--accent-light);
-  transform: scale(0.96);
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--gold-pale);
+  margin-bottom: 12px;
 }
 
-/* ── Forms ───────────────────────────────────────────────────── */
-.form-group { margin-bottom: 16px; }
+/* ═══════════════════════════════════════════════════════════════════
+   FORMS
+   ═══════════════════════════════════════════════════════════════════ */
+.form-group { margin-bottom: 14px; }
 .form-label {
   display: block;
-  font-size: 13px;
-  color: var(--text-secondary);
-  margin-bottom: 8px;
+  font-size: 12px;
   font-weight: 500;
-  letter-spacing: 0.3px;
+  color: var(--stardust-dim);
+  margin-bottom: 6px;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
 }
-.form-input, .form-select {
+.form-input, select.form-input {
   width: 100%;
   padding: 14px 16px;
-  background: var(--surface);
+  background: rgba(255,255,255,0.04);
   border: 1px solid var(--border);
-  border-radius: 14px;
-  color: var(--text);
+  border-radius: var(--radius-sm);
+  color: var(--stardust);
   font-size: 15px;
-  font-family: var(--font);
-  -webkit-appearance: none;
-  appearance: none;
-  transition: all 0.2s;
-}
-.form-input:focus, .form-select:focus {
+  font-family: var(--font-body);
   outline: none;
+  transition: all 0.3s;
+}
+.form-input:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 0 0 3px rgba(139,92,246,0.12);
-  background: rgba(255,255,255,0.09);
+  box-shadow: 0 0 0 3px var(--gold-ghost), 0 0 20px var(--gold-ghost);
+  background: rgba(255,255,255,0.06);
 }
-.form-input::placeholder { color: var(--text-muted); }
-.form-select {
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6585' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 16px center;
-  padding-right: 40px;
-}
+.form-input::placeholder { color: var(--stardust-muted); }
 
-/* ── Buttons ─────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   BUTTONS
+   ═══════════════════════════════════════════════════════════════════ */
 .btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 14px 28px;
+  width: 100%;
+  padding: 14px;
   border: none;
-  border-radius: 100px;
+  border-radius: var(--radius);
   font-size: 15px;
   font-weight: 600;
-  font-family: var(--font);
+  font-family: var(--font-body);
   cursor: pointer;
-  transition: all 0.2s;
-  letter-spacing: 0.2px;
-  width: 100%;
+  transition: all 0.3s var(--ease-magic);
+  position: relative;
+  overflow: hidden;
 }
+.btn::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255,255,255,0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.btn:active::after { opacity: 1; }
+.btn:active { transform: scale(0.97); }
+
 .btn-primary {
-  background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
-  color: #fff;
-  box-shadow: 0 4px 20px var(--accent-glow);
+  background: linear-gradient(135deg, #8b6914 0%, #b8942e 30%, #d4a843 50%, #b8942e 70%, #8b6914 100%);
+  background-size: 200% auto;
+  color: #1a1000;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  box-shadow: 0 4px 20px rgba(180, 140, 50, 0.25), inset 0 1px 0 rgba(255,255,255,0.15);
+  animation: goldShimmer 4s linear infinite;
 }
-.btn-primary:active { transform: scale(0.97); opacity: 0.9; }
-.btn-primary:disabled { opacity: 0.4; pointer-events: none; }
+@keyframes goldShimmer {
+  0% { background-position: 0% center; }
+  100% { background-position: 200% center; }
+}
+.btn-primary:active { box-shadow: 0 2px 10px rgba(180, 140, 50, 0.3); }
+
 .btn-secondary {
   background: var(--surface);
-  color: var(--text);
   border: 1px solid var(--border);
+  color: var(--stardust-dim);
 }
-.btn-secondary:active { background: var(--surface-hover); transform: scale(0.97); }
+.btn-secondary:active { background: var(--surface-hover); }
+
 .btn-small {
-  padding: 8px 16px;
+  padding: 9px 18px;
   font-size: 13px;
   width: auto;
   border-radius: 100px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
 }
-.btn-danger {
-  background: rgba(244,63,94,0.12);
-  color: var(--rose-light);
-  border: 1px solid rgba(244,63,94,0.2);
-}
-.btn-danger:active { background: rgba(244,63,94,0.2); }
 
-/* ── Gender Toggle ───────────────────────────────────────────── */
-.gender-toggle {
-  display: flex;
-  gap: 10px;
+.btn-danger {
+  background: rgba(232, 93, 117, 0.08);
+  color: var(--rose-light);
+  border: 1px solid rgba(232, 93, 117, 0.15);
 }
+.btn-danger:active { background: rgba(232, 93, 117, 0.15); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   GENDER TOGGLE
+   ═══════════════════════════════════════════════════════════════════ */
+.gender-toggle { display: flex; gap: 10px; }
 .gender-btn {
   flex: 1;
   padding: 14px;
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: var(--radius-sm);
   background: var(--surface);
-  color: var(--text-secondary);
+  color: var(--stardust-dim);
   font-size: 15px;
   font-weight: 500;
-  font-family: var(--font);
+  font-family: var(--font-body);
   cursor: pointer;
   text-align: center;
-  transition: all 0.2s;
+  transition: all 0.3s;
 }
 .gender-btn.selected {
-  background: rgba(139,92,246,0.18);
-  border-color: var(--accent);
-  color: var(--accent-light);
-  box-shadow: 0 0 20px rgba(139,92,246,0.12);
+  background: var(--surface-gold);
+  border-color: var(--gold);
+  color: var(--gold-bright);
+  box-shadow: 0 0 24px var(--gold-ghost);
 }
 
-/* ── Checkbox ────────────────────────────────────────────────── */
-.checkbox-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin-top: -8px;
-  margin-bottom: 16px;
-}
-.checkbox-row input[type=checkbox] {
-  width: 20px; height: 20px;
-  accent-color: var(--accent);
-}
-.checkbox-row label {
-  font-size: 13px;
-  color: var(--text-secondary);
-}
+/* ═══════════════════════════════════════════════════════════════════
+   CHECKBOX
+   ═══════════════════════════════════════════════════════════════════ */
+.checkbox-row { display: flex; align-items: center; gap: 10px; margin-top: -6px; margin-bottom: 16px; }
+.checkbox-row input[type=checkbox] { width: 20px; height: 20px; accent-color: var(--gold); }
+.checkbox-row label { font-size: 13px; color: var(--stardust-dim); }
 
-/* ── Profile Cards ───────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   PROFILE CARDS
+   ═══════════════════════════════════════════════════════════════════ */
 .profile-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: var(--surface);
-  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--surface), rgba(255,255,255,0.02));
+  border-radius: var(--radius);
   padding: 16px 18px;
   margin-bottom: 10px;
   border: 1px solid var(--border);
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s var(--ease-magic);
+  position: relative;
 }
+.profile-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(135deg, var(--gold-ghost), transparent 60%);
+  opacity: 0;
+  transition: opacity 0.4s;
+}
+.profile-card:hover::before { opacity: 1; }
 .profile-card.active-profile {
-  border-color: var(--accent);
-  background: rgba(139,92,246,0.1);
-  box-shadow: 0 0 24px rgba(139,92,246,0.1);
+  border-color: var(--gold);
+  box-shadow: 0 0 30px var(--gold-ghost), inset 0 0 20px var(--gold-ghost);
 }
 .profile-card:active { transform: scale(0.98); }
 .profile-info { flex: 1; }
-.profile-name { font-size: 16px; font-weight: 600; letter-spacing: -0.2px; }
-.profile-detail { font-size: 13px; color: var(--text-secondary); margin-top: 3px; }
+.profile-name { font-family: var(--font-display); font-size: 16px; font-weight: 600; color: var(--stardust); letter-spacing: 0.02em; }
+.profile-detail { font-size: 13px; color: var(--stardust-dim); margin-top: 3px; }
 .profile-actions { display: flex; gap: 6px; }
 
-/* ── Day Cards ───────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   DAY CARDS
+   ═══════════════════════════════════════════════════════════════════ */
 .day-card {
-  background: var(--surface);
-  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, var(--surface), rgba(255,255,255,0.02));
+  border-radius: var(--radius);
   padding: 14px 18px;
   margin-bottom: 8px;
-  border-left: 4px solid var(--green);
   border: 1px solid var(--border);
-  border-left: 4px solid var(--green);
+  border-left: 3px solid var(--emerald);
+  transition: all 0.3s;
 }
 .day-card.avoid { border-left-color: var(--rose); }
-.day-date { font-weight: 600; font-size: 15px; }
-.day-reason { font-size: 13px; color: var(--text-secondary); margin-top: 4px; }
+.day-date { font-family: var(--font-display); font-weight: 600; font-size: 15px; color: var(--gold-pale); }
+.day-reason { font-size: 13px; color: var(--stardust-dim); margin-top: 4px; line-height: 1.6; }
 
-/* ── Date Display ────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   DATE DISPLAY
+   ═══════════════════════════════════════════════════════════════════ */
 .date-display {
-  font-size: 14px;
-  color: var(--text-secondary);
+  font-size: 13px;
+  color: var(--stardust-dim);
   margin-bottom: 16px;
-  padding: 12px 16px;
+  padding: 11px 16px;
   background: var(--surface);
-  border-radius: 14px;
+  border-radius: var(--radius-sm);
   text-align: center;
   border: 1px solid var(--border);
+  letter-spacing: 0.02em;
 }
 
-/* ── Empty State ─────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   EMPTY STATE
+   ═══════════════════════════════════════════════════════════════════ */
 .empty-state {
   text-align: center;
-  padding: 48px 20px;
-  color: var(--text-muted);
+  padding: 56px 20px;
+  color: var(--stardust-muted);
 }
-.empty-state .empty-icon { font-size: 56px; margin-bottom: 16px; opacity: 0.8; }
-.empty-state p { font-size: 15px; line-height: 1.7; color: var(--text-secondary); }
+.empty-state .empty-icon { font-size: 64px; margin-bottom: 18px; opacity: 0.6; animation: iconPulse 3s ease-in-out infinite; }
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); opacity: 0.5; }
+  50% { transform: scale(1.06); opacity: 0.7; }
+}
+.empty-state p { font-size: 15px; line-height: 1.8; color: var(--stardust-dim); }
 
-/* ── Loading ─────────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   LOADING SPINNER — 魔法罗盘
+   ═══════════════════════════════════════════════════════════════════ */
 .loading-spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 28px;
-  color: var(--text-secondary);
-  font-size: 14px;
-}
-.spinner {
-  width: 20px; height: 20px;
-  border: 2px solid var(--border);
-  border-top-color: var(--accent-light);
-  border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
-
-/* ── Modal ───────────────────────────────────────────────────── */
-.modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  z-index: 100;
-  display: flex;
-  align-items: flex-end;
-  justify-content: center;
-  animation: fadeIn 0.2s ease;
-}
-@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-.modal-sheet {
-  background: linear-gradient(180deg, #1a1540 0%, #151030 100%);
-  width: 100%;
-  max-width: 480px;
-  border-radius: 24px 24px 0 0;
-  padding: 24px 18px;
-  padding-bottom: calc(24px + var(--safe-bottom));
-  max-height: 90vh;
-  overflow-y: auto;
-  animation: slideUp 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  border-top: 1px solid var(--border);
-}
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
-.modal-title {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 18px;
-  text-align: center;
-  letter-spacing: -0.3px;
-}
-
-/* ── Bottom Nav ──────────────────────────────────────────────── */
-#bottom-nav {
-  position: fixed;
-  bottom: 0; left: 0; right: 0;
-  display: flex;
-  justify-content: center;
-  z-index: 90;
-  padding: 0 12px;
-  padding-bottom: var(--safe-bottom);
-  pointer-events: none;
-}
-#bottom-nav > nav {
-  width: 100%;
-  max-width: 480px;
-  display: flex;
-  background: rgba(20, 15, 45, 0.85);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
-  border-radius: 24px;
-  margin: 0 4px 6px 4px;
-  padding: 6px 4px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.4), 0 0 1px rgba(255,255,255,0.1) inset;
-  pointer-events: auto;
-}
-.nav-btn {
-  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  padding: 8px 2px;
-  border: none;
-  background: none;
-  color: var(--text-muted);
-  font-size: 10px;
-  font-weight: 500;
-  font-family: var(--font);
-  cursor: pointer;
-  transition: all 0.25s;
-  border-radius: 18px;
-  position: relative;
-  letter-spacing: 0.3px;
+  gap: 14px;
+  padding: 40px 20px;
+  color: var(--stardust-dim);
+  font-size: 14px;
 }
-.nav-btn .nav-icon { font-size: 22px; line-height: 1; transition: transform 0.25s; }
-.nav-btn.active {
-  color: var(--accent-light);
+.spinner {
+  width: 44px; height: 44px;
+  border: 2px solid var(--border);
+  border-top-color: var(--gold);
+  border-right-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 1.2s linear infinite, spinnerGlow 2s ease-in-out infinite;
+  box-shadow: 0 0 16px var(--gold-glow);
 }
-.nav-btn.active .nav-icon {
-  transform: translateY(-2px);
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes spinnerGlow {
+  0%, 100% { box-shadow: 0 0 12px var(--gold-glow); }
+  50% { box-shadow: 0 0 28px var(--gold-glow), 0 0 48px rgba(212,168,67,0.1); }
 }
-.nav-btn.active::after {
-  content: '';
+
+/* ═══════════════════════════════════════════════════════════════════
+   MODAL — 魔法卷轴展开
+   ═══════════════════════════════════════════════════════════════════ */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(2, 2, 10, 0.7);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+.modal-sheet {
+  background: linear-gradient(180deg, #1a1545 0%, #100e2e 100%);
+  width: 100%;
+  max-width: 480px;
+  border-radius: 24px 24px 0 0;
+  padding: 27px 18px;
+  padding-bottom: calc(27px + var(--safe-bottom));
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: scrollUnfurl 0.45s var(--ease-magic);
+  border-top: 1px solid var(--border-gold);
+  box-shadow: 0 -8px 40px rgba(0,0,0,0.5);
+}
+@keyframes scrollUnfurl {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+.modal-title {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  letter-spacing: 0.04em;
+  background: linear-gradient(180deg, var(--gold-bright), var(--gold-pale));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   NAVIGATION — 魔法罗盘底栏
+   ═══════════════════════════════════════════════════════════════════ */
+#bottom-nav {
   position: absolute;
   bottom: 0;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: var(--accent-light);
-  box-shadow: 0 0 8px var(--accent-glow);
+  left: 0; right: 0;
+  z-index: 50;
+  padding: 0 8px 6px;
+  background: linear-gradient(0deg, rgba(6,5,15,0.95) 0%, rgba(6,5,15,0.85) 70%, transparent 100%);
+  padding-bottom: calc(6px + var(--safe-bottom));
 }
-.nav-btn:active { opacity: 0.7; }
+#bottom-nav nav {
+  display: flex;
+  gap: 0;
+  background: rgba(255,255,255,0.03);
+  border-radius: 100px;
+  padding: 4px;
+  border: 1px solid var(--border);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+}
+.nav-btn {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 2px;
+  padding: 8px 4px 6px;
+  background: transparent;
+  border: none;
+  border-radius: 100px;
+  color: var(--stardust-muted);
+  font-size: 10px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.3s var(--ease-magic);
+  letter-spacing: 0.02em;
+  position: relative;
+}
+.nav-btn .nav-icon { font-size: 19px; transition: transform 0.3s; }
+.nav-btn.active {
+  color: var(--gold-bright);
+  background: var(--surface-gold);
+  box-shadow: 0 0 16px var(--gold-ghost);
+}
+.nav-btn.active .nav-icon { transform: scale(1.1); }
+.nav-btn:active { transform: scale(0.95); }
 
-/* ── Chat Input Bar ──────────────────────────────────────────── */
-#chat-input-bar {
+/* ═══════════════════════════════════════════════════════════════════
+   QUICK-ASK BUTTONS — 胶囊卡片网格
+   ═══════════════════════════════════════════════════════════════════ */
+.quick-asks {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  margin: 12px 0;
+}
+.quick-asks.rows-3 { grid-template-columns: repeat(3, 1fr); }
+.quick-ask-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  padding: 12px 10px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--stardust-dim);
+  font-size: 13px;
+  font-weight: 500;
+  font-family: var(--font-body);
+  cursor: pointer;
+  transition: all 0.25s var(--ease-magic);
+  letter-spacing: 0.02em;
+  line-height: 1.4;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.quick-ask-btn:hover { background: var(--surface-hover); transform: translateY(-1px); }
+.quick-ask-btn:active { transform: scale(0.96); }
+.quick-ask-btn.accent { border-color: rgba(232,93,117,0.25); color: var(--rose-light); background: rgba(232,93,117,0.06); }
+.quick-ask-btn.primary { border-color: var(--border-gold); color: var(--gold-bright); background: var(--surface-gold); }
+.quick-ask-btn.feature { border-color: var(--border-gold); color: var(--gold-pale); background: var(--surface-gold); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   CHAT BUBBLES — 段间距 + 时间戳 + 双色
+   ═══════════════════════════════════════════════════════════════════ */
+.chat-bubble {
+  max-width: 88%;
+  padding: 15px 18px 13px;
+  border-radius: 18px;
+  font-size: 14px;
+  line-height: 1.85;
+  word-break: break-word;
+  position: relative;
+  animation: bubbleIn 0.4s var(--ease-magic);
+}
+.chat-bubble p, .chat-bubble div:not(.chat-time) { margin-bottom: 0.5rem; }
+.chat-bubble .chat-time {
+  display: block;
+  font-size: 10px;
+  color: var(--stardust-muted);
+  margin-top: 6px;
+  opacity: 0.6;
+}
+.chat-bubble.system {
+  max-width: 100%;
+  text-align: center;
+  background: transparent;
+  border: none;
+  color: var(--stardust-dim);
+  font-size: 13px;
+  padding: 8px 14px;
+}
+/* Bubble inner formatting */
+.chat-bubble p { margin-bottom: 0.6rem; }
+.chat-bubble p:last-child { margin-bottom: 0; }
+.chat-bubble .bubble-h2 {
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--gold-bright);
+  margin-top: 0.4rem;
+  margin-bottom: 0.3rem;
+  letter-spacing: 0.02em;
+}
+.chat-bubble strong {
+  font-weight: 700;
+  color: var(--gold-bright);
+  letter-spacing: 0.02em;
+}
+.chat-bubble.ai {
+  align-self: flex-start;
+  background: linear-gradient(135deg, rgba(255,255,255,0.04), rgba(255,255,255,0.02));
+  border: 1px solid var(--border);
+}
+.chat-bubble.user {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #3d2e0f 0%, #5a4215 50%, #4a3510 100%) !important;
+  border: 1px solid rgba(212,168,67,0.15);
+  color: var(--stardust);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.3);
+}
+.chat-bubble.typing::after {
+  content: '✦';
+  display: inline-block;
+  animation: sparkFloat 0.8s ease-in-out infinite;
+  margin-left: 4px;
+  color: var(--gold);
+}
+@keyframes sparkFloat {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-3px); }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   CHAT CONTAINER — 气泡容器
+   ═══════════════════════════════════════════════════════════════════ */
+.chat-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 80px;
+}
+
+@keyframes bubbleIn {
+  from { opacity: 0; transform: translateY(8px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+.chat-bubble:nth-child(1) { animation-delay: 0s; }
+.chat-bubble:nth-child(2) { animation-delay: 0.05s; }
+.chat-bubble:nth-child(3) { animation-delay: 0.1s; }
+.chat-bubble:nth-child(4) { animation-delay: 0.15s; }
+.chat-bubble:nth-child(5) { animation-delay: 0.2s; }
+
+/* ═══════════════════════════════════════════════════════════════════
+   CHAT INPUT BAR
+   ═══════════════════════════════════════════════════════════════════ */
+#chat-input-bar, #crystal-input-bar {
   position: fixed;
-  bottom: calc(var(--nav-height) + var(--safe-bottom) - 6px);
+  bottom: calc(var(--nav-height) + var(--safe-bottom) - 4px);
   left: 0; right: 0;
   display: flex;
   justify-content: center;
   z-index: 80;
-  padding: 8px 12px;
+  padding: 6px 12px;
   pointer-events: none;
 }
-#chat-input-bar > div {
+#chat-input-bar > div, #crystal-input-bar > div {
   width: 100%;
   max-width: 480px;
   display: flex;
@@ -591,108 +741,225 @@ body::after {
   align-items: center;
   pointer-events: auto;
 }
-#chat-input {
+#chat-input, #crystal-search {
   flex: 1;
   padding: 14px 18px;
-  background: rgba(30, 22, 60, 0.9);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  background: rgba(20, 16, 45, 0.9);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
   border: 1px solid var(--border);
   border-radius: 100px;
-  color: var(--text);
+  color: var(--stardust);
   font-size: 15px;
-  font-family: var(--font);
+  font-family: var(--font-body);
   outline: none;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4);
+  transition: all 0.3s;
 }
-#chat-input:focus {
+#chat-input:focus, #crystal-search:focus {
   border-color: var(--border-focus);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 3px rgba(139,92,246,0.12);
+  box-shadow: 0 4px 24px rgba(0,0,0,0.4), 0 0 0 3px var(--gold-ghost), 0 0 32px var(--gold-ghost);
 }
-#chat-input::placeholder { color: var(--text-muted); }
+#chat-input::placeholder, #crystal-search::placeholder { color: var(--stardust-muted); }
+
 #chat-send-btn {
   flex-shrink: 0;
   width: 46px; height: 46px;
   border-radius: 50%;
   border: none;
-  background: linear-gradient(135deg, var(--accent) 0%, #a855f7 100%);
-  color: #fff;
+  background: linear-gradient(135deg, #8b6914, #d4a843);
+  color: #1a1000;
   font-size: 18px;
+  font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px var(--accent-glow);
-  transition: all 0.2s;
+  box-shadow: 0 4px 20px var(--gold-glow);
+  transition: all 0.3s;
 }
-#chat-send-btn:active { transform: scale(0.92); opacity: 0.9; }
-#chat-send-btn:disabled { opacity: 0.3; pointer-events: none; }
+#chat-send-btn:active { transform: scale(0.9); }
+#chat-send-btn:disabled { opacity: 0.2; pointer-events: none; }
+
 #chat-hepan-btn, #chat-clear-btn {
   flex-shrink: 0;
   width: 40px; height: 40px;
   border-radius: 50%;
   border: 1px solid var(--border);
-  background: rgba(255,255,255,0.06);
+  background: rgba(255,255,255,0.04);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
-  color: var(--text-secondary);
-  font-size: 14px;
+  color: var(--stardust-dim);
+  font-size: 15px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: all 0.2s;
+  transition: all 0.3s;
 }
-#chat-hepan-btn:active, #chat-clear-btn:active { background: rgba(255,255,255,0.12); transform: scale(0.92); }
+#chat-hepan-btn:active, #chat-clear-btn:active { transform: scale(0.92); }
 
-/* ── Crystal Input Bar ───────────────────────────────────────── */
-#crystal-input-bar {
-  position: fixed;
-  bottom: calc(var(--nav-height) + var(--safe-bottom) - 6px);
-  left: 0; right: 0;
-  display: flex;
-  justify-content: center;
-  z-index: 80;
-  padding: 8px 12px;
-  pointer-events: none;
-}
-#crystal-input-bar > div {
-  width: 100%;
-  max-width: 480px;
-  pointer-events: auto;
-}
-#crystal-search {
-  width: 100%;
-  padding: 14px 18px;
-  background: rgba(30, 22, 60, 0.9);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid var(--border);
-  border-radius: 100px;
-  color: var(--text);
-  font-size: 15px;
-  font-family: var(--font);
-  outline: none;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3);
-}
-#crystal-search:focus {
-  border-color: var(--border-focus);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.3), 0 0 0 3px rgba(139,92,246,0.12);
-}
-#crystal-search::placeholder { color: var(--text-muted); }
-
-/* ── Privacy Note ────────────────────────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════
+   PRIVACY NOTE
+   ═══════════════════════════════════════════════════════════════════ */
 .privacy-note {
-  text-align: center;
   font-size: 12px;
-  color: var(--text-muted);
-  padding: 12px 0;
-  opacity: 0.5;
+  color: var(--stardust-muted);
+  text-align: center;
+  margin-top: 12px;
 }
 
-/* ── Scrollbar ───────────────────────────────────────────────── */
-.tab-panel::-webkit-scrollbar { width: 0; }
+/* ═══════════════════════════════════════════════════════════════════
+   MOBILE REFINEMENTS
+   ═══════════════════════════════════════════════════════════════════ */
+@media (max-width: 380px) {
+  .nav-btn { font-size: 9px; }
+  .nav-btn .nav-icon { font-size: 17px; }
+  .chat-bubble { max-width: 92%; font-size: 13px; }
+}
+
+/* ═══════════════════════════════════════════════════════════════════
+   THEME: IVORY — 象牙白昼 · 古籍手卷
+   ═══════════════════════════════════════════════════════════════════ */
+.theme-ivory {
+  --void-deep: #faf7f0;
+  --void: #f5f0e6;
+  --void-mid: #ede4d4;
+  --gold: #8b6914;
+  --gold-bright: #a67c22;
+  --gold-pale: #b8953c;
+  --gold-glow: rgba(139, 105, 20, 0.2);
+  --gold-ghost: rgba(139, 105, 20, 0.06);
+  --stardust: #2d2416;
+  --stardust-dim: #5c4f3a;
+  --stardust-muted: #8a7d68;
+  --surface: rgba(139, 105, 20, 0.06);
+  --surface-hover: rgba(139, 105, 20, 0.12);
+  --surface-gold: rgba(139, 105, 20, 0.1);
+  --surface-gold-hover: rgba(139, 105, 20, 0.18);
+  --border: rgba(139, 105, 20, 0.12);
+  --border-gold: rgba(139, 105, 20, 0.25);
+  --border-focus: rgba(139, 105, 20, 0.55);
+  --rose: #c44a5a;
+  --rose-light: #a83d4a;
+  --red: #c44a5a;
+  --emerald: #387a5c;
+  --sapphire: #4a7298;
+  --sapphire-glow: rgba(74, 114, 152, 0.15);
+  --arcane: #5c4f3a;
+  --arcane-bright: #8a7d68;
+  --arcane-glow: rgba(92, 79, 58, 0.2);
+  --rose-glow: rgba(196, 74, 90, 0.15);
+  --emerald-glow: rgba(56, 122, 92, 0.12);
+  --shadow-gold: 0 4px 20px rgba(139, 105, 20, 0.1);
+}
+.theme-ivory body::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 25% 0%, rgba(139, 105, 20, 0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 75% 15%, rgba(180, 150, 100, 0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 35% at 30% 70%, rgba(160, 130, 90, 0.04) 0%, transparent 55%);
+  animation: none; opacity: 0.8;
+}
+.theme-ivory body::after { background-image: none; animation: none; }
+.theme-ivory .card { background: rgba(255,252,245,0.85); border-color: rgba(139,105,20,0.12); }
+.theme-ivory .card::before { background: linear-gradient(135deg, rgba(139,105,20,0.1), transparent 40%, transparent 60%, rgba(139,105,20,0.06)); }
+.theme-ivory .profile-card { background: rgba(255,252,245,0.8); }
+.theme-ivory .profile-card.active-profile { box-shadow: 0 0 24px rgba(139,105,20,0.12), inset 0 0 16px rgba(139,105,20,0.04); }
+.theme-ivory .nav-btn.active { background: rgba(139,105,20,0.1); }
+.theme-ivory #bottom-nav { background: linear-gradient(0deg, rgba(250,247,240,0.95) 0%, rgba(250,247,240,0.85) 70%, transparent 100%); }
+.theme-ivory #bottom-nav nav { background: rgba(255,255,255,0.7); border-color: rgba(139,105,20,0.12); }
+.theme-ivory .modal-overlay { background: rgba(230,220,200,0.6); }
+.theme-ivory .modal-sheet { background: linear-gradient(180deg, #faf6ed 0%, #f0ead8 100%); border-top-color: rgba(139,105,20,0.2); }
+.theme-ivory #chat-input, .theme-ivory #crystal-search { background: rgba(255,255,255,0.85); }
+.theme-ivory .chat-bubble.ai { background: linear-gradient(135deg, rgba(139,105,20,0.05), rgba(139,105,20,0.02)); border-color: rgba(139,105,20,0.1); }
+.theme-ivory .chat-bubble.user { background: linear-gradient(135deg, #f0e8d0 0%, #e8dcb8 50%, #ded0a8 100%) !important; border-color: rgba(139,105,20,0.2); color: #2d2416; }
+.theme-ivory .chat-bubble.system { color: var(--stardust-dim); }
+.theme-ivory .form-input, .theme-ivory select.form-input { background: rgba(139,105,20,0.04); }
+.theme-ivory .day-card { background: linear-gradient(135deg, rgba(255,252,245,0.8), rgba(245,240,225,0.7)); }
+.theme-ivory .date-display { background: rgba(139,105,20,0.05); }
+.theme-ivory .spinner { border-color: rgba(139,105,20,0.12); border-top-color: var(--gold); border-right-color: var(--gold); }
+.theme-ivory .btn-primary { background: linear-gradient(135deg, #6b5010, #a67c22, #8b6914, #a67c22, #6b5010); background-size: 200% auto; animation: goldShimmer 4s linear infinite; color: #faf6ed; }
+.theme-ivory .empty-state p { color: var(--stardust-dim); }
+.theme-ivory .quick-ask-btn { background: rgba(139,105,20,0.04); border-color: rgba(139,105,20,0.12); color: var(--stardust-dim); }
+.theme-ivory .quick-ask-btn.accent { border-color: rgba(196,74,90,0.2); color: var(--rose); background: rgba(196,74,90,0.04); }
+.theme-ivory .quick-ask-btn.primary, .theme-ivory .quick-ask-btn.feature { border-color: rgba(139,105,20,0.2); color: var(--gold); background: rgba(139,105,20,0.06); }
+.theme-ivory .card-header { color: var(--gold); }
+.theme-ivory .bubble-h2, .theme-ivory .chat-bubble strong { color: var(--gold); }
+.theme-ivory .page-header { background: linear-gradient(180deg, var(--gold-bright), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.theme-ivory .page-header { background: linear-gradient(180deg, var(--gold-bright), var(--gold)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.theme-ivory .page-header::after { background: linear-gradient(90deg, transparent, var(--gold-glow), var(--gold), var(--gold-glow), transparent); }
+.theme-ivory .spinner { box-shadow: 0 0 12px var(--gold-glow); }
+
+/* ═══════════════════════════════════════════════════════════════════
+   THEME: ECLIPSE — 血月蚀 · 暗黑高反差
+   ═══════════════════════════════════════════════════════════════════ */
+.theme-eclipse {
+  --void-deep: #080404;
+  --void: #0e0808;
+  --void-mid: #1a0e0e;
+  --gold: #d4553a;
+  --gold-bright: #f0705a;
+  --gold-pale: #c04838;
+  --gold-glow: rgba(212, 85, 58, 0.3);
+  --gold-ghost: rgba(212, 85, 58, 0.06);
+  --stardust: #f2e0d8;
+  --stardust-dim: #c4a89c;
+  --stardust-muted: #806560;
+  --surface: rgba(255, 255, 255, 0.03);
+  --surface-hover: rgba(255, 255, 255, 0.06);
+  --surface-gold: rgba(212, 85, 58, 0.06);
+  --surface-gold-hover: rgba(212, 85, 58, 0.12);
+  --border: rgba(255, 255, 255, 0.05);
+  --border-gold: rgba(212, 85, 58, 0.2);
+  --border-focus: rgba(212, 85, 58, 0.5);
+  --rose: #d4553a;
+  --rose-light: #e0705a;
+  --red: #d4553a;
+  --rose-glow: rgba(212, 85, 58, 0.3);
+  --emerald: #b84c3a;
+  --emerald-glow: rgba(184, 76, 58, 0.15);
+  --sapphire: #c06050;
+  --sapphire-glow: rgba(192, 96, 80, 0.15);
+  --arcane: #c06050;
+  --arcane-bright: #e08070;
+  --arcane-glow: rgba(192, 96, 80, 0.25);
+  --shadow-gold: 0 4px 24px rgba(212, 85, 58, 0.12);
+}
+.theme-eclipse body::before {
+  background:
+    radial-gradient(ellipse 80% 50% at 25% 10%, rgba(180, 60, 50, 0.1) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 70% 20%, rgba(200, 80, 60, 0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 50% 35% at 40% 75%, rgba(160, 50, 30, 0.05) 0%, transparent 55%);
+  animation: nebulaDrift 20s ease-in-out infinite alternate;
+}
+.theme-eclipse body::after { background-image: none; animation: none; }
+.theme-eclipse .card { background: linear-gradient(160deg, rgba(255,255,255,0.025) 0%, rgba(40,15,10,0.3) 50%, rgba(255,255,255,0.025) 100%); border-color: rgba(212,85,58,0.12); }
+.theme-eclipse .card::before { background: linear-gradient(135deg, rgba(212,85,58,0.15), transparent 40%, transparent 60%, rgba(212,85,58,0.08)); }
+.theme-eclipse .profile-card { background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(30,10,5,0.3)); }
+.theme-eclipse .profile-card.active-profile { border-color: var(--gold); box-shadow: 0 0 30px rgba(212,85,58,0.15), inset 0 0 20px rgba(212,85,58,0.05); }
+.theme-eclipse .nav-btn.active { background: rgba(212,85,58,0.08); }
+.theme-eclipse #bottom-nav { background: linear-gradient(0deg, rgba(8,4,4,0.95) 0%, rgba(8,4,4,0.85) 70%, transparent 100%); }
+.theme-eclipse #bottom-nav nav { background: rgba(255,255,255,0.02); border-color: rgba(212,85,58,0.1); }
+.theme-eclipse .modal-overlay { background: rgba(4,2,2,0.75); }
+.theme-eclipse .modal-sheet { background: linear-gradient(180deg, #1a0c0a 0%, #100605 100%); border-top-color: rgba(212,85,58,0.2); }
+.theme-eclipse #chat-input, .theme-eclipse #crystal-search { background: rgba(20,8,6,0.9); }
+.theme-eclipse .chat-bubble.ai { background: linear-gradient(135deg, rgba(255,255,255,0.03), rgba(40,10,5,0.2)); border-color: rgba(212,85,58,0.1); }
+.theme-eclipse .chat-bubble.user { background: linear-gradient(135deg, #3d1a10 0%, #5a2215 50%, #4a1a10 100%) !important; border-color: rgba(212,85,58,0.2); }
+.theme-eclipse .chat-bubble.system { color: var(--stardust-dim); }
+.theme-eclipse .form-input, .theme-eclipse select.form-input { background: rgba(255,255,255,0.03); }
+.theme-eclipse .day-card { background: linear-gradient(135deg, rgba(255,255,255,0.025), rgba(30,10,5,0.2)); }
+.theme-eclipse .date-display { background: rgba(255,255,255,0.02); }
+.theme-eclipse .spinner { border-color: rgba(212,85,58,0.15); border-top-color: var(--gold); border-right-color: var(--gold); }
+.theme-eclipse .btn-primary { background: linear-gradient(135deg, #8b3018, #c04838, #d4553a, #c04838, #8b3018); background-size: 200% auto; animation: goldShimmer 3s linear infinite; color: #fae0d8; }
+.theme-eclipse .loading-spinner { color: #c4a89c; }
+.theme-eclipse .page-header::after { background: linear-gradient(90deg, transparent, rgba(212,85,58,0.4), var(--gold), rgba(212,85,58,0.4), transparent); }
+.theme-eclipse .bubble-h2, .theme-eclipse .chat-bubble strong { color: var(--gold-bright); }
+.theme-eclipse .quick-ask-btn { background: rgba(255,255,255,0.025); border-color: rgba(212,85,58,0.1); color: var(--stardust-dim); }
+.theme-eclipse .quick-ask-btn.accent { border-color: rgba(212,85,58,0.2); color: var(--rose-light); background: rgba(212,85,58,0.06); }
+.theme-eclipse .quick-ask-btn.primary, .theme-eclipse .quick-ask-btn.feature { border-color: rgba(212,85,58,0.2); color: var(--gold-bright); background: rgba(212,85,58,0.06); }
+.theme-eclipse .spinner { box-shadow: 0 0 12px var(--gold-glow); }
 </style>
+
 </head>
 <body>
 <div id="app">
@@ -986,7 +1253,31 @@ async function streamFetch(type, body, targetEl, { onDone, onError } = {}) {
               bubble = createBubble('', false, true);
               if (targetEl) targetEl.appendChild(bubble);
             }
-            bubble.textContent += content;
+            // Accumulate raw text, then re-render bubble innerHTML for formatting
+            bubble._rawText = (bubble._rawText || '') + content;
+            // Render formatted HTML
+            let html = bubble._rawText;
+            // Escape + format
+            const escaped = html.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+            const withBold = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+            const paragraphs = withBold.split(/\n{2,}/);
+            const rendered = paragraphs.map(p => {
+              const trimmed = p.trim();
+              if (!trimmed) return '';
+              if (/^#\s/.test(trimmed)) return '<div class="bubble-h2">' + trimmed.replace(/^#\s+/, '') + '</div>';
+              const lines = trimmed.split('\n');
+              const formatted = lines.map(line => {
+                const t = line.trim();
+                if (/^(性格|事业|感情|健康|财运|运势|未来|水晶|整体|总结|注意|建议|推荐|命盘|八字|日主|大运|流年|姓名|职业|评分|匹配|年度|月份|今日|本月|适合|避免|宜|忌)/.test(t)) return '<div class="bubble-h2">' + t + '</div>';
+                if (/^[📿☀️🌙📅💬👤💎⚙️🔮❤️💼📊🏠📝🔑✅⚠️🔄💰✨💎🌟]/.test(t)) return '<div class="bubble-h2">' + t + '</div>';
+                return t;
+              }).join('<br>');
+              return '<p>' + formatted + '</p>';
+            }).filter(Boolean).join('');
+            // Preserve time span, replace content
+            const timeSpan = bubble.querySelector('.chat-time');
+            bubble.innerHTML = rendered;
+            if (timeSpan) bubble.appendChild(timeSpan);
             scheduleScrollToBottom();
           }
         } catch (e) { /* skip incomplete line */ }
@@ -1008,7 +1299,45 @@ function createBubble(text, role = 'ai', isTyping = false) {
   const time = document.createElement('span');
   time.className = 'chat-time';
   time.textContent = new Date().toLocaleTimeString('zh-CN', { hour: '2-digit', minute: '2-digit' });
-  div.textContent = text;
+
+  // Smart formatting: \n\n → paragraph break, **text** → bold heading, single \n → <br>
+  let html = '';
+  if (text) {
+    // Escape HTML first
+    const escaped = text
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+    // **bold** markers
+    const withBold = escaped.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+    // Split by double newline → paragraphs
+    const paragraphs = withBold.split(/\n{2,}/);
+    html = paragraphs
+      .map(p => {
+        const trimmed = p.trim();
+        if (!trimmed) return '';
+        // Lines starting with # (like # 性格) become headings
+        if (/^#\s/.test(trimmed)) {
+          return '<div class="bubble-h2">' + trimmed.replace(/^#\s+/, '') + '</div>';
+        }
+        // Lines ending with ：or : become subheadings
+        const lines = trimmed.split('\n');
+        const formatted = lines.map(line => {
+          const t = line.trim();
+          if (/^(性格|事业|感情|健康|财运|运势|未来|水晶|整体|总结|注意|建议|推荐|命盘|八字|日主|大运|流年|姓名|职业|评分|匹配|年度|月份|今日|本月|适合|避免|宜|忌)/.test(t)) {
+            return '<div class="bubble-h2">' + t + '</div>';
+          }
+          if (/^[📿☀️🌙📅💬👤💎⚙️🔮❤️💼📊🏠📝🔑✅⚠️🔄💰✨💎🌟]/.test(t)) {
+            return '<div class="bubble-h2">' + t + '</div>';
+          }
+          return t;
+        }).join('<br>');
+        return '<p>' + formatted + '</p>';
+      })
+      .filter(Boolean)
+      .join('');
+  }
+  div.innerHTML = html;
   div.appendChild(time);
   return div;
 }
@@ -1079,9 +1408,12 @@ function renderFortune() {
       <div style="margin-top:16px;display:flex;gap:10px;">
         <button class="btn btn-primary" onclick="doFullReading()">🔄 重新排盘</button>
         <button class="btn btn-secondary btn-small" onclick="switchTab('daily')">去看看日运 →</button>
-      </div>`;
+      </div>
+      <div id="crystal-quick-match" style="margin-top:20px;"></div>`;
     const chat = document.getElementById('fortune-chat');
     chat.appendChild(createBubble(profile.lastReading.fullText));
+    // 排盘结果渲染完后，立即渲染水晶速搭
+    setTimeout(() => renderCrystalQuickMatch(profile), 100);
   } else {
     panel.innerHTML = `
       <div class="page-header">📿 命盘</div>
@@ -1148,6 +1480,12 @@ async function doFullReading() {
       btnRow.style.cssText = 'margin-top:16px;display:flex;gap:10px;';
       btnRow.innerHTML = '<button class="btn btn-primary" onclick="doFullReading()">🔄 重新排盘</button><button class="btn btn-secondary btn-small" onclick="switchTab(\'daily\')">去看看日运 →</button>';
       panel.appendChild(btnRow);
+      // 水晶速搭
+      const matchEl = document.createElement('div');
+      matchEl.id = 'crystal-quick-match';
+      matchEl.style.marginTop = '20px';
+      panel.appendChild(matchEl);
+      setTimeout(() => renderCrystalQuickMatch(profile), 100);
     },
     onError(err) {
       const btnRow = document.createElement('div');
@@ -1195,7 +1533,7 @@ function renderDaily() {
     <div class="date-display">📅 ${todayDisplay()}</div>
     <div style="display:flex;gap:8px;margin-bottom:12px;">
       <button class="btn btn-primary btn-small" onclick="doDailyReading()">🔮 今日运势</button>
-      <button class="btn btn-secondary btn-small" onclick="doDailyLucky()" style="background:rgba(90,173,110,0.15);color:var(--green);border-color:rgba(90,173,110,0.3);">✅ 今日宜忌</button>
+      <button class="btn btn-secondary btn-small" onclick="doDailyLucky()" style="background:rgba(90,173,110,0.15);color:var(--emerald);border-color:rgba(90,173,110,0.3);">✅ 今日宜忌</button>
     </div>
     <div class="chat-container" id="daily-chat"></div>
     <div style="margin-top:12px;"><button class="btn btn-primary btn-small" onclick="doDailyReading()" id="daily-refresh-btn">🔄 重新推算</button></div>`;
@@ -1573,11 +1911,11 @@ function showProfileForm(existing) {
     <div class="card" style="margin-top:16px;">
       <div class="card-header"><span class="icon">🔑</span> DeepSeek API Key</div>
       <div class="form-group" style="margin-bottom:0;">
-        <label class="form-label">去 <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:var(--accent-light);">platform.deepseek.com</a> 注册，充10块够用很久</label>
+        <label class="form-label">去 <a href="https://platform.deepseek.com/api_keys" target="_blank" style="color:var(--gold-bright);">platform.deepseek.com</a> 注册，充10块够用很久</label>
         <input type="password" class="form-input" id="api-key-input" placeholder="sk-..." value="${getApiKey()}" style="margin-bottom:6px;">
       </div>
       <button class="btn btn-primary btn-small" onclick="saveApiKey()" style="width:auto;margin-top:6px;">保存 Key</button>
-      <span id="api-key-status" style="font-size:12px;color:var(--green);margin-left:8px;display:none;">✓ 已保存</span>
+      <span id="api-key-status" style="font-size:12px;color:var(--emerald);margin-left:8px;display:none;">✓ 已保存</span>
     </div>
     <div class="privacy-note">🔒 Key 和档案都存在你手机本地，不会上传</div>`;
 
@@ -1681,19 +2019,6 @@ function renderChat() {
     ? ['我这两年事业怎么样', '感情方面有什么建议', '最近财运如何', '适合创业吗', '健康状况要注意什么']
     : ['帮我看看我的命盘'] + ['我这两年事业怎么样', '感情方面有什么建议', '最近适合做什么'].slice(0, 3);
 
-  // Feature buttons row
-  const featureBtns = `
-    <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;">
-      <button class="quick-ask-btn" style="background:rgba(90,173,110,0.1);border-color:rgba(90,173,110,0.3);color:var(--green);" onclick="showNameScore()">📝 取名打分</button>
-      <button class="quick-ask-btn" style="background:rgba(90,143,207,0.1);border-color:rgba(90,143,207,0.3);color:var(--blue);" onclick="showCareerMatch()">💼 职业匹配</button>
-      <button class="quick-ask-btn" style="background:rgba(226,176,74,0.1);border-color:rgba(226,176,74,0.3);color:var(--gold);" onclick="showAnnualReport()">📊 年度报告</button>
-      <button class="quick-ask-btn" style="background:rgba(180,100,220,0.1);border-color:rgba(180,100,220,0.3);color:#b464dc;" onclick="showFengshui()">🏠 风水布局</button>
-    </div>`;
-
-  // All profiles for hepan partner selection
-  const allProfiles = Profiles.getAll();
-  const partnerOptions = allProfiles.filter(p => p.id !== profile?.id);
-
   panel.innerHTML = `
     <div class="page-header">💬 聊聊 <button class="btn btn-danger btn-small" style="float:right;font-size:11px;" onclick="clearChatHistory()">清空记录</button><button class="btn btn-secondary btn-small" style="float:right;font-size:11px;margin-right:6px;" onclick="exportChatHistory()">📋 导出</button></div>
     <div id="chat-history" class="chat-container">
@@ -1702,15 +2027,27 @@ function renderChat() {
         : `先到📿命盘排个盘，回来聊天会更精准。随便问也OK 👇`}</div>
       ${savedHtml ? savedHtml : ''}
     </div>
-    <div class="quick-asks" id="quick-asks">
-      <button class="quick-ask-btn" style="background:rgba(224,85,85,0.1);border-color:rgba(224,85,85,0.3);color:var(--red);" onclick="showHePan()">❤️ 看看和TA合不合</button>
-      ${quickAsks.map(q => `<button class="quick-ask-btn" onclick="askQuick('${q}')">${q}</button>`).join('')}
+
+    <div class="card" style="margin-top:8px;">
+      <div class="card-header" style="font-size:13px;margin-bottom:8px;">🪄 快捷提问</div>
+      <div class="quick-asks" id="quick-asks">
+        <button class="quick-ask-btn accent" onclick="showHePan()">❤️ 看看和TA合不合</button>
+        ${quickAsks.map(q => `<button class="quick-ask-btn" onclick="askQuick('${q}')">${q}</button>`).join('')}
+      </div>
     </div>
-    ${hasReading ? featureBtns : ''}
-    <div style="margin-top:12px;">
-      <button class="quick-ask-btn" style="background:rgba(224,85,85,0.08);border-color:rgba(224,85,85,0.2);color:var(--red);" onclick="showHePanCard()">❤️ 合盘卡片</button>
-      <button class="quick-ask-btn" style="background:rgba(226,176,74,0.1);border-color:rgba(226,176,74,0.3);color:var(--gold);" onclick="showLunarConverter()">📅 阴阳历换算</button>
-    </div>`;
+
+    ${hasReading ? `
+    <div class="card" style="margin-top:8px;">
+      <div class="card-header" style="font-size:13px;margin-bottom:8px;">🧰 工具</div>
+      <div class="quick-asks rows-3">
+        <button class="quick-ask-btn feature" onclick="showNameScore()">📝 取名打分</button>
+        <button class="quick-ask-btn feature" onclick="showCareerMatch()">💼 职业匹配</button>
+        <button class="quick-ask-btn feature" onclick="showAnnualReport()">📊 年度报告</button>
+        <button class="quick-ask-btn feature" onclick="showFengshui()">🏠 风水布局</button>
+        <button class="quick-ask-btn feature" onclick="showHePanCard()">❤️ 合盘卡片</button>
+        <button class="quick-ask-btn feature" onclick="showLunarConverter()">📅 阴阳历换算</button>
+      </div>
+    </div>` : ''}`;
 
   // Restore scroll to bottom
   setTimeout(() => {
@@ -1733,6 +2070,151 @@ function renderChat() {
   setTimeout(bindCrystalCollectButtons, 500);
 }
 
+// ── 水晶速搭栏（纯前端，不调 API） ──
+function renderCrystalQuickMatch(profile) {
+  const el = document.getElementById('crystal-quick-match');
+  if (!el || !profile) return;
+
+  const dmEl = profile.lastReading?.dayMasterElement || '';
+  // 日主五行 → 用神推导（简化：以日主克者为财/食伤为大方向，用户可选）
+  // 金 → 喜水木？这里提供一个交互选择器，让用户自己按场景选
+  const wuxingColors = { 金: '#e2e8f0', 木: '#86efac', 水: '#93c5fd', 火: '#fca5a5', 土: '#fde68a' };
+  const wuxingBorder = { 金: '#94a3b8', 木: '#22c55e', 水: '#3b82f6', 火: '#ef4444', 土: '#f59e0b' };
+  const wuxingDesc = {
+    金: '增强意志力 · 净化能量 · 提升决断力',
+    木: '养肝生长 · 招财旺业 · 激发创造力',
+    水: '养肾辟邪 · 吸纳负能量 · 增强直觉',
+    火: '益心活力 · 促进感情 · 提升贵人运',
+    土: '健脾胃 · 聚财稳定 · 增强自信',
+  };
+
+  let html = '<div class="card" style="margin-top:0;"><div class="card-header">💎 水晶快速搭配</div>';
+  html += '<div style="font-size:13px;color:var(--stardust-dim);margin-bottom:12px;">';
+  html += dmEl ? `你的日主五行是<span style="color:${wuxingColors[dmEl] || '#fff'};font-weight:600;"> ${dmEl} </span> · 选择你想补的五行，帮你搭配腕间组合` : '选择你想补的五行，帮你搭配腕间组合';
+  html += '</div>';
+
+  // 五行按钮
+  html += '<div style="display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap;">';
+  for (const wx of ['金','木','水','火','土']) {
+    html += `<button class="crystal-wuxing-btn" data-wx="${wx}" style="
+      flex:1;min-width:48px;padding:10px 6px;border-radius:12px;
+      border:2px solid ${wuxingBorder[wx]};background:rgba(255,255,255,0.04);
+      color:${wuxingBorder[wx]};font-size:14px;font-weight:600;
+      cursor:pointer;transition:all 0.2s;font-family:var(--font-body);
+    " onclick="pickCrystalWuxing('${wx}')">${wx}</button>`;
+  }
+  html += '</div>';
+
+  // 已选五行 + 推荐结果
+  html += '<div id="crystal-match-result" style="min-height:60px;">';
+  html += '<div style="font-size:13px;color:var(--stardust-muted);text-align:center;padding:24px 0;">👆 点一个五行，帮你搭配适合的水晶</div>';
+  html += '</div>';
+
+  html += '</div>'; // card
+  el.innerHTML = html;
+}
+
+function pickCrystalWuxing(targetWx) {
+  const result = document.getElementById('crystal-match-result');
+  if (!result) return;
+
+  // 高亮被选中的按钮
+  document.querySelectorAll('.crystal-wuxing-btn').forEach(b => {
+    const wx = b.dataset.wx;
+    const colors = { 金:'#94a3b8', 木:'#22c55e', 水:'#3b82f6', 火:'#ef4444', 土:'#f59e0b' };
+    const isSel = wx === targetWx;
+    b.style.background = isSel ? colors[wx]+'22' : 'rgba(255,255,255,0.04)';
+    b.style.borderColor = isSel ? colors[wx] : 'rgba(255,255,255,0.12)';
+    b.style.boxShadow = isSel ? `0 0 16px ${colors[wx]}33` : 'none';
+    b.style.color = isSel ? colors[wx] : 'var(--stardust-dim)';
+  });
+
+  // 筛选目标五行水晶
+  const matched = CRYSTAL_DB.filter(c => c.element.includes(targetWx));
+  // 从水→木→火→土→金→水 相生链里找可叠加的
+  const shengChain = ['水','木','火','土','金'];
+  const wxIdx = shengChain.indexOf(targetWx);
+  const complementWx = shengChain[(wxIdx + 1) % 5]; // 相生的五行（补用神叠加）
+  const complementMatched = CRYSTAL_DB.filter(c => c.element.includes(complementWx));
+
+  // 相克五行（避开）
+  const keMap = { 金:'木', 木:'土', 土:'水', 水:'火', 火:'金' };
+  const avoidWx = Object.entries(keMap).filter(([k,v]) => v === targetWx).map(([k]) => k)[0] || '';
+
+  let html = '';
+
+  // 推荐搭配
+  html += '<div style="margin-top:8px;">';
+  html += '<div style="font-size:13px;font-weight:600;margin-bottom:6px;color:var(--gold-bright);">✨ 推荐腕间搭配</div>';
+  html += '<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:10px;">';
+  const top3 = matched.slice(0, 3);
+  top3.forEach((c, i) => {
+    const isCol = isCrystalCollected(c.name);
+    html += `<div style="
+      flex:1;min-width:100px;padding:10px 8px;border-radius:12px;
+      background:rgba(255,255,255,0.06);border:1px solid var(--border);
+      text-align:center;cursor:pointer;transition:all 0.2s;
+    " onclick="toggleCrystalQuickCollect('${c.name}', this)">
+      <div style="font-size:24px;">${c.emoji}</div>
+      <div style="font-size:12px;font-weight:600;margin:4px 0;">${c.name}</div>
+      <div style="font-size:10px;color:var(--stardust-muted);">${c.use}</div>
+      <div style="font-size:16px;margin-top:4px;color:${isCol ? 'var(--gold)' : 'var(--stardust-muted)'};">${isCol ? '★' : '☆'}</div>
+    </div>`;
+  });
+  html += '</div>';
+
+  // 配戴建议
+  html += '<div style="font-size:12px;color:var(--stardust-dim);line-height:1.8;">';
+  html += `<div>🔹 左手戴${top3[0]?.name||'水晶'}（招财/桃花/提升运）</div>`;
+  if (complementMatched.length > 0) {
+    html += `<div>🔹 可叠戴 <span style="color:#f59e0b;">${complementMatched[0].name}</span>（${complementWx}生${targetWx}，效果叠加）</div>`;
+  }
+  if (avoidWx) {
+    html += `<div>🔸 避免与<span style="color:var(--rose-light);">${avoidWx}性</span>水晶同戴（五行相克）</div>`;
+  }
+  html += '<div>🔸 新买先用流水/月光净化，日常每月净化1-2次</div>';
+  html += '<div>🔸 体质虚弱者慎用钛晶、捷克陨石；孕妇只建议白水晶</div>';
+  html += '</div>';
+
+  // 右上臂/随身推荐
+  html += '<div style="margin-top:10px;font-size:12px;color:var(--stardust-muted);">';
+  html += '右上臂（右·辟邪化煞版）：';
+  const forRight = matched.filter(c => c.use.includes('辟邪') || c.use.includes('防护') || c.use.includes('化煞'));
+  if (forRight.length > 0) {
+    html += forRight.slice(0,2).map(c => `${c.emoji}${c.name}`).join(' / ');
+  } else {
+    html += matched.slice(3,5).map(c => `${c.emoji}${c.name}`).join(' / ') || '黑曜石';
+  }
+  html += '</div>';
+
+  html += '</div>'; // result inner
+
+  result.innerHTML = html;
+}
+
+function toggleCrystalQuickCollect(name, el) {
+  let collected = [];
+  try { collected = JSON.parse(localStorage.getItem('fortune_crystals') || '[]'); } catch(e) {}
+  const idx = collected.indexOf(name);
+  if (idx >= 0) {
+    collected.splice(idx, 1);
+    const star = el.querySelector('div:last-child');
+    if (star) { star.textContent = '☆'; star.style.color = 'var(--stardust-muted)'; }
+  } else {
+    collected.push(name);
+    const star = el.querySelector('div:last-child');
+    if (star) { star.textContent = '★'; star.style.color = 'var(--gold)'; }
+  }
+  localStorage.setItem('fortune_crystals', JSON.stringify(collected));
+}
+
+function isCrystalCollected(name) {
+  try {
+    const col = JSON.parse(localStorage.getItem('fortune_crystals') || '[]');
+    return col.includes(name);
+  } catch(e) { return false; }
+}
+
 // ── 水晶收藏系统 ──
 function toggleCrystalCollect(crystalName, btn) {
   let collected = [];
@@ -1741,7 +2223,7 @@ function toggleCrystalCollect(crystalName, btn) {
   if (idx >= 0) {
     collected.splice(idx, 1);
     btn.textContent = '☆';
-    btn.style.color = 'var(--text-muted)';
+    btn.style.color = 'var(--stardust-muted)';
   } else {
     collected.push(crystalName);
     btn.textContent = '★';
@@ -1775,7 +2257,7 @@ function bindCrystalCollectButtons() {
       if (html.includes(c) && html.indexOf('data-crystal="' + c + '"') < 0) {
         const isCollected = collected.includes(c);
         const marker = '<span data-crystal="' + c + '" style="cursor:pointer;font-size:16px;margin-left:2px;color:' +
-          (isCollected ? 'var(--gold)' : 'var(--text-muted)') + ';">' + (isCollected ? ' ★' : ' ☆') + '</span>';
+          (isCollected ? 'var(--gold)' : 'var(--stardust-muted)') + ';">' + (isCollected ? ' ★' : ' ☆') + '</span>';
         html = html.replace(c, c + marker);      // first occurrence only
         changed = true;
       }
@@ -1791,11 +2273,11 @@ function showNameScore() {
   const history = document.getElementById('chat-history');
   const card = document.createElement('div');
   card.className = 'card';
-  card.style.cssText = 'border:2px solid var(--green);margin-top:12px;';
+  card.style.cssText = 'border:2px solid var(--emerald);margin-top:12px;';
   card.innerHTML = `
     <div class="card-header"><span class="icon">📝</span> 取名打分</div>
     <div class="form-group"><label class="form-label">你想评估的名字</label><input type="text" class="form-input" id="name-score-input" placeholder="比如：张伟、李思涵"></div>
-    <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-small" style="background:var(--green);" onclick="doNameScore()">打分</button><button class="btn btn-secondary btn-small" onclick="this.parentElement.parentElement.remove()">取消</button></div>`;
+    <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-small" style="background:var(--emerald);" onclick="doNameScore()">打分</button><button class="btn btn-secondary btn-small" onclick="this.parentElement.parentElement.remove()">取消</button></div>`;
   history.before(card);
   card.scrollIntoView({behavior:'smooth'});
   document.getElementById('name-score-input').focus();
@@ -1826,11 +2308,11 @@ function showCareerMatch() {
   const history = document.getElementById('chat-history');
   const card = document.createElement('div');
   card.className = 'card';
-  card.style.cssText = 'border:2px solid var(--blue);margin-top:12px;';
+  card.style.cssText = 'border:2px solid var(--sapphire);margin-top:12px;';
   card.innerHTML = `
     <div class="card-header"><span class="icon">💼</span> 职业五行匹配</div>
     <div class="form-group"><label class="form-label">输入一个职业或行业</label><input type="text" class="form-input" id="career-input" placeholder="比如：程序员、教师、开店、金融"></div>
-    <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-small" style="background:var(--blue);" onclick="doCareerMatch()">分析</button><button class="btn btn-secondary btn-small" onclick="this.parentElement.parentElement.remove()">取消</button></div>`;
+    <div style="display:flex;gap:8px;"><button class="btn btn-primary btn-small" style="background:var(--sapphire);" onclick="doCareerMatch()">分析</button><button class="btn btn-secondary btn-small" onclick="this.parentElement.parentElement.remove()">取消</button></div>`;
   history.before(card);
   card.scrollIntoView({behavior:'smooth'});
   document.getElementById('career-input').focus();
@@ -2207,7 +2689,7 @@ function renderCrystals() {
     <div id="crystal-collected-section">
       <div style="font-size:14px;font-weight:600;margin-bottom:8px;color:var(--gold);">⭐ 已收藏 (${collected.length}种)</div>
       ${collected.length === 0
-        ? '<div style="color:var(--text-muted);font-size:13px;margin-bottom:16px;">还没有收藏任何水晶。去💬聊天里看到推荐水晶时点★就能收藏。</div>'
+        ? '<div style="color:var(--stardust-muted);font-size:13px;margin-bottom:16px;">还没有收藏任何水晶。去💬聊天里看到推荐水晶时点★就能收藏。</div>'
         : collected.map(c => `
           <div class="profile-card" data-crystal="${c}" style="cursor:default;">
             <div class="profile-info">
@@ -2228,7 +2710,7 @@ function renderCrystals() {
               <div class="profile-name" style="font-size:13px;">${getCrystalEmoji(c.name)} ${c.name}</div>
               <div class="profile-detail" style="font-size:11px;">${c.element} | ${c.use}</div>
             </div>
-            <span class="crystal-star" style="font-size:18px;color:${isCollected ? 'var(--gold)' : 'var(--text-muted)'};">${isCollected ? '★' : '☆'}</span>
+            <span class="crystal-star" style="font-size:18px;color:${isCollected ? 'var(--gold)' : 'var(--stardust-muted)'};">${isCollected ? '★' : '☆'}</span>
           </div>`;
         }).join('')}
       </div>
@@ -2236,7 +2718,7 @@ function renderCrystals() {
 
     ${collected.length > 0 ? `
     <div style="margin-top:20px;">
-      <button class="btn btn-primary" onclick="exportCrystalList()" style="background:var(--green);">📋 导出购物清单</button>
+      <button class="btn btn-primary" onclick="exportCrystalList()" style="background:var(--emerald);">📋 导出购物清单</button>
     </div>` : ''}
 
     <div class="privacy-note" style="margin-top:16px;">🔒 收藏数据存在你手机本地</div>`;
@@ -2320,40 +2802,40 @@ function getCrystalInfo(name) {
    ══════════════════════════════════════════════════════════════════ */
 function renderSettings() {
   const panel = document.getElementById('panel-settings');
-  const currentTheme = localStorage.getItem('theme') || 'purple';
+  const currentTheme = localStorage.getItem('theme') || 'arcane';
 
   panel.innerHTML = `
     <div class="page-header">⚙️ 设置</div>
 
     <div class="card">
-      <div class="card-header"><span class="icon">🎨</span> 系统色彩</div>
+      <div class="card-header"><span class="icon">🎨</span> 风格主题</div>
       <div style="display:flex;flex-direction:column;gap:10px;">
-        <div class="theme-option" onclick="setTheme('purple')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);border:2px solid ${currentTheme==='purple'?'var(--accent)':'var(--border)'};background:var(--surface);cursor:pointer;">
-          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);flex-shrink:0;"></div>
-          <div style="flex:1;"><strong>紫水晶</strong><br><span style="font-size:12px;color:var(--text-muted);">神秘优雅 · 默认配色</span></div>
-          ${currentTheme==='purple'?'<span style="color:var(--accent-light);font-size:20px;">✓</span>':''}
+        <div class="theme-option" onclick="setTheme('arcane')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);border:2px solid ${currentTheme==='arcane'?'var(--gold)':'var(--border)'};background:var(--surface);cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#1a1240,#a78bfa,#d4a843);flex-shrink:0;box-shadow:0 0 12px rgba(167,139,250,0.3);"></div>
+          <div style="flex:1;"><strong>暗黑魔典</strong><br><span style="font-size:12px;color:var(--stardust-dim);">星云底色 · 魔法金字 · 深邃神秘</span></div>
+          ${currentTheme==='arcane'?'<span style="color:var(--gold-bright);font-size:20px;">✦</span>':''}
         </div>
-        <div class="theme-option" onclick="setTheme('gold')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);border:2px solid ${currentTheme==='gold'?'var(--accent)':'var(--border)'};background:var(--surface);cursor:pointer;">
-          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#fbbf24);flex-shrink:0;"></div>
-          <div style="flex:1;"><strong>琥珀金</strong><br><span style="font-size:12px;color:var(--text-muted);">温暖沉稳 · 经典命理色调</span></div>
-          ${currentTheme==='gold'?'<span style="color:var(--accent-light);font-size:20px;">✓</span>':''}
+        <div class="theme-option" onclick="setTheme('ivory')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);border:2px solid ${currentTheme==='ivory'?'var(--gold)':'var(--border)'};background:var(--surface);cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#f5f0e6,#d4c9a8,#8b6914);flex-shrink:0;box-shadow:0 0 12px rgba(139,105,20,0.2);"></div>
+          <div style="flex:1;"><strong>象牙古籍</strong><br><span style="font-size:12px;color:var(--stardust-dim);">暖白底色 · 墨金文字 · 明亮清爽</span></div>
+          ${currentTheme==='ivory'?'<span style="color:var(--gold-bright);font-size:20px;">✦</span>':''}
         </div>
-        <div class="theme-option" onclick="setTheme('green')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);border:2px solid ${currentTheme==='green'?'var(--accent)':'var(--border)'};background:var(--surface);cursor:pointer;">
-          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#34d399);flex-shrink:0;"></div>
-          <div style="flex:1;"><strong>翡翠绿</strong><br><span style="font-size:12px;color:var(--text-muted);">自然生机 · 养眼清爽</span></div>
-          ${currentTheme==='green'?'<span style="color:var(--accent-light);font-size:20px;">✓</span>':''}
+        <div class="theme-option" onclick="setTheme('eclipse')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);border:2px solid ${currentTheme==='eclipse'?'var(--gold)':'var(--border)'};background:var(--surface);cursor:pointer;">
+          <div style="width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#080404,#5a2215,#d4553a);flex-shrink:0;box-shadow:0 0 12px rgba(212,85,58,0.3);"></div>
+          <div style="flex:1;"><strong>血月蚀</strong><br><span style="font-size:12px;color:var(--stardust-dim);">纯黑底 · 红铜金光 · 高反差</span></div>
+          ${currentTheme==='eclipse'?'<span style="color:var(--gold-bright);font-size:20px;">✦</span>':''}
         </div>
       </div>
     </div>
 
     <div class="card">
       <div class="card-header"><span class="icon">ℹ️</span> 软件信息</div>
-      <div style="font-size:14px;line-height:2;color:var(--text-secondary);">
+      <div style="font-size:14px;line-height:2;color:var(--stardust-dim);">
         <div><strong>命镜</strong> — 八字命理随身工具</div>
-        <div style="color:var(--text-muted);font-size:12px;">AI 驱动的智能排盘 · 四家合参投票 · 紫微交叉验证</div>
-        <div style="margin-top:8px;">版本：<span style="color:var(--text);">1.0.0</span></div>
-        <div>开发者：<a href="mailto:ytmaya@126.com" style="color:var(--accent-light);text-decoration:none;">ytmaya@126.com</a></div>
-        <div style="color:var(--text-muted);font-size:11px;margin-top:8px;">Powered by DeepSeek · 数据全部存储在本地</div>
+        <div style="color:var(--stardust-muted);font-size:12px;">AI 驱动的智能排盘 · 四家合参投票 · 紫微交叉验证</div>
+        <div style="margin-top:8px;">版本：<span style="color:var(--stardust);">1.0.0</span></div>
+        <div>开发者：<a href="mailto:ytmaya@126.com" style="color:var(--gold-bright);text-decoration:none;">ytmaya@126.com</a></div>
+        <div style="color:var(--stardust-muted);font-size:11px;margin-top:8px;">Powered by DeepSeek · 数据全部存储在本地</div>
       </div>
     </div>
 
@@ -2362,8 +2844,8 @@ function renderSettings() {
 }
 
 function setTheme(theme) {
-  document.documentElement.classList.remove('theme-gold', 'theme-green');
-  if (theme !== 'purple') document.documentElement.classList.add('theme-' + theme);
+  document.documentElement.classList.remove('theme-ivory', 'theme-eclipse');
+  if (theme !== 'arcane') document.documentElement.classList.add('theme-' + theme);
   localStorage.setItem('theme', theme);
   renderSettings();
 }
@@ -2434,7 +2916,7 @@ function showHePan() {
   formCard.style.cssText = 'border: 2px solid var(--red); margin-top:12px;';
   formCard.innerHTML = `
     <div class="card-header"><span class="icon">❤️</span> 看看你们合不合适</div>
-    <p style="font-size:13px;color:var(--text-muted);margin-bottom:12px;">
+    <p style="font-size:13px;color:var(--stardust-muted);margin-bottom:12px;">
       你的八字：<strong>${profile.lastReading.bazi || '已排盘'}</strong>
     </p>
     ${partnerSelectHtml}
@@ -2555,8 +3037,8 @@ TA的信息→${partnerData}，${partnerBazi}
    ══════════════════════════════════════════════════════════════════ */
 // 加载保存的主题
 (function() {
-  const theme = localStorage.getItem('theme') || 'purple';
-  if (theme !== 'purple') document.documentElement.classList.add('theme-' + theme);
+  const theme = localStorage.getItem('theme') || 'arcane';
+  if (theme !== 'arcane') document.documentElement.classList.add('theme-' + theme);
 })();
 switchTab('fortune');
 </script>
