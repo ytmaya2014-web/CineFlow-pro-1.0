@@ -2,7 +2,7 @@
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="算命">
@@ -45,6 +45,32 @@
   --safe-bottom: env(safe-area-inset-bottom, 0px);
   --font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "PingFang SC", "Noto Sans SC", sans-serif;
   --transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+/* 主题2：琥珀金 */
+:root.theme-gold {
+  --bg-start: #1a1405;
+  --bg-mid: #2a1f10;
+  --bg-end: #1a1008;
+  --accent: #f59e0b;
+  --accent-light: #fbbf24;
+  --accent-glow: rgba(245, 158, 11, 0.35);
+  --border-focus: rgba(245, 158, 11, 0.45);
+  --text: #f8f0e3;
+  --text-secondary: #c4b08a;
+  --text-muted: #8a7555;
+}
+/* 主题3：翡翠绿 */
+:root.theme-green {
+  --bg-start: #051a10;
+  --bg-mid: #102820;
+  --bg-end: #081a14;
+  --accent: #10b981;
+  --accent-light: #34d399;
+  --accent-glow: rgba(16, 185, 129, 0.35);
+  --border-focus: rgba(16, 185, 129, 0.45);
+  --text: #e3f8ef;
+  --text-secondary: #8ac4a8;
+  --text-muted: #557a68;
 }
 html, body { height: 100%; overflow: hidden; }
 body {
@@ -703,6 +729,8 @@ body::after {
   <section class="tab-panel" id="panel-profiles"></section>
   <!-- Tab 7: 水晶收藏 -->
   <section class="tab-panel" id="panel-crystals"></section>
+  <!-- Tab 8: 设置 -->
+  <section class="tab-panel" id="panel-settings"></section>
 
   <!-- Bottom Nav -->
   <div id="bottom-nav">
@@ -714,6 +742,7 @@ body::after {
       <button class="nav-btn" data-tab="chat"><span class="nav-icon">💬</span>聊天</button>
       <button class="nav-btn" data-tab="profiles"><span class="nav-icon">👤</span>档案</button>
       <button class="nav-btn" data-tab="crystals"><span class="nav-icon">💎</span>水晶</button>
+      <button class="nav-btn" data-tab="settings"><span class="nav-icon">⚙️</span>设置</button>
     </nav>
   </div>
 </div>
@@ -1651,12 +1680,13 @@ function renderTab(tab) {
     case 'chat': renderChat(); break;
     case 'profiles': renderProfiles(); break;
     case 'crystals': renderCrystals(); break;
+    case 'settings': renderSettings(); break;
   }
   // 显示/隐藏输入框
   const chatBar = document.getElementById('chat-input-bar');
   if (chatBar) chatBar.style.display = tab === 'chat' ? 'flex' : 'none';
   const crystalBar = document.getElementById('crystal-input-bar');
-  if (crystalBar) crystalBar.style.display = tab === 'crystals' ? 'flex' : 'none';
+  if (crystalBar) crystalBar.style.display = (tab === 'crystals' || tab === 'settings') ? 'none' : (tab === 'chat' ? 'flex' : 'none');
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -2296,6 +2326,59 @@ function getCrystalInfo(name) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
+   TAB 8: 系统设置
+   ══════════════════════════════════════════════════════════════════ */
+function renderSettings() {
+  const panel = document.getElementById('panel-settings');
+  const currentTheme = localStorage.getItem('theme') || 'purple';
+
+  panel.innerHTML = `
+    <div class="page-header">⚙️ 设置</div>
+
+    <div class="card">
+      <div class="card-header"><span class="icon">🎨</span> 系统色彩</div>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div class="theme-option" onclick="setTheme('purple')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);border:2px solid ${currentTheme==='purple'?'var(--accent)':'var(--border)'};background:var(--surface);cursor:pointer;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#8b5cf6,#a855f7);flex-shrink:0;"></div>
+          <div style="flex:1;"><strong>紫水晶</strong><br><span style="font-size:12px;color:var(--text-muted);">神秘优雅 · 默认配色</span></div>
+          ${currentTheme==='purple'?'<span style="color:var(--accent-light);font-size:20px;">✓</span>':''}
+        </div>
+        <div class="theme-option" onclick="setTheme('gold')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);border:2px solid ${currentTheme==='gold'?'var(--accent)':'var(--border)'};background:var(--surface);cursor:pointer;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#f59e0b,#fbbf24);flex-shrink:0;"></div>
+          <div style="flex:1;"><strong>琥珀金</strong><br><span style="font-size:12px;color:var(--text-muted);">温暖沉稳 · 经典命理色调</span></div>
+          ${currentTheme==='gold'?'<span style="color:var(--accent-light);font-size:20px;">✓</span>':''}
+        </div>
+        <div class="theme-option" onclick="setTheme('green')" style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:var(--radius);border:2px solid ${currentTheme==='green'?'var(--accent)':'var(--border)'};background:var(--surface);cursor:pointer;">
+          <div style="width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,#10b981,#34d399);flex-shrink:0;"></div>
+          <div style="flex:1;"><strong>翡翠绿</strong><br><span style="font-size:12px;color:var(--text-muted);">自然生机 · 养眼清爽</span></div>
+          ${currentTheme==='green'?'<span style="color:var(--accent-light);font-size:20px;">✓</span>':''}
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header"><span class="icon">ℹ️</span> 软件信息</div>
+      <div style="font-size:14px;line-height:2;color:var(--text-secondary);">
+        <div><strong>命镜</strong> — 八字命理随身工具</div>
+        <div style="color:var(--text-muted);font-size:12px;">AI 驱动的智能排盘 · 四家合参投票 · 紫微交叉验证</div>
+        <div style="margin-top:8px;">版本：<span style="color:var(--text);">1.0.0</span></div>
+        <div>开发者：<a href="mailto:ytmaya@126.com" style="color:var(--accent-light);text-decoration:none;">ytmaya@126.com</a></div>
+        <div style="color:var(--text-muted);font-size:11px;margin-top:8px;">Powered by DeepSeek · 数据全部存储在本地</div>
+      </div>
+    </div>
+
+    <div class="privacy-note" style="margin-top:8px;">🔒 你的生辰数据和 API Key 都存在手机本地，不会上传</div>
+  `;
+}
+
+function setTheme(theme) {
+  document.documentElement.classList.remove('theme-gold', 'theme-green');
+  if (theme !== 'purple') document.documentElement.classList.add('theme-' + theme);
+  localStorage.setItem('theme', theme);
+  renderSettings();
+}
+
+/* ══════════════════════════════════════════════════════════════════
    合盘功能 — 两人八字配对
    ══════════════════════════════════════════════════════════════════ */
 function showHePan() {
@@ -2480,6 +2563,11 @@ TA的信息→${partnerData}，${partnerBazi}
 /* ══════════════════════════════════════════════════════════════════
    INIT
    ══════════════════════════════════════════════════════════════════ */
+// 加载保存的主题
+(function() {
+  const theme = localStorage.getItem('theme') || 'purple';
+  if (theme !== 'purple') document.documentElement.classList.add('theme-' + theme);
+})();
 switchTab('fortune');
 </script>
 </body>
