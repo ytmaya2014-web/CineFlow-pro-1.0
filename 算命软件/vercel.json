@@ -7,13 +7,5 @@
   },
   "rewrites": [
     { "source": "/api/fortune", "destination": "/api/fortune" }
-  ],
-  "env": {
-    "DEEPSEEK_API_KEY": {
-      "description": "DeepSeek API Key, from platform.deepseek.com"
-    },
-    "FORTUNE_API_KEY": {
-      "description": "自定一个密钥，前端请求时带上，防止被人刷"
-    }
-  }
+  ]
 }
