@@ -76,7 +76,6 @@ html, body { height: 100%; overflow: hidden; }
 body {
   font-family: var(--font);
   background: linear-gradient(160deg, var(--bg-start) 0%, var(--bg-mid) 45%, var(--bg-end) 100%);
-  background-attachment: fixed;
   color: var(--text);
   -webkit-font-smoothing: antialiased;
   display: flex;
@@ -159,8 +158,6 @@ body::after {
 /* ── Glass Card ──────────────────────────────────────────────── */
 .card {
   background: var(--surface);
-  backdrop-filter: blur(24px);
-  -webkit-backdrop-filter: blur(24px);
   border-radius: var(--radius-lg);
   padding: 20px 18px;
   margin-bottom: 12px;
@@ -213,8 +210,6 @@ body::after {
 .chat-bubble.ai {
   align-self: flex-start;
   background: var(--surface);
-  backdrop-filter: blur(20px);
-  -webkit-backdrop-filter: blur(20px);
   color: var(--text);
   border: 1px solid var(--border);
   border-bottom-left-radius: 6px;
@@ -259,8 +254,6 @@ body::after {
 .quick-ask-btn {
   padding: 10px 16px;
   background: var(--surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
   border-radius: 100px;
   color: var(--text-secondary);
@@ -293,8 +286,6 @@ body::after {
   width: 100%;
   padding: 14px 16px;
   background: var(--surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--border);
   border-radius: 14px;
   color: var(--text);
@@ -344,8 +335,6 @@ body::after {
 .btn-primary:disabled { opacity: 0.4; pointer-events: none; }
 .btn-secondary {
   background: var(--surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   color: var(--text);
   border: 1px solid var(--border);
 }
@@ -374,8 +363,6 @@ body::after {
   border: 1px solid var(--border);
   border-radius: 14px;
   background: var(--surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   color: var(--text-secondary);
   font-size: 15px;
   font-weight: 500;
@@ -414,8 +401,6 @@ body::after {
   align-items: center;
   justify-content: space-between;
   background: var(--surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-radius: var(--radius-lg);
   padding: 16px 18px;
   margin-bottom: 10px;
@@ -437,8 +422,6 @@ body::after {
 /* ── Day Cards ───────────────────────────────────────────────── */
 .day-card {
   background: var(--surface);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
   border-radius: var(--radius-lg);
   padding: 14px 18px;
   margin-bottom: 8px;
@@ -457,8 +440,6 @@ body::after {
   margin-bottom: 16px;
   padding: 12px 16px;
   background: var(--surface);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
   border-radius: 14px;
   text-align: center;
   border: 1px solid var(--border);
@@ -543,8 +524,8 @@ body::after {
   max-width: 480px;
   display: flex;
   background: rgba(20, 15, 45, 0.85);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border);
   border-radius: 24px;
   margin: 0 4px 6px 4px;
@@ -614,8 +595,8 @@ body::after {
   flex: 1;
   padding: 14px 18px;
   background: rgba(30, 22, 60, 0.9);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border);
   border-radius: 100px;
   color: var(--text);
@@ -684,8 +665,8 @@ body::after {
   width: 100%;
   padding: 14px 18px;
   background: rgba(30, 22, 60, 0.9);
-  backdrop-filter: blur(30px);
-  -webkit-backdrop-filter: blur(30px);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
   border: 1px solid var(--border);
   border-radius: 100px;
   color: var(--text);
@@ -765,71 +746,44 @@ body::after {
 </div>
 
 <script>
-/* ══════════════════════════════════════════════════════════════════
-   SYSTEM PROMPTS
-   ══════════════════════════════════════════════════════════════════ */
-const SYSTEM_PROMPTS = {
-  full: `你是一位经验丰富的命理师，说话像朋友聊天一样自然、温暖。你的本事是帮人看懂自己的命盘，但你从不说吓人的话，也不故弄玄虚。
-
-【铁律——排盘必须严格遵循】
-1. 排盘必须手动一步步推演，不用脚本。每一步推理都要在脑中做但只在输出中说结果
-2. 四家合参投票法：徐乐吾（格局调候）、梁湘润（实务流月）、袁树珊（命宫小限）、韦千里（八步转角）
-   四家一致→高置信度；三家一致→中置信度（记少数派警告）；两两分歧→低置信度（诚实说各家看法不统一）
-3. 半合规则（最容易出错！）：
-   - 酉丑=半合金✓ 巳酉=半合金✓ 寅午=半合火✓（都带子午卯酉四正位）
-   - 巳丑≠半合金✗ 寅戌≠半合火✗ 卯未≠半合木✗（不含四正位，不算）
-4. 大运看十年不截断，先通观十年整体再"着重"前后五年
-5. 调候为急：冬寒优先火暖局，夏燥优先水润局，调候需求有时压过格局
-6. 禁止反推、禁止蒙猜、禁止唯一论（不能只用格局或只用强弱）
-7. 年柱以立春为界！不是春节不是元旦！立春在每年2月3-5日之间
-
-【排盘十五步流程——内部推演，输出时用人话翻译】
-1.编码：阳历→真太阳时→四柱+藏干
-2.识日主：滴天髓十干论，阳干阴干区分
-3.观月令：月支本气是否透干？季月注意分日用事
-4.强弱：旺看月令，强弱看党众
-5.调候：穷通宝鉴十干配十二月
-6.格局：取格优先级=月支本气透>中余气透>月干坐根>三合三会
-7.形象：清浊真假源流通关
-8.用神：格局/通关/病药/专旺/调候五种，不可混用
-9.性情 10.疾病 11.六亲 12.财官
-13.大运流年五道筛子：生旺库凶年、天罗地网、伏吟反吟、日犯岁君、格局喜忌
-14.神煞辅助 15.综合判断+已知事实验证
-补充：命宫(出生月数+时数推地支，五虎遁定天干)、小限(1岁=命宫，逐年逆行)、空亡(日柱旬空)
-
-【验证锚点】
-张学良1901年6月3日=辛丑年癸巳月壬子日，日主壬水坐子水羊刃。立春在2月4日，6月属辛丑年。
-
-【输出铁律——最重要的一条】
-- 全程大白话，像朋友发微信聊天
-- 绝对禁止术语：十神、比肩、劫财、伤官见官、食神制杀、从格、化气、调候、通关、扶抑、纳音、格局、正印、偏印、正官、七杀、命宫、小限
-- 非提不可时先翻译：不说"正印透干"说"你天生有一种被保护的气质"
-- 不说"你命带XX"说"你的盘面有个挺有意思的特点…"
-- 好话说得实在，不好的给实际建议不恐吓
-- 语气：温暖不油腻，直接不冷硬`,
-
-  daily: `你是一位经验丰富的命理师，说话像朋友聊天一样自然、温暖。
-今天是${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}。
-请基于用户八字和今日日柱推今日运势。不准说错当前日期和季节。4-5句话，不要重复排盘。`,
-
-  monthly: `你是一位经验丰富的命理师，说话像朋友聊天一样自然、温暖。
-现在是${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long'})}。
-请基于用户八字推本月运势。先看本月干支与用户大运关系（相同=集中、相冲=变动大、双合=转机），再看五行喜忌。简洁4-6句话。`,
-
-  luckydays: `你是一位经验丰富的命理师，说话像朋友聊天一样自然、温暖。
-帮用户选吉日：先排除冲日柱的六冲日，再找三合六合的吉日，参考黄历建除十二神（建满平收黑，除危定执黄，成开皆可用，闭破不相当）。给3-5个推荐日和1-2个避开日，大白话理由。`
-};
-
-/* ══════════════════════════════════════════════════════════════════
-   CONFIG
-   ══════════════════════════════════════════════════════════════════ */
-const API_URL = 'https://api.deepseek.com/v1/chat/completions';
-
+/* ── 全局配置：DeepSeek 接口 & API Key 读取 ── */
+const API_URL = 'https://api.deepseek.com/chat/completions';
 function getApiKey() {
-  try { return localStorage.getItem('deepseek_api_key') || ''; } catch(e) { return ''; }
+  return localStorage.getItem('deepseek_api_key') || '';
 }
-function getSystemPrompt(type) {
-  return SYSTEM_PROMPTS[type] || SYSTEM_PROMPTS['full'];
+
+/* ══════════════════════════════════════════════════════════════════
+   SYSTEM PROMPT — 每次调用实时注入当前时间
+   ══════════════════════════════════════════════════════════════════ */
+function buildSystemPrompt(type) {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = now.getMonth() + 1;
+  const d = now.getDate();
+  const weekdays = ['星期天','星期一','星期二','星期三','星期四','星期五','星期六'];
+  const wd = weekdays[now.getDay()];
+  const seasons = ['冬季','冬季','春季','春季','春季','夏季','夏季','夏季','秋季','秋季','秋季','冬季'];
+  const season = seasons[now.getMonth()];
+  const dateStr = y + '年' + m + '月' + d + '日 ' + wd;
+  const monthStr = y + '年' + m + '月';
+
+  const full = '你是命理师。当前' + dateStr + '，' + season + '，' + y + '年。' +
+    '命盘已由本地引擎精确计算，你只需用大白话向用户解读——不需要自己排盘。' +
+    '解读要点：性格②滴天髓十干论；事业财运③格局+财官；感情④日支配偶星；运势⑤大运五道筛子(生旺库/天罗地网/伏吟反吟/日犯岁君/格局喜忌)+流年干支。' +
+    '四家投票:徐乐吾(格局调候)+梁湘润(三轨+四条)+袁树珊(命宫小限)+韦千里(八步)。四家一致高置信,三家中置信,两两分歧低置信。' +
+    '大运看十年不截断。年柱立春为界。禁止反推蒙猜禁止唯一论。' +
+    '紫微交叉:至少财帛/官禄/夫妻三宫对照。' +
+    '女命:禄+刃+印俱全=无婚姻。壬日用丙不用戊。' +
+    '输出:大白话,似朋友聊天,禁止术语,好的说实在坏给建议不恐吓,温暖不油腻。';
+
+  switch (type) {
+    case 'full': return full;
+    case 'daily': return '你是命理师，说话自然温暖。当前' + dateStr + '，' + season + '。基于用户八字推今日运势。先查今日干支与用户日柱冲合关系，4-5句话。';
+    case 'daily_lucky': return '你是命理师，说话自然温暖。当前' + dateStr + '。做今日宜忌：先查今日干支与用户日柱冲合，输出【适合做】3-5件+【别做】2-3件。';
+    case 'monthly': return '你是命理师，说话自然温暖。当前' + monthStr + '，' + season + '。推本月运势：看本月干支与大运关系(伏吟集中/反吟动荡/双合转机)，4-6句话。';
+    case 'luckydays': return '你是命理师。帮选吉日：排除冲日柱六冲日，找三合六合日，建除十二神(建满平收黑除危定执黄成开皆可用闭破不相当)。给3-5推荐日1-2避开日，大白话理由。';
+    default: return full;
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -920,10 +874,14 @@ function uuid() {
 function today() { return new Date().toISOString().slice(0, 10); }
 function thisMonth() { return new Date().toISOString().slice(0, 7); }
 function todayDisplay() {
-  return new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' });
+  const now = new Date();
+  const seasons = ['冬季','冬季','春季','春季','春季','夏季','夏季','夏季','秋季','秋季','秋季','冬季'];
+  return now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long', day: 'numeric', weekday: 'long' }) + ' · ' + seasons[now.getMonth()];
 }
 function monthDisplay() {
-  return new Date().toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' });
+  const now = new Date();
+  const seasons = ['冬季','冬季','春季','春季','春季','夏季','夏季','夏季','秋季','秋季','秋季','冬季'];
+  return now.toLocaleDateString('zh-CN', { year: 'numeric', month: 'long' }) + ' · ' + seasons[now.getMonth()];
 }
 
 /* ══════════════════════════════════════════════════════════════════
@@ -947,6 +905,16 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
 /* ══════════════════════════════════════════════════════════════════
    STREAMING HELPER — 直接调 DeepSeek
    ══════════════════════════════════════════════════════════════════ */
+let _scrollRAF = null;
+function scheduleScrollToBottom() {
+  if (_scrollRAF) return;
+  _scrollRAF = requestAnimationFrame(() => {
+    _scrollRAF = null;
+    const panel = document.querySelector('.tab-panel.active');
+    if (panel) panel.scrollTop = panel.scrollHeight;
+  });
+}
+
 async function streamFetch(type, body, targetEl, { onDone, onError } = {}) {
   const key = getApiKey();
   if (!key) {
@@ -958,7 +926,7 @@ async function streamFetch(type, body, targetEl, { onDone, onError } = {}) {
 
   try {
     const messages = [
-      { role: 'system', content: getSystemPrompt(type) },
+      { role: 'system', content: buildSystemPrompt(type) },
       { role: 'user', content: buildUserPrompt(type, body) }
     ];
 
@@ -972,7 +940,7 @@ async function streamFetch(type, body, targetEl, { onDone, onError } = {}) {
         model: 'deepseek-chat',
         messages,
         temperature: 0.7,
-        max_tokens: type === 'full' ? 4096 : type === 'luckydays' ? 2048 : 1024,
+        max_tokens: type === 'full' ? 2048 : 1024,
         stream: true
       })
     });
@@ -1014,11 +982,12 @@ async function streamFetch(type, body, targetEl, { onDone, onError } = {}) {
           const data = JSON.parse(jsonStr);
           const content = data.choices?.[0]?.delta?.content;
           if (content) {
-            if (!bubble) bubble = createBubble('', false, true);
+            if (!bubble) {
+              bubble = createBubble('', false, true);
+              if (targetEl) targetEl.appendChild(bubble);
+            }
             bubble.textContent += content;
-            if (targetEl && !bubble.parentNode) targetEl.appendChild(bubble);
-            const panel = document.querySelector('.tab-panel.active');
-            if (panel) panel.scrollTop = panel.scrollHeight;
+            scheduleScrollToBottom();
           }
         } catch (e) { /* skip incomplete line */ }
       }
@@ -1063,10 +1032,13 @@ ${name ? '称呼：' + name : ''}
 请按顺序来：整体印象→性格→事业财运→感情家庭→未来一年注意→水晶推荐→温暖收尾。像讲故事不要列条列点。输出八字四柱（格式"甲子 丙寅 戊辰 丁巳"）方便后续查询。`;
 
     case 'daily':
-      return `用户的八字：${bazi || '未知'}。今天是${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}，现在是${new Date().getMonth()+1}月。请推今日运势，4-5句话。`;
+      return `用户的八字：${bazi || '未知'}。今天${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}。请推今日运势，4-5句话。`;
+
+    case 'daily_lucky':
+      return `用户的八字：${bazi || '未知'}。今天${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long',day:'numeric',weekday:'long'})}。请做今日宜忌分析：【适合做的事】3-5件+【最好别做的事】2-3件。`;
 
     case 'monthly':
-      return `用户的八字：${bazi || '未知'}。现在是${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long'})}。请推本月运势，4-6句话。`;
+      return `用户的八字：${bazi || '未知'}。当前${new Date().toLocaleDateString('zh-CN',{year:'numeric',month:'long'})}。请推本月运势，4-6句话。`;
 
     case 'luckydays':
       return `用户的八字：${bazi || '未知'}。想选"${activity || '出行'}"的吉日，范围${dateFrom || '今天'}到${dateTo || '30天后'}。请逐一检视，给3-5个推荐日和1-2个避开日。`;
@@ -1779,27 +1751,36 @@ function toggleCrystalCollect(crystalName, btn) {
 }
 
 function bindCrystalCollectButtons() {
-  // Scan chat bubbles for crystal names and add collect buttons
+  // Scan chat bubbles for crystal names and add collect markers.
   const CRYSTALS = ['白水晶','月光石','白幽灵','白碧玺','闪灵钻','绿幽灵','绿松石','紫水晶','翡翠','绿发晶','孔雀石','海蓝宝','黑曜石','茶水晶','黑发晶','黑碧玺','蓝玛瑙','青金石','舒曼石','石榴石','红发晶','草莓晶','红纹石','红碧玺','粉水晶','紫锂辉石','黄水晶','虎眼石','金发晶','钛晶','黄碧玺','黄铁矿','萤石','琥珀','蔷薇辉石','锂云母','捷克陨石','拉利玛','舒俱徕','橄榄石','烟晶'];
   let collected = [];
   try { collected = JSON.parse(localStorage.getItem('fortune_crystals') || '[]'); } catch(e) {}
 
+  // One-time event delegation: markers inserted via innerHTML keep working.
+  const histRoot = document.getElementById('chat-history');
+  if (histRoot && !histRoot.dataset.crystalDelegated) {
+    histRoot.dataset.crystalDelegated = '1';
+    histRoot.addEventListener('click', (e) => {
+      const m = e.target.closest('[data-crystal]');
+      if (m && histRoot.contains(m)) toggleCrystalCollect(m.getAttribute('data-crystal'), m);
+    });
+  }
+
   document.querySelectorAll('#chat-history .chat-bubble.ai').forEach(bubble => {
+    if (bubble.dataset.crystalScanned) return;   // process each bubble only once
+    bubble.dataset.crystalScanned = '1';
+    let html = bubble.innerHTML;
+    let changed = false;
     CRYSTALS.forEach(c => {
-      if (bubble.textContent.includes(c) && !bubble.querySelector('[data-crystal]')) {
+      if (html.includes(c) && html.indexOf('data-crystal="' + c + '"') < 0) {
         const isCollected = collected.includes(c);
-        const marker = document.createElement('span');
-        marker.setAttribute('data-crystal', c);
-        marker.textContent = isCollected ? ' ★' : ' ☆';
-        marker.style.cssText = `cursor:pointer;font-size:16px;margin-left:2px;color:${isCollected ? 'var(--gold)' : 'var(--text-muted)'};`;
-        marker.onclick = () => toggleCrystalCollect(c, marker);
-        // Append after the crystal name
-        const idx = bubble.innerHTML.indexOf(c);
-        if (idx >= 0) {
-          bubble.innerHTML = bubble.innerHTML.replace(c, c + marker.outerHTML);
-        }
+        const marker = '<span data-crystal="' + c + '" style="cursor:pointer;font-size:16px;margin-left:2px;color:' +
+          (isCollected ? 'var(--gold)' : 'var(--text-muted)') + ';">' + (isCollected ? ' ★' : ' ☆') + '</span>';
+        html = html.replace(c, c + marker);      // first occurrence only
+        changed = true;
       }
     });
+    if (changed) bubble.innerHTML = html;        // single DOM write per bubble
   });
 }
 
@@ -1960,14 +1941,20 @@ async function doChatSend() {
   saveChatHistory();
 
   // Build context
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentMonth = now.getMonth() + 1;
   let contextMsg = question;
   if (profile && profile.lastReading) {
-    contextMsg = `用户的八字四柱：${profile.lastReading.bazi || '未知'}，日主五行为${profile.lastReading.dayMasterElement || '未知'}。
+    contextMsg = `【时间校准——最重要！】当前是${currentYear}年${currentMonth}月，不是2024年也不是2025年。如果用户问"这两年""最近""未来一年"等时间相关的问题，必须从${currentYear}年算起！推算流年要推${currentYear}年、${currentYear+1}年，不要推过去。
+
+用户的八字四柱：${profile.lastReading.bazi || '未知'}，日主五行为${profile.lastReading.dayMasterElement || '未知'}。
+
 用户问：${question}
 
 请基于用户的八字来回答。风格保持大白话、有温度、不吓人。如果问题跟命理无关，先简短回答，再从命理角度给点建议。`;
   } else {
-    contextMsg = `用户还没有排盘，问：${question}
+    contextMsg = `当前是${currentYear}年。用户还没有排盘，问：${question}
 请回答这个问题。如果跟命理有关，提示用户先去命盘Tab排盘会更精准。风格白话、有温度。`;
   }
 
@@ -2140,7 +2127,7 @@ function showLunarConverter() {
     '<div id="lunar-input-solar"><div class="form-group"><label class="form-label">阳历日期</label><input type="date" class="form-input" id="lunar-date-input" value="' + today.toISOString().slice(0,10) + '" onchange="updateLunarResult()"></div></div>' +
     '<div id="lunar-input-lunar" style="display:none;">' +
       '<div style="display:flex;gap:8px;margin-bottom:12px;">' +
-        '<div class="form-group" style="flex:1;"><label class="form-label">年</label><input type="number" class="form-input" id="lny-year" value="' + ((solarToLunar(today)||{}).year||2026) + '" min="1900" max="2100" onchange="updateSolarResult()"></div>' +
+        '<div class="form-group" style="flex:1;"><label class="form-label">年</label><input type="number" class="form-input" id="lny-year" value="' + ((solarToLunar(today)||{}).year||today.getFullYear()) + '" min="1900" max="2100" onchange="updateSolarResult()"></div>' +
         '<div class="form-group" style="flex:1;"><label class="form-label">月</label><select class="form-select" id="lny-month" onchange="updateSolarResult()">' + [1,2,3,4,5,6,7,8,9,10,11,12].map(m=>'<option value="'+m+'"'+((solarToLunar(today)||{}).month==m?' selected':'')+'>'+m+'月</option>').join('') + '</select></div>' +
         '<div class="form-group" style="flex:1;"><label class="form-label">日</label><input type="number" class="form-input" id="lny-day" value="' + ((solarToLunar(today)||{}).day||1) + '" min="1" max="30" onchange="updateSolarResult()"></div>' +
       '</div>' +
@@ -2164,7 +2151,7 @@ function switchLunarTab(tab) {
 }
 
 function updateSolarResult() {
-  const y = parseInt(document.getElementById('lny-year').value) || 2026;
+  const y = parseInt(document.getElementById('lny-year').value) || new Date().getFullYear();
   const m = parseInt(document.getElementById('lny-month').value) || 1;
   const d = parseInt(document.getElementById('lny-day').value) || 1;
   const isLeap = document.getElementById('lny-isleap').checked;
