@@ -1071,6 +1071,9 @@ ${name ? '称呼：' + name : ''}
     case 'luckydays':
       return `用户的八字：${bazi || '未知'}。想选"${activity || '出行'}"的吉日，范围${dateFrom || '今天'}到${dateTo || '30天后'}。请逐一检视，给3-5个推荐日和1-2个避开日。`;
 
+    case 'chat':
+      return body.question || '';
+
     default:
       return body.question || '';
   }
@@ -1829,7 +1832,7 @@ async function doNameScore() {
   const aiBubble = createBubble('', 'ai', true);
   history.appendChild(aiBubble);
   if (card) card.remove();
-  await streamFetch('name_score', { name, bazi: profile.lastReading.bazi, gender: profile.gender }, history, {
+  await streamFetch('chat', { question: `📝 帮我看看"${name}"这个名字的五行和八字匹配度。我的八字：${profile.lastReading.bazi}，日主五行：${profile.lastReading.dayMasterElement || '未知'}，性别：${profile.gender || '未知'}。请从五行角度分析这个名字的适配度。` }, history, {
     onDone() { saveChatHistory(); bindCrystalCollectButtons(); },
     onError() {}
   });
@@ -1862,7 +1865,7 @@ async function doCareerMatch() {
   const aiBubble = createBubble('', 'ai', true);
   history.appendChild(aiBubble);
   if (card) card.remove();
-  await streamFetch('career_match', { career, bazi: profile.lastReading.bazi }, history, {
+  await streamFetch('chat', { question: `💼 我想做"${career}"这个行业，帮我看看跟我的八字五行合不合。我的八字：${profile.lastReading.bazi}，日主五行：${profile.lastReading.dayMasterElement || '未知'}。这个行业五行属什么？跟我的日主是相生还是相克？做这行要注意什么？` }, history, {
     onDone() { saveChatHistory(); },
     onError() {}
   });
@@ -1893,7 +1896,7 @@ async function doAnnualReport() {
   const aiBubble = createBubble('', 'ai', true);
   history.appendChild(aiBubble);
   if (card) card.remove();
-  await streamFetch('annual_report', { year, bazi: profile.lastReading.bazi, birthDate: profile.birthDate }, history, {
+  await streamFetch('chat', { question: `📊 帮我做一份${year}年度运势报告。我的八字：${profile.lastReading.bazi}，日主五行：${profile.lastReading.dayMasterElement || '未知'}，生日：${profile.birthDate}。请基于我的八字和${year}年的流年干支，分析这一年的整体运势、事业、财运、感情、健康各方面。结合大运和流年的关系，标注需要注意的月份。` }, history, {
     onDone() { saveChatHistory(); bindCrystalCollectButtons(); },
     onError() {}
   });
@@ -1908,7 +1911,7 @@ function showFengshui() {
   const aiBubble = createBubble('', 'ai', true);
   history.appendChild(aiBubble);
   history.parentElement.scrollTop = history.parentElement.scrollHeight;
-  streamFetch('fengshui', { bazi: profile.lastReading.bazi, year: new Date().getFullYear() }, history, {
+  streamFetch('chat', { question: `🏠 帮我看看${new Date().getFullYear()}年家里的风水布局建议。我的八字：${profile.lastReading.bazi}，日主五行：${profile.lastReading.dayMasterElement || '未知'}。请结合今年的流年飞星和我的八字用神，帮我分析：1.财位在哪里 2.卧室床头朝向 3.办公桌怎么摆 4.适合放什么水晶。` }, history, {
     onDone() { saveChatHistory(); bindCrystalCollectButtons(); },
     onError() {}
   });
